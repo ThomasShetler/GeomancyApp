@@ -30,17 +30,20 @@ namespace GeomancyApp
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.label76 = new System.Windows.Forms.Label();
             this.label77 = new System.Windows.Forms.Label();
             this.label78 = new System.Windows.Forms.Label();
-            this.label79 = new System.Windows.Forms.Label();
             this.label80 = new System.Windows.Forms.Label();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.label71 = new System.Windows.Forms.Label();
             this.label72 = new System.Windows.Forms.Label();
             this.label73 = new System.Windows.Forms.Label();
-            this.label74 = new System.Windows.Forms.Label();
             this.label75 = new System.Windows.Forms.Label();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.label66 = new System.Windows.Forms.Label();
@@ -108,11 +111,6 @@ namespace GeomancyApp
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.label24 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -134,13 +132,49 @@ namespace GeomancyApp
             this.label9 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button2 = new System.Windows.Forms.Button();
-            this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.figureWikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.houseWikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button2 = new System.Windows.Forms.Button();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.textBox15 = new System.Windows.Forms.TextBox();
+            this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.textBox19 = new System.Windows.Forms.TextBox();
+            this.textBox18 = new System.Windows.Forms.TextBox();
+            this.textBox17 = new System.Windows.Forms.TextBox();
+            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.textBox22 = new System.Windows.Forms.TextBox();
+            this.label34 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.textBox20 = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label49 = new System.Windows.Forms.Label();
+            this.label54 = new System.Windows.Forms.Label();
+            this.label59 = new System.Windows.Forms.Label();
+            this.label64 = new System.Windows.Forms.Label();
+            this.textBox21 = new System.Windows.Forms.TextBox();
+            this.textBox23 = new System.Windows.Forms.TextBox();
+            this.textBox24 = new System.Windows.Forms.TextBox();
+            this.textBox25 = new System.Windows.Forms.TextBox();
+            this.groupBox23 = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.label81 = new System.Windows.Forms.Label();
+            this.textBox28 = new System.Windows.Forms.TextBox();
+            this.label79 = new System.Windows.Forms.Label();
+            this.label74 = new System.Windows.Forms.Label();
+            this.textBox27 = new System.Windows.Forms.TextBox();
+            this.textBox26 = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox17.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox15.SuspendLayout();
@@ -156,14 +190,18 @@ namespace GeomancyApp
             this.groupBox4.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox19.SuspendLayout();
+            this.groupBox20.SuspendLayout();
+            this.groupBox21.SuspendLayout();
+            this.groupBox22.SuspendLayout();
+            this.groupBox23.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.groupBox17);
             this.groupBox1.Controls.Add(this.groupBox16);
             this.groupBox1.Controls.Add(this.groupBox15);
@@ -179,7 +217,6 @@ namespace GeomancyApp
             this.groupBox1.Controls.Add(this.groupBox4);
             this.groupBox1.Controls.Add(this.groupBox9);
             this.groupBox1.Controls.Add(this.groupBox3);
-            this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Location = new System.Drawing.Point(12, 69);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(788, 682);
@@ -187,20 +224,90 @@ namespace GeomancyApp
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Chart";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            this.groupBox1.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Location = new System.Drawing.Point(686, 19);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(90, 142);
+            this.groupBox2.TabIndex = 0;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Tag = "1";
+            this.groupBox2.Text = "1";
+            this.groupBox2.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(22, 15);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(59, 31);
+            this.label1.TabIndex = 5;
+            this.label1.Tag = "2";
+            this.label1.Text = "◆ ◆";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(24, 108);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(59, 31);
+            this.label5.TabIndex = 4;
+            this.label5.Tag = "2";
+            this.label5.Text = "◆ ◆";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label5.Click += new System.EventHandler(this.label5_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(22, 78);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(59, 31);
+            this.label4.TabIndex = 3;
+            this.label4.Tag = "2";
+            this.label4.Text = "◆ ◆";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(22, 47);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(59, 31);
+            this.label3.TabIndex = 2;
+            this.label3.Tag = "2";
+            this.label3.Text = "◆ ◆";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.label76);
             this.groupBox17.Controls.Add(this.label77);
             this.groupBox17.Controls.Add(this.label78);
-            this.groupBox17.Controls.Add(this.label79);
             this.groupBox17.Controls.Add(this.label80);
             this.groupBox17.Location = new System.Drawing.Point(668, 531);
             this.groupBox17.Name = "groupBox17";
             this.groupBox17.Size = new System.Drawing.Size(90, 142);
             this.groupBox17.TabIndex = 18;
             this.groupBox17.TabStop = false;
+            this.groupBox17.Tag = "16";
             this.groupBox17.Text = "Fallout";
+            this.groupBox17.Enter += new System.EventHandler(this.groupBox17_Enter);
+            this.groupBox17.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label76
             // 
@@ -238,16 +345,6 @@ namespace GeomancyApp
             this.label78.Text = "◆ ◆";
             this.label78.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // label79
-            // 
-            this.label79.AutoSize = true;
-            this.label79.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label79.Location = new System.Drawing.Point(33, 47);
-            this.label79.Name = "label79";
-            this.label79.Size = new System.Drawing.Size(47, 31);
-            this.label79.TabIndex = 1;
-            this.label79.Text = "  ◆";
-            // 
             // label80
             // 
             this.label80.AutoSize = true;
@@ -265,14 +362,16 @@ namespace GeomancyApp
             this.groupBox16.Controls.Add(this.label71);
             this.groupBox16.Controls.Add(this.label72);
             this.groupBox16.Controls.Add(this.label73);
-            this.groupBox16.Controls.Add(this.label74);
             this.groupBox16.Controls.Add(this.label75);
             this.groupBox16.Location = new System.Drawing.Point(333, 534);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(90, 142);
             this.groupBox16.TabIndex = 18;
             this.groupBox16.TabStop = false;
+            this.groupBox16.Tag = "15";
             this.groupBox16.Text = "Judge";
+            this.groupBox16.Enter += new System.EventHandler(this.groupBox16_Enter);
+            this.groupBox16.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label71
             // 
@@ -302,23 +401,13 @@ namespace GeomancyApp
             // 
             this.label73.AutoSize = true;
             this.label73.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label73.Location = new System.Drawing.Point(24, 46);
+            this.label73.Location = new System.Drawing.Point(24, 49);
             this.label73.Name = "label73";
             this.label73.Size = new System.Drawing.Size(59, 31);
             this.label73.TabIndex = 2;
             this.label73.Tag = "2";
             this.label73.Text = "◆ ◆";
             this.label73.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // label74
-            // 
-            this.label74.AutoSize = true;
-            this.label74.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label74.Location = new System.Drawing.Point(33, 47);
-            this.label74.Name = "label74";
-            this.label74.Size = new System.Drawing.Size(47, 31);
-            this.label74.TabIndex = 1;
-            this.label74.Text = "  ◆";
             // 
             // label75
             // 
@@ -344,7 +433,10 @@ namespace GeomancyApp
             this.groupBox15.Size = new System.Drawing.Size(90, 142);
             this.groupBox15.TabIndex = 17;
             this.groupBox15.TabStop = false;
+            this.groupBox15.Tag = "14";
             this.groupBox15.Text = "Left Wit";
+            this.groupBox15.Enter += new System.EventHandler(this.groupBox15_Enter);
+            this.groupBox15.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label66
             // 
@@ -415,7 +507,10 @@ namespace GeomancyApp
             this.groupBox13.Size = new System.Drawing.Size(90, 142);
             this.groupBox13.TabIndex = 15;
             this.groupBox13.TabStop = false;
+            this.groupBox13.Tag = "13";
             this.groupBox13.Text = "Right Wit";
+            this.groupBox13.Enter += new System.EventHandler(this.groupBox13_Enter);
+            this.groupBox13.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label56
             // 
@@ -476,7 +571,10 @@ namespace GeomancyApp
             this.groupBox10.Size = new System.Drawing.Size(90, 142);
             this.groupBox10.TabIndex = 16;
             this.groupBox10.TabStop = false;
+            this.groupBox10.Tag = "12";
             this.groupBox10.Text = "12";
+            this.groupBox10.Enter += new System.EventHandler(this.groupBox10_Enter);
+            this.groupBox10.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label41
             // 
@@ -537,7 +635,9 @@ namespace GeomancyApp
             this.groupBox6.Size = new System.Drawing.Size(90, 142);
             this.groupBox6.TabIndex = 11;
             this.groupBox6.TabStop = false;
+            this.groupBox6.Tag = "8";
             this.groupBox6.Text = "8";
+            this.groupBox6.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label21
             // 
@@ -598,7 +698,9 @@ namespace GeomancyApp
             this.groupBox11.Size = new System.Drawing.Size(90, 142);
             this.groupBox11.TabIndex = 13;
             this.groupBox11.TabStop = false;
+            this.groupBox11.Tag = "9";
             this.groupBox11.Text = "9";
+            this.groupBox11.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label46
             // 
@@ -659,7 +761,10 @@ namespace GeomancyApp
             this.groupBox12.Size = new System.Drawing.Size(90, 142);
             this.groupBox12.TabIndex = 15;
             this.groupBox12.TabStop = false;
+            this.groupBox12.Tag = "11";
             this.groupBox12.Text = "11";
+            this.groupBox12.Enter += new System.EventHandler(this.groupBox12_Enter);
+            this.groupBox12.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label51
             // 
@@ -720,7 +825,9 @@ namespace GeomancyApp
             this.groupBox7.Size = new System.Drawing.Size(90, 142);
             this.groupBox7.TabIndex = 10;
             this.groupBox7.TabStop = false;
+            this.groupBox7.Tag = "7";
             this.groupBox7.Text = "7";
+            this.groupBox7.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label26
             // 
@@ -781,7 +888,9 @@ namespace GeomancyApp
             this.groupBox5.Size = new System.Drawing.Size(90, 142);
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
+            this.groupBox5.Tag = "4";
             this.groupBox5.Text = "4";
+            this.groupBox5.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label16
             // 
@@ -846,7 +955,9 @@ namespace GeomancyApp
             this.groupBox14.Size = new System.Drawing.Size(90, 142);
             this.groupBox14.TabIndex = 14;
             this.groupBox14.TabStop = false;
+            this.groupBox14.Tag = "10";
             this.groupBox14.Text = "10";
+            this.groupBox14.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label61
             // 
@@ -907,7 +1018,9 @@ namespace GeomancyApp
             this.groupBox8.Size = new System.Drawing.Size(90, 142);
             this.groupBox8.TabIndex = 9;
             this.groupBox8.TabStop = false;
+            this.groupBox8.Tag = "6";
             this.groupBox8.Text = "6";
+            this.groupBox8.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label31
             // 
@@ -968,7 +1081,9 @@ namespace GeomancyApp
             this.groupBox4.Size = new System.Drawing.Size(90, 142);
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
+            this.groupBox4.Tag = "3";
             this.groupBox4.Text = "3";
+            this.groupBox4.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label11
             // 
@@ -1033,7 +1148,9 @@ namespace GeomancyApp
             this.groupBox9.Size = new System.Drawing.Size(90, 142);
             this.groupBox9.TabIndex = 8;
             this.groupBox9.TabStop = false;
+            this.groupBox9.Tag = "5";
             this.groupBox9.Text = "5";
+            this.groupBox9.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label36
             // 
@@ -1095,7 +1212,9 @@ namespace GeomancyApp
             this.groupBox3.Size = new System.Drawing.Size(90, 142);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
+            this.groupBox3.Tag = "2";
             this.groupBox3.Text = "2";
+            this.groupBox3.MouseHover += new System.EventHandler(this.groupBox2_MouseHover);
             // 
             // label6
             // 
@@ -1148,71 +1267,6 @@ namespace GeomancyApp
             this.label10.Text = "◆ ◆";
             this.label10.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label10.Click += new System.EventHandler(this.label10_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(686, 22);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(90, 142);
-            this.groupBox2.TabIndex = 0;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "1";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(22, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 31);
-            this.label1.TabIndex = 5;
-            this.label1.Tag = "2";
-            this.label1.Text = "◆ ◆";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(24, 108);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(59, 31);
-            this.label5.TabIndex = 4;
-            this.label5.Tag = "2";
-            this.label5.Text = "◆ ◆";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label5.Click += new System.EventHandler(this.label5_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(22, 78);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(59, 31);
-            this.label4.TabIndex = 3;
-            this.label4.Tag = "2";
-            this.label4.Text = "◆ ◆";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(22, 47);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 31);
-            this.label3.TabIndex = 2;
-            this.label3.Tag = "2";
-            this.label3.Text = "◆ ◆";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // button1
             // 
@@ -1327,9 +1381,9 @@ namespace GeomancyApp
             this.groupBox18.Controls.Add(this.textBox7);
             this.groupBox18.Controls.Add(this.textBox5);
             this.groupBox18.Controls.Add(this.textBox6);
-            this.groupBox18.Location = new System.Drawing.Point(806, 346);
+            this.groupBox18.Location = new System.Drawing.Point(806, 386);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(257, 424);
+            this.groupBox18.Size = new System.Drawing.Size(257, 365);
             this.groupBox18.TabIndex = 14;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "HOUSES";
@@ -1380,7 +1434,7 @@ namespace GeomancyApp
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1075, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1304, 24);
             this.menuStrip1.TabIndex = 19;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -1389,26 +1443,6 @@ namespace GeomancyApp
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(860, 298);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(148, 30);
-            this.button2.TabIndex = 20;
-            this.button2.Text = "Generate chart from link";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // groupBox19
-            // 
-            this.groupBox19.Controls.Add(this.button1);
-            this.groupBox19.Location = new System.Drawing.Point(806, 69);
-            this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(257, 100);
-            this.groupBox19.TabIndex = 21;
-            this.groupBox19.TabStop = false;
-            this.groupBox19.Text = "Normal Generation";
             // 
             // toolsToolStripMenuItem
             // 
@@ -1422,30 +1456,963 @@ namespace GeomancyApp
             // figureWikiToolStripMenuItem
             // 
             this.figureWikiToolStripMenuItem.Name = "figureWikiToolStripMenuItem";
-            this.figureWikiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.figureWikiToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.figureWikiToolStripMenuItem.Text = "Figure Wiki";
             // 
             // houseWikiToolStripMenuItem
             // 
             this.houseWikiToolStripMenuItem.Name = "houseWikiToolStripMenuItem";
-            this.houseWikiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.houseWikiToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.houseWikiToolStripMenuItem.Text = "House Wiki";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(54, 64);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(148, 30);
+            this.button2.TabIndex = 20;
+            this.button2.Text = "Generate chart from link";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.button1);
+            this.groupBox19.Location = new System.Drawing.Point(12, 797);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(257, 100);
+            this.groupBox19.TabIndex = 21;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "Normal Generation";
             // 
             // textBox15
             // 
-            this.textBox15.Location = new System.Drawing.Point(815, 252);
+            this.textBox15.Location = new System.Drawing.Point(12, 38);
             this.textBox15.Name = "textBox15";
             this.textBox15.Size = new System.Drawing.Size(245, 20);
             this.textBox15.TabIndex = 22;
+            // 
+            // groupBox20
+            // 
+            this.groupBox20.Controls.Add(this.textBox19);
+            this.groupBox20.Controls.Add(this.textBox18);
+            this.groupBox20.Controls.Add(this.textBox17);
+            this.groupBox20.Controls.Add(this.textBox16);
+            this.groupBox20.Controls.Add(this.label14);
+            this.groupBox20.Location = new System.Drawing.Point(806, 230);
+            this.groupBox20.Name = "groupBox20";
+            this.groupBox20.Size = new System.Drawing.Size(257, 150);
+            this.groupBox20.TabIndex = 23;
+            this.groupBox20.TabStop = false;
+            this.groupBox20.Text = "COURT";
+            // 
+            // textBox19
+            // 
+            this.textBox19.Location = new System.Drawing.Point(112, 110);
+            this.textBox19.Name = "textBox19";
+            this.textBox19.Size = new System.Drawing.Size(139, 20);
+            this.textBox19.TabIndex = 18;
+            // 
+            // textBox18
+            // 
+            this.textBox18.Location = new System.Drawing.Point(112, 84);
+            this.textBox18.Name = "textBox18";
+            this.textBox18.Size = new System.Drawing.Size(139, 20);
+            this.textBox18.TabIndex = 17;
+            // 
+            // textBox17
+            // 
+            this.textBox17.Location = new System.Drawing.Point(112, 58);
+            this.textBox17.Name = "textBox17";
+            this.textBox17.Size = new System.Drawing.Size(139, 20);
+            this.textBox17.TabIndex = 16;
+            // 
+            // textBox16
+            // 
+            this.textBox16.Location = new System.Drawing.Point(112, 32);
+            this.textBox16.Name = "textBox16";
+            this.textBox16.Size = new System.Drawing.Size(139, 20);
+            this.textBox16.TabIndex = 15;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(7, 35);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(79, 91);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "Left Wittness:\r\n\r\nRight Wittness:\r\n\r\nJudge:\r\n\r\nFallout:";
+            // 
+            // groupBox21
+            // 
+            this.groupBox21.Controls.Add(this.button2);
+            this.groupBox21.Controls.Add(this.textBox15);
+            this.groupBox21.Location = new System.Drawing.Point(282, 797);
+            this.groupBox21.Name = "groupBox21";
+            this.groupBox21.Size = new System.Drawing.Size(266, 100);
+            this.groupBox21.TabIndex = 22;
+            this.groupBox21.TabStop = false;
+            this.groupBox21.Text = "Link Generation";
+            // 
+            // groupBox22
+            // 
+            this.groupBox22.Controls.Add(this.label39);
+            this.groupBox22.Controls.Add(this.progressBar1);
+            this.groupBox22.Controls.Add(this.textBox22);
+            this.groupBox22.Controls.Add(this.label34);
+            this.groupBox22.Controls.Add(this.label29);
+            this.groupBox22.Controls.Add(this.label19);
+            this.groupBox22.Controls.Add(this.textBox20);
+            this.groupBox22.Location = new System.Drawing.Point(809, 77);
+            this.groupBox22.Name = "groupBox22";
+            this.groupBox22.Size = new System.Drawing.Size(253, 152);
+            this.groupBox22.TabIndex = 24;
+            this.groupBox22.TabStop = false;
+            this.groupBox22.Text = "figure placement";
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(159, 108);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(36, 13);
+            this.label39.TabIndex = 8;
+            this.label39.Text = " None";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(6, 124);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(242, 23);
+            this.progressBar1.TabIndex = 7;
+            // 
+            // textBox22
+            // 
+            this.textBox22.Location = new System.Drawing.Point(109, 60);
+            this.textBox22.Name = "textBox22";
+            this.textBox22.Size = new System.Drawing.Size(138, 20);
+            this.textBox22.TabIndex = 6;
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(6, 63);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(45, 13);
+            this.label34.TabIndex = 5;
+            this.label34.Text = "Element";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(58, 108);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(95, 13);
+            this.label29.TabIndex = 3;
+            this.label29.Text = "Strength in House:";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 30);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(35, 13);
+            this.label19.TabIndex = 2;
+            this.label19.Text = "Name";
+            // 
+            // textBox20
+            // 
+            this.textBox20.Location = new System.Drawing.Point(109, 27);
+            this.textBox20.Name = "textBox20";
+            this.textBox20.Size = new System.Drawing.Size(138, 20);
+            this.textBox20.TabIndex = 1;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Africa/Abidjan",
+            "Africa/Accra",
+            "Africa/Addis_Ababa",
+            "Africa/Algiers",
+            "Africa/Asmara",
+            "Africa/Asmera",
+            "Africa/Bamako",
+            "Africa/Bangui",
+            "Africa/Banjul",
+            "Africa/Bissau",
+            "Africa/Blantyre",
+            "Africa/Brazzaville",
+            "Africa/Bujumbura",
+            "Africa/Cairo",
+            "Africa/Casablanca",
+            "Africa/Ceuta",
+            "Africa/Conakry",
+            "Africa/Dakar",
+            "Africa/Dar_es_Salaam",
+            "Africa/Djibouti",
+            "Africa/Douala",
+            "Africa/El_Aaiun",
+            "Africa/Freetown",
+            "Africa/Gaborone",
+            "Africa/Harare",
+            "Africa/Johannesburg",
+            "Africa/Juba",
+            "Africa/Kampala",
+            "Africa/Khartoum",
+            "Africa/Kigali",
+            "Africa/Kinshasa",
+            "Africa/Lagos",
+            "Africa/Libreville",
+            "Africa/Lome",
+            "Africa/Luanda",
+            "Africa/Lubumbashi",
+            "Africa/Lusaka",
+            "Africa/Malabo",
+            "Africa/Maputo",
+            "Africa/Maseru",
+            "Africa/Mbabane",
+            "Africa/Mogadishu",
+            "Africa/Monrovia",
+            "Africa/Nairobi",
+            "Africa/Ndjamena",
+            "Africa/Niamey",
+            "Africa/Nouakchott",
+            "Africa/Ouagadougou",
+            "Africa/Porto-Novo",
+            "Africa/Sao_Tome",
+            "Africa/Timbuktu",
+            "Africa/Tripoli",
+            "Africa/Tunis",
+            "Africa/Windhoek",
+            "America/Adak",
+            "America/Anchorage",
+            "America/Anguilla",
+            "America/Antigua",
+            "America/Araguaina",
+            "America/Argentina/Buenos_Aires",
+            "America/Argentina/Catamarca",
+            "America/Argentina/ComodRivadavia",
+            "America/Argentina/Cordoba",
+            "America/Argentina/Jujuy",
+            "America/Argentina/La_Rioja",
+            "America/Argentina/Mendoza",
+            "America/Argentina/Rio_Gallegos",
+            "America/Argentina/Salta",
+            "America/Argentina/San_Juan",
+            "America/Argentina/San_Luis",
+            "America/Argentina/Tucuman",
+            "America/Argentina/Ushuaia",
+            "America/Aruba",
+            "America/Asuncion",
+            "America/Atikokan",
+            "America/Atka",
+            "America/Bahia",
+            "America/Bahia_Banderas",
+            "America/Barbados",
+            "America/Belem",
+            "America/Belize",
+            "America/Blanc-Sablon",
+            "America/Boa_Vista",
+            "America/Bogota",
+            "America/Boise",
+            "America/Buenos_Aires",
+            "America/Cambridge_Bay",
+            "America/Campo_Grande",
+            "America/Cancun",
+            "America/Caracas",
+            "America/Catamarca",
+            "America/Cayenne",
+            "America/Cayman",
+            "America/Chicago",
+            "America/Chihuahua",
+            "America/Coral_Harbour",
+            "America/Cordoba",
+            "America/Costa_Rica",
+            "America/Creston",
+            "America/Cuiaba",
+            "America/Curacao",
+            "America/Danmarkshavn",
+            "America/Dawson",
+            "America/Dawson_Creek",
+            "America/Denver",
+            "America/Detroit",
+            "America/Dominica",
+            "America/Edmonton",
+            "America/Eirunepe",
+            "America/El_Salvador",
+            "America/Ensenada",
+            "America/Fort_Nelson",
+            "America/Fort_Wayne",
+            "America/Fortaleza",
+            "America/Glace_Bay",
+            "America/Godthab",
+            "America/Goose_Bay",
+            "America/Grand_Turk",
+            "America/Grenada",
+            "America/Guadeloupe",
+            "America/Guatemala",
+            "America/Guayaquil",
+            "America/Guyana",
+            "America/Halifax",
+            "America/Havana",
+            "America/Hermosillo",
+            "America/Indiana/Indianapolis",
+            "America/Indiana/Knox",
+            "America/Indiana/Marengo",
+            "America/Indiana/Petersburg",
+            "America/Indiana/Tell_City",
+            "America/Indiana/Vevay",
+            "America/Indiana/Vincennes",
+            "America/Indiana/Winamac",
+            "America/Indianapolis",
+            "America/Inuvik",
+            "America/Iqaluit",
+            "America/Jamaica",
+            "America/Jujuy",
+            "America/Juneau",
+            "America/Kentucky/Louisville",
+            "America/Kentucky/Monticello",
+            "America/Knox_IN",
+            "America/Kralendijk",
+            "America/La_Paz",
+            "America/Lima",
+            "America/Los_Angeles",
+            "America/Louisville",
+            "America/Lower_Princes",
+            "America/Maceio",
+            "America/Managua",
+            "America/Manaus",
+            "America/Marigot",
+            "America/Martinique",
+            "America/Matamoros",
+            "America/Mazatlan",
+            "America/Mendoza",
+            "America/Menominee",
+            "America/Merida",
+            "America/Metlakatla",
+            "America/Mexico_City",
+            "America/Miquelon",
+            "America/Moncton",
+            "America/Monterrey",
+            "America/Montevideo",
+            "America/Montreal",
+            "America/Montserrat",
+            "America/Nassau",
+            "America/New_York",
+            "America/Nipigon",
+            "America/Nome",
+            "America/Noronha",
+            "America/North_Dakota/Beulah",
+            "America/North_Dakota/Center",
+            "America/North_Dakota/New_Salem",
+            "America/Ojinaga",
+            "America/Panama",
+            "America/Pangnirtung",
+            "America/Paramaribo",
+            "America/Phoenix",
+            "America/Port-au-Prince",
+            "America/Port_of_Spain",
+            "America/Porto_Acre",
+            "America/Porto_Velho",
+            "America/Puerto_Rico",
+            "America/Rainy_River",
+            "America/Rankin_Inlet",
+            "America/Recife",
+            "America/Regina",
+            "America/Resolute",
+            "America/Rio_Branco",
+            "America/Rosario",
+            "America/Santa_Isabel",
+            "America/Santarem",
+            "America/Santiago",
+            "America/Santo_Domingo",
+            "America/Sao_Paulo",
+            "America/Scoresbysund",
+            "America/Shiprock",
+            "America/Sitka",
+            "America/St_Barthelemy",
+            "America/St_Johns",
+            "America/St_Kitts",
+            "America/St_Lucia",
+            "America/St_Thomas",
+            "America/St_Vincent",
+            "America/Swift_Current",
+            "America/Tegucigalpa",
+            "America/Thule",
+            "America/Thunder_Bay",
+            "America/Tijuana",
+            "America/Toronto",
+            "America/Tortola",
+            "America/Vancouver",
+            "America/Virgin",
+            "America/Whitehorse",
+            "America/Winnipeg",
+            "America/Yakutat",
+            "America/Yellowknife",
+            "Antarctica/Casey",
+            "Antarctica/Davis",
+            "Antarctica/DumontDUrville",
+            "Antarctica/Macquarie",
+            "Antarctica/Mawson",
+            "Antarctica/McMurdo",
+            "Antarctica/Palmer",
+            "Antarctica/Rothera",
+            "Antarctica/South_Pole",
+            "Antarctica/Syowa",
+            "Antarctica/Troll",
+            "Antarctica/Vostok",
+            "Arctic/Longyearbyen",
+            "Asia/Aden",
+            "Asia/Almaty",
+            "Asia/Amman",
+            "Asia/Anadyr",
+            "Asia/Aqtau",
+            "Asia/Aqtobe",
+            "Asia/Ashgabat",
+            "Asia/Ashkhabad",
+            "Asia/Baghdad",
+            "Asia/Bahrain",
+            "Asia/Baku",
+            "Asia/Bangkok",
+            "Asia/Barnaul",
+            "Asia/Beirut",
+            "Asia/Bishkek",
+            "Asia/Brunei",
+            "Asia/Calcutta",
+            "Asia/Chita",
+            "Asia/Choibalsan",
+            "Asia/Chongqing",
+            "Asia/Chungking",
+            "Asia/Colombo",
+            "Asia/Dacca",
+            "Asia/Damascus",
+            "Asia/Dhaka",
+            "Asia/Dili",
+            "Asia/Dubai",
+            "Asia/Dushanbe",
+            "Asia/Gaza",
+            "Asia/Harbin",
+            "Asia/Hebron",
+            "Asia/Ho_Chi_Minh",
+            "Asia/Hong_Kong",
+            "Asia/Hovd",
+            "Asia/Irkutsk",
+            "Asia/Istanbul",
+            "Asia/Jakarta",
+            "Asia/Jayapura",
+            "Asia/Jerusalem",
+            "Asia/Kabul",
+            "Asia/Kamchatka",
+            "Asia/Karachi",
+            "Asia/Kashgar",
+            "Asia/Kathmandu",
+            "Asia/Katmandu",
+            "Asia/Khandyga",
+            "Asia/Kolkata",
+            "Asia/Krasnoyarsk",
+            "Asia/Kuala_Lumpur",
+            "Asia/Kuching",
+            "Asia/Kuwait",
+            "Asia/Macao",
+            "Asia/Macau",
+            "Asia/Magadan",
+            "Asia/Makassar",
+            "Asia/Manila",
+            "Asia/Muscat",
+            "Asia/Nicosia",
+            "Asia/Novokuznetsk",
+            "Asia/Novosibirsk",
+            "Asia/Omsk",
+            "Asia/Oral",
+            "Asia/Phnom_Penh",
+            "Asia/Pontianak",
+            "Asia/Pyongyang",
+            "Asia/Qatar",
+            "Asia/Qyzylorda",
+            "Asia/Rangoon",
+            "Asia/Riyadh",
+            "Asia/Saigon",
+            "Asia/Sakhalin",
+            "Asia/Samarkand",
+            "Asia/Seoul",
+            "Asia/Shanghai",
+            "Asia/Singapore",
+            "Asia/Srednekolymsk",
+            "Asia/Taipei",
+            "Asia/Tashkent",
+            "Asia/Tbilisi",
+            "Asia/Tehran",
+            "Asia/Tel_Aviv",
+            "Asia/Thimbu",
+            "Asia/Thimphu",
+            "Asia/Tokyo",
+            "Asia/Tomsk",
+            "Asia/Ujung_Pandang",
+            "Asia/Ulaanbaatar",
+            "Asia/Ulan_Bator",
+            "Asia/Urumqi",
+            "Asia/Ust-Nera",
+            "Asia/Vientiane",
+            "Asia/Vladivostok",
+            "Asia/Yakutsk",
+            "Asia/Yekaterinburg",
+            "Asia/Yerevan",
+            "Atlantic/Azores",
+            "Atlantic/Bermuda",
+            "Atlantic/Canary",
+            "Atlantic/Cape_Verde",
+            "Atlantic/Faeroe",
+            "Atlantic/Faroe",
+            "Atlantic/Jan_Mayen",
+            "Atlantic/Madeira",
+            "Atlantic/Reykjavik",
+            "Atlantic/South_Georgia",
+            "Atlantic/St_Helena",
+            "Atlantic/Stanley",
+            "Australia/ACT",
+            "Australia/Adelaide",
+            "Australia/Brisbane",
+            "Australia/Broken_Hill",
+            "Australia/Canberra",
+            "Australia/Currie",
+            "Australia/Darwin",
+            "Australia/Eucla",
+            "Australia/Hobart",
+            "Australia/LHI",
+            "Australia/Lindeman",
+            "Australia/Lord_Howe",
+            "Australia/Melbourne",
+            "Australia/NSW",
+            "Australia/North",
+            "Australia/Perth",
+            "Australia/Queensland",
+            "Australia/South",
+            "Australia/Sydney",
+            "Australia/Tasmania",
+            "Australia/Victoria",
+            "Australia/West",
+            "Australia/Yancowinna",
+            "Brazil/Acre",
+            "Brazil/DeNoronha",
+            "Brazil/East",
+            "Brazil/West",
+            "CET",
+            "CST6CDT",
+            "Canada/Atlantic",
+            "Canada/Central",
+            "Canada/East-Saskatchewan",
+            "Canada/Eastern",
+            "Canada/Mountain",
+            "Canada/Newfoundland",
+            "Canada/Pacific",
+            "Canada/Saskatchewan",
+            "Canada/Yukon",
+            "Chile/Continental",
+            "Chile/EasterIsland",
+            "Cuba",
+            "EET",
+            "EST",
+            "EST5EDT",
+            "Egypt",
+            "Eire",
+            "Etc/GMT",
+            "Etc/GMT+0",
+            "Etc/GMT+1",
+            "Etc/GMT+10",
+            "Etc/GMT+11",
+            "Etc/GMT+12",
+            "Etc/GMT+2",
+            "Etc/GMT+3",
+            "Etc/GMT+4",
+            "Etc/GMT+5",
+            "Etc/GMT+6",
+            "Etc/GMT+7",
+            "Etc/GMT+8",
+            "Etc/GMT+9",
+            "Etc/GMT-0",
+            "Etc/GMT-1",
+            "Etc/GMT-10",
+            "Etc/GMT-11",
+            "Etc/GMT-12",
+            "Etc/GMT-13",
+            "Etc/GMT-14",
+            "Etc/GMT-2",
+            "Etc/GMT-3",
+            "Etc/GMT-4",
+            "Etc/GMT-5",
+            "Etc/GMT-6",
+            "Etc/GMT-7",
+            "Etc/GMT-8",
+            "Etc/GMT-9",
+            "Etc/GMT0",
+            "Etc/Greenwich",
+            "Etc/UCT",
+            "Etc/UTC",
+            "Etc/Universal",
+            "Etc/Zulu",
+            "Europe/Amsterdam",
+            "Europe/Andorra",
+            "Europe/Astrakhan",
+            "Europe/Athens",
+            "Europe/Belfast",
+            "Europe/Belgrade",
+            "Europe/Berlin",
+            "Europe/Bratislava",
+            "Europe/Brussels",
+            "Europe/Bucharest",
+            "Europe/Budapest",
+            "Europe/Busingen",
+            "Europe/Chisinau",
+            "Europe/Copenhagen",
+            "Europe/Dublin",
+            "Europe/Gibraltar",
+            "Europe/Guernsey",
+            "Europe/Helsinki",
+            "Europe/Isle_of_Man",
+            "Europe/Istanbul",
+            "Europe/Jersey",
+            "Europe/Kaliningrad",
+            "Europe/Kiev",
+            "Europe/Kirov",
+            "Europe/Lisbon",
+            "Europe/Ljubljana",
+            "Europe/London",
+            "Europe/Luxembourg",
+            "Europe/Madrid",
+            "Europe/Malta",
+            "Europe/Mariehamn",
+            "Europe/Minsk",
+            "Europe/Monaco",
+            "Europe/Moscow",
+            "Europe/Nicosia",
+            "Europe/Oslo",
+            "Europe/Paris",
+            "Europe/Podgorica",
+            "Europe/Prague",
+            "Europe/Riga",
+            "Europe/Rome",
+            "Europe/Samara",
+            "Europe/San_Marino",
+            "Europe/Sarajevo",
+            "Europe/Simferopol",
+            "Europe/Skopje",
+            "Europe/Sofia",
+            "Europe/Stockholm",
+            "Europe/Tallinn",
+            "Europe/Tirane",
+            "Europe/Tiraspol",
+            "Europe/Ulyanovsk",
+            "Europe/Uzhgorod",
+            "Europe/Vaduz",
+            "Europe/Vatican",
+            "Europe/Vienna",
+            "Europe/Vilnius",
+            "Europe/Volgograd",
+            "Europe/Warsaw",
+            "Europe/Zagreb",
+            "Europe/Zaporozhye",
+            "Europe/Zurich",
+            "GB",
+            "GB-Eire",
+            "GMT",
+            "GMT+0",
+            "GMT-0",
+            "GMT0",
+            "Greenwich",
+            "HST",
+            "Hongkong",
+            "Iceland",
+            "Indian/Antananarivo",
+            "Indian/Chagos",
+            "Indian/Christmas",
+            "Indian/Cocos",
+            "Indian/Comoro",
+            "Indian/Kerguelen",
+            "Indian/Mahe",
+            "Indian/Maldives",
+            "Indian/Mauritius",
+            "Indian/Mayotte",
+            "Indian/Reunion",
+            "Iran",
+            "Israel",
+            "Jamaica",
+            "Japan",
+            "Kwajalein",
+            "Libya",
+            "MET",
+            "MST",
+            "MST7MDT",
+            "Mexico/BajaNorte",
+            "Mexico/BajaSur",
+            "Mexico/General",
+            "NZ",
+            "NZ-CHAT",
+            "Navajo",
+            "PRC",
+            "PST8PDT",
+            "Pacific/Apia",
+            "Pacific/Auckland",
+            "Pacific/Bougainville",
+            "Pacific/Chatham",
+            "Pacific/Chuuk",
+            "Pacific/Easter",
+            "Pacific/Efate",
+            "Pacific/Enderbury",
+            "Pacific/Fakaofo",
+            "Pacific/Fiji",
+            "Pacific/Funafuti",
+            "Pacific/Galapagos",
+            "Pacific/Gambier",
+            "Pacific/Guadalcanal",
+            "Pacific/Guam",
+            "Pacific/Honolulu",
+            "Pacific/Johnston",
+            "Pacific/Kiritimati",
+            "Pacific/Kosrae",
+            "Pacific/Kwajalein",
+            "Pacific/Majuro",
+            "Pacific/Marquesas",
+            "Pacific/Midway",
+            "Pacific/Nauru",
+            "Pacific/Niue",
+            "Pacific/Norfolk",
+            "Pacific/Noumea",
+            "Pacific/Pago_Pago",
+            "Pacific/Palau",
+            "Pacific/Pitcairn",
+            "Pacific/Pohnpei",
+            "Pacific/Ponape",
+            "Pacific/Port_Moresby",
+            "Pacific/Rarotonga",
+            "Pacific/Saipan",
+            "Pacific/Samoa",
+            "Pacific/Tahiti",
+            "Pacific/Tarawa",
+            "Pacific/Tongatapu",
+            "Pacific/Truk",
+            "Pacific/Wake",
+            "Pacific/Wallis",
+            "Pacific/Yap",
+            "Poland",
+            "Portugal",
+            "ROC",
+            "ROK",
+            "Singapore",
+            "Turkey",
+            "UCT",
+            "US/Alaska",
+            "US/Aleutian",
+            "US/Arizona",
+            "US/Central",
+            "US/East-Indiana",
+            "US/Eastern",
+            "US/Hawaii",
+            "US/Indiana-Starke",
+            "US/Michigan",
+            "US/Mountain",
+            "US/Pacific",
+            "US/Pacific-New",
+            "US/Samoa",
+            "UTC",
+            "Universal",
+            "W-SU",
+            "WET",
+            "Zulu"});
+            this.comboBox1.Location = new System.Drawing.Point(1120, 112);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(141, 21);
+            this.comboBox1.TabIndex = 25;
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(1144, 96);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(91, 13);
+            this.label44.TabIndex = 26;
+            this.label44.Text = "Select Time Zone";
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(1117, 151);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(54, 13);
+            this.label49.TabIndex = 27;
+            this.label49.Text = "Longitude";
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(1178, 196);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(35, 13);
+            this.label54.TabIndex = 28;
+            this.label54.Text = "Name";
+            // 
+            // label59
+            // 
+            this.label59.AutoSize = true;
+            this.label59.Location = new System.Drawing.Point(1204, 152);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(45, 13);
+            this.label59.TabIndex = 29;
+            this.label59.Text = "Latitude";
+            // 
+            // label64
+            // 
+            this.label64.AutoSize = true;
+            this.label64.Location = new System.Drawing.Point(1178, 235);
+            this.label64.Name = "label64";
+            this.label64.Size = new System.Drawing.Size(24, 13);
+            this.label64.TabIndex = 30;
+            this.label64.Text = "City";
+            // 
+            // textBox21
+            // 
+            this.textBox21.Location = new System.Drawing.Point(1120, 167);
+            this.textBox21.Name = "textBox21";
+            this.textBox21.ReadOnly = true;
+            this.textBox21.Size = new System.Drawing.Size(54, 20);
+            this.textBox21.TabIndex = 31;
+            // 
+            // textBox23
+            // 
+            this.textBox23.Location = new System.Drawing.Point(1207, 168);
+            this.textBox23.Name = "textBox23";
+            this.textBox23.ReadOnly = true;
+            this.textBox23.Size = new System.Drawing.Size(54, 20);
+            this.textBox23.TabIndex = 32;
+            // 
+            // textBox24
+            // 
+            this.textBox24.Location = new System.Drawing.Point(1120, 212);
+            this.textBox24.Name = "textBox24";
+            this.textBox24.Size = new System.Drawing.Size(141, 20);
+            this.textBox24.TabIndex = 33;
+            // 
+            // textBox25
+            // 
+            this.textBox25.Location = new System.Drawing.Point(41, 174);
+            this.textBox25.Name = "textBox25";
+            this.textBox25.Size = new System.Drawing.Size(141, 20);
+            this.textBox25.TabIndex = 34;
+            // 
+            // groupBox23
+            // 
+            this.groupBox23.Controls.Add(this.button4);
+            this.groupBox23.Controls.Add(this.label81);
+            this.groupBox23.Controls.Add(this.textBox28);
+            this.groupBox23.Controls.Add(this.label79);
+            this.groupBox23.Controls.Add(this.textBox25);
+            this.groupBox23.Controls.Add(this.label74);
+            this.groupBox23.Controls.Add(this.textBox27);
+            this.groupBox23.Controls.Add(this.textBox26);
+            this.groupBox23.Controls.Add(this.button3);
+            this.groupBox23.Location = new System.Drawing.Point(1079, 77);
+            this.groupBox23.Name = "groupBox23";
+            this.groupBox23.Size = new System.Drawing.Size(212, 408);
+            this.groupBox23.TabIndex = 35;
+            this.groupBox23.TabStop = false;
+            this.groupBox23.Text = "Astro Info";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(54, 338);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(102, 23);
+            this.button4.TabIndex = 41;
+            this.button4.Text = "Get Latitude Info";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // label81
+            // 
+            this.label81.AutoSize = true;
+            this.label81.Location = new System.Drawing.Point(91, 283);
+            this.label81.Name = "label81";
+            this.label81.Size = new System.Drawing.Size(32, 13);
+            this.label81.TabIndex = 40;
+            this.label81.Text = "State";
+            // 
+            // textBox28
+            // 
+            this.textBox28.Location = new System.Drawing.Point(41, 297);
+            this.textBox28.Name = "textBox28";
+            this.textBox28.Size = new System.Drawing.Size(141, 20);
+            this.textBox28.TabIndex = 39;
+            // 
+            // label79
+            // 
+            this.label79.AutoSize = true;
+            this.label79.Location = new System.Drawing.Point(89, 240);
+            this.label79.Name = "label79";
+            this.label79.Size = new System.Drawing.Size(45, 13);
+            this.label79.TabIndex = 38;
+            this.label79.Text = "Address";
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(99, 198);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(22, 13);
+            this.label74.TabIndex = 37;
+            this.label74.Text = "Zip";
+            // 
+            // textBox27
+            // 
+            this.textBox27.Location = new System.Drawing.Point(41, 214);
+            this.textBox27.Name = "textBox27";
+            this.textBox27.Size = new System.Drawing.Size(141, 20);
+            this.textBox27.TabIndex = 37;
+            // 
+            // textBox26
+            // 
+            this.textBox26.Location = new System.Drawing.Point(41, 259);
+            this.textBox26.Name = "textBox26";
+            this.textBox26.Size = new System.Drawing.Size(141, 20);
+            this.textBox26.TabIndex = 37;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(54, 368);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(102, 23);
+            this.button3.TabIndex = 0;
+            this.button3.Text = "Get Astro Info";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Visible = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(1079, 491);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(212, 400);
+            this.richTextBox1.TabIndex = 36;
+            this.richTextBox1.Text = "";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1075, 782);
-            this.Controls.Add(this.textBox15);
+            this.ClientSize = new System.Drawing.Size(1304, 909);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.textBox24);
+            this.Controls.Add(this.textBox23);
+            this.Controls.Add(this.textBox21);
+            this.Controls.Add(this.label64);
+            this.Controls.Add(this.label59);
+            this.Controls.Add(this.label54);
+            this.Controls.Add(this.label49);
+            this.Controls.Add(this.label44);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.groupBox22);
+            this.Controls.Add(this.groupBox21);
+            this.Controls.Add(this.groupBox20);
             this.Controls.Add(this.groupBox19);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.textBox14);
             this.Controls.Add(this.textBox13);
@@ -1453,10 +2420,13 @@ namespace GeomancyApp
             this.Controls.Add(this.groupBox18);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.groupBox23);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox17.ResumeLayout(false);
             this.groupBox17.PerformLayout();
             this.groupBox16.ResumeLayout(false);
@@ -1487,13 +2457,19 @@ namespace GeomancyApp
             this.groupBox9.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox18.ResumeLayout(false);
             this.groupBox18.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox19.ResumeLayout(false);
+            this.groupBox20.ResumeLayout(false);
+            this.groupBox20.PerformLayout();
+            this.groupBox21.ResumeLayout(false);
+            this.groupBox21.PerformLayout();
+            this.groupBox22.ResumeLayout(false);
+            this.groupBox22.PerformLayout();
+            this.groupBox23.ResumeLayout(false);
+            this.groupBox23.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1565,13 +2541,11 @@ namespace GeomancyApp
         private System.Windows.Forms.Label label76;
         private System.Windows.Forms.Label label77;
         private System.Windows.Forms.Label label78;
-        private System.Windows.Forms.Label label79;
         private System.Windows.Forms.Label label80;
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.Label label71;
         private System.Windows.Forms.Label label72;
         private System.Windows.Forms.Label label73;
-        private System.Windows.Forms.Label label74;
         private System.Windows.Forms.Label label75;
         private System.Windows.Forms.GroupBox groupBox15;
         private System.Windows.Forms.Label label66;
@@ -1612,6 +2586,41 @@ namespace GeomancyApp
         private System.Windows.Forms.ToolStripMenuItem figureWikiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem houseWikiToolStripMenuItem;
         private System.Windows.Forms.TextBox textBox15;
+        private System.Windows.Forms.GroupBox groupBox20;
+        private System.Windows.Forms.TextBox textBox19;
+        private System.Windows.Forms.TextBox textBox18;
+        private System.Windows.Forms.TextBox textBox17;
+        private System.Windows.Forms.TextBox textBox16;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.GroupBox groupBox21;
+        private System.Windows.Forms.GroupBox groupBox22;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.TextBox textBox22;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox textBox20;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label54;
+        private System.Windows.Forms.Label label59;
+        private System.Windows.Forms.Label label64;
+        private System.Windows.Forms.TextBox textBox21;
+        private System.Windows.Forms.TextBox textBox23;
+        private System.Windows.Forms.TextBox textBox24;
+        private System.Windows.Forms.TextBox textBox25;
+        private System.Windows.Forms.GroupBox groupBox23;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Label label81;
+        private System.Windows.Forms.TextBox textBox28;
+        private System.Windows.Forms.Label label79;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.TextBox textBox27;
+        private System.Windows.Forms.TextBox textBox26;
+        private System.Windows.Forms.Button button4;
     }
 }
 

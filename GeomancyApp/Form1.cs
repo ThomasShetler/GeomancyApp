@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Device.Location;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -1066,6 +1070,37 @@ namespace GeomancyApp
                 return "Rubeus";
             }
         }
+        public void GenerateChartFromString(HouseChart houses)
+        {
+            List<figure> figureList = new List<figure>();
+            string returnString = "";
+            figureList.Add(houses.FirstHouse);
+            figureList.Add(houses.SecondHouse);
+            figureList.Add(houses.ThirdHouse);
+            figureList.Add(houses.ForthHouse);
+            figureList.Add(houses.FifthHouse);
+            figureList.Add(houses.SixthHouse);
+            figureList.Add(houses.SeventhHouse);
+            figureList.Add(houses.EightHouse);
+            figureList.Add(houses.NinthHouse);
+            figureList.Add(houses.TenthHouse);
+            figureList.Add(houses.eleventhHouse);
+            figureList.Add(houses.twelvethHouse);
+            figureList.Add(houses.RightWitness);
+            figureList.Add(houses.LeftWittness);
+            figureList.Add(houses.Judge);
+            figureList.Add(houses.fallout);
+            int indexer = 1;
+            foreach (figure item in figureList)
+            {
+
+                returnString += item.headLine.ToString();
+                returnString += item.neckLine.ToString();
+                returnString += item.bodyLine.ToString();
+                returnString += item.footLine.ToString();
+
+            }
+        }
         public string SharingString (HouseChart houses)
         {
            List<figure> figureList = new List<figure>();
@@ -1098,9 +1133,91 @@ namespace GeomancyApp
             return returnString;
 
         }
+        public void SelectHouse (GroupBox box, int head, int neck, int body, int foot)
+        {
+            int indexer = 0;
+            foreach (Label label in box.Controls)
+            {
+                if (indexer == 0)
+                {
+                    if(head == 1)
+                    {
+                        label.Text = "  ◆";
+                        label.Tag = 1;
+                    }
+                    else
+                    {
+                        label.Text = "◆ ◆";
+                        label.Tag = 2;
+                    }
+                }
+                else if (indexer == 1)
+                {
+                    if (neck == 1)
+                    {
+                        label.Text = "  ◆";
+                        label.Tag = 1;
+                    }
+                    else
+                    {
+                        label.Text = "◆ ◆";
+                        label.Tag = 2;
+                    }
+                }
+                else if (indexer == 2)
+                {
+                    if (body == 1)
+                    {
+                        label.Text = "  ◆";
+                        label.Tag = 1;
+                    }
+                    else
+                    {
+                        label.Text = "◆ ◆";
+                        label.Tag = 2;
+                    }
+                }
+                else if (indexer == 3)
+                {
+                    if (foot == 1)
+                    {
+                        label.Text = "  ◆";
+                        label.Tag = 1;
+                    }
+                    else
+                    {
+                        label.Text = "◆ ◆";
+                        label.Tag = 2;
+                    }
+                }
+                indexer++;
+            }
+        }
+        public void GenerateChartFromShared (HouseChart house)
+        {
+            SelectHouse(groupBox2, house.FirstHouse.headLine, house.FirstHouse.neckLine, house.FirstHouse.bodyLine, house.FirstHouse.footLine);
+            SelectHouse(groupBox3, house.SecondHouse.headLine, house.SecondHouse.neckLine, house.SecondHouse.bodyLine, house.SecondHouse.footLine);
+            SelectHouse(groupBox4, house.ThirdHouse.headLine, house.ThirdHouse.neckLine, house.ThirdHouse.bodyLine, house.ThirdHouse.footLine);
+            SelectHouse(groupBox5, house.ForthHouse.headLine, house.ForthHouse.neckLine, house.ForthHouse.bodyLine, house.ForthHouse.footLine);
+            SelectHouse(groupBox9, house.FifthHouse.headLine, house.FifthHouse.neckLine, house.FifthHouse.bodyLine, house.FifthHouse.footLine);
+            SelectHouse(groupBox8, house.SixthHouse.headLine, house.SixthHouse.neckLine, house.SixthHouse.bodyLine, house.SixthHouse.footLine);
+            SelectHouse(groupBox7, house.SeventhHouse.headLine, house.SeventhHouse.neckLine, house.SeventhHouse.bodyLine, house.SeventhHouse.footLine);
+            SelectHouse(groupBox6, house.EightHouse.headLine, house.EightHouse.neckLine, house.EightHouse.bodyLine, house.EightHouse.footLine);
+            SelectHouse(groupBox11, house.NinthHouse.headLine, house.NinthHouse.neckLine, house.NinthHouse.bodyLine, house.NinthHouse.footLine);
+            SelectHouse(groupBox14, house.TenthHouse.headLine, house.TenthHouse.neckLine, house.TenthHouse.bodyLine, house.TenthHouse.footLine);
+            SelectHouse(groupBox12, house.eleventhHouse.headLine, house.eleventhHouse.neckLine, house.eleventhHouse.bodyLine, house.eleventhHouse.footLine);
+            SelectHouse(groupBox10, house.twelvethHouse.headLine, house.NinthHouse.neckLine, house.NinthHouse.bodyLine, house.NinthHouse.footLine);
+            SelectHouse(groupBox13, house.RightWitness.headLine, house.RightWitness.neckLine, house.RightWitness.bodyLine, house.RightWitness.footLine);
+            SelectHouse(groupBox15, house.LeftWittness.headLine, house.LeftWittness.neckLine, house.LeftWittness.bodyLine, house.LeftWittness.footLine);
+            SelectHouse(groupBox15, house.LeftWittness.headLine, house.LeftWittness.neckLine, house.LeftWittness.bodyLine, house.LeftWittness.footLine);
+            SelectHouse(groupBox16, house.Judge.headLine, house.Judge.neckLine, house.Judge.bodyLine, house.Judge.footLine);
+            SelectHouse(groupBox17, house.fallout.headLine, house.fallout.neckLine, house.fallout.bodyLine, house.fallout.footLine);
+
+
+        }
         public HouseChart HouseChartFromString (string input)
         {
-            HouseChart houseChart = new HouseChart();
+           
 
             string[] ListOfStrings = input.Split('-');
             int indexer = 1;
@@ -1188,7 +1305,23 @@ namespace GeomancyApp
                 }
                 indexer++;
             }
-
+            textBox1.Text = houseChart.FirstHouse.figureName;
+            textBox2.Text = houseChart.SecondHouse.figureName;
+            textBox3.Text = houseChart.ThirdHouse.figureName;
+            textBox4.Text = houseChart.ForthHouse.figureName;
+            textBox5.Text = houseChart.FifthHouse.figureName;
+            textBox6.Text = houseChart.SixthHouse.figureName;
+            textBox7.Text = houseChart.SeventhHouse.figureName;
+            textBox8.Text = houseChart.EightHouse.figureName;
+            textBox9.Text = houseChart.NinthHouse.figureName;
+            textBox10.Text = houseChart.TenthHouse.figureName;
+            textBox11.Text = houseChart.eleventhHouse.figureName;
+            textBox12.Text = houseChart.twelvethHouse.figureName;
+            textBox16.Text = houseChart.LeftWittness.figureName;
+            textBox17.Text = houseChart.RightWitness.figureName;
+            textBox18.Text = houseChart.Judge.figureName;
+            textBox19.Text = houseChart.fallout.figureName;
+            textBox13.Text = SharingString(houseChart);
             return houseChart;
         }
         public int CalNieces(int h1, int h2)
@@ -1222,7 +1355,7 @@ namespace GeomancyApp
                 JudgeCal(CalNieces(Convert.ToInt32(label60.Tag), Convert.ToInt32(label70.Tag)), CalNieces(Convert.ToInt32(label58.Tag), Convert.ToInt32(label68.Tag)), CalNieces(Convert.ToInt32(label57.Tag), Convert.ToInt32(label67.Tag)), CalNieces(Convert.ToInt32(label66.Tag), Convert.ToInt32(label56.Tag)));
                 FallOutCal(CalNieces(Convert.ToInt32(label75.Tag), Convert.ToInt32(label1.Tag)), CalNieces(Convert.ToInt32(label3.Tag), Convert.ToInt32(label73.Tag)), CalNieces(Convert.ToInt32(label4.Tag), Convert.ToInt32(label72.Tag)), CalNieces(Convert.ToInt32(label5.Tag), Convert.ToInt32(label71.Tag)));
 
-            HouseChart houseChart = new HouseChart();
+            
             houseChart.FirstHouse = House1;
             houseChart.SecondHouse = House2;
             houseChart.ThirdHouse = House3;
@@ -1252,8 +1385,12 @@ namespace GeomancyApp
             textBox10.Text = houseChart.TenthHouse.figureName;
             textBox11.Text = houseChart.eleventhHouse.figureName;
             textBox12.Text = houseChart.twelvethHouse.figureName;
+            textBox16.Text = houseChart.LeftWittness.figureName;
+            textBox17.Text = houseChart.RightWitness.figureName;
+            textBox18.Text = houseChart.Judge.figureName;
+            textBox19.Text = houseChart.fallout.figureName;
             textBox13.Text = SharingString(houseChart);
-
+            //getAstroInfoAsync();
 
         }
 
@@ -1264,9 +1401,682 @@ namespace GeomancyApp
 
         private void button2_Click(object sender, EventArgs e)
         {
-            HouseChartFromString(textBox15.Text);
+            GenerateChartFromShared(HouseChartFromString(textBox15.Text));
 
 
         }
+      
+        private void groupBox2_MouseHover(object sender, EventArgs e)
+        {
+
+            if (houseChart.FirstHouse != null)
+            {
+                System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
+                //ToolTip1.SetToolTip(((GroupBox)sender), houseChart.FirstHouse.figureName);
+
+                var house = houseChart.FirstHouse.figureName;
+                if (((GroupBox)sender).Text == "1")
+                {
+                    house = houseChart.FirstHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "2")
+                {
+                    house = houseChart.SecondHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "3")
+                {
+                    house = houseChart.ThirdHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "4")
+                {
+                    house = houseChart.ForthHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "5")
+                {
+                    house = houseChart.FifthHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "6")
+                {
+                    house = houseChart.SixthHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "7")
+                {
+                    house = houseChart.SeventhHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "8")
+                {
+                    house = houseChart.EightHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "9")
+                {
+                    house = houseChart.NinthHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "10")
+                {
+                    house = houseChart.TenthHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "11")
+                {
+                    house = houseChart.eleventhHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "12")
+                {
+                    house = houseChart.twelvethHouse.figureName;
+                }
+                else if (((GroupBox)sender).Text == "Left Wit")
+                {
+                    house = houseChart.LeftWittness.figureName;
+                }
+                else if (((GroupBox)sender).Text == "Right Wit")
+                {
+                    house = houseChart.RightWitness.figureName;
+                }
+                else if (((GroupBox)sender).Text == "Judge")
+                {
+                    house = houseChart.Judge.figureName;
+                }
+                else
+                {
+                    house = houseChart.fallout.figureName;
+                }
+                foreach (Control tb in ((GroupBox)sender).Controls)
+                {
+                    if (tb is Label)
+                    {
+                        ToolTip1.SetToolTip(tb, house);
+                    }
+
+                }
+                textBox20.Text = house;
+            }
+        }
+
+
+        private void groupBox4_MouseHover(object sender, EventArgs e)
+        {
+            System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
+            ToolTip1.SetToolTip(this.groupBox2, houseChart.ThirdHouse.figureName);
+            textBox20.Text = houseChart.ThirdHouse.figureName;
+
+        }
+
+        private void groupBox13_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox12_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox10_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox15_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox16_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox17_Enter(object sender, EventArgs e)
+        {
+
+        }
+        private async Task GetLatitude (string address)
+        {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"https://google-maps-geocoding.p.rapidapi.com/geocode/json?address={address}&language=en"),
+                Headers =
+    {
+        { "X-RapidAPI-Key", "7df6dcd5afmsh731a50be35ddefep11ec31jsn8c579ea5f8f7" },
+        { "X-RapidAPI-Host", "google-maps-geocoding.p.rapidapi.com" },
+    },
+            };
+            using (var response = await client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                
+                Console.WriteLine(body.ToString());
+                try
+                {
+                    Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(body);
+                    foreach(Result item in myDeserializedClass.results)
+                    {
+                        Console.WriteLine(item.geometry.location.lat);
+                        Console.WriteLine(item.geometry.location.lng);
+                        textBox21.Text = item.geometry.location.lng.ToString();
+                        textBox23.Text = item.geometry.location.lat.ToString();
+
+                    }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                
+                }
+
+            }
+        }
+        private async Task getAstroInfoAsync()
+        {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://astrologer.p.rapidapi.com/api/v2/birth-data"),
+                Headers =
+    {
+        { "X-RapidAPI-Key", "7df6dcd5afmsh731a50be35ddefep11ec31jsn8c579ea5f8f7" },
+        { "X-RapidAPI-Host", "astrologer.p.rapidapi.com" },
+    },
+                Content = new StringContent("{\r\n    \"name\": \"" + textBox24.Text + "\",\r\n    \"year\":" + DateTime.Today.Year.ToString() + ",\r\n    \"month\":" + DateTime.Today.Month.ToString() + ",\r\n    \"day\":" + DateTime.Today.Day.ToString() + ",\r\n    \"hour\":" + DateTime.Now.Hour.ToString() + ",\r\n    \"minute\":" + DateTime.Now.Minute.ToString() + ",\r\n    \"longitude\":" + textBox21.Text.ToString() + ",\r\n    \"latitude\":" + textBox23.Text.ToString() + ",\r\n    \"city\": \"" + textBox25.Text + "\",\r\n    \"timezone\": \"" + comboBox1.SelectedItem.ToString() + "\",\r\n    \"language\": \"EN\"\r\n}")
+                {
+                    Headers =
+                        {
+                            ContentType = new MediaTypeHeaderValue("application/json")
+                        }
+                }
+            };
+            using (var response = await client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                Root2 myDeserializedClass = JsonConvert.DeserializeObject<Root2>(body);
+
+                Console.WriteLine(body);
+                var cd = myDeserializedClass.data;
+                richTextBox1.Text += (" first House Pos:" + cd.first_house.position.ToString() 
+                    );
+                richTextBox1.Text += (" first House Sign:" + cd.first_house.sign.ToString());
+                richTextBox1.Text += (" Second House Pos:" + cd.second_house.position.ToString());
+                richTextBox1.Text += (" Second House Sign:" + cd.second_house.sign.ToString());
+                richTextBox1.Text += (" Thrid House Pos:" + cd.third_house.position.ToString());
+                richTextBox1.Text += (" Thrid House Sign:" + cd.third_house.sign.ToString());
+                richTextBox1.Text += (" Forth House Pos:" + cd.fourth_house.position.ToString());
+                richTextBox1.Text += (" Forth House Sign:" + cd.fourth_house.sign.ToString());
+            }
+        }
+
+            private void button3_Click(object sender, EventArgs e)
+        {
+
+           
+            getAstroInfoAsync();
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            button3.Visible = true;
+            GetLatitude(textBox26.Text + ", " + textBox25.Text + ", " + textBox28.Text + ", " + textBox27.Text);
+        }
     }
+
+    public class AddressComponent
+    {
+        public string long_name { get; set; }
+        public string short_name { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class Bounds
+    {
+        public Northeast northeast { get; set; }
+        public Southwest southwest { get; set; }
+    }
+
+    public class Geometry
+    {
+        public Bounds bounds { get; set; }
+        public Location location { get; set; }
+        public string location_type { get; set; }
+        public Viewport viewport { get; set; }
+    }
+
+    public class Location
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Northeast
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Result
+    {
+        public List<AddressComponent> address_components { get; set; }
+        public string formatted_address { get; set; }
+        public Geometry geometry { get; set; }
+        public string place_id { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class Root
+    {
+        public List<Result> results { get; set; }
+        public string status { get; set; }
+    }
+
+    public class Southwest
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Viewport
+    {
+        public Northeast northeast { get; set; }
+        public Southwest southwest { get; set; }
+    }
+
+    public class Data
+    {
+        public string name { get; set; }
+        public int year { get; set; }
+        public int month { get; set; }
+        public int day { get; set; }
+        public int hour { get; set; }
+        public int minute { get; set; }
+        public string city { get; set; }
+        public string nation { get; set; }
+        public double lng { get; set; }
+        public double lat { get; set; }
+        public string tz_str { get; set; }
+        public string zodiac_type { get; set; }
+        public double local_time { get; set; }
+        public double utc_time { get; set; }
+        public double julian_day { get; set; }
+        public Sun sun { get; set; }
+        public Moon moon { get; set; }
+        public Mercury mercury { get; set; }
+        public Venus venus { get; set; }
+        public Mars mars { get; set; }
+        public Jupiter jupiter { get; set; }
+        public Saturn saturn { get; set; }
+        public Uranus uranus { get; set; }
+        public Neptune neptune { get; set; }
+        public Pluto pluto { get; set; }
+        public FirstHouse first_house { get; set; }
+        public SecondHouse second_house { get; set; }
+        public ThirdHouse third_house { get; set; }
+        public FourthHouse fourth_house { get; set; }
+        public FifthHouse fifth_house { get; set; }
+        public SixthHouse sixth_house { get; set; }
+        public SeventhHouse seventh_house { get; set; }
+        public EighthHouse eighth_house { get; set; }
+        public NinthHouse ninth_house { get; set; }
+        public TenthHouse tenth_house { get; set; }
+        public EleventhHouse eleventh_house { get; set; }
+        public TwelfthHouse twelfth_house { get; set; }
+        public MeanNode mean_node { get; set; }
+        public TrueNode true_node { get; set; }
+        public LunarPhase lunar_phase { get; set; }
+    }
+
+    public class EighthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class EleventhHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class FifthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class FirstHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class FourthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class Jupiter
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class LunarPhase
+    {
+        public int degrees_between_s_m { get; set; }
+        public int moon_phase { get; set; }
+        public int sun_phase { get; set; }
+        public string moon_emoji { get; set; }
+    }
+
+    public class Mars
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class MeanNode
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class Mercury
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class Moon
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class Neptune
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class NinthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class Pluto
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class Root2
+    {
+        public Data data { get; set; }
+        public string status { get; set; }
+    }
+
+    public class Saturn
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class SecondHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class SeventhHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class SixthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class Sun
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class TenthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class ThirdHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class TrueNode
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class TwelfthHouse
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+    }
+
+    public class Uranus
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+    public class Venus
+    {
+        public string name { get; set; }
+        public string quality { get; set; }
+        public string element { get; set; }
+        public string sign { get; set; }
+        public int sign_num { get; set; }
+        public double position { get; set; }
+        public double abs_pos { get; set; }
+        public string emoji { get; set; }
+        public string point_type { get; set; }
+        public string house { get; set; }
+        public bool retrograde { get; set; }
+    }
+
+
+
 }
