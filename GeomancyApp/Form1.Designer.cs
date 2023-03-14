@@ -132,6 +132,7 @@ namespace GeomancyApp
             this.label9 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.figureWikiToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.figureWikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.houseWikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -146,13 +147,6 @@ namespace GeomancyApp
             this.label14 = new System.Windows.Forms.Label();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.textBox22 = new System.Windows.Forms.TextBox();
-            this.label34 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.textBox20 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label44 = new System.Windows.Forms.Label();
             this.label49 = new System.Windows.Forms.Label();
@@ -173,6 +167,11 @@ namespace GeomancyApp
             this.textBox26 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox17.SuspendLayout();
@@ -232,7 +231,7 @@ namespace GeomancyApp
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(686, 19);
+            this.groupBox2.Location = new System.Drawing.Point(686, 22);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(90, 142);
             this.groupBox2.TabIndex = 0;
@@ -258,7 +257,7 @@ namespace GeomancyApp
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(24, 108);
+            this.label5.Location = new System.Drawing.Point(22, 107);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(59, 31);
             this.label5.TabIndex = 4;
@@ -1440,9 +1439,18 @@ namespace GeomancyApp
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.figureWikiToolStripMenuItem1});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // figureWikiToolStripMenuItem1
+            // 
+            this.figureWikiToolStripMenuItem1.Name = "figureWikiToolStripMenuItem1";
+            this.figureWikiToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.figureWikiToolStripMenuItem1.Text = "Figure Wiki";
+            this.figureWikiToolStripMenuItem1.Click += new System.EventHandler(this.figureWikiToolStripMenuItem1_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -1456,13 +1464,14 @@ namespace GeomancyApp
             // figureWikiToolStripMenuItem
             // 
             this.figureWikiToolStripMenuItem.Name = "figureWikiToolStripMenuItem";
-            this.figureWikiToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.figureWikiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.figureWikiToolStripMenuItem.Text = "Figure Wiki";
+            this.figureWikiToolStripMenuItem.Click += new System.EventHandler(this.figureWikiToolStripMenuItem_Click);
             // 
             // houseWikiToolStripMenuItem
             // 
             this.houseWikiToolStripMenuItem.Name = "houseWikiToolStripMenuItem";
-            this.houseWikiToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.houseWikiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.houseWikiToolStripMenuItem.Text = "House Wiki";
             // 
             // button2
@@ -1556,76 +1565,18 @@ namespace GeomancyApp
             // 
             // groupBox22
             // 
-            this.groupBox22.Controls.Add(this.label39);
-            this.groupBox22.Controls.Add(this.progressBar1);
-            this.groupBox22.Controls.Add(this.textBox22);
-            this.groupBox22.Controls.Add(this.label34);
             this.groupBox22.Controls.Add(this.label29);
             this.groupBox22.Controls.Add(this.label19);
-            this.groupBox22.Controls.Add(this.textBox20);
+            this.groupBox22.Controls.Add(this.comboBox3);
+            this.groupBox22.Controls.Add(this.comboBox2);
+            this.groupBox22.Controls.Add(this.listBox1);
             this.groupBox22.Location = new System.Drawing.Point(809, 77);
             this.groupBox22.Name = "groupBox22";
             this.groupBox22.Size = new System.Drawing.Size(253, 152);
             this.groupBox22.TabIndex = 24;
             this.groupBox22.TabStop = false;
-            this.groupBox22.Text = "figure placement";
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(159, 108);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(36, 13);
-            this.label39.TabIndex = 8;
-            this.label39.Text = " None";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(6, 124);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(242, 23);
-            this.progressBar1.TabIndex = 7;
-            // 
-            // textBox22
-            // 
-            this.textBox22.Location = new System.Drawing.Point(109, 60);
-            this.textBox22.Name = "textBox22";
-            this.textBox22.Size = new System.Drawing.Size(138, 20);
-            this.textBox22.TabIndex = 6;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(6, 63);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(45, 13);
-            this.label34.TabIndex = 5;
-            this.label34.Text = "Element";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(58, 108);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(95, 13);
-            this.label29.TabIndex = 3;
-            this.label29.Text = "Strength in House:";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(6, 30);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(35, 13);
-            this.label19.TabIndex = 2;
-            this.label19.Text = "Name";
-            // 
-            // textBox20
-            // 
-            this.textBox20.Location = new System.Drawing.Point(109, 27);
-            this.textBox20.Name = "textBox20";
-            this.textBox20.Size = new System.Drawing.Size(138, 20);
-            this.textBox20.TabIndex = 1;
+            this.groupBox22.Text = "Perfection";
+            this.groupBox22.Enter += new System.EventHandler(this.groupBox22_Enter);
             // 
             // comboBox1
             // 
@@ -2394,6 +2345,50 @@ namespace GeomancyApp
             this.richTextBox1.TabIndex = 36;
             this.richTextBox1.Text = "";
             // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(6, 71);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(241, 69);
+            this.listBox1.TabIndex = 0;
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(7, 35);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(106, 21);
+            this.comboBox2.TabIndex = 1;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Location = new System.Drawing.Point(141, 35);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(106, 21);
+            this.comboBox3.TabIndex = 2;
+            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(36, 19);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(45, 13);
+            this.label19.TabIndex = 3;
+            this.label19.Text = "Querent";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(173, 19);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(49, 13);
+            this.label29.TabIndex = 4;
+            this.label29.Text = "Quesited";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2594,13 +2589,6 @@ namespace GeomancyApp
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.GroupBox groupBox21;
         private System.Windows.Forms.GroupBox groupBox22;
-        private System.Windows.Forms.Label label39;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.TextBox textBox22;
-        private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox textBox20;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label label49;
@@ -2621,6 +2609,12 @@ namespace GeomancyApp
         private System.Windows.Forms.TextBox textBox27;
         private System.Windows.Forms.TextBox textBox26;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.ToolStripMenuItem figureWikiToolStripMenuItem1;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ListBox listBox1;
     }
 }
 

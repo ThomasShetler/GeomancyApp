@@ -6,15 +6,17 @@ using System.Data;
 using System.Device.Location;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GeomancyApp
 {
-   
+
 
     public partial class Form1 : Form
     {
@@ -23,12 +25,12 @@ namespace GeomancyApp
             InitializeComponent();
         }
         HouseChart houseChart = new HouseChart();
-       
+
         figure House1 = new figure();
         private void label1_Click(object sender, EventArgs e)
         {
-            
-            if(label1.Text == "  ◆")
+
+            if (label1.Text == "  ◆")
             {
                 label1.Text = "◆ ◆";
                 label1.Tag = 2;
@@ -40,15 +42,15 @@ namespace GeomancyApp
                 label1.Tag = 1;
                 House1.headLine = 1;
             }
-            
+
         }
 
 
-        
+
         private void label5_Click(object sender, EventArgs e)
         {
             {
-            
+
                 if (label5.Text == "  ◆")
                 {
                     label5.Text = "◆ ◆";
@@ -61,7 +63,7 @@ namespace GeomancyApp
                     label5.Tag = 1;
                     House1.footLine = 1;
                 }
-             
+
             }
 
         }
@@ -74,7 +76,7 @@ namespace GeomancyApp
         private void label3_Click(object sender, EventArgs e)
         {
             {
-                
+
 
                 if (label3.Text == "  ◆")
                 {
@@ -111,7 +113,7 @@ namespace GeomancyApp
             }
 
         }
-        
+
         private void firstHouse(int l1, int l2, int l3, int l4)
         {
             House1.headLine = l1;
@@ -120,10 +122,10 @@ namespace GeomancyApp
             House1.footLine = l4;
             House1.HouseNumber = 1;
             House1.figureName = FigureName(l1, l2, l3, l4);
-           
+
         }
         figure House2 = new figure();
-        private void SecondHouse(int l1, int l2, int l3, int l4)
+        private void SecondHouse2(int l1, int l2, int l3, int l4)
         {
             House2.headLine = l1;
             House2.neckLine = l2;
@@ -134,7 +136,7 @@ namespace GeomancyApp
 
         }
         figure House3 = new figure();
-        private void ThirdHouse(int l1, int l2, int l3, int l4)
+        private void ThirdHouse2(int l1, int l2, int l3, int l4)
         {
             House3.headLine = l1;
             House3.neckLine = l2;
@@ -179,7 +181,7 @@ namespace GeomancyApp
             {
 
                 if (label8.Text == "  ◆")
-                { 
+                {
                     label8.Text = "◆ ◆";
                     label8.Tag = 2;
                 }
@@ -359,7 +361,7 @@ namespace GeomancyApp
                     label16.Text = "  ◆";
                     label16.Tag = 1;
                 }
-               
+
             }
         }
         figure House5 = new figure();
@@ -381,7 +383,7 @@ namespace GeomancyApp
             {
                 label40.Text = "◆ ◆";
                 label40.Tag = 2;
-                
+
             }
             if (h2 == 1)
             {
@@ -628,7 +630,7 @@ namespace GeomancyApp
                 label46.Tag = 2;
             }
         }
-        figure House10 = new figure(); 
+        figure House10 = new figure();
         public void TenthHouseCal(int h1, int h2, int h3, int h4)
         {
             House10.headLine = h1;
@@ -905,16 +907,16 @@ namespace GeomancyApp
             judge.figureName = FigureName(h1, h2, h3, h4);
             if (h1 == 1)
                 if (h1 == 1)
-            {
-                label75.Text = "  ◆";
-                label75.Tag = 1;
-            }
-            else
-            {
-                label75.Text = "◆ ◆";
-                label75.Tag = 2;
+                {
+                    label75.Text = "  ◆";
+                    label75.Tag = 1;
+                }
+                else
+                {
+                    label75.Text = "◆ ◆";
+                    label75.Tag = 2;
 
-            }
+                }
             if (h2 == 1)
             {
                 label73.Text = "  ◆";
@@ -1101,9 +1103,9 @@ namespace GeomancyApp
 
             }
         }
-        public string SharingString (HouseChart houses)
+        public string SharingString(HouseChart houses)
         {
-           List<figure> figureList = new List<figure>();
+            List<figure> figureList = new List<figure>();
             string returnString = "";
             figureList.Add(houses.FirstHouse);
             figureList.Add(houses.SecondHouse);
@@ -1121,10 +1123,10 @@ namespace GeomancyApp
             figureList.Add(houses.LeftWittness);
             figureList.Add(houses.Judge);
             figureList.Add(houses.fallout);
-            foreach(figure item in figureList)
+            foreach (figure item in figureList)
             {
                 returnString += "-";
-               returnString += item.headLine.ToString();
+                returnString += item.headLine.ToString();
                 returnString += item.neckLine.ToString();
                 returnString += item.bodyLine.ToString();
                 returnString += item.footLine.ToString();
@@ -1133,14 +1135,14 @@ namespace GeomancyApp
             return returnString;
 
         }
-        public void SelectHouse (GroupBox box, int head, int neck, int body, int foot)
+        public void SelectHouse(GroupBox box, int head, int neck, int body, int foot)
         {
             int indexer = 0;
             foreach (Label label in box.Controls)
             {
                 if (indexer == 0)
                 {
-                    if(head == 1)
+                    if (head == 1)
                     {
                         label.Text = "  ◆";
                         label.Tag = 1;
@@ -1193,7 +1195,7 @@ namespace GeomancyApp
                 indexer++;
             }
         }
-        public void GenerateChartFromShared (HouseChart house)
+        public void GenerateChartFromShared(HouseChart house)
         {
             SelectHouse(groupBox2, house.FirstHouse.headLine, house.FirstHouse.neckLine, house.FirstHouse.bodyLine, house.FirstHouse.footLine);
             SelectHouse(groupBox3, house.SecondHouse.headLine, house.SecondHouse.neckLine, house.SecondHouse.bodyLine, house.SecondHouse.footLine);
@@ -1215,19 +1217,19 @@ namespace GeomancyApp
 
 
         }
-        public HouseChart HouseChartFromString (string input)
+        public HouseChart HouseChartFromString(string input)
         {
-           
+
 
             string[] ListOfStrings = input.Split('-');
             int indexer = 1;
-            foreach( var item in ListOfStrings)
+            foreach (var item in ListOfStrings)
             {
                 char a = item[0];
                 char b = item[1];
                 char c = item[2];
                 char d = item[3];
-                 figure fig = new figure();
+                figure fig = new figure();
                 fig.headLine = Convert.ToInt32(a.ToString());
                 fig.neckLine = Convert.ToInt32(b.ToString());
                 fig.bodyLine = Convert.ToInt32(c.ToString());
@@ -1329,33 +1331,33 @@ namespace GeomancyApp
             if ((h1 + h2) % 2 == 0)
             {
                 return 2;
-}
+            }
             else
             {
                 return 1;
-           }
+            }
         }
         private void button1_Click(object sender, EventArgs e)
-            {
-            
-                firstHouse(Convert.ToInt32(label1.Tag), Convert.ToInt32(label3.Tag), Convert.ToInt32(label4.Tag), Convert.ToInt32(label5.Tag));
-                SecondHouse(Convert.ToInt32(label10.Tag), Convert.ToInt32(label8.Tag), Convert.ToInt32(label7.Tag), Convert.ToInt32(label6.Tag));
-                ThirdHouse(Convert.ToInt32(label15.Tag), Convert.ToInt32(label13.Tag), Convert.ToInt32(label12.Tag), Convert.ToInt32(label11.Tag));
-                ForthHouse(Convert.ToInt32(label20.Tag), Convert.ToInt32(label18.Tag), Convert.ToInt32(label17.Tag), Convert.ToInt32(label16.Tag));
-                FifthHouseCal(Convert.ToInt32(label1.Tag), Convert.ToInt32(label10.Tag), Convert.ToInt32(label15.Tag), Convert.ToInt32(label20.Tag));
-                SixthHouseCal(Convert.ToInt32(label3.Tag), Convert.ToInt32(label8.Tag), Convert.ToInt32(label13.Tag), Convert.ToInt32(label18.Tag));
-                SeventhHouseCal(Convert.ToInt32(label4.Tag), Convert.ToInt32(label7.Tag), Convert.ToInt32(label12.Tag), Convert.ToInt32(label17.Tag));
-                EighthHouseCal(Convert.ToInt32(label5.Tag), Convert.ToInt32(label6.Tag), Convert.ToInt32(label11.Tag), Convert.ToInt32(label16.Tag));
-                NinthHouseCal(CalNieces(Convert.ToInt32(label1.Tag), Convert.ToInt32(label10.Tag)), CalNieces(Convert.ToInt32(label3.Tag), Convert.ToInt32(label8.Tag)), CalNieces(Convert.ToInt32(label4.Tag), Convert.ToInt32(label7.Tag)), CalNieces(Convert.ToInt32(label5.Tag), Convert.ToInt32(label6.Tag)));
-                TenthHouseCal(CalNieces(Convert.ToInt32(label15.Tag), Convert.ToInt32(label20.Tag)), CalNieces(Convert.ToInt32(label13.Tag), Convert.ToInt32(label18.Tag)), CalNieces(Convert.ToInt32(label12.Tag), Convert.ToInt32(label17.Tag)), CalNieces(Convert.ToInt32(label11.Tag), Convert.ToInt32(label16.Tag)));
-                eleventhHouseCal(CalNieces(Convert.ToInt32(label40.Tag), Convert.ToInt32(label35.Tag)), CalNieces(Convert.ToInt32(label38.Tag), Convert.ToInt32(label33.Tag)), CalNieces(Convert.ToInt32(label37.Tag), Convert.ToInt32(label32.Tag)), CalNieces(Convert.ToInt32(label36.Tag), Convert.ToInt32(label31.Tag)));
-                twelvthHouseCal(CalNieces(Convert.ToInt32(label30.Tag), Convert.ToInt32(label25.Tag)), CalNieces(Convert.ToInt32(label28.Tag), Convert.ToInt32(label23.Tag)), CalNieces(Convert.ToInt32(label27.Tag), Convert.ToInt32(label22.Tag)), CalNieces(Convert.ToInt32(label26.Tag), Convert.ToInt32(label21.Tag)));
-                RightWitCal(CalNieces(Convert.ToInt32(label50.Tag), Convert.ToInt32(label65.Tag)), CalNieces(Convert.ToInt32(label48.Tag), Convert.ToInt32(label63.Tag)), CalNieces(Convert.ToInt32(label47.Tag), Convert.ToInt32(label62.Tag)), CalNieces(Convert.ToInt32(label46.Tag), Convert.ToInt32(label61.Tag)));
-                LeftWitCal(CalNieces(Convert.ToInt32(label55.Tag), Convert.ToInt32(label45.Tag)), CalNieces(Convert.ToInt32(label53.Tag), Convert.ToInt32(label43.Tag)), CalNieces(Convert.ToInt32(label52.Tag), Convert.ToInt32(label42.Tag)), CalNieces(Convert.ToInt32(label51.Tag), Convert.ToInt32(label41.Tag)));
-                JudgeCal(CalNieces(Convert.ToInt32(label60.Tag), Convert.ToInt32(label70.Tag)), CalNieces(Convert.ToInt32(label58.Tag), Convert.ToInt32(label68.Tag)), CalNieces(Convert.ToInt32(label57.Tag), Convert.ToInt32(label67.Tag)), CalNieces(Convert.ToInt32(label66.Tag), Convert.ToInt32(label56.Tag)));
-                FallOutCal(CalNieces(Convert.ToInt32(label75.Tag), Convert.ToInt32(label1.Tag)), CalNieces(Convert.ToInt32(label3.Tag), Convert.ToInt32(label73.Tag)), CalNieces(Convert.ToInt32(label4.Tag), Convert.ToInt32(label72.Tag)), CalNieces(Convert.ToInt32(label5.Tag), Convert.ToInt32(label71.Tag)));
+        {
 
-            
+            firstHouse(Convert.ToInt32(label1.Tag), Convert.ToInt32(label3.Tag), Convert.ToInt32(label4.Tag), Convert.ToInt32(label5.Tag));
+            SecondHouse2(Convert.ToInt32(label10.Tag), Convert.ToInt32(label8.Tag), Convert.ToInt32(label7.Tag), Convert.ToInt32(label6.Tag));
+            ThirdHouse2(Convert.ToInt32(label15.Tag), Convert.ToInt32(label13.Tag), Convert.ToInt32(label12.Tag), Convert.ToInt32(label11.Tag));
+            ForthHouse(Convert.ToInt32(label20.Tag), Convert.ToInt32(label18.Tag), Convert.ToInt32(label17.Tag), Convert.ToInt32(label16.Tag));
+            FifthHouseCal(Convert.ToInt32(label1.Tag), Convert.ToInt32(label10.Tag), Convert.ToInt32(label15.Tag), Convert.ToInt32(label20.Tag));
+            SixthHouseCal(Convert.ToInt32(label3.Tag), Convert.ToInt32(label8.Tag), Convert.ToInt32(label13.Tag), Convert.ToInt32(label18.Tag));
+            SeventhHouseCal(Convert.ToInt32(label4.Tag), Convert.ToInt32(label7.Tag), Convert.ToInt32(label12.Tag), Convert.ToInt32(label17.Tag));
+            EighthHouseCal(Convert.ToInt32(label5.Tag), Convert.ToInt32(label6.Tag), Convert.ToInt32(label11.Tag), Convert.ToInt32(label16.Tag));
+            NinthHouseCal(CalNieces(Convert.ToInt32(label1.Tag), Convert.ToInt32(label10.Tag)), CalNieces(Convert.ToInt32(label3.Tag), Convert.ToInt32(label8.Tag)), CalNieces(Convert.ToInt32(label4.Tag), Convert.ToInt32(label7.Tag)), CalNieces(Convert.ToInt32(label5.Tag), Convert.ToInt32(label6.Tag)));
+            TenthHouseCal(CalNieces(Convert.ToInt32(label15.Tag), Convert.ToInt32(label20.Tag)), CalNieces(Convert.ToInt32(label13.Tag), Convert.ToInt32(label18.Tag)), CalNieces(Convert.ToInt32(label12.Tag), Convert.ToInt32(label17.Tag)), CalNieces(Convert.ToInt32(label11.Tag), Convert.ToInt32(label16.Tag)));
+            eleventhHouseCal(CalNieces(Convert.ToInt32(label40.Tag), Convert.ToInt32(label35.Tag)), CalNieces(Convert.ToInt32(label38.Tag), Convert.ToInt32(label33.Tag)), CalNieces(Convert.ToInt32(label37.Tag), Convert.ToInt32(label32.Tag)), CalNieces(Convert.ToInt32(label36.Tag), Convert.ToInt32(label31.Tag)));
+            twelvthHouseCal(CalNieces(Convert.ToInt32(label30.Tag), Convert.ToInt32(label25.Tag)), CalNieces(Convert.ToInt32(label28.Tag), Convert.ToInt32(label23.Tag)), CalNieces(Convert.ToInt32(label27.Tag), Convert.ToInt32(label22.Tag)), CalNieces(Convert.ToInt32(label26.Tag), Convert.ToInt32(label21.Tag)));
+            RightWitCal(CalNieces(Convert.ToInt32(label50.Tag), Convert.ToInt32(label65.Tag)), CalNieces(Convert.ToInt32(label48.Tag), Convert.ToInt32(label63.Tag)), CalNieces(Convert.ToInt32(label47.Tag), Convert.ToInt32(label62.Tag)), CalNieces(Convert.ToInt32(label46.Tag), Convert.ToInt32(label61.Tag)));
+            LeftWitCal(CalNieces(Convert.ToInt32(label55.Tag), Convert.ToInt32(label45.Tag)), CalNieces(Convert.ToInt32(label53.Tag), Convert.ToInt32(label43.Tag)), CalNieces(Convert.ToInt32(label52.Tag), Convert.ToInt32(label42.Tag)), CalNieces(Convert.ToInt32(label51.Tag), Convert.ToInt32(label41.Tag)));
+            JudgeCal(CalNieces(Convert.ToInt32(label60.Tag), Convert.ToInt32(label70.Tag)), CalNieces(Convert.ToInt32(label58.Tag), Convert.ToInt32(label68.Tag)), CalNieces(Convert.ToInt32(label57.Tag), Convert.ToInt32(label67.Tag)), CalNieces(Convert.ToInt32(label66.Tag), Convert.ToInt32(label56.Tag)));
+            FallOutCal(CalNieces(Convert.ToInt32(label75.Tag), Convert.ToInt32(label1.Tag)), CalNieces(Convert.ToInt32(label3.Tag), Convert.ToInt32(label73.Tag)), CalNieces(Convert.ToInt32(label4.Tag), Convert.ToInt32(label72.Tag)), CalNieces(Convert.ToInt32(label5.Tag), Convert.ToInt32(label71.Tag)));
+
+
             houseChart.FirstHouse = House1;
             houseChart.SecondHouse = House2;
             houseChart.ThirdHouse = House3;
@@ -1389,10 +1391,38 @@ namespace GeomancyApp
             textBox17.Text = houseChart.RightWitness.figureName;
             textBox18.Text = houseChart.Judge.figureName;
             textBox19.Text = houseChart.fallout.figureName;
+            comboBox2.Items.Clear();
+            comboBox2.Items.Add($"I ({houseChart.FirstHouse.figureName})");
+            comboBox2.Items.Add($"II ({houseChart.SecondHouse.figureName})");
+            comboBox2.Items.Add($"III ({houseChart.ThirdHouse.figureName})");
+            comboBox2.Items.Add($"IV ({houseChart.ForthHouse.figureName})");
+            comboBox2.Items.Add($"V ({houseChart.FifthHouse.figureName})");
+            comboBox2.Items.Add($"VI ({houseChart.SixthHouse.figureName})");
+            comboBox2.Items.Add($"VII ({houseChart.SeventhHouse.figureName})");
+            comboBox2.Items.Add($"VIII ({houseChart.EightHouse.figureName})");
+            comboBox2.Items.Add($"IX ({houseChart.NinthHouse.figureName})");
+            comboBox2.Items.Add($"X ({houseChart.TenthHouse.figureName})");
+            comboBox2.Items.Add($"XI ({houseChart.eleventhHouse.figureName})");
+            comboBox2.Items.Add($"XII ({houseChart.twelvethHouse.figureName})");
+            comboBox3.Items.Clear();
+            comboBox3.Items.Add($"I ({houseChart.FirstHouse.figureName})");
+            comboBox3.Items.Add($"II ({houseChart.SecondHouse.figureName})");
+            comboBox3.Items.Add($"III ({houseChart.ThirdHouse.figureName})");
+            comboBox3.Items.Add($"IV ({houseChart.ForthHouse.figureName})");
+            comboBox3.Items.Add($"V ({houseChart.FifthHouse.figureName})");
+            comboBox3.Items.Add($"VI ({houseChart.SixthHouse.figureName})");
+            comboBox3.Items.Add($"VII ({houseChart.SeventhHouse.figureName})");
+            comboBox3.Items.Add($"VIII ({houseChart.EightHouse.figureName})");
+            comboBox3.Items.Add($"IX ({houseChart.NinthHouse.figureName})");
+            comboBox3.Items.Add($"X ({houseChart.TenthHouse.figureName})");
+            comboBox3.Items.Add($"XI ({houseChart.eleventhHouse.figureName})");
+            comboBox3.Items.Add($"XII ({houseChart.twelvethHouse.figureName})");
+
             textBox13.Text = SharingString(houseChart);
             //getAstroInfoAsync();
 
         }
+
 
         private void label40_Click(object sender, EventArgs e)
         {
@@ -1405,7 +1435,7 @@ namespace GeomancyApp
 
 
         }
-      
+
         private void groupBox2_MouseHover(object sender, EventArgs e)
         {
 
@@ -1487,7 +1517,7 @@ namespace GeomancyApp
                     }
 
                 }
-                textBox20.Text = house;
+                //textBox20.Text = house;
             }
         }
 
@@ -1496,7 +1526,7 @@ namespace GeomancyApp
         {
             System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
             ToolTip1.SetToolTip(this.groupBox2, houseChart.ThirdHouse.figureName);
-            textBox20.Text = houseChart.ThirdHouse.figureName;
+            //textBox20.Text = houseChart.ThirdHouse.figureName;
 
         }
 
@@ -1529,7 +1559,7 @@ namespace GeomancyApp
         {
 
         }
-        private async Task GetLatitude (string address)
+        private async Task GetLatitude(string address)
         {
             var client = new HttpClient();
             var request = new HttpRequestMessage
@@ -1546,12 +1576,12 @@ namespace GeomancyApp
             {
                 response.EnsureSuccessStatusCode();
                 var body = await response.Content.ReadAsStringAsync();
-                
+
                 Console.WriteLine(body.ToString());
                 try
                 {
                     Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(body);
-                    foreach(Result item in myDeserializedClass.results)
+                    foreach (Result item in myDeserializedClass.results)
                     {
                         Console.WriteLine(item.geometry.location.lat);
                         Console.WriteLine(item.geometry.location.lng);
@@ -1560,10 +1590,10 @@ namespace GeomancyApp
 
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
-                
+
                 }
 
             }
@@ -1596,7 +1626,7 @@ namespace GeomancyApp
 
                 Console.WriteLine(body);
                 var cd = myDeserializedClass.data;
-                richTextBox1.Text += (" first House Pos:" + cd.first_house.position.ToString() 
+                richTextBox1.Text += (" first House Pos:" + cd.first_house.position.ToString()
                     );
                 richTextBox1.Text += (" first House Sign:" + cd.first_house.sign.ToString());
                 richTextBox1.Text += (" Second House Pos:" + cd.second_house.position.ToString());
@@ -1608,10 +1638,10 @@ namespace GeomancyApp
             }
         }
 
-            private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
 
-           
+
             getAstroInfoAsync();
 
         }
@@ -1621,462 +1651,614 @@ namespace GeomancyApp
             button3.Visible = true;
             GetLatitude(textBox26.Text + ", " + textBox25.Text + ", " + textBox28.Text + ", " + textBox27.Text);
         }
+
+        private void figureWikiToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void figureWikiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FigureWiki figureWiki = new FigureWiki();
+            figureWiki.Show();
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedItem != null && comboBox3.SelectedItem != null)
+            {
+                CheckForPerfection(houseChart, comboBox2.SelectedIndex, comboBox3.SelectedIndex);
+            }
+        }
+
+        private void groupBox22_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedItem != null && comboBox3.SelectedItem != null)
+            {
+                CheckForPerfection(houseChart, comboBox2.SelectedIndex, comboBox3.SelectedIndex);
+            }
+        }
+
+        public void CheckForPerfection(HouseChart houseChart, int index, int index2)
+        {
+
+            int s1Before = index - 1;
+            int s1After = index + 1;
+            int s2before = index2 - 1;
+            int s2After = index2 + 1;
+
+            bool occupation = false;
+
+            figure neb1 = new figure();
+            neb1.figureName = "";
+            figure neb2 = new figure();
+            neb2.figureName = "";
+            figure neb3 = new figure();
+            neb3.figureName = "";
+            figure neb4 = new figure();
+            neb4.figureName = "";
+            List <figure> figures = new List<figure>();
+
+            figures.Add(houseChart.FirstHouse);
+            figures.Add(houseChart.SecondHouse);
+            figures.Add(houseChart.ThirdHouse);
+            figures.Add(houseChart.ForthHouse);
+            figures.Add(houseChart.FifthHouse);
+            figures.Add(houseChart.SixthHouse);
+            figures.Add(houseChart.SeventhHouse);
+            figures.Add(houseChart.EightHouse);
+            figures.Add(houseChart.NinthHouse);
+            figures.Add(houseChart.TenthHouse);
+            figures.Add(houseChart.twelvethHouse);
+            figures.Add(houseChart.eleventhHouse);
+
+            string results = "";
+
+            if (figures[index].figureName == figures[index2].figureName)
+            {
+                listBox1.Items.Add($"Occupation: House (Querent) {figures[index].HouseNumber} is the same House (Quesited) {figures[index2].HouseNumber} Figure: {figures[index].figureName} ");
+            }
+
+            checkConjunction(index, index2, figures);
+
+
+            for (int i = 0; i < figures.Count; i++)
+            {
+
+                if (i + 1 < figures.Count)
+                {
+                    if (figures[i].HouseNumber != figures[index].HouseNumber && figures[i + 1].HouseNumber != figures[index].HouseNumber && figures[i + 1].HouseNumber != figures[index2].HouseNumber && figures[i].HouseNumber != figures[index].HouseNumber)
+                    {
+                        if ((figures[i].figureName == figures[index].figureName && figures[i + 1].figureName == figures[index2].figureName) || (figures[i + 1].figureName == figures[index].figureName && figures[i].figureName == figures[index2].figureName))
+                        {
+
+                            listBox1.Items.Add($"Mutation [H:{figures[index2].HouseNumber}] & [H: {figures[index].HouseNumber} => [H: {figures[i + i].HouseNumber}] & [H: {figures[i].HouseNumber}] ");
+                        }
+                    }
+
+                }
+
+            }
+            List<figure> nebs1 = new List<figure>();
+            List<figure> nebs2 = new List<figure>();
+            List<figure> nebsValid = new List<figure>();
+            nebs1.Add(neb1);
+            nebs2.Add(neb2);
+            nebs1.Add(neb3);
+            nebs2.Add(neb4);
+
+            foreach (figure items in nebs1)
+            {
+                foreach (figure items2 in nebs2)
+                {
+                    if (items.figureName != "" && items2.figureName != "")
+                    {
+                        if (items.figureName == items2.figureName)
+                        {
+                            listBox1.Items.Add($"Transition [H:{figures[index2].HouseNumber}] & [H: {figures[index].HouseNumber} => [H: {items.HouseNumber}] & [H: {items2.HouseNumber}] ");
+                        }
+                    }
+
+                }
+            }
+
+            
+
+        }
+        public void checkConjunction (int index, int index2, List<figure> figures)
+        {
+            //check querent
+            if (index > 0)
+            {
+                if (figures[index - 1].figureName == figures[index2].figureName)
+                {
+                    listBox1.Items.Add($"Conjunction [H:{figures[index2].HouseNumber} ({figures[index2].figureName})] => [H: {figures[index - 1].HouseNumber}] ");
+                }
+            }
+            if (index < 11)
+            {
+                if(figures[index + 1].figureName == figures[index2].figureName)
+                {
+                    listBox1.Items.Add($"Conjunction [H:{figures[index2].HouseNumber} ({figures[index2].figureName})] => [H: {figures[index + 1].HouseNumber}] ");
+                }
+            }
+            //check quested 
+            if (index2 > 0)
+            {
+                if (figures[index2 - 1].figureName == figures[index].figureName)
+                {
+                    listBox1.Items.Add($"Conjunction [H:{figures[index].HouseNumber} ({figures[index].figureName})] => [H: {figures[index2 - 1].HouseNumber}] ");
+                }
+            }
+            if (index2 < 11)
+            {
+                if (figures[index2 + 1].figureName == figures[index].figureName)
+                {
+                    listBox1.Items.Add($"Conjunction [H:{figures[index].HouseNumber} ({figures[index].figureName})] => [H: {figures[index2 + 1].HouseNumber}] ");
+                }
+            }
+        }
+
+        public class AddressComponent
+        {
+            public string long_name { get; set; }
+            public string short_name { get; set; }
+            public List<string> types { get; set; }
+        }
+
+        public class Bounds
+        {
+            public Northeast northeast { get; set; }
+            public Southwest southwest { get; set; }
+        }
+
+        public class Geometry
+        {
+            public Bounds bounds { get; set; }
+            public Location location { get; set; }
+            public string location_type { get; set; }
+            public Viewport viewport { get; set; }
+        }
+
+        public class Location
+        {
+            public double lat { get; set; }
+            public double lng { get; set; }
+        }
+
+        public class Northeast
+        {
+            public double lat { get; set; }
+            public double lng { get; set; }
+        }
+
+        public class Result
+        {
+            public List<AddressComponent> address_components { get; set; }
+            public string formatted_address { get; set; }
+            public Geometry geometry { get; set; }
+            public string place_id { get; set; }
+            public List<string> types { get; set; }
+        }
+
+        public class Root
+        {
+            public List<Result> results { get; set; }
+            public string status { get; set; }
+        }
+
+        public class Southwest
+        {
+            public double lat { get; set; }
+            public double lng { get; set; }
+        }
+
+        public class Viewport
+        {
+            public Northeast northeast { get; set; }
+            public Southwest southwest { get; set; }
+        }
+
+        public class Data
+        {
+            public string name { get; set; }
+            public int year { get; set; }
+            public int month { get; set; }
+            public int day { get; set; }
+            public int hour { get; set; }
+            public int minute { get; set; }
+            public string city { get; set; }
+            public string nation { get; set; }
+            public double lng { get; set; }
+            public double lat { get; set; }
+            public string tz_str { get; set; }
+            public string zodiac_type { get; set; }
+            public double local_time { get; set; }
+            public double utc_time { get; set; }
+            public double julian_day { get; set; }
+            public Sun sun { get; set; }
+            public Moon moon { get; set; }
+            public Mercury mercury { get; set; }
+            public Venus venus { get; set; }
+            public Mars mars { get; set; }
+            public Jupiter jupiter { get; set; }
+            public Saturn saturn { get; set; }
+            public Uranus uranus { get; set; }
+            public Neptune neptune { get; set; }
+            public Pluto pluto { get; set; }
+            public FirstHouse first_house { get; set; }
+            public SecondHouse second_house { get; set; }
+            public ThirdHouse third_house { get; set; }
+            public FourthHouse fourth_house { get; set; }
+            public FifthHouse fifth_house { get; set; }
+            public SixthHouse sixth_house { get; set; }
+            public SeventhHouse seventh_house { get; set; }
+            public EighthHouse eighth_house { get; set; }
+            public NinthHouse ninth_house { get; set; }
+            public TenthHouse tenth_house { get; set; }
+            public EleventhHouse eleventh_house { get; set; }
+            public TwelfthHouse twelfth_house { get; set; }
+            public MeanNode mean_node { get; set; }
+            public TrueNode true_node { get; set; }
+            public LunarPhase lunar_phase { get; set; }
+        }
+
+        public class EighthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class EleventhHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class FifthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class FirstHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class FourthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class Jupiter
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class LunarPhase
+        {
+            public int degrees_between_s_m { get; set; }
+            public int moon_phase { get; set; }
+            public int sun_phase { get; set; }
+            public string moon_emoji { get; set; }
+        }
+
+        public class Mars
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class MeanNode
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class Mercury
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class Moon
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class Neptune
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class NinthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class Pluto
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class Root2
+        {
+            public Data data { get; set; }
+            public string status { get; set; }
+        }
+
+        public class Saturn
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class SecondHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class SeventhHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class SixthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class Sun
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class TenthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class ThirdHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class TrueNode
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class TwelfthHouse
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+        }
+
+        public class Uranus
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+        public class Venus
+        {
+            public string name { get; set; }
+            public string quality { get; set; }
+            public string element { get; set; }
+            public string sign { get; set; }
+            public int sign_num { get; set; }
+            public double position { get; set; }
+            public double abs_pos { get; set; }
+            public string emoji { get; set; }
+            public string point_type { get; set; }
+            public string house { get; set; }
+            public bool retrograde { get; set; }
+        }
+
+
+
     }
-
-    public class AddressComponent
-    {
-        public string long_name { get; set; }
-        public string short_name { get; set; }
-        public List<string> types { get; set; }
-    }
-
-    public class Bounds
-    {
-        public Northeast northeast { get; set; }
-        public Southwest southwest { get; set; }
-    }
-
-    public class Geometry
-    {
-        public Bounds bounds { get; set; }
-        public Location location { get; set; }
-        public string location_type { get; set; }
-        public Viewport viewport { get; set; }
-    }
-
-    public class Location
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }
-
-    public class Northeast
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }
-
-    public class Result
-    {
-        public List<AddressComponent> address_components { get; set; }
-        public string formatted_address { get; set; }
-        public Geometry geometry { get; set; }
-        public string place_id { get; set; }
-        public List<string> types { get; set; }
-    }
-
-    public class Root
-    {
-        public List<Result> results { get; set; }
-        public string status { get; set; }
-    }
-
-    public class Southwest
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }
-
-    public class Viewport
-    {
-        public Northeast northeast { get; set; }
-        public Southwest southwest { get; set; }
-    }
-
-    public class Data
-    {
-        public string name { get; set; }
-        public int year { get; set; }
-        public int month { get; set; }
-        public int day { get; set; }
-        public int hour { get; set; }
-        public int minute { get; set; }
-        public string city { get; set; }
-        public string nation { get; set; }
-        public double lng { get; set; }
-        public double lat { get; set; }
-        public string tz_str { get; set; }
-        public string zodiac_type { get; set; }
-        public double local_time { get; set; }
-        public double utc_time { get; set; }
-        public double julian_day { get; set; }
-        public Sun sun { get; set; }
-        public Moon moon { get; set; }
-        public Mercury mercury { get; set; }
-        public Venus venus { get; set; }
-        public Mars mars { get; set; }
-        public Jupiter jupiter { get; set; }
-        public Saturn saturn { get; set; }
-        public Uranus uranus { get; set; }
-        public Neptune neptune { get; set; }
-        public Pluto pluto { get; set; }
-        public FirstHouse first_house { get; set; }
-        public SecondHouse second_house { get; set; }
-        public ThirdHouse third_house { get; set; }
-        public FourthHouse fourth_house { get; set; }
-        public FifthHouse fifth_house { get; set; }
-        public SixthHouse sixth_house { get; set; }
-        public SeventhHouse seventh_house { get; set; }
-        public EighthHouse eighth_house { get; set; }
-        public NinthHouse ninth_house { get; set; }
-        public TenthHouse tenth_house { get; set; }
-        public EleventhHouse eleventh_house { get; set; }
-        public TwelfthHouse twelfth_house { get; set; }
-        public MeanNode mean_node { get; set; }
-        public TrueNode true_node { get; set; }
-        public LunarPhase lunar_phase { get; set; }
-    }
-
-    public class EighthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class EleventhHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class FifthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class FirstHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class FourthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class Jupiter
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class LunarPhase
-    {
-        public int degrees_between_s_m { get; set; }
-        public int moon_phase { get; set; }
-        public int sun_phase { get; set; }
-        public string moon_emoji { get; set; }
-    }
-
-    public class Mars
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class MeanNode
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class Mercury
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class Moon
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class Neptune
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class NinthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class Pluto
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class Root2
-    {
-        public Data data { get; set; }
-        public string status { get; set; }
-    }
-
-    public class Saturn
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class SecondHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class SeventhHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class SixthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class Sun
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class TenthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class ThirdHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class TrueNode
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class TwelfthHouse
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-    }
-
-    public class Uranus
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-    public class Venus
-    {
-        public string name { get; set; }
-        public string quality { get; set; }
-        public string element { get; set; }
-        public string sign { get; set; }
-        public int sign_num { get; set; }
-        public double position { get; set; }
-        public double abs_pos { get; set; }
-        public string emoji { get; set; }
-        public string point_type { get; set; }
-        public string house { get; set; }
-        public bool retrograde { get; set; }
-    }
-
-
-
 }

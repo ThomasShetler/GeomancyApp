@@ -45,5 +45,7 @@ namespace GeomancyApp
         public figure Judge { get; set; }
         public figure fallout { get; set; }
 
+        
+
      }
 }
