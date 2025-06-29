@@ -212,7 +212,10 @@
             this.groupBox2.Size = new System.Drawing.Size(120, 160);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
+<<<<<<< HEAD
+=======
             this.groupBox2.Tag = "1";
+>>>>>>> a217c5f6b24d50af963e7f71d322920f3aa65f7f
             this.groupBox2.Text = "Elemental Pattern";
             // 
             // label1

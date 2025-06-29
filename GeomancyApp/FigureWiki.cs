@@ -23,17 +23,14 @@ namespace GeomancyApp
             if (label1.Text == "  ◆")
             {
                 label1.Text = "◆ ◆";
-                label1.Tag = 2;
+                label1.Tag = "2";
             }
             else
             {
                 label1.Text = "  ◆";
-                label1.Tag = 1;
+                label1.Tag = "1";
             }
-            FigureData figureData = new FigureData();
-
-            FigureData FigFill = figureData.ReturnFigureData(FigureName(Convert.ToInt32(label1.Tag), Convert.ToInt32(label3.Tag), Convert.ToInt32(label4.Tag), Convert.ToInt32(label5.Tag)));
-            UpdateText(FigFill);
+            UpdateFigureDisplay();
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -41,17 +38,14 @@ namespace GeomancyApp
             if (label3.Text == "  ◆")
             {
                 label3.Text = "◆ ◆";
-                label3.Tag = 2;
+                label3.Tag = "2";
             }
             else
             {
                 label3.Text = "  ◆";
-                label3.Tag = 1;
+                label3.Tag = "1";
             }
-            FigureData figureData = new FigureData();
-
-            FigureData FigFill = figureData.ReturnFigureData(FigureName(Convert.ToInt32(label1.Tag), Convert.ToInt32(label3.Tag), Convert.ToInt32(label4.Tag), Convert.ToInt32(label5.Tag)));
-            UpdateText(FigFill);
+            UpdateFigureDisplay();
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -59,17 +53,14 @@ namespace GeomancyApp
             if (label4.Text == "  ◆")
             {
                 label4.Text = "◆ ◆";
-                label4.Tag = 2;
+                label4.Tag = "2";
             }
             else
             {
                 label4.Text = "  ◆";
-                label4.Tag = 1;
+                label4.Tag = "1";
             }
-            FigureData figureData = new FigureData();
-
-            FigureData FigFill = figureData.ReturnFigureData(FigureName(Convert.ToInt32(label1.Tag), Convert.ToInt32(label3.Tag), Convert.ToInt32(label4.Tag), Convert.ToInt32(label5.Tag)));
-            UpdateText(FigFill);
+            UpdateFigureDisplay();
         }
 
         private void label5_Click(object sender, EventArgs e)
@@ -77,19 +68,126 @@ namespace GeomancyApp
             if (label5.Text == "  ◆")
             {
                 label5.Text = "◆ ◆";
-                label5.Tag = 2;
+                label5.Tag = "2";
             }
             else
             {
                 label5.Text = "  ◆";
-                label5.Tag = 1;
+                label5.Tag = "1";
             }
-            FigureData figureData = new FigureData();
-
-            FigureData FigFill = figureData.ReturnFigureData(FigureName(Convert.ToInt32(label1.Tag), Convert.ToInt32(label3.Tag), Convert.ToInt32(label4.Tag), Convert.ToInt32(label5.Tag)));
-            UpdateText(FigFill);
+            UpdateFigureDisplay();
         }
 
+<<<<<<< HEAD
+        private void UpdateFigureDisplay()
+        {
+            try
+            {
+                // Get the current elemental pattern from the labels, handling string Tags
+                int fireValue = Convert.ToInt32(label1.Tag?.ToString() ?? "2");
+                int airValue = Convert.ToInt32(label3.Tag?.ToString() ?? "2");
+                int waterValue = Convert.ToInt32(label4.Tag?.ToString() ?? "2");
+                int earthValue = Convert.ToInt32(label5.Tag?.ToString() ?? "2");
+
+                // Use the new method to get figure data by elemental pattern
+                FigureData fig = FigureData.GetFigureByElementalPattern(fireValue, airValue, waterValue, earthValue);
+                
+                if (fig != null)
+                {
+                    UpdateText(fig);
+                }
+                else
+                {
+                    // Fallback to legacy method if needed
+                    string figureName = GetFigureNameByPattern(fireValue, airValue, waterValue, earthValue);
+                    fig = FigureData.GetFigureByName(figureName);
+                    if (fig != null)
+                    {
+                        UpdateText(fig);
+                    }
+                    else
+                    {
+                        // If still no figure found, clear the display
+                        ClearDisplay();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating figure display: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ClearDisplay()
+        {
+            FigName.Text = "No Figure Found";
+            OtherNames.Text = "";
+            InnerElement.Text = "";
+            OutterElement.Text = "";
+            Quality.Text = "";
+            Planet.Text = "";
+            Sign.Text = "";
+            Keyword.Text = "";
+            DivinaryMeaning.Text = "";
+            Imagery.Text = "";
+            StrongHouse.Text = "";
+            WeakHouse.Text = "";
+            
+            if (FireElement != null) FireElement.Text = "";
+            if (AirElement != null) AirElement.Text = "";
+            if (WaterElement != null) WaterElement.Text = "";
+            if (EarthElement != null) EarthElement.Text = "";
+            
+            if (Anatomy != null) Anatomy.Text = "";
+            if (BodyType != null) BodyType.Text = "";
+            if (CharacterType != null) CharacterType.Text = "";
+            if (Colors != null) Colors.Text = "";
+            if (Commentary != null) Commentary.Text = "";
+        }
+
+        public void UpdateText(FigureData fig)
+        {
+            if (fig == null) 
+            {
+                ClearDisplay();
+                return;
+            }
+
+            try
+            {
+                FigName.Text = fig.Name ?? "";
+                OtherNames.Text = fig.OtherNames ?? "";
+                InnerElement.Text = fig.InnerEl ?? "";
+                OutterElement.Text = fig.OuterEl ?? "";
+                Quality.Text = fig.Quality ?? "";
+                Planet.Text = fig.Planet ?? "";
+                Sign.Text = fig.Sign ?? "";
+                Keyword.Text = fig.Keyword ?? "";
+                DivinaryMeaning.Text = fig.DivinatoryMeaning ?? "";
+                Imagery.Text = fig.Imagery ?? "";
+                StrongHouse.Text = fig.StrongHouse ?? "";
+                WeakHouse.Text = fig.WeakHouse ?? "";
+                
+                if (FireElement != null) FireElement.Text = fig.FireElement ?? "";
+                if (AirElement != null) AirElement.Text = fig.AirElement ?? "";
+                if (WaterElement != null) WaterElement.Text = fig.WaterElement ?? "";
+                if (EarthElement != null) EarthElement.Text = fig.EarthElement ?? "";
+                
+                if (Anatomy != null) Anatomy.Text = fig.Anatomy ?? "";
+                if (BodyType != null) BodyType.Text = fig.BodyType ?? "";
+                if (CharacterType != null) CharacterType.Text = fig.CharacterType ?? "";
+                if (Colors != null) Colors.Text = fig.Colors ?? "";
+                if (Commentary != null) Commentary.Text = fig.Commentary ?? "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating text: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Legacy method for backward compatibility
+        public string GetFigureNameByPattern(int h1, int h2, int h3, int h4)
+=======
         public void UpdateText(FigureData fig)
         {
             FigName.Text = fig.Name;
@@ -118,6 +216,7 @@ namespace GeomancyApp
         }
 
         public string FigureName(int h1, int h2, int h3, int h4)
+>>>>>>> a217c5f6b24d50af963e7f71d322920f3aa65f7f
         {
             if (h1 == 1 && h2 == 1 && h3 == 1 && h4 == 1)
             {
@@ -197,7 +296,110 @@ namespace GeomancyApp
 
         private void FigureWiki_Load(object sender, EventArgs e)
         {
+            // Initialize the form with default values
+            try
+            {
+                // Set initial Tag values as strings
+                label1.Tag = "2";
+                label3.Tag = "2";
+                label4.Tag = "2";
+                label5.Tag = "2";
+                
+                // Set initial text
+                label1.Text = "◆ ◆";
+                label3.Text = "◆ ◆";
+                label4.Text = "◆ ◆";
+                label5.Text = "◆ ◆";
+                
+                // Update the display with the initial pattern (2-2-2-2 = Populus)
+                UpdateFigureDisplay();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error initializing form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
+        // Event handlers for the new labels (color-coded elemental labels)
+        private void label17_Click(object sender, EventArgs e)
+        {
+            // Fire Element label clicked - could be used for additional functionality
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+            // Air Element label clicked - could be used for additional functionality
+        }
+
+        private void label19_Click(object sender, EventArgs e)
+        {
+            // Water Element label clicked - could be used for additional functionality
+        }
+
+        private void label20_Click(object sender, EventArgs e)
+        {
+            // Earth Element label clicked - could be used for additional functionality
+        }
+
+        // Event handlers for text boxes (if needed for validation or real-time updates)
+        private void Quality_TextChanged(object sender, EventArgs e)
+        {
+            // Quality text changed - could be used for validation
+        }
+
+        private void Keyword_TextChanged(object sender, EventArgs e)
+        {
+            // Keyword text changed - could be used for validation
+        }
+
+        private void Planet_TextChanged(object sender, EventArgs e)
+        {
+            // Planet text changed - could be used for validation
+        }
+
+        private void Sign_TextChanged(object sender, EventArgs e)
+        {
+            // Sign text changed - could be used for validation
+        }
+
+        private void StrongHouse_TextChanged(object sender, EventArgs e)
+        {
+            // Strong House text changed - could be used for validation
+        }
+
+        private void WeakHouse_TextChanged(object sender, EventArgs e)
+        {
+            // Weak House text changed - could be used for validation
+        }
+
+        private void InnerElement_TextChanged(object sender, EventArgs e)
+        {
+            // Inner Element text changed - could be used for validation
+        }
+
+        private void FireElement_TextChanged(object sender, EventArgs e)
+        {
+            // Fire Element text changed - could be used for validation
+        }
+
+        private void AirElement_TextChanged(object sender, EventArgs e)
+        {
+            // Air Element text changed - could be used for validation
+        }
+
+        private void WaterElement_TextChanged(object sender, EventArgs e)
+        {
+            // Water Element text changed - could be used for validation
+        }
+
+        private void EarthElement_TextChanged(object sender, EventArgs e)
+        {
+            // Earth Element text changed - could be used for validation
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            // Panel paint event - could be used for custom drawing
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
