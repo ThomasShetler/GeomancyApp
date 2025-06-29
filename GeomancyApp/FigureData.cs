@@ -12,6 +12,7 @@ namespace GeomancyApp
         public string Name { get; set; }
         public string OtherNames { get; set; }
         public string Quality { get; set; }
+        public string Quality { get; set; }
         public string Keyword { get; set; }
         public string Imagery { get; set; }
         public string StrongHouse { get; set; }
