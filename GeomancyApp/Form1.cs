@@ -1074,7 +1074,7 @@ namespace GeomancyApp
         }
         public void GenerateChartFromString(HouseChart houses)
         {
-            List<figure> figureList = new List<figure>();
+            List<GeomanticFigure> figureList = new List<GeomanticFigure>();
             string returnString = "";
             figureList.Add(houses.FirstHouse);
             figureList.Add(houses.SecondHouse);
@@ -1093,7 +1093,7 @@ namespace GeomancyApp
             figureList.Add(houses.Judge);
             figureList.Add(houses.fallout);
             int indexer = 1;
-            foreach (figure item in figureList)
+            foreach (GeomanticFigure item in figureList)
             {
 
                 returnString += item.headLine.ToString();
@@ -1105,7 +1105,7 @@ namespace GeomancyApp
         }
         public string SharingString(HouseChart houses)
         {
-            List<figure> figureList = new List<figure>();
+            List<GeomanticFigure> figureList = new List<GeomanticFigure>();
             string returnString = "";
             figureList.Add(houses.FirstHouse);
             figureList.Add(houses.SecondHouse);
@@ -1123,7 +1123,7 @@ namespace GeomancyApp
             figureList.Add(houses.LeftWittness);
             figureList.Add(houses.Judge);
             figureList.Add(houses.fallout);
-            foreach (figure item in figureList)
+            foreach (GeomanticFigure item in figureList)
             {
                 returnString += "-";
                 returnString += item.headLine.ToString();
@@ -1702,7 +1702,7 @@ namespace GeomancyApp
             neb3.figureName = "";
             figure neb4 = new figure();
             neb4.figureName = "";
-            List <figure> figures = new List<figure>();
+            List<GeomanticFigure> figures = new List<GeomanticFigure>();
 
             figures.Add(houseChart.FirstHouse);
             figures.Add(houseChart.SecondHouse);
@@ -1770,7 +1770,7 @@ namespace GeomancyApp
             
 
         }
-        public void checkConjunction (int index, int index2, List<figure> figures)
+        public void checkConjunction (int index, int index2, List<GeomanticFigure> figures)
         {
             //check querent
             if (index > 0)

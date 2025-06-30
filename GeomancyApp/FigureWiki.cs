@@ -218,7 +218,6 @@ namespace GeomancyApp
             else if (h1 == 2 && h2 == 2 && h3 == 2 && h4 == 1)
             {
                 return "Tristitia";
-                return "Tristitia";
             }
             else if (h1 == 1 && h2 == 2 && h3 == 2 && h4 == 1)
             {

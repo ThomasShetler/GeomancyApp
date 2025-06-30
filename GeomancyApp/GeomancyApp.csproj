@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChartAspectAnalysis.cs" />
     <Compile Include="FigureData.cs" />
     <Compile Include="FigureWiki.cs">
       <SubType>Form</SubType>
@@ -64,7 +65,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GeomanticAspects.cs" />
+    <Compile Include="GeomancyAPI.cs" />
     <Compile Include="HouseChart.cs" />
+    <Compile Include="PerfectionCalculator.cs" />
+    <Compile Include="PerfectionResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FigureWiki.resx">
@@ -81,7 +86,6 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

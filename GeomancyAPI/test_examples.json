@@ -1,0 +1,125 @@
+{
+  "examples": {
+    "generate_single_figure": {
+      "description": "Generate a Via figure (1-2-1-2 pattern)",
+      "endpoint": "POST /api/geomancy/figure",
+      "request": {
+        "headLine": 1,
+        "neckLine": 2,
+        "bodyLine": 1,
+        "footLine": 2
+      }
+    },
+    "generate_four_figures": {
+      "description": "Generate 4 figures for houses 1-4",
+      "endpoint": "POST /api/geomancy/figures",
+      "request": {
+        "house1": {
+          "headLine": 1,
+          "neckLine": 2,
+          "bodyLine": 1,
+          "footLine": 2
+        },
+        "house2": {
+          "headLine": 2,
+          "neckLine": 1,
+          "bodyLine": 2,
+          "footLine": 1
+        },
+        "house3": {
+          "headLine": 1,
+          "neckLine": 1,
+          "bodyLine": 2,
+          "footLine": 2
+        },
+        "house4": {
+          "headLine": 2,
+          "neckLine": 2,
+          "bodyLine": 1,
+          "footLine": 1
+        }
+      }
+    },
+    "generate_complete_chart": {
+      "description": "Generate a complete house chart with all calculations",
+      "endpoint": "POST /api/geomancy/chart",
+      "request": {
+        "house1": {
+          "headLine": 1,
+          "neckLine": 2,
+          "bodyLine": 1,
+          "footLine": 2
+        },
+        "house2": {
+          "headLine": 2,
+          "neckLine": 1,
+          "bodyLine": 2,
+          "footLine": 1
+        },
+        "house3": {
+          "headLine": 1,
+          "neckLine": 1,
+          "bodyLine": 2,
+          "footLine": 2
+        },
+        "house4": {
+          "headLine": 2,
+          "neckLine": 2,
+          "bodyLine": 1,
+          "footLine": 1
+        }
+      }
+    },
+    "get_figure_by_name": {
+      "description": "Get Via figure information by name",
+      "endpoint": "GET /api/geomancy/figure/Via",
+      "request": null
+    },
+    "get_figure_by_pattern": {
+      "description": "Get figure information by elemental pattern",
+      "endpoint": "GET /api/geomancy/figure/pattern?headLine=1&neckLine=2&bodyLine=1&footLine=2",
+      "request": null
+    },
+    "get_all_figures": {
+      "description": "Get all 16 geomantic figures",
+      "endpoint": "GET /api/geomancy/figures/all",
+      "request": null
+    }
+  },
+  "figure_names": [
+    "Via",
+    "Populus",
+    "Conjunctio",
+    "Carcer",
+    "Fortuna Minor",
+    "Puer",
+    "Puella",
+    "Amissio",
+    "Fortuna Major",
+    "Acquisitio",
+    "Tristitia",
+    "Laetitia",
+    "Rubeus",
+    "Albus",
+    "Caput Draconis",
+    "Cauda Draconis"
+  ],
+  "elemental_patterns": {
+    "Via": "1-2-1-2",
+    "Populus": "2-2-2-2",
+    "Conjunctio": "1-1-1-1",
+    "Carcer": "2-1-2-1",
+    "Fortuna Minor": "1-2-2-1",
+    "Puer": "1-1-2-2",
+    "Puella": "2-2-1-1",
+    "Amissio": "2-1-1-2",
+    "Fortuna Major": "1-1-1-2",
+    "Acquisitio": "2-2-2-1",
+    "Tristitia": "1-2-2-2",
+    "Laetitia": "2-1-1-1",
+    "Rubeus": "1-1-2-1",
+    "Albus": "2-2-1-2",
+    "Caput Draconis": "1-2-1-1",
+    "Cauda Draconis": "2-1-2-2"
+  }
+} 

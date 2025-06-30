@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geomancy API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        h2 {
+            color: #666;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+        .method {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .url {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .success {
+            color: #28a745;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+        }
+        .port-selector {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .subsection {
+            margin-bottom: 10px;
+        }
+        .url-example {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .url-display {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <h1>Geomancy API Test Interface</h1>
+    
+    <div class="port-selector">
+        <h3>API Configuration</h3>
+        <label>Port:</label>
+        <select id="apiPort">
+            <option value="9000">9000</option>
+            <option value="9001">9001</option>
+            <option value="9002">9002</option>
+            <option value="9003">9003</option>
+            <option value="9004">9004</option>
+        </select>
+        <button onclick="testConnection()">Test Connection</button>
+        <span id="connectionStatus"></span>
+    </div>
+    
+    <div class="container">
+        <h2>Test Connection</h2>
+        <div class="endpoint">
+            <div class="method">GET</div>
+            <div class="url">/api/geomancy/test</div>
+            <button onclick="testConnection()">Test API Connection</button>
+            <div id="testResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Single Figure</h2>
+        <div class="endpoint">
+            <div class="method">POST</div>
+            <div class="url">/api/geomancy/figure</div>
+            <div class="form-group">
+                <label>Head:</label>
+                <select id="headLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+                <label>Neck:</label>
+                <select id="neckLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+                <label>Body:</label>
+                <select id="bodyLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+                <label>Foot:</label>
+                <select id="footLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+            </div>
+            <button onclick="generateFigure()">Generate Figure</button>
+            <div id="figureResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Four Figures</h2>
+        <div class="endpoint">
+            <div class="method">POST</div>
+            <div class="url">/api/geomancy/figures</div>
+            <div class="form-group">
+                <h3>House 1:</h3>
+                <label>Head:</label><select id="h1Head"><option value="1">1</option><option value="2">2</option></select>
+                <label>Neck:</label><select id="h1Neck"><option value="1">1</option><option value="2">2</option></select>
+                <label>Body:</label><select id="h1Body"><option value="1">1</option><option value="2">2</option></select>
+                <label>Foot:</label><select id="h1Foot"><option value="1">1</option><option value="2">2</option></select>
+            </div>
+            <div class="form-group">
+                <h3>House 2:</h3>
+                <label>Head:</label><select id="h2Head"><option value="1">1</option><option value="2">2</option></select>
+                <label>Neck:</label><select id="h2Neck"><option value="1">1</option><option value="2">2</option></select>
+                <label>Body:</label><select id="h2Body"><option value="1">1</option><option value="2">2</option></select>
+                <label>Foot:</label><select id="h2Foot"><option value="1">1</option><option value="2">2</option></select>
+            </div>
+            <div class="form-group">
+                <h3>House 3:</h3>
+                <label>Head:</label><select id="h3Head"><option value="1">1</option><option value="2">2</option></select>
+                <label>Neck:</label><select id="h3Neck"><option value="1">1</option><option value="2">2</option></select>
+                <label>Body:</label><select id="h3Body"><option value="1">1</option><option value="2">2</option></select>
+                <label>Foot:</label><select id="h3Foot"><option value="1">1</option><option value="2">2</option></select>
+            </div>
+            <div class="form-group">
+                <h3>House 4:</h3>
+                <label>Head:</label><select id="h4Head"><option value="1">1</option><option value="2">2</option></select>
+                <label>Neck:</label><select id="h4Neck"><option value="1">1</option><option value="2">2</option></select>
+                <label>Body:</label><select id="h4Body"><option value="1">1</option><option value="2">2</option></select>
+                <label>Foot:</label><select id="h4Foot"><option value="1">1</option><option value="2">2</option></select>
+            </div>
+            <button onclick="generateFourFigures()">Generate Four Figures</button>
+            <div id="fourFiguresResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Complete House Chart</h2>
+        <div class="endpoint">
+            <div class="method">POST</div>
+            <div class="url">/api/geomancy/chart</div>
+            <p>Uses the same input as "Generate Four Figures" but calculates the complete chart with all 12 houses, witnesses, judge, and sentence.</p>
+            <button onclick="generateChart()">Generate Complete Chart</button>
+            <div id="chartResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Chart from Figure Names (Individual Parameters)</h2>
+        <div class="endpoint">
+            <div class="method">GET</div>
+            <div class="url">/api/geomancy/chart/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer</div>
+            <p><strong>Generate a complete chart by specifying 4 figure names as individual parameters!</strong></p>
+            <div class="form-group">
+                <label>1st Mother:</label>
+                <select id="firstMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>2nd Mother:</label>
+                <select id="secondMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>3rd Mother:</label>
+                <select id="thirdMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>4th Mother:</label>
+                <select id="fourthMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+            </div>
+            <button onclick="generateChartFromFigureNames()">Generate Chart</button>
+            <button onclick="copyChartUrlToClipboard()">Copy URL</button>
+            <div id="chartFromNamesResponse" class="response" style="display: none;"></div>
+            <div id="chartUrlDisplay" style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px; font-family: monospace; word-break: break-all;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Chart from Figure Names (Comma-Separated)</h2>
+        <div class="endpoint">
+            <div class="method">GET</div>
+            <div class="url">/api/geomancy/chart/figures/comma?mothers=Via,Populus,Conjunctio,Carcer</div>
+            <p><strong>Generate a complete chart by specifying 4 figure names as a comma-separated list!</strong></p>
+            <div class="form-group">
+                <label>Mothers:</label>
+                <input type="text" id="mothersComma" value="Via,Populus,Conjunctio,Carcer" style="width: 300px;" placeholder="Enter 4 figure names separated by commas">
+                <p style="font-size: 12px; color: #666;">Example: Via,Populus,Conjunctio,Carcer</p>
+            </div>
+            <button onclick="generateChartFromCommaSeparated()">Generate Chart</button>
+            <button onclick="copyCommaChartUrlToClipboard()">Copy URL</button>
+            <div id="chartFromCommaResponse" class="response" style="display: none;"></div>
+            <div id="commaChartUrlDisplay" style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px; font-family: monospace; word-break: break-all;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Get Figure by Name</h2>
+        <div class="endpoint">
+            <div class="method">GET</div>
+            <div class="url">/api/geomancy/figure/{figureName}</div>
+            <div class="form-group">
+                <label>Figure:</label>
+                <select id="figureName">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+            </div>
+            <button onclick="getFigureByName()">Get Figure</button>
+            <div id="figureByNameResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Generate Figure by URL (Simple)</h2>
+        <div class="endpoint">
+            <div class="method">GET</div>
+            <div class="url">/api/geomancy/figure/pattern?headLine=1&neckLine=2&bodyLine=1&footLine=2</div>
+            <p><strong>This is the simplest way to generate a figure!</strong> Just use a URL with query parameters.</p>
+            <div class="form-group">
+                <label>Head:</label>
+                <select id="urlHeadLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+                <label>Neck:</label>
+                <select id="urlNeckLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+                <label>Body:</label>
+                <select id="urlBodyLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+                <label>Foot:</label>
+                <select id="urlFootLine">
+                    <option value="1">1 (Active)</option>
+                    <option value="2">2 (Passive)</option>
+                </select>
+            </div>
+            <button onclick="generateFigureByUrl()">Generate Figure</button>
+            <button onclick="copyUrlToClipboard()">Copy URL</button>
+            <div id="urlFigureResponse" class="response" style="display: none;"></div>
+            <div id="urlDisplay" style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px; font-family: monospace; word-break: break-all;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Get All Figures</h2>
+        <div class="endpoint">
+            <div class="method">GET</div>
+            <div class="url">/api/geomancy/figures/all</div>
+            <button onclick="getAllFigures()">Get All Figures</button>
+            <div id="allFiguresResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Calculate Perfection (Interpretation Layer)</h2>
+        <div class="endpoint">
+            <div class="method">POST</div>
+            <div class="url">/api/geomancy/perfection</div>
+            <p><strong>Calculate the mode of perfection between two significators using Greer's classical rules!</strong></p>
+            <div class="form-group">
+                <h3>Mother Figures:</h3>
+                <label>1st Mother:</label>
+                <select id="perf1stMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>2nd Mother:</label>
+                <select id="perf2ndMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>3rd Mother:</label>
+                <select id="perf3rdMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>4th Mother:</label>
+                <select id="perf4thMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <h3>Significators:</h3>
+                <label>Querent House:</label>
+                <select id="querentHouse">
+                    <option value="1">1 (Vita)</option>
+                    <option value="2">2 (Lucrum)</option>
+                    <option value="3">3 (Fratres)</option>
+                    <option value="4">4 (Genitor)</option>
+                    <option value="5">5 (Nati)</option>
+                    <option value="6">6 (Valetudo)</option>
+                    <option value="7">7 (Uxor)</option>
+                    <option value="8">8 (Mors)</option>
+                    <option value="9">9 (Itineris)</option>
+                    <option value="10">10 (Regnum)</option>
+                    <option value="11">11 (Benefacta)</option>
+                    <option value="12">12 (Carcer)</option>
+                </select>
+                <label>Quesited House:</label>
+                <select id="quesitedHouse">
+                    <option value="1">1 (Vita)</option>
+                    <option value="2">2 (Lucrum)</option>
+                    <option value="3">3 (Fratres)</option>
+                    <option value="4">4 (Genitor)</option>
+                    <option value="5">5 (Nati)</option>
+                    <option value="6">6 (Valetudo)</option>
+                    <option value="7" selected>7 (Uxor)</option>
+                    <option value="8">8 (Mors)</option>
+                    <option value="9">9 (Itineris)</option>
+                    <option value="10">10 (Regnum)</option>
+                    <option value="11">11 (Benefacta)</option>
+                    <option value="12">12 (Carcer)</option>
+                </select>
+            </div>
+            <button onclick="calculatePerfection()">Calculate Perfection</button>
+            <div id="perfectionResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Get Chart Aspects (Interpretation Layer)</h2>
+        <div class="endpoint">
+            <div class="method">POST</div>
+            <div class="url">/api/geomancy/aspects</div>
+            <p><strong>Get all aspects in a chart above a minimum aspect type using Greer's classical aspect rules!</strong></p>
+            <div class="form-group">
+                <h3>Mother Figures:</h3>
+                <label>1st Mother:</label>
+                <select id="aspect1stMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>2nd Mother:</label>
+                <select id="aspect2ndMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>3rd Mother:</label>
+                <select id="aspect3rdMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+                <label>4th Mother:</label>
+                <select id="aspect4thMother">
+                    <option value="Via">Via</option>
+                    <option value="Populus">Populus</option>
+                    <option value="Conjunctio">Conjunctio</option>
+                    <option value="Carcer">Carcer</option>
+                    <option value="Fortuna Minor">Fortuna Minor</option>
+                    <option value="Puer">Puer</option>
+                    <option value="Puella">Puella</option>
+                    <option value="Amissio">Amissio</option>
+                    <option value="Fortuna Major">Fortuna Major</option>
+                    <option value="Acquisitio">Acquisitio</option>
+                    <option value="Tristitia">Tristitia</option>
+                    <option value="Laetitia">Laetitia</option>
+                    <option value="Rubeus">Rubeus</option>
+                    <option value="Albus">Albus</option>
+                    <option value="Caput Draconis">Caput Draconis</option>
+                    <option value="Cauda Draconis">Cauda Draconis</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Minimum Aspect Type:</label>
+                <select id="minAspectType">
+                    <option value="Sextile">Sextile</option>
+                    <option value="Square">Square</option>
+                    <option value="Trine">Trine</option>
+                    <option value="Opposition">Opposition</option>
+                    <option value="Conjunction">Conjunction</option>
+                </select>
+            </div>
+            <button onclick="getChartAspects()">Get Aspects</button>
+            <div id="aspectsResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>URL-Based Testing</h3>
+        <p>Test the API directly in your browser with these simple GET endpoints:</p>
+        
+        <div class="subsection">
+            <h4>Perfection Calculation by Figure Names</h4>
+            <p>Calculate perfection between houses using figure names:</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/perfection/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer&querentHouse=1&quesitedHouse=7</code>
+            </div>
+            <button onclick="copyUrl('perfection-figures-example')">Copy Example URL</button>
+            <div id="perfection-figures-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/perfection/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer&querentHouse=1&quesitedHouse=7
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>Perfection Calculation by Elemental Pattern</h4>
+            <p>Calculate perfection using elemental line values (1 or 2 for each line):</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/perfection/pattern?h1Head=1&h1Neck=2&h1Body=1&h1Foot=2&h2Head=2&h2Neck=1&h2Body=2&h2Foot=1&h3Head=1&h3Neck=1&h3Body=2&h3Foot=2&h4Head=2&h4Neck=2&h4Body=1&h4Foot=1&querentHouse=1&quesitedHouse=7</code>
+            </div>
+            <button onclick="copyUrl('perfection-pattern-example')">Copy Example URL</button>
+            <div id="perfection-pattern-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/perfection/pattern?h1Head=1&h1Neck=2&h1Body=1&h1Foot=2&h2Head=2&h2Neck=1&h2Body=2&h2Foot=1&h3Head=1&h3Neck=1&h3Body=2&h3Foot=2&h4Head=2&h4Neck=2&h4Body=1&h4Foot=1&querentHouse=1&quesitedHouse=7
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>Aspects Analysis by Figure Names</h4>
+            <p>Get all aspects in a chart using figure names:</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/aspects/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer&minAspect=Sextile</code>
+            </div>
+            <button onclick="copyUrl('aspects-figures-example')">Copy Example URL</button>
+            <div id="aspects-figures-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/aspects/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer&minAspect=Sextile
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>Aspects Analysis by Elemental Pattern</h4>
+            <p>Get all aspects using elemental line values:</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/aspects/pattern?h1Head=1&h1Neck=2&h1Body=1&h1Foot=2&h2Head=2&h2Neck=1&h2Body=2&h2Foot=1&h3Head=1&h3Neck=1&h3Body=2&h3Foot=2&h4Head=2&h4Neck=2&h4Body=1&h4Foot=1&minAspect=Trine</code>
+            </div>
+            <button onclick="copyUrl('aspects-pattern-example')">Copy Example URL</button>
+            <div id="aspects-pattern-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/aspects/pattern?h1Head=1&h1Neck=2&h1Body=1&h1Foot=2&h2Head=2&h2Neck=1&h2Body=2&h2Foot=1&h3Head=1&h3Neck=1&h3Body=2&h3Foot=2&h4Head=2&h4Neck=2&h4Body=1&h4Foot=1&minAspect=Trine
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>Simple Figure Generation</h4>
+            <p>Generate a single figure from elemental pattern:</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/figure/pattern?h1=1&h2=2&h3=1&h4=2</code>
+            </div>
+            <button onclick="copyUrl('figure-pattern-example')">Copy Example URL</button>
+            <div id="figure-pattern-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/figure/pattern?h1=1&h2=2&h3=1&h4=2
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>House Chart Generation</h4>
+            <p>Generate complete house chart from figure names:</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/chart/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer</code>
+            </div>
+            <button onclick="copyUrl('chart-figures-example')">Copy Example URL</button>
+            <div id="chart-figures-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/chart/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>Multiple Perfections Analysis</h4>
+            <p>Find all perfections in a chart (tests every house pair):</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/perfections/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer</code>
+            </div>
+            <button onclick="copyUrl('perfections-figures-example')">Copy Example URL</button>
+            <div id="perfections-figures-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/perfections/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h4>Chart Aspect Analysis with Scoring</h4>
+            <p>Get aspect strength score and detailed aspect analysis:</p>
+            <div class="url-example">
+                <strong>Example:</strong><br>
+                <code>http://localhost:9000/api/geomancy/aspect-analysis/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer</code>
+            </div>
+            <button onclick="copyUrl('aspect-analysis-figures-example')">Copy Example URL</button>
+            <div id="aspect-analysis-figures-example" class="url-display" style="display:none;">
+                http://localhost:9000/api/geomancy/aspect-analysis/figures?firstMother=Via&secondMother=Populus&thirdMother=Conjunctio&fourthMother=Carcer
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getBaseUrl() {
+            const port = document.getElementById('apiPort').value;
+            return `http://localhost:${port}`;
+        }
+
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'response ' + (isError ? 'error' : 'success');
+            element.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+
+        function hideResponse(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        async function testConnection() {
+            const baseUrl = getBaseUrl();
+            const statusElement = document.getElementById('connectionStatus');
+            
+            try {
+                statusElement.textContent = 'Testing...';
+                statusElement.className = '';
+                
+                const response = await fetch(`${baseUrl}/api/geomancy/test`);
+                if (response.ok) {
+                    const data = await response.json();
+                    showResponse('testResponse', data);
+                    statusElement.textContent = '✓ Connected';
+                    statusElement.className = 'success';
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                showResponse('testResponse', `Connection failed: ${error.message}`, true);
+                statusElement.textContent = '✗ Connection failed';
+                statusElement.className = 'error';
+            }
+        }
+
+        async function generateFigure() {
+            const baseUrl = getBaseUrl();
+            const data = {
+                headLine: parseInt(document.getElementById('headLine').value),
+                neckLine: parseInt(document.getElementById('neckLine').value),
+                bodyLine: parseInt(document.getElementById('bodyLine').value),
+                footLine: parseInt(document.getElementById('footLine').value)
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/figure`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                showResponse('figureResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('figureResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        async function generateFourFigures() {
+            const baseUrl = getBaseUrl();
+            const data = {
+                house1: {
+                    headLine: parseInt(document.getElementById('h1Head').value),
+                    neckLine: parseInt(document.getElementById('h1Neck').value),
+                    bodyLine: parseInt(document.getElementById('h1Body').value),
+                    footLine: parseInt(document.getElementById('h1Foot').value)
+                },
+                house2: {
+                    headLine: parseInt(document.getElementById('h2Head').value),
+                    neckLine: parseInt(document.getElementById('h2Neck').value),
+                    bodyLine: parseInt(document.getElementById('h2Body').value),
+                    footLine: parseInt(document.getElementById('h2Foot').value)
+                },
+                house3: {
+                    headLine: parseInt(document.getElementById('h3Head').value),
+                    neckLine: parseInt(document.getElementById('h3Neck').value),
+                    bodyLine: parseInt(document.getElementById('h3Body').value),
+                    footLine: parseInt(document.getElementById('h3Foot').value)
+                },
+                house4: {
+                    headLine: parseInt(document.getElementById('h4Head').value),
+                    neckLine: parseInt(document.getElementById('h4Neck').value),
+                    bodyLine: parseInt(document.getElementById('h4Body').value),
+                    footLine: parseInt(document.getElementById('h4Foot').value)
+                }
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/figures`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                showResponse('fourFiguresResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('fourFiguresResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        async function generateChart() {
+            const baseUrl = getBaseUrl();
+            const data = {
+                house1: {
+                    headLine: parseInt(document.getElementById('h1Head').value),
+                    neckLine: parseInt(document.getElementById('h1Neck').value),
+                    bodyLine: parseInt(document.getElementById('h1Body').value),
+                    footLine: parseInt(document.getElementById('h1Foot').value)
+                },
+                house2: {
+                    headLine: parseInt(document.getElementById('h2Head').value),
+                    neckLine: parseInt(document.getElementById('h2Neck').value),
+                    bodyLine: parseInt(document.getElementById('h2Body').value),
+                    footLine: parseInt(document.getElementById('h2Foot').value)
+                },
+                house3: {
+                    headLine: parseInt(document.getElementById('h3Head').value),
+                    neckLine: parseInt(document.getElementById('h3Neck').value),
+                    bodyLine: parseInt(document.getElementById('h3Body').value),
+                    footLine: parseInt(document.getElementById('h3Foot').value)
+                },
+                house4: {
+                    headLine: parseInt(document.getElementById('h4Head').value),
+                    neckLine: parseInt(document.getElementById('h4Neck').value),
+                    bodyLine: parseInt(document.getElementById('h4Body').value),
+                    footLine: parseInt(document.getElementById('h4Foot').value)
+                }
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/chart`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                showResponse('chartResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('chartResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        async function getFigureByName() {
+            const baseUrl = getBaseUrl();
+            const figureName = document.getElementById('figureName').value;
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/figure/${encodeURIComponent(figureName)}`);
+                const result = await response.json();
+                showResponse('figureByNameResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('figureByNameResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        async function getAllFigures() {
+            const baseUrl = getBaseUrl();
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/figures/all`);
+                const result = await response.json();
+                showResponse('allFiguresResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('allFiguresResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        async function generateFigureByUrl() {
+            const baseUrl = getBaseUrl();
+            const headLine = document.getElementById('urlHeadLine').value;
+            const neckLine = document.getElementById('urlNeckLine').value;
+            const bodyLine = document.getElementById('urlBodyLine').value;
+            const footLine = document.getElementById('urlFootLine').value;
+
+            const url = `${baseUrl}/api/geomancy/figure/pattern?headLine=${headLine}&neckLine=${neckLine}&bodyLine=${bodyLine}&footLine=${footLine}`;
+            
+            // Display the URL
+            document.getElementById('urlDisplay').textContent = url;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                showResponse('urlFigureResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('urlFigureResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        function copyUrlToClipboard() {
+            const baseUrl = getBaseUrl();
+            const headLine = document.getElementById('urlHeadLine').value;
+            const neckLine = document.getElementById('urlNeckLine').value;
+            const bodyLine = document.getElementById('urlBodyLine').value;
+            const footLine = document.getElementById('urlFootLine').value;
+
+            const url = `${baseUrl}/api/geomancy/figure/pattern?headLine=${headLine}&neckLine=${neckLine}&bodyLine=${bodyLine}&footLine=${footLine}`;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('URL copied to clipboard!');
+            });
+        }
+
+        async function generateChartFromFigureNames() {
+            const baseUrl = getBaseUrl();
+            const firstMother = encodeURIComponent(document.getElementById('firstMother').value);
+            const secondMother = encodeURIComponent(document.getElementById('secondMother').value);
+            const thirdMother = encodeURIComponent(document.getElementById('thirdMother').value);
+            const fourthMother = encodeURIComponent(document.getElementById('fourthMother').value);
+
+            const url = `${baseUrl}/api/geomancy/chart/figures?firstMother=${firstMother}&secondMother=${secondMother}&thirdMother=${thirdMother}&fourthMother=${fourthMother}`;
+            
+            // Display the URL
+            document.getElementById('chartUrlDisplay').textContent = url;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                showResponse('chartFromNamesResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('chartFromNamesResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        function copyChartUrlToClipboard() {
+            const baseUrl = getBaseUrl();
+            const firstMother = encodeURIComponent(document.getElementById('firstMother').value);
+            const secondMother = encodeURIComponent(document.getElementById('secondMother').value);
+            const thirdMother = encodeURIComponent(document.getElementById('thirdMother').value);
+            const fourthMother = encodeURIComponent(document.getElementById('fourthMother').value);
+
+            const url = `${baseUrl}/api/geomancy/chart/figures?firstMother=${firstMother}&secondMother=${secondMother}&thirdMother=${thirdMother}&fourthMother=${fourthMother}`;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('URL copied to clipboard!');
+            });
+        }
+
+        async function generateChartFromCommaSeparated() {
+            const baseUrl = getBaseUrl();
+            const mothers = encodeURIComponent(document.getElementById('mothersComma').value);
+
+            const url = `${baseUrl}/api/geomancy/chart/figures/comma?mothers=${mothers}`;
+            
+            // Display the URL
+            document.getElementById('commaChartUrlDisplay').textContent = url;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                showResponse('chartFromCommaResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('chartFromCommaResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        function copyCommaChartUrlToClipboard() {
+            const baseUrl = getBaseUrl();
+            const mothers = encodeURIComponent(document.getElementById('mothersComma').value);
+
+            const url = `${baseUrl}/api/geomancy/chart/figures/comma?mothers=${mothers}`;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('URL copied to clipboard!');
+            });
+        }
+
+        async function calculatePerfection() {
+            const baseUrl = getBaseUrl();
+            
+            // Get mother figures and convert to elemental patterns
+            const mother1 = new GeomanticFigure(document.getElementById('perf1stMother').value);
+            const mother2 = new GeomanticFigure(document.getElementById('perf2ndMother').value);
+            const mother3 = new GeomanticFigure(document.getElementById('perf3rdMother').value);
+            const mother4 = new GeomanticFigure(document.getElementById('perf4thMother').value);
+            
+            const data = {
+                mothers: {
+                    house1: {
+                        headLine: mother1.HeadLine,
+                        neckLine: mother1.NeckLine,
+                        bodyLine: mother1.BodyLine,
+                        footLine: mother1.FootLine
+                    },
+                    house2: {
+                        headLine: mother2.HeadLine,
+                        neckLine: mother2.NeckLine,
+                        bodyLine: mother2.BodyLine,
+                        footLine: mother2.FootLine
+                    },
+                    house3: {
+                        headLine: mother3.HeadLine,
+                        neckLine: mother3.NeckLine,
+                        bodyLine: mother3.BodyLine,
+                        footLine: mother3.FootLine
+                    },
+                    house4: {
+                        headLine: mother4.HeadLine,
+                        neckLine: mother4.NeckLine,
+                        bodyLine: mother4.BodyLine,
+                        footLine: mother4.FootLine
+                    }
+                },
+                querentHouse: parseInt(document.getElementById('querentHouse').value),
+                quesitedHouse: parseInt(document.getElementById('quesitedHouse').value)
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/perfection`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                showResponse('perfectionResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('perfectionResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        async function getChartAspects() {
+            const baseUrl = getBaseUrl();
+            
+            // Get mother figures and convert to elemental patterns
+            const mother1 = new GeomanticFigure(document.getElementById('aspect1stMother').value);
+            const mother2 = new GeomanticFigure(document.getElementById('aspect2ndMother').value);
+            const mother3 = new GeomanticFigure(document.getElementById('aspect3rdMother').value);
+            const mother4 = new GeomanticFigure(document.getElementById('aspect4thMother').value);
+            
+            const data = {
+                house1: {
+                    headLine: mother1.HeadLine,
+                    neckLine: mother1.NeckLine,
+                    bodyLine: mother1.BodyLine,
+                    footLine: mother1.FootLine
+                },
+                house2: {
+                    headLine: mother2.HeadLine,
+                    neckLine: mother2.NeckLine,
+                    bodyLine: mother2.BodyLine,
+                    footLine: mother2.FootLine
+                },
+                house3: {
+                    headLine: mother3.HeadLine,
+                    neckLine: mother3.NeckLine,
+                    bodyLine: mother3.BodyLine,
+                    footLine: mother3.FootLine
+                },
+                house4: {
+                    headLine: mother4.HeadLine,
+                    neckLine: mother4.NeckLine,
+                    bodyLine: mother4.BodyLine,
+                    footLine: mother4.FootLine
+                }
+            };
+
+            const minAspect = document.getElementById('minAspectType').value;
+
+            try {
+                const response = await fetch(`${baseUrl}/api/geomancy/aspects?minAspect=${minAspect}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                showResponse('aspectsResponse', result, !response.ok);
+            } catch (error) {
+                showResponse('aspectsResponse', `Error: ${error.message}`, true);
+            }
+        }
+
+        // Helper function to create GeomanticFigure from name (simplified for JavaScript)
+        function GeomanticFigure(name) {
+            // This is a simplified version for the JavaScript interface
+            // In a real implementation, you'd need the full figure data
+            this.Name = name;
+            // Default elemental patterns - in practice, you'd look these up
+            const patterns = {
+                'Via': {HeadLine: 1, NeckLine: 1, BodyLine: 1, FootLine: 1},
+                'Populus': {HeadLine: 2, NeckLine: 2, BodyLine: 2, FootLine: 2},
+                'Conjunctio': {HeadLine: 2, NeckLine: 1, BodyLine: 1, FootLine: 2},
+                'Carcer': {HeadLine: 1, NeckLine: 2, BodyLine: 2, FootLine: 1},
+                'Fortuna Minor': {HeadLine: 1, NeckLine: 1, BodyLine: 2, FootLine: 2},
+                'Puer': {HeadLine: 1, NeckLine: 2, BodyLine: 2, FootLine: 1},
+                'Puella': {HeadLine: 2, NeckLine: 1, BodyLine: 1, FootLine: 2},
+                'Amissio': {HeadLine: 2, NeckLine: 2, BodyLine: 1, FootLine: 1},
+                'Fortuna Major': {HeadLine: 1, NeckLine: 2, BodyLine: 2, FootLine: 2},
+                'Acquisitio': {HeadLine: 2, NeckLine: 1, BodyLine: 1, FootLine: 1},
+                'Tristitia': {HeadLine: 1, NeckLine: 1, BodyLine: 2, FootLine: 1},
+                'Laetitia': {HeadLine: 2, NeckLine: 2, BodyLine: 1, FootLine: 2},
+                'Rubeus': {HeadLine: 1, NeckLine: 1, BodyLine: 1, FootLine: 2},
+                'Albus': {HeadLine: 2, NeckLine: 2, BodyLine: 2, FootLine: 1},
+                'Caput Draconis': {HeadLine: 1, NeckLine: 2, BodyLine: 1, FootLine: 1},
+                'Cauda Draconis': {HeadLine: 2, NeckLine: 1, BodyLine: 2, FootLine: 2}
+            };
+            
+            const pattern = patterns[name] || {HeadLine: 1, NeckLine: 1, BodyLine: 1, FootLine: 1};
+            this.HeadLine = pattern.HeadLine;
+            this.NeckLine = pattern.NeckLine;
+            this.BodyLine = pattern.BodyLine;
+            this.FootLine = pattern.FootLine;
+        }
+
+        // Auto-test connection on page load
+        window.onload = function() {
+            setTimeout(testConnection, 1000);
+        };
+
+        function copyUrl(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show the URL display
+                element.style.display = 'block';
+                
+                // Change button text temporarily
+                const button = element.previousElementSibling;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.backgroundColor = '#28a745';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '#007bff';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy URL to clipboard');
+            });
+        }
+    </script>
+</body>
+</html> 

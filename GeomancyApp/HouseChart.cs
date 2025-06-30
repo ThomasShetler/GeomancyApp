@@ -15,6 +15,37 @@ namespace GeomancyApp
         public int HouseNumber { get; set; }
         public string FigureName { get; set; }
 
+        // Backward compatibility properties for Form1 (lowercase)
+        public int headLine 
+        { 
+            get => HeadLine; 
+            set => HeadLine = value; 
+        }
+        
+        public int neckLine 
+        { 
+            get => NeckLine; 
+            set => NeckLine = value; 
+        }
+        
+        public int bodyLine 
+        { 
+            get => BodyLine; 
+            set => BodyLine = value; 
+        }
+        
+        public int footLine 
+        { 
+            get => FootLine; 
+            set => FootLine = value; 
+        }
+        
+        public string figureName 
+        { 
+            get => FigureName ?? Name; 
+            set => FigureName = value; 
+        }
+
         // Constructor to create figure from elemental pattern
         public GeomanticFigure(int headLine, int neckLine, int bodyLine, int footLine, int houseNumber = 0)
         {
@@ -138,6 +169,43 @@ namespace GeomancyApp
         public GeomanticFigure LeftWitness { get; set; }
         public GeomanticFigure Judge { get; set; }
         public GeomanticFigure Sentence { get; set; }
+
+        // Backward compatibility properties for Form1
+        public GeomanticFigure ForthHouse 
+        { 
+            get => FourthHouse; 
+            set => FourthHouse = value; 
+        }
+        
+        public GeomanticFigure EightHouse 
+        { 
+            get => EighthHouse; 
+            set => EighthHouse = value; 
+        }
+        
+        public GeomanticFigure eleventhHouse 
+        { 
+            get => EleventhHouse; 
+            set => EleventhHouse = value; 
+        }
+        
+        public GeomanticFigure twelvethHouse 
+        { 
+            get => TwelfthHouse; 
+            set => TwelfthHouse = value; 
+        }
+        
+        public GeomanticFigure LeftWittness 
+        { 
+            get => LeftWitness; 
+            set => LeftWitness = value; 
+        }
+        
+        public GeomanticFigure fallout 
+        { 
+            get => Sentence; 
+            set => Sentence = value; 
+        }
 
         // Constructor
         public HouseChart()
@@ -313,25 +381,39 @@ namespace GeomancyApp
             return (h1 + h2) % 2 == 0 ? 2 : 1;
         }
 
+        /// <summary>
+        /// Returns 1 (single dot) or 2 (double dot) after XOR-adding any number of
+        /// geomantic lines.  A single-dot line is stored as 1, a double-dot line as 2.
+        /// </summary>
+        private static int ParitySum(params int[] lines)
+        {
+            // Count how many lines are "active" (single dots)
+            int ones = lines.Count(l => l == 1);
+            return (ones % 2 == 0) ? 2 : 1;   // even → 2 dots, odd → 1 dot
+        }
+
         // Method to calculate witnesses from the houses
         public void CalculateWitnesses()
         {
-            if (FifthHouse != null && SixthHouse != null && SeventhHouse != null && EighthHouse != null)
-            {
-                // Right Witness calculation (from Houses 5 and 7)
-                int rightHead = CalculateNieces(FifthHouse.HeadLine, SeventhHouse.HeadLine);
-                int rightNeck = CalculateNieces(FifthHouse.NeckLine, SeventhHouse.NeckLine);
-                int rightBody = CalculateNieces(FifthHouse.BodyLine, SeventhHouse.BodyLine);
-                int rightFoot = CalculateNieces(FifthHouse.FootLine, SeventhHouse.FootLine);
-                RightWitness = new GeomanticFigure(rightHead, rightNeck, rightBody, rightFoot);
+            // Make sure the nieces are present
+            if (NinthHouse == null || TenthHouse == null || EleventhHouse == null || TwelfthHouse == null)
+                return;
 
-                // Left Witness calculation (from Houses 6 and 8)
-                int leftHead = CalculateNieces(SixthHouse.HeadLine, EighthHouse.HeadLine);
-                int leftNeck = CalculateNieces(SixthHouse.NeckLine, EighthHouse.NeckLine);
-                int leftBody = CalculateNieces(SixthHouse.BodyLine, EighthHouse.BodyLine);
-                int leftFoot = CalculateNieces(SixthHouse.FootLine, EighthHouse.FootLine);
-                LeftWitness = new GeomanticFigure(leftHead, leftNeck, leftBody, leftFoot);
-            }
+            // === RIGHT WITNESS (Shield position 13): Niece 1 + Niece 2 ===
+            RightWitness = new GeomanticFigure(
+                ParitySum(NinthHouse.HeadLine,  TenthHouse.HeadLine),
+                ParitySum(NinthHouse.NeckLine,  TenthHouse.NeckLine),
+                ParitySum(NinthHouse.BodyLine,  TenthHouse.BodyLine),
+                ParitySum(NinthHouse.FootLine,  TenthHouse.FootLine)
+            ) { HouseNumber = 13 };
+
+            // === LEFT WITNESS (Shield position 14): Niece 3 + Niece 4 ===
+            LeftWitness = new GeomanticFigure(
+                ParitySum(EleventhHouse.HeadLine, TwelfthHouse.HeadLine),
+                ParitySum(EleventhHouse.NeckLine, TwelfthHouse.NeckLine),
+                ParitySum(EleventhHouse.BodyLine, TwelfthHouse.BodyLine),
+                ParitySum(EleventhHouse.FootLine, TwelfthHouse.FootLine)
+            ) { HouseNumber = 14 };
         }
 
         // Method to calculate the Judge from the witnesses
@@ -393,15 +475,18 @@ namespace GeomancyApp
             return FirstHouse != null && SecondHouse != null && ThirdHouse != null && FourthHouse != null &&
                    RightWitness != null && LeftWitness != null && Judge != null && Sentence != null;
         }
-
-        // Legacy compatibility - keep the old figure class for backward compatibility
-        public class figure : GeomanticFigure
-        {
-            public figure(int headLine, int neckLine, int bodyLine, int footLine, int houseNumber = 0) 
-                : base(headLine, neckLine, bodyLine, footLine, houseNumber) { }
-            
-            public figure(string figureName, int houseNumber = 0) 
-                : base(figureName, houseNumber) { }
-        }
     }
+
+    // Legacy compatibility - keep the old figure class for backward compatibility
+    public class figure : GeomanticFigure
+    {
+        public figure(int headLine, int neckLine, int bodyLine, int footLine, int houseNumber = 0) 
+            : base(headLine, neckLine, bodyLine, footLine, houseNumber) { }
+        
+        public figure(string figureName, int houseNumber = 0) 
+            : base(figureName, houseNumber) { }
+            
+        // Default constructor for Form1 compatibility
+        public figure() : base(1, 1, 1, 1) { }
+     }
 }
