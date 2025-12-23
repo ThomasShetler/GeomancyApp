@@ -2,6 +2,8 @@
 
 A RESTful API for generating geomantic figures and house charts using traditional geomancy methods.
 
+**Version: 1.1.0.0**
+
 ## Overview
 
 This API provides endpoints for:
@@ -9,6 +11,52 @@ This API provides endpoints for:
 - Creating four figures for the first four houses
 - Generating complete house charts with all 12 houses, witnesses, judge, and sentence
 - Retrieving figure information by name or elemental pattern
+
+## Version 1.1.0.0 - 12/22/2025
+
+### New Features
+
+1. **Blazor Web UI Application**
+   - Created a complete Blazor WebAssembly application (`GeomancyWebUI`)
+   - Interactive web interface for generating and visualizing geomantic charts
+   - Client-side and server-side Blazor components
+   - Theme support with dark/light mode toggle
+   - Responsive design with Bootstrap styling
+   - Chart visualization page with detailed aspect analysis
+   - Perfection analysis view component
+
+2. **.NET Aspire Integration**
+   - Added `GeomancyApp.AppHost` project for service orchestration
+   - Created `GeomancyApp.ServiceDefaults` for shared service configuration
+   - Modern cloud-native architecture support
+
+3. **Enhanced Aspect Analysis System**
+   - Implemented weighted dignity tables (`DignityTables.cs`)
+   - Enhanced `ChartAspectAnalysis` with sophisticated dignity scoring system
+   - Combines Essential Dignity (Rulership/Exaltation) with Accidental Dignity (House Joys)
+   - Sign natural rulership and figure-specific strong/weak house overrides
+   - Planet interaction modifiers (benefic/malefic interactions)
+   - Sign compatibility calculations (elemental compatibility)
+   - Synergy bonuses when planet nature aligns with dignity scores
+   - Detailed weight justifications for aspect calculations
+
+4. **API Enhancements**
+   - Updated API models to support new aspect analysis features
+   - Enhanced controller endpoints with improved aspect reporting
+   - Better integration with dignity table calculations
+
+5. **Core Library Improvements**
+   - Updated `HouseChart.cs` with enhanced functionality
+   - Improved `PerfectionCalculator.cs` calculations
+   - Enhanced `GeomanticAspects.cs` with new aspect analysis capabilities
+   - Updated `FigureData.cs` with additional figure information
+
+### Technical Details
+
+- **Web UI Stack**: Blazor WebAssembly (.NET 8.0)
+- **Aspire Version**: 9.0.0
+- **Target Framework**: .NET 8.0 for new projects
+- **Architecture**: Modern microservices-ready with Aspire orchestration
 
 ## Recent Fixes
 
