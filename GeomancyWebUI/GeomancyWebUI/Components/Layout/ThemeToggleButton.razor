@@ -1,0 +1,31 @@
+@using GeomancyWebUI.Services
+@inject ThemeService ThemeService
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+
+<button class="theme-toggle-button @(ThemeService.IsDarkMode ? "active" : "")" @onclick="ToggleTheme" type="button" title="@(ThemeService.IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode")">
+    <span>@(ThemeService.IsDarkMode ? "☀️" : "🌙")</span>
+</button>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.ThemeChanged += OnThemeChanged;
+    }
+
+    private void ToggleTheme()
+    {
+        ThemeService.ToggleTheme();
+    }
+
+    private void OnThemeChanged(bool isDark)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+}
+

@@ -9,13 +9,16 @@ namespace GeomancyApp
 {
     public class FigureData
     {
+        public string FigureID {get; set;}
         public string Name { get; set; }
         public string OtherNames { get; set; }
         public string Quality { get; set; }
         public string Keyword { get; set; }
         public string Imagery { get; set; }
         public string StrongHouse { get; set; }
+        public int    StrongHouseID {get; set;}
         public string WeakHouse { get; set; }
+        public int    WeakHouseID { get; set; }
         public string Planet { get; set; }
         public string Sign { get; set; }
         public string InnerEl { get; set; }
@@ -43,13 +46,16 @@ namespace GeomancyApp
             {
                 new FigureData
                 {
+                    FigureID = "1",
                     Name = "Puer (Boy)",
                     OtherNames = "Beardless, yellow, warrior, man, sword",
                     Quality = "Mobile",
                     Keyword = "Energy",
                     Imagery = "A sword; a male figure with exaggerated testicles",
                     StrongHouse = "First",
+                    StrongHouseID = 1,
                     WeakHouse = "Seventh",
+                    WeakHouseID = 7,
                     Planet = "Mars",
                     Sign = "Aries",
                     InnerEl = "Air",
@@ -68,13 +74,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "2",
                     Name = "Amissio (Loss)",
                     OtherNames = "Grasping externally, outer wealth, something escaped or lost",
                     Quality = "Mobile",
                     Keyword = "Loss",
                     Imagery = "A bag held mouth downward, letting the contents fall out",
                     StrongHouse = "Second",
+                    StrongHouseID = 2,
                     WeakHouse = "Eighth",
+                    WeakHouseID = 8,
                     Planet = "Venus",
                     Sign = "Taurus",
                     InnerEl = "Fire",
@@ -93,13 +102,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "3",
                     Name = "Albus (White)",
                     OtherNames = "None",
                     Quality = "Stable",
                     Keyword = "Peace",
                     Imagery = "A goblet set upright",
                     StrongHouse = "Third",
+                    StrongHouseID = 3,
                     WeakHouse = "Ninth",
+                    WeakHouseID = 9,
                     Planet = "Mercury",
                     Sign = "Gemini",
                     InnerEl = "Water",
@@ -118,13 +130,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "4",
                     Name = "Populus (People)",
                     OtherNames = "Congregation, multitude, double path",
                     Quality = "Stable",
                     Keyword = "Stability",
                     Imagery = "A crowd",
                     StrongHouse = "Fourth",
+                    StrongHouseID = 4,
                     WeakHouse = "Tenth",
+                    WeakHouseID = 10,
                     Planet = "Moon",
                     Sign = "Cancer",
                     InnerEl = "Water",
@@ -143,13 +158,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "5",
                     Name = "Fortuna Major (Greater Fortune)",
                     OtherNames = "Inward fortune, protection going in, greater omen, inside or hidden help",
                     Quality = "Stable",
                     Keyword = "Power",
                     Imagery = "A valley through which a river flows",
                     StrongHouse = "Fifth",
+                    StrongHouseID = 5,
                     WeakHouse = "Eleventh",
+                    WeakHouseID = 11,
                     Planet = "Sun",
                     Sign = "Leo",
                     InnerEl = "Earth",
@@ -168,13 +186,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "6",
                     Name = "Conjunctio (Conjunction)",
                     OtherNames = "Association, gathering together",
                     Quality = "Mobile",
                     Keyword = "Interaction",
                     Imagery = "A crossroads",
                     StrongHouse = "Sixth",
+                    StrongHouseID = 6,
                     WeakHouse = "Twelfth",
+                    WeakHouseID = 12,
                     Planet = "Mercury",
                     Sign = "Virgo",
                     InnerEl = "Air",
@@ -193,13 +214,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "7",
                     Name = "Puella (Girl)",
                     OtherNames = "Beauty, purity",
                     Quality = "Stable",
                     Keyword = "Harmony",
                     Imagery = "A mirror; a female figure with exaggerated breasts",
                     StrongHouse = "Seventh",
+                    StrongHouseID = 7,
                     WeakHouse = "First",
+                    WeakHouseID = 1,
                     Planet = "Venus",
                     Sign = "Libra",
                     InnerEl = "Water",
@@ -218,13 +242,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "8",
                     Name = "Rubeus (Red)",
                     OtherNames = "Burning, danger",
                     Quality = "Mobile",
                     Keyword = "Passion",
                     Imagery = "A goblet turned upside down",
                     StrongHouse = "Eighth",
+                    StrongHouseID = 8,
                     WeakHouse = "Second",
+                    WeakHouseID = 2,
                     Planet = "Mars",
                     Sign = "Scorpio",
                     InnerEl = "Air",
@@ -243,13 +270,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "9",
                     Name = "Acquisitio (Gain)",
                     OtherNames = "Grasping internally, inner wealth, something gained or picked up",
                     Quality = "Stable",
                     Keyword = "Gain",
                     Imagery = "A bag held mouth upward, as though to take something in",
                     StrongHouse = "Ninth",
+                    StrongHouseID = 9,
                     WeakHouse = "Third",
+                    WeakHouseID = 3,
                     Planet = "Jupiter",
                     Sign = "Sagittarius",
                     InnerEl = "Air",
@@ -268,13 +298,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "10",
                     Name = "Carcer (Prison)",
                     OtherNames = "Constricted, lock",
                     Quality = "Stable",
                     Keyword = "Isolation",
                     Imagery = "An enclosure",
                     StrongHouse = "Tenth",
+                    StrongHouseID = 10,
                     WeakHouse = "Fourth",
+                    WeakHouseID = 4,
                     Planet = "Saturn",
                     Sign = "Capricorn",
                     InnerEl = "Earth",
@@ -293,13 +326,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "11",
                     Name = "Tristitia (Sorrow)",
                     OtherNames = "Crosswise, diminished, accursed, head down, fallen tower, cross",
                     Quality = "Stable",
                     Keyword = "Sorrow",
                     Imagery = "A pit, a stake driven downward",
                     StrongHouse = "Eleventh",
+                    StrongHouseID = 11,
                     WeakHouse = "Fifth",
+                    WeakHouseID = 5,
                     Planet = "Saturn",
                     Sign = "Aquarius",
                     InnerEl = "Earth",
@@ -318,13 +354,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "12",
                     Name = "Laetitia (Joy)",
                     OtherNames = "Bearded, laughing, singing, high tower, head lifted, candelabrum, high mountain",
                     Quality = "Mobile",
                     Keyword = "Joy",
                     Imagery = "A tower",
                     StrongHouse = "Twelfth",
+                    StrongHouseID = 12,
                     WeakHouse = "Sixth",
+                    WeakHouseID = 6,
                     Planet = "Jupiter",
                     Sign = "Pisces",
                     InnerEl = "Fire",
@@ -343,13 +382,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "13",
                     Name = "Cauda Draconis (Tail of the Dragon)",
                     OtherNames = "Outer threshold, threshold going out, lower boundary, stepping outside",
                     Quality = "Mobile",
                     Keyword = "Ending",
                     Imagery = "A doorway with footprints leading away from it",
                     StrongHouse = "Ninth",
+                    StrongHouseID = 9,
                     WeakHouse = "Third",
+                    WeakHouseID = 3,
                     Planet = "South node of the Moon",
                     Sign = "Sagittarius",
                     InnerEl = "Fire",
@@ -368,13 +410,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "14",
                     Name = "Caput Draconis (Head of the Dragon)",
                     OtherNames = "Inner threshold, threshold coming in, upper boundary, high tree, upright staff, stepping inside",
                     Quality = "Stable",
                     Keyword = "Beginning",
                     Imagery = "A doorway with footprints leading toward it",
                     StrongHouse = "Sixth",
+                    StrongHouseID = 6,
                     WeakHouse = "Twelfth",
+                    WeakHouseID = 12,
                     Planet = "North node of the Moon",
                     Sign = "Virgo",
                     InnerEl = "Earth",
@@ -393,13 +438,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "15",
                     Name = "Fortuna Minor (Lesser Fortune)",
                     OtherNames = "Outward fortune, protection going out, lesser omen, outside or apparent help",
                     Quality = "Mobile",
                     Keyword = "Swiftness",
                     Imagery = "A mountain with a staff atop it",
                     StrongHouse = "Fifth",
+                    StrongHouseID = 5,
                     WeakHouse = "Eleventh",
+                    WeakHouseID = 11,
                     Planet = "Sun",
                     Sign = "Leo",
                     InnerEl = "Fire",
@@ -418,13 +466,16 @@ namespace GeomancyApp
 
                 new FigureData
                 {
+                    FigureID = "16",
                     Name = "Via (Way)",
                     OtherNames = "Wayfarer, candle, journey",
                     Quality = "Mobile",
                     Keyword = "Change",
                     Imagery = "A road",
                     StrongHouse = "Fourth",
+                    StrongHouseID = 4,
                     WeakHouse = "Tenth",
+                    WeakHouseID = 10,
                     Planet = "Moon",
                     Sign = "Cancer",
                     InnerEl = "Water",

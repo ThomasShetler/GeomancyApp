@@ -1,0 +1,162 @@
+@using GeomancyWebUI.Client.Models
+
+<div class="figure-container @GetHouseStrengthClass()" title="@Figure?.Name">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <div class="figure-label">
+            @Label
+            @if (ShowHouseStrength && Figure != null && Figure.HouseStrength != FigureInHouseStrength.Neutral)
+            {
+                <span class="house-strength-badge @GetHouseStrengthBadgeClass()" title="@GetHouseStrengthTooltip()">
+                    @GetHouseStrengthSymbol()
+                </span>
+            }
+        </div>
+    }
+    <div class="figure-lines">
+        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+             @onclick="() => ToggleLine(1)"
+             title="@GetLineTooltip(1)">
+            @GetLineDisplay(Figure?.HeadLine ?? 2)
+        </div>
+        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+             @onclick="() => ToggleLine(2)"
+             title="@GetLineTooltip(2)">
+            @GetLineDisplay(Figure?.NeckLine ?? 2)
+        </div>
+        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+             @onclick="() => ToggleLine(3)"
+             title="@GetLineTooltip(3)">
+            @GetLineDisplay(Figure?.BodyLine ?? 2)
+        </div>
+        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+             @onclick="() => ToggleLine(4)"
+             title="@GetLineTooltip(4)">
+            @GetLineDisplay(Figure?.FootLine ?? 2)
+        </div>
+    </div>
+    @if (ShowFigureName && !string.IsNullOrEmpty(Figure?.Name))
+    {
+        <div class="figure-name">@Figure.Name</div>
+    }
+</div>
+
+@code {
+    [Parameter] public FigureModel? Figure { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public bool IsInteractive { get; set; } = true;
+    [Parameter] public bool ShowFigureName { get; set; } = false;
+    [Parameter] public bool ShowHouseStrength { get; set; } = true;  // Show house strength by default
+    [Parameter] public EventCallback<FigureModel> OnFigureChanged { get; set; }
+
+    private string GetLineDisplay(int? lineValue)
+    {
+        return lineValue == 1 ? "  ◆" : "◆ ◆";
+    }
+
+    private string GetLineTooltip(int lineNumber)
+    {
+        if (!IsInteractive) return string.Empty;
+        
+        var lineNames = new[] { "Head (Fire)", "Neck (Air)", "Body (Water)", "Foot (Earth)" };
+        var currentValue = GetLineValue(lineNumber);
+        var newValue = currentValue == 1 ? 2 : 1;
+        return $"Click to toggle {lineNames[lineNumber - 1]} from {currentValue} to {newValue}";
+    }
+
+    private int GetLineValue(int lineNumber)
+    {
+        return lineNumber switch
+        {
+            1 => Figure?.HeadLine ?? 2,
+            2 => Figure?.NeckLine ?? 2,
+            3 => Figure?.BodyLine ?? 2,
+            4 => Figure?.FootLine ?? 2,
+            _ => 2
+        };
+    }
+
+    private void SetLineValue(int lineNumber, int value)
+    {
+        if (Figure == null)
+        {
+            Figure = new FigureModel();
+        }
+
+        switch (lineNumber)
+        {
+            case 1:
+                Figure.HeadLine = value;
+                break;
+            case 2:
+                Figure.NeckLine = value;
+                break;
+            case 3:
+                Figure.BodyLine = value;
+                break;
+            case 4:
+                Figure.FootLine = value;
+                break;
+        }
+    }
+
+    private async Task ToggleLine(int lineNumber)
+    {
+        if (!IsInteractive || Figure == null) return;
+
+        var currentValue = GetLineValue(lineNumber);
+        var newValue = currentValue == 1 ? 2 : 1;
+        SetLineValue(lineNumber, newValue);
+        
+        await OnFigureChanged.InvokeAsync(Figure);
+    }
+
+    private string GetHouseStrengthClass()
+    {
+        if (Figure == null) return string.Empty;
+        
+        return Figure.HouseStrength switch
+        {
+            FigureInHouseStrength.StrongInHouse => "house-strong",
+            FigureInHouseStrength.WeakInHouse => "house-weak",
+            _ => string.Empty
+        };
+    }
+
+    private string GetHouseStrengthBadgeClass()
+    {
+        if (Figure == null) return string.Empty;
+        
+        return Figure.HouseStrength switch
+        {
+            FigureInHouseStrength.StrongInHouse => "badge-strong",
+            FigureInHouseStrength.WeakInHouse => "badge-weak",
+            _ => string.Empty
+        };
+    }
+
+    private string GetHouseStrengthSymbol()
+    {
+        if (Figure == null) return string.Empty;
+        
+        return Figure.HouseStrength switch
+        {
+            FigureInHouseStrength.StrongInHouse => "▲",
+            FigureInHouseStrength.WeakInHouse => "▼",
+            _ => string.Empty
+        };
+    }
+
+    private string GetHouseStrengthTooltip()
+    {
+        if (Figure == null) return string.Empty;
+        
+        return Figure.HouseStrength switch
+        {
+            FigureInHouseStrength.StrongInHouse => $"Strong in House {Label}",
+            FigureInHouseStrength.WeakInHouse => $"Weak in House {Label}",
+            _ => string.Empty
+        };
+    }
+}
+

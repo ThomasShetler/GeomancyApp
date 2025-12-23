@@ -454,10 +454,10 @@ namespace GeomancyAPI.Controllers
         /// Calculate perfection between two significators in a chart
         /// </summary>
         /// <param name="request">Chart data and significator houses</param>
-        /// <returns>Perfection analysis result</returns>
+        /// <returns>Perfection analysis result (may contain multiple perfections)</returns>
         [HttpPost]
         [Route("perfection")]
-        [ResponseType(typeof(PerfectionResponse))]
+        [ResponseType(typeof(MultiplePerfectionsResponse))]
         public HttpResponseMessage CalculatePerfection([FromBody] PerfectionRequest request)
         {
             try
@@ -476,33 +476,63 @@ namespace GeomancyAPI.Controllers
                     request.Mothers.House4.HeadLine, request.Mothers.House4.NeckLine, request.Mothers.House4.BodyLine, request.Mothers.House4.FootLine
                 );
 
-                // Calculate perfection
-                var perfection = PerfectionCalculator.Find(houseChart, request.QuerentHouse, request.QuesitedHouse);
+                // Calculate all perfections for this pair
+                var allPerfections = PerfectionCalculator.Find(houseChart, request.QuerentHouse, request.QuesitedHouse, returnAllModes: true);
 
-                // Convert to response model
-                var response = new PerfectionResponse
+                // Filter out None perfections
+                var validPerfections = allPerfections.Where(p => p.Mode != PerfectionType.None).ToList();
+
+                // Convert all perfections to response models (without individual scores)
+                var perfectionResponses = new List<PerfectionResponse>();
+                foreach (var perfection in validPerfections)
                 {
-                    Mode = perfection.Mode.ToString(),
-                    AspectBetweenSignificators = perfection.AspectBetweenSignificators.ToString(),
-                    TranslatorHouse = perfection.TranslatorHouse,
-                    TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : null,
-                    Notes = perfection.Notes,
-                    QuerentHouse = request.QuerentHouse,
-                    QuesitedHouse = request.QuesitedHouse,
-                    QuerentFigure = houseChart.GetHouseFigure(request.QuerentHouse)?.Name,
-                    QuesitedFigure = houseChart.GetHouseFigure(request.QuesitedHouse)?.Name,
+                    var perfectionResponse = ToPerfectionResponseWithoutScoring(perfection, houseChart, request.QuerentHouse, request.QuesitedHouse);
+                    perfectionResponses.Add(perfectionResponse);
+                }
+
+                // Calculate aggregate scores after all perfections are found
+                int totalFavorableScore = 0;
+                
+                // Sum favorable scores from all perfections
+                foreach (var perfection in validPerfections)
+                {
+                    totalFavorableScore += PerfectionCalculator.CalculateScore(perfection);
+                }
+                
+                // Calculate total unfavorable score once (handles impedition and unfavorable aspects)
+                // This method checks impedition only if no perfections exist, and checks unfavorable aspects
+                int totalUnfavorableScore = PerfectionCalculator.CalculateTotalUnfavorableScore(houseChart, request.QuerentHouse, request.QuesitedHouse);
+                
+                int aggregateNetScore = totalFavorableScore + totalUnfavorableScore; // unfavorableScore is already negative
+
+                // Apply aggregate scores to all responses
+                foreach (var perfectionResponse in perfectionResponses)
+                {
+                    perfectionResponse.FavorableScore = totalFavorableScore;
+                    perfectionResponse.UnfavorableScore = totalUnfavorableScore;
+                    perfectionResponse.NetScore = aggregateNetScore;
+                }
+
+                var response = new MultiplePerfectionsResponse
+                {
                     Success = true,
-                    Message = "Perfection calculation completed successfully"
+                    Message = perfectionResponses.Count > 0 
+                        ? $"Found {perfectionResponses.Count} perfection(s)." 
+                        : "No perfections found.",
+                    Perfections = perfectionResponses,
+                    TotalPerfections = perfectionResponses.Count
                 };
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
             {
-                var errorResponse = new PerfectionResponse
+                var errorResponse = new MultiplePerfectionsResponse
                 {
                     Success = false,
-                    Message = $"Error calculating perfection: {ex.Message}"
+                    Message = $"Error calculating perfection: {ex.Message}",
+                    Perfections = new List<PerfectionResponse>(),
+                    TotalPerfections = 0
                 };
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, errorResponse);
             }
@@ -554,21 +584,8 @@ namespace GeomancyAPI.Controllers
                 // Calculate perfection
                 var perfection = PerfectionCalculator.Find(houseChart, querentHouse, quesitedHouse);
 
-                // Convert to response model
-                var response = new PerfectionResponse
-                {
-                    Mode = perfection.Mode.ToString(),
-                    AspectBetweenSignificators = perfection.AspectBetweenSignificators.ToString(),
-                    TranslatorHouse = perfection.TranslatorHouse,
-                    TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : null,
-                    Notes = perfection.Notes,
-                    QuerentHouse = querentHouse,
-                    QuesitedHouse = quesitedHouse,
-                    QuerentFigure = houseChart.GetHouseFigure(querentHouse)?.Name,
-                    QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
-                    Success = true,
-                    Message = "Perfection calculation completed successfully"
-                };
+                // Convert to response model with scoring
+                var response = ToPerfectionResponse(perfection, houseChart, querentHouse, quesitedHouse);
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -640,21 +657,8 @@ namespace GeomancyAPI.Controllers
                 // Calculate perfection
                 var perfection = PerfectionCalculator.Find(houseChart, querentHouse, quesitedHouse);
 
-                // Convert to response model
-                var response = new PerfectionResponse
-                {
-                    Mode = perfection.Mode.ToString(),
-                    AspectBetweenSignificators = perfection.AspectBetweenSignificators.ToString(),
-                    TranslatorHouse = perfection.TranslatorHouse,
-                    TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : null,
-                    Notes = perfection.Notes,
-                    QuerentHouse = querentHouse,
-                    QuesitedHouse = quesitedHouse,
-                    QuerentFigure = houseChart.GetHouseFigure(querentHouse)?.Name,
-                    QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
-                    Success = true,
-                    Message = "Perfection calculation completed successfully"
-                };
+                // Convert to response model with scoring
+                var response = ToPerfectionResponse(perfection, houseChart, querentHouse, quesitedHouse);
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -877,21 +881,8 @@ namespace GeomancyAPI.Controllers
                 // Find all perfections
                 var perfections = PerfectionCalculator.FindAll(houseChart).ToList();
 
-                // Convert to response model
-                var perfectionList = perfections.Select(p => new PerfectionResponse
-                {
-                    Mode = p.Mode.ToString(),
-                    AspectBetweenSignificators = p.AspectBetweenSignificators.ToString(),
-                    TranslatorHouse = p.TranslatorHouse,
-                    TranslatorFigure = p.TranslatorHouse > 0 ? houseChart.GetHouseFigure(p.TranslatorHouse)?.Name : null,
-                    Notes = p.Notes,
-                    QuerentHouse = p.QuerentHouse,
-                    QuesitedHouse = p.QuesitedHouse,
-                    QuerentFigure = houseChart.GetHouseFigure(p.QuerentHouse)?.Name,
-                    QuesitedFigure = houseChart.GetHouseFigure(p.QuesitedHouse)?.Name,
-                    Success = true,
-                    Message = "Perfection found"
-                }).ToList();
+                // Convert to response model with scoring
+                var perfectionList = perfections.Select(p => ToPerfectionResponse(p, houseChart, p.QuerentHouse, p.QuesitedHouse)).ToList();
 
                 var response = new MultiplePerfectionsResponse
                 {
@@ -961,7 +952,14 @@ namespace GeomancyAPI.Controllers
                     AspectType = d.Aspect.ToString(),
                     Weight = d.Weight,
                     FromFigure = houseChart.GetHouseFigure(d.From)?.Name,
-                    ToFigure = houseChart.GetHouseFigure(d.To)?.Name
+                    ToFigure = houseChart.GetHouseFigure(d.To)?.Name,
+                    Justification = d.Justification != null ? new WeightJustificationDetail
+                    {
+                        BaseWeight = d.Justification.BaseWeight,
+                        TotalModifier = d.Justification.TotalModifier,
+                        FinalWeight = d.Justification.FinalWeight,
+                        Justifications = d.Justification.Justifications
+                    } : null
                 }).ToList();
 
                 var response = new AspectAnalysisResponse
@@ -1039,24 +1037,16 @@ namespace GeomancyAPI.Controllers
                 // Find all perfections for the specific pair
                 var perfections = PerfectionCalculator.FindAll(houseChart, querentHouse, quesitedHouse).ToList();
 
-                // Convert to response model
-                var perfectionList = perfections.Select(p => new PerfectionResponse
+                // Convert to response model with scoring
+                var perfectionList = perfections.Select(p =>
                 {
-                    Mode = p.Mode.ToString(),
-                    AspectBetweenSignificators = p.AspectBetweenSignificators.ToString(),
-                    TranslatorHouse = p.TranslatorHouse,
-                    TranslatorFigure = p.TranslatorHouse > 0 ? houseChart.GetHouseFigure(p.TranslatorHouse)?.Name : null,
-                    Notes = p.Notes,
-                    QuerentHouse = querentHouse,
-                    QuesitedHouse = quesitedHouse,
-                    QuerentFigure = houseChart.GetHouseFigure(querentHouse)?.Name,
-                    QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
-                    Indentation = ToIndentScoreResponse(ChartAspectAnalysis.ComputeIndent(houseChart, querentHouse, quesitedHouse)),
-                    TranslatorIndentation = (p.TranslatorHouse > 0)
+                    var perfectionResponse = ToPerfectionResponse(p, houseChart, querentHouse, quesitedHouse);
+                    // Add indentation information
+                    perfectionResponse.Indentation = ToIndentScoreResponse(ChartAspectAnalysis.ComputeIndent(houseChart, querentHouse, quesitedHouse));
+                    perfectionResponse.TranslatorIndentation = (p.TranslatorHouse > 0)
                         ? ToIndentScoreResponse(ChartAspectAnalysis.ComputeIndent(houseChart, querentHouse, p.TranslatorHouse))
-                        : null,
-                    Success = true,
-                    Message = "Perfection found"
+                        : null;
+                    return perfectionResponse;
                 }).ToList();
 
                 var mainIndent = ChartAspectAnalysis.ComputeIndent(houseChart, querentHouse, quesitedHouse);
@@ -1155,6 +1145,7 @@ namespace GeomancyAPI.Controllers
             return new FigureResponse
             {
                 Name = figure.Name,
+                HouseStrength = (Models.FigureInHouseStrength)(int)figure.HouseStrength,
                 OtherNames = figure.OtherNames,
                 Quality = figure.Quality,
                 Keyword = figure.Keyword,
@@ -1223,6 +1214,181 @@ namespace GeomancyAPI.Controllers
                 QuesitedHouse = s.QuesitedHouse,
                 Index = s.Index,
                 Bonus = s.Bonus
+            };
+        }
+
+        // Helper to convert PerfectionResult to PerfectionResponse without scoring (for aggregate calculation)
+        private static PerfectionResponse ToPerfectionResponseWithoutScoring(PerfectionResult perfection, HouseChart houseChart, int querentHouse, int quesitedHouse)
+        {
+            // Build mode string with aspect direction if applicable
+            string modeString = perfection.Mode.ToString();
+            if (perfection.Mode == PerfectionType.None)
+            {
+                modeString = "Impedition";
+            }
+            else if (perfection.Mode == PerfectionType.Aspect && !string.IsNullOrEmpty(perfection.AspectDirection))
+            {
+                modeString = $"Aspect ({perfection.AspectDirection})";
+            }
+            
+            return new PerfectionResponse
+            {
+                Mode = modeString,
+                AspectBetweenSignificators = perfection.AspectBetweenSignificators.ToString(),
+                AspectDirection = perfection.AspectDirection ?? string.Empty,
+                TranslatorHouse = perfection.TranslatorHouse,
+                TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : null,
+                Notes = perfection.Notes,
+                QuerentHouse = querentHouse,
+                QuesitedHouse = quesitedHouse,
+                QuerentFigure = houseChart.GetHouseFigure(querentHouse)?.Name,
+                QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
+                MadeThroughCompany = perfection.MadeThroughCompany,
+                BaseMode = perfection.BaseMode != PerfectionType.None ? perfection.BaseMode.ToString() : null,
+                FavorableScore = 0,  // Will be set after aggregate calculation
+                UnfavorableScore = 0,  // Will be set after aggregate calculation
+                NetScore = 0,  // Will be set after aggregate calculation
+                Success = true,
+                Message = "Perfection calculation completed successfully"
+            };
+        }
+
+        /// <summary>
+        /// Analyze perfections with comprehensive scoring and aspect tracking
+        /// </summary>
+        /// <param name="request">Chart data and significator houses</param>
+        /// <returns>Comprehensive perfection analysis with all aspects</returns>
+        [HttpPost]
+        [Route("perfection/analyze")]
+        [ResponseType(typeof(PerfectionAnalysisResponse))]
+        public HttpResponseMessage AnalyzePerfections([FromBody] PerfectionRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+                }
+
+                // Create the house chart from the provided mothers
+                var houseChart = new HouseChart();
+                houseChart.SetFirstFourHousesAndCalculate(
+                    request.Mothers.House1.HeadLine, request.Mothers.House1.NeckLine, request.Mothers.House1.BodyLine, request.Mothers.House1.FootLine,
+                    request.Mothers.House2.HeadLine, request.Mothers.House2.NeckLine, request.Mothers.House2.BodyLine, request.Mothers.House2.FootLine,
+                    request.Mothers.House3.HeadLine, request.Mothers.House3.NeckLine, request.Mothers.House3.BodyLine, request.Mothers.House3.FootLine,
+                    request.Mothers.House4.HeadLine, request.Mothers.House4.NeckLine, request.Mothers.House4.BodyLine, request.Mothers.House4.FootLine
+                );
+
+                // Use the new AnalyzePerfections method
+                var analysis = PerfectionCalculator.AnalyzePerfections(houseChart, request.QuerentHouse, request.QuesitedHouse);
+
+                // Convert to response models
+                var perfectionResponses = new List<PerfectionResponse>();
+                foreach (var perfection in analysis.Perfections)
+                {
+                    var perfectionResponse = ToPerfectionResponseWithoutScoring(perfection, houseChart, request.QuerentHouse, request.QuesitedHouse);
+                    perfectionResponses.Add(perfectionResponse);
+                }
+
+                var denialResponses = new List<PerfectionResponse>();
+                foreach (var denial in analysis.Denials)
+                {
+                    var denialResponse = ToPerfectionResponseWithoutScoring(denial, houseChart, request.QuerentHouse, request.QuesitedHouse);
+                    denialResponses.Add(denialResponse);
+                }
+
+                var positiveAspects = analysis.PositiveAspects.Select(a => new AspectRecordResponse
+                {
+                    AspectType = a.AspectType.ToString(),
+                    Direction = a.Direction,
+                    FromHouse = a.FromHouse,
+                    ToHouse = a.ToHouse,
+                    Description = a.Description,
+                    MadeThroughCompany = a.MadeThroughCompany,
+                    IsMajorAspect = a.IsMajorAspect
+                }).ToList();
+
+                var negativeAspects = analysis.NegativeAspects.Select(a => new AspectRecordResponse
+                {
+                    AspectType = a.AspectType.ToString(),
+                    Direction = a.Direction,
+                    FromHouse = a.FromHouse,
+                    ToHouse = a.ToHouse,
+                    Description = a.Description,
+                    MadeThroughCompany = a.MadeThroughCompany,
+                    IsMajorAspect = a.IsMajorAspect
+                }).ToList();
+
+                var response = new PerfectionAnalysisResponse
+                {
+                    Success = true,
+                    Message = $"Found {analysis.Perfections.Count} perfection(s), {analysis.Denials.Count} denial(s), {analysis.PositiveAspects.Count} positive aspect(s), and {analysis.NegativeAspects.Count} negative aspect(s).",
+                    Perfections = perfectionResponses,
+                    Denials = denialResponses,
+                    PositiveAspects = positiveAspects,
+                    NegativeAspects = negativeAspects,
+                    TotalFavorableScore = analysis.TotalFavorableScore,
+                    TotalUnfavorableScore = analysis.TotalUnfavorableScore,
+                    NetScore = analysis.NetScore,
+                    QuerentHouse = analysis.QuerentHouse,
+                    QuesitedHouse = analysis.QuesitedHouse
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new PerfectionAnalysisResponse
+                {
+                    Success = false,
+                    Message = $"Error analyzing perfections: {ex.Message}",
+                    Perfections = new List<PerfectionResponse>(),
+                    Denials = new List<PerfectionResponse>(),
+                    PositiveAspects = new List<AspectRecordResponse>(),
+                    NegativeAspects = new List<AspectRecordResponse>()
+                };
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, errorResponse);
+            }
+        }
+
+        // Helper to convert PerfectionResult to PerfectionResponse with scoring
+        private static PerfectionResponse ToPerfectionResponse(PerfectionResult perfection, HouseChart houseChart, int querentHouse, int quesitedHouse)
+        {
+            // Calculate scores
+            int favorableScore = PerfectionCalculator.CalculateScore(perfection);
+            int unfavorableScore = PerfectionCalculator.CalculateTotalUnfavorableScore(houseChart, querentHouse, quesitedHouse);
+            int netScore = favorableScore + unfavorableScore; // unfavorableScore is already negative
+
+            // Build mode string with aspect direction if applicable
+            string modeString = perfection.Mode.ToString();
+            if (perfection.Mode == PerfectionType.None)
+            {
+                modeString = "Impedition";
+            }
+            else if (perfection.Mode == PerfectionType.Aspect && !string.IsNullOrEmpty(perfection.AspectDirection))
+            {
+                modeString = $"Aspect ({perfection.AspectDirection})";
+            }
+
+            return new PerfectionResponse
+            {
+                Mode = modeString,
+                AspectBetweenSignificators = perfection.AspectBetweenSignificators.ToString(),
+                AspectDirection = perfection.AspectDirection ?? string.Empty,
+                TranslatorHouse = perfection.TranslatorHouse,
+                TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : null,
+                Notes = perfection.Notes,
+                QuerentHouse = querentHouse,
+                QuesitedHouse = quesitedHouse,
+                QuerentFigure = houseChart.GetHouseFigure(querentHouse)?.Name,
+                QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
+                MadeThroughCompany = perfection.MadeThroughCompany,
+                BaseMode = perfection.BaseMode != PerfectionType.None ? perfection.BaseMode.ToString() : null,
+                FavorableScore = favorableScore,
+                UnfavorableScore = unfavorableScore,
+                NetScore = netScore,
+                Success = true,
+                Message = "Perfection calculation completed successfully"
             };
         }
 

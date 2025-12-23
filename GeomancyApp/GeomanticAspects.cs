@@ -55,6 +55,7 @@ namespace GeomancyApp
         }
 
         /*  Enumerate every pair once (i < j) and yield aspects >= min  */
+        /*  Only count aspects when the figures in the two houses are different  */
         public static IEnumerable<(int from, int to, AspectType aspect)>
             AllAspects(HouseChart chart, AspectType min = AspectType.Sextile)
         {
@@ -64,7 +65,28 @@ namespace GeomancyApp
                 {
                     var asp = GetAspect(i, j);
                     if (asp != AspectType.None && (int)asp >= (int)min)
-                        yield return (i, j, asp);
+                    {
+                        // Only count aspects when the figures in the two houses are different
+                        var figure1 = chart?.GetHouseFigure(i);
+                        var figure2 = chart?.GetHouseFigure(j);
+                        
+                        if (figure1 != null && figure2 != null)
+                        {
+                            // Compare figures by name (root name, ignoring case)
+                            string name1 = figure1.Name ?? "";
+                            string name2 = figure2.Name ?? "";
+                            
+                            // Extract root name (before any parentheses)
+                            string root1 = name1.Contains("(") ? name1.Substring(0, name1.IndexOf("(")).Trim() : name1.Trim();
+                            string root2 = name2.Contains("(") ? name2.Substring(0, name2.IndexOf("(")).Trim() : name2.Trim();
+                            
+                            // Only yield if figures are different
+                            if (!root1.Equals(root2, StringComparison.OrdinalIgnoreCase))
+                            {
+                                yield return (i, j, asp);
+                            }
+                        }
+                    }
                 }
             }
         }

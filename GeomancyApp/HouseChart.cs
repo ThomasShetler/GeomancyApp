@@ -6,14 +6,33 @@ using System.Threading.Tasks;
 
 namespace GeomancyApp
 {
+    public enum FigureInHouseStrength
+    {
+        StrongInHouse = 1,
+        WeakInHouse = 2,
+        Neutral = 3
+    }
+
     public class GeomanticFigure : FigureData
     {
         public int HeadLine { get; set; }
         public int NeckLine { get; set; }
         public int BodyLine { get; set; }
         public int FootLine { get; set; }
-        public int HouseNumber { get; set; }
+        
+        private int _houseNumber;
+        public int HouseNumber 
+        { 
+            get => _houseNumber;
+            set 
+            { 
+                _houseNumber = value;
+                CalculateHouseStrength();
+            }
+        }
+        
         public string FigureName { get; set; }
+        public FigureInHouseStrength HouseStrength { get; set; }
 
         // Backward compatibility properties for Form1 (lowercase)
         public int headLine 
@@ -60,13 +79,16 @@ namespace GeomancyApp
             if (figureData != null)
             {
                 // Copy all properties from the found figure
+                FigureID = figureData.FigureID;
                 Name = figureData.Name;
                 OtherNames = figureData.OtherNames;
                 Quality = figureData.Quality;
                 Keyword = figureData.Keyword;
                 Imagery = figureData.Imagery;
                 StrongHouse = figureData.StrongHouse;
+                StrongHouseID = figureData.StrongHouseID;
                 WeakHouse = figureData.WeakHouse;
+                WeakHouseID = figureData.WeakHouseID;
                 Planet = figureData.Planet;
                 Sign = figureData.Sign;
                 InnerEl = figureData.InnerEl;
@@ -82,6 +104,9 @@ namespace GeomancyApp
                 Commentary = figureData.Commentary;
                 DivinatoryMeaning = figureData.DivinatoryMeaning;
                 FigureName = figureData.Name;
+                
+                // Calculate and set house strength (only for houses 1-12)
+                CalculateHouseStrength();
             }
         }
 
@@ -95,13 +120,16 @@ namespace GeomancyApp
             if (figureData != null)
             {
                 // Copy all properties from the found figure
+                FigureID = figureData.FigureID;
                 Name = figureData.Name;
                 OtherNames = figureData.OtherNames;
                 Quality = figureData.Quality;
                 Keyword = figureData.Keyword;
                 Imagery = figureData.Imagery;
                 StrongHouse = figureData.StrongHouse;
+                StrongHouseID = figureData.StrongHouseID;
                 WeakHouse = figureData.WeakHouse;
+                WeakHouseID = figureData.WeakHouseID;
                 Planet = figureData.Planet;
                 Sign = figureData.Sign;
                 InnerEl = figureData.InnerEl;
@@ -119,6 +147,9 @@ namespace GeomancyApp
                 
                 // Set the elemental lines based on the figure's pattern
                 SetElementalLinesFromFigure(figureData);
+                
+                // Calculate and set house strength (only for houses 1-12)
+                CalculateHouseStrength();
             }
         }
 
@@ -129,6 +160,32 @@ namespace GeomancyApp
             NeckLine = figureData.AirElement.Equals("Active", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
             BodyLine = figureData.WaterElement.Equals("Active", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
             FootLine = figureData.EarthElement.Equals("Active", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+        }
+
+        private void CalculateHouseStrength()
+        {
+            // Only calculate strength for houses 1-12 (not for witnesses, judge, or sentence)
+            // Also check that StrongHouseID and WeakHouseID are valid (not 0)
+            if (HouseNumber >= 1 && HouseNumber <= 12 && StrongHouseID > 0 && WeakHouseID > 0)
+            {
+                if (HouseNumber == StrongHouseID)
+                {
+                    HouseStrength = FigureInHouseStrength.StrongInHouse;
+                }
+                else if (HouseNumber == WeakHouseID)
+                {
+                    HouseStrength = FigureInHouseStrength.WeakInHouse;
+                }
+                else
+                {
+                    HouseStrength = FigureInHouseStrength.Neutral;
+                }
+            }
+            else
+            {
+                // For witnesses, judge, sentence, or when IDs aren't set yet, set to Neutral
+                HouseStrength = FigureInHouseStrength.Neutral;
+            }
         }
 
         // Get elemental pattern as string for display

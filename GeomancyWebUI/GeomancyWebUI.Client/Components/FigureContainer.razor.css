@@ -1,0 +1,152 @@
+.figure-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--bg-secondary, #f9f9f9);
+    width: 100%;
+    height: 100%;
+    min-height: 120px;
+    position: relative;
+    transition: border-color 0.3s ease, box-shadow 0.2s ease, background 0.3s ease;
+    box-sizing: border-box;
+    contain: layout style;
+}
+
+.figure-container:hover {
+    border-color: var(--accent-color, #007bff);
+    box-shadow: 0 3px 8px var(--shadow-hover, rgba(0, 123, 255, 0.25));
+    transform: translateY(-1px);
+}
+
+.figure-label {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: var(--text-primary, #333);
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.figure-lines {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    justify-content: center;
+}
+
+.figure-line {
+    font-size: 20px;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--text-primary, #000);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    min-height: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.figure-line.interactive {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    will-change: transform;
+}
+
+.figure-line.interactive:hover {
+    transform: scale(1.1);
+    color: var(--accent-color, #007bff);
+}
+
+.figure-line.interactive:active {
+    transform: scale(0.95);
+}
+
+.figure-name {
+    font-size: 10px;
+    color: var(--text-secondary, #666);
+    margin-top: 4px;
+    text-align: center;
+    font-style: italic;
+    transition: color 0.3s ease;
+}
+
+/* Override for traditional house chart - bring labels closer */
+/* This targets figure containers within the traditional house chart */
+.traditional-house-chart-container .figure-label,
+.house-card-container .figure-label {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+}
+
+.traditional-house-chart-container .figure-name,
+.house-card-container .figure-name {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+}
+
+.traditional-house-chart-container .figure-lines,
+.house-card-container .figure-lines {
+    flex: 0 0 auto !important; /* Remove flex: 1 to prevent expansion */
+    gap: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    justify-content: flex-start !important; /* Remove center justification */
+}
+
+/* House Strength Indicators */
+.house-strength-badge {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 3px;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.badge-strong {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #1e7e34;
+}
+
+.badge-weak {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid #c82333;
+}
+
+/* Container styling for strong/weak houses */
+.figure-container.house-strong {
+    border-color: #28a745;
+    background: linear-gradient(to bottom, #f9f9f9 0%, #f0f9f2 100%);
+}
+
+.figure-container.house-strong:hover {
+    border-color: #1e7e34;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.figure-container.house-weak {
+    border-color: #dc3545;
+    background: linear-gradient(to bottom, #f9f9f9 0%, #fdf0f0 100%);
+}
+
+.figure-container.house-weak:hover {
+    border-color: #c82333;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+

@@ -6,6 +6,12 @@ using Newtonsoft.Json;
 
 namespace GeomancyAPI.Models
 {
+    public enum FigureInHouseStrength
+    {
+        StrongInHouse = 1,
+        WeakInHouse = 2,
+        Neutral = 3
+    }
     // Request model for generating a single figure
     public class GenerateFigureRequest
     {
@@ -71,6 +77,7 @@ namespace GeomancyAPI.Models
         public int NeckLine { get; set; }
         public int BodyLine { get; set; }
         public int FootLine { get; set; }
+        public FigureInHouseStrength HouseStrength { get; set; }
     }
 
     // Response model for a house in the chart
@@ -130,6 +137,7 @@ namespace GeomancyAPI.Models
         public string Message { get; set; }
         public string Mode { get; set; }
         public string AspectBetweenSignificators { get; set; }
+        public string AspectDirection { get; set; }
         public int TranslatorHouse { get; set; }
         public string TranslatorFigure { get; set; }
         public List<string> Notes { get; set; }
@@ -139,6 +147,11 @@ namespace GeomancyAPI.Models
         public string QuesitedFigure { get; set; }
         public IndentScoreResponse Indentation { get; set; }
         public IndentScoreResponse TranslatorIndentation { get; set; }
+        public bool MadeThroughCompany { get; set; }
+        public string BaseMode { get; set; }
+        public int FavorableScore { get; set; }
+        public int UnfavorableScore { get; set; }
+        public int NetScore { get; set; }
     }
 
     public class IndentScoreResponse
@@ -193,6 +206,15 @@ namespace GeomancyAPI.Models
         public int Weight { get; set; }
         public string FromFigure { get; set; }
         public string ToFigure { get; set; }
+        public WeightJustificationDetail Justification { get; set; }
+    }
+    
+    public class WeightJustificationDetail
+    {
+        public int BaseWeight { get; set; }
+        public int TotalModifier { get; set; }
+        public int FinalWeight { get; set; }
+        public List<string> Justifications { get; set; } = new List<string>();
     }
 
     public class AspectInfo
@@ -211,5 +233,31 @@ namespace GeomancyAPI.Models
         public List<AspectInfo> Aspects { get; set; } = new List<AspectInfo>();
         public int TotalAspects { get; set; }
         public string MinimumAspectType { get; set; }
+    }
+
+    public class AspectRecordResponse
+    {
+        public string AspectType { get; set; }
+        public string Direction { get; set; }
+        public int FromHouse { get; set; }
+        public int ToHouse { get; set; }
+        public string Description { get; set; }
+        public bool MadeThroughCompany { get; set; }
+        public bool IsMajorAspect { get; set; }
+    }
+
+    public class PerfectionAnalysisResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public List<PerfectionResponse> Perfections { get; set; } = new List<PerfectionResponse>();
+        public List<PerfectionResponse> Denials { get; set; } = new List<PerfectionResponse>();
+        public List<AspectRecordResponse> PositiveAspects { get; set; } = new List<AspectRecordResponse>();
+        public List<AspectRecordResponse> NegativeAspects { get; set; } = new List<AspectRecordResponse>();
+        public int TotalFavorableScore { get; set; }
+        public int TotalUnfavorableScore { get; set; }
+        public int NetScore { get; set; }
+        public int QuerentHouse { get; set; }
+        public int QuesitedHouse { get; set; }
     }
 } 

@@ -1,0 +1,387 @@
+@using GeomancyWebUI.Client.Models
+
+@if (Analysis == null)
+{
+    <div class="alert alert-info">No perfection analysis available.</div>
+}
+else
+{
+    <div class="perfection-analysis">
+        <h3>Perfection Analysis</h3>
+        
+        <!-- Summary Scores -->
+        <div class="score-summary mb-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card @(Analysis.TotalFavorableScore > 0 ? "border-success" : "")">
+                        <div class="card-body">
+                            <h5 class="card-title">Favorable Score</h5>
+                            <h3 class="@(Analysis.TotalFavorableScore > 0 ? "text-success" : "")">+@Analysis.TotalFavorableScore</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card @(Analysis.TotalUnfavorableScore < 0 ? "border-danger" : "")">
+                        <div class="card-body">
+                            <h5 class="card-title">Unfavorable Score</h5>
+                            <h3 class="@(Analysis.TotalUnfavorableScore < 0 ? "text-danger" : "")">@Analysis.TotalUnfavorableScore</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card @(Analysis.NetScore > 0 ? "border-success" : Analysis.NetScore < 0 ? "border-danger" : "border-secondary")">
+                        <div class="card-body">
+                            <h5 class="card-title">Net Score</h5>
+                            <h3 class="@(Analysis.NetScore > 0 ? "text-success" : Analysis.NetScore < 0 ? "text-danger" : "text-secondary")">@Analysis.NetScore</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perfections (Collapsible) -->
+        <div class="accordion mb-3" id="perfectionsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showPerfections ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#perfectionsCollapse" @onclick="() => showPerfections = !showPerfections">
+                        Perfections (@Analysis.Perfections.Count)
+                    </button>
+                </h2>
+                <div id="perfectionsCollapse" class="accordion-collapse collapse @(showPerfections ? "show" : "")">
+                    <div class="accordion-body">
+                        @if (Analysis.Perfections.Count == 0)
+                        {
+                            <p class="text-muted">No perfections found.</p>
+                        }
+                        else
+                        {
+                            @foreach (var perfection in Analysis.Perfections)
+                            {
+                                @if (perfection.Success)
+                                {
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <!-- Perfection Mode with Company Indicator -->
+                                            <div class="perfection-mode-section mb-2">
+                                                <h6 class="card-title">
+                                                    <strong>Mode:</strong>
+                                                    @if (perfection.Mode == "Company" && perfection.MadeThroughCompany && !string.IsNullOrEmpty(perfection.BaseMode))
+                                                    {
+                                                        <span class="badge bg-primary">@perfection.BaseMode</span>
+                                                        <span class="badge bg-info">Company</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-primary">@perfection.Mode</span>
+                                                        @if (perfection.Mode == "Aspect" && perfection.TranslatorHouse > 0)
+                                                        {
+                                                            <span class="badge bg-warning">Translation</span>
+                                                        }
+                                                        @if (perfection.MadeThroughCompany && perfection.Mode != "Company")
+                                                        {
+                                                            <span class="badge bg-info">Made through Company</span>
+                                                            @if (!string.IsNullOrEmpty(perfection.BaseMode) && perfection.BaseMode != perfection.Mode)
+                                                            {
+                                                                <span class="badge bg-secondary">Base: @perfection.BaseMode</span>
+                                                            }
+                                                        }
+                                                    }
+                                                </h6>
+                                            </div>
+
+                                            <!-- Aspect Information -->
+                                            @if (!string.IsNullOrEmpty(perfection.AspectBetweenSignificators) && perfection.AspectBetweenSignificators != "None")
+                                            {
+                                                <p class="mb-1"><strong>Aspect:</strong> @perfection.AspectBetweenSignificators</p>
+                                            }
+
+                                            <!-- Translator Information -->
+                                            @if (perfection.TranslatorHouse > 0)
+                                            {
+                                                <p class="mb-1">
+                                                    <strong>Translator:</strong> House @perfection.TranslatorHouse
+                                                    @if (!string.IsNullOrEmpty(perfection.TranslatorFigure))
+                                                    {
+                                                        <span>(@perfection.TranslatorFigure)</span>
+                                                    }
+                                                </p>
+                                            }
+
+                                            <!-- Querent/Quesited Figures -->
+                                            @if (!string.IsNullOrEmpty(perfection.QuerentFigure) || !string.IsNullOrEmpty(perfection.QuesitedFigure))
+                                            {
+                                                <p class="mb-1 small">
+                                                    @if (!string.IsNullOrEmpty(perfection.QuerentFigure))
+                                                    {
+                                                        <span><strong>Querent:</strong> House @perfection.QuerentHouse (@perfection.QuerentFigure)</span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(perfection.QuesitedFigure))
+                                                    {
+                                                        <span class="ms-2"><strong>Quesited:</strong> House @perfection.QuesitedHouse (@perfection.QuesitedFigure)</span>
+                                                    }
+                                                </p>
+                                            }
+
+                                            <!-- Notes -->
+                                            @if (perfection.Notes != null && perfection.Notes.Count > 0)
+                                            {
+                                                <div class="notes-section mt-2">
+                                                    <strong>Notes:</strong>
+                                                    <ul class="list-unstyled mt-1 mb-0">
+                                                        @foreach (var note in perfection.Notes)
+                                                        {
+                                                            <li class="small text-muted">
+                                                                • @note
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning">
+                                        <p class="mb-0">@perfection.Message</p>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Denials (Collapsible) -->
+        @if (Analysis.Denials != null && Analysis.Denials.Count > 0)
+        {
+            <div class="accordion mb-3" id="denialsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button @(showDenials ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#denialsCollapse" @onclick="() => showDenials = !showDenials">
+                            <span class="text-warning">⚠️ Denials (@Analysis.Denials.Count)</span>
+                        </button>
+                    </h2>
+                    <div id="denialsCollapse" class="accordion-collapse collapse @(showDenials ? "show" : "")">
+                        <div class="accordion-body">
+                            @{
+                                var hasImpedition = Analysis.Denials.Any(d => d.Mode == "None");
+                                var hasUnfavorableAspects = Analysis.Denials.Any(d => d.AspectBetweenSignificators == "Square" || d.AspectBetweenSignificators == "Opposition");
+                            }
+                            @if (hasImpedition)
+                            {
+                                <div class="alert alert-warning">
+                                    <strong>No connection found between significators - the question cannot be answered (Impedition).</strong>
+                                </div>
+                            }
+                            else if (hasUnfavorableAspects)
+                            {
+                                <div class="alert alert-warning">
+                                    <strong>Unfavorable aspects are the only connection - indirect factors are too strong to overcome. Impedition is also present, indicating no positive connection exists.</strong>
+                                </div>
+                            }
+                            @foreach (var denial in Analysis.Denials)
+                            {
+                                @if (denial.Success)
+                                {
+                                    <div class="card mb-2 border-warning">
+                                        <div class="card-body">
+                                            <!-- Denial Mode with Company Indicator -->
+                                            <div class="perfection-mode-section mb-2">
+                                                <h6 class="card-title text-warning">
+                                                    <strong>Mode:</strong>
+                                                    @if (denial.Mode == "Company" && denial.MadeThroughCompany && !string.IsNullOrEmpty(denial.BaseMode))
+                                                    {
+                                                        <span class="badge bg-warning">@denial.BaseMode</span>
+                                                        <span class="badge bg-info">Company</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-warning">@denial.Mode</span>
+                                                        @if (denial.Mode == "Aspect" && denial.TranslatorHouse > 0)
+                                                        {
+                                                            <span class="badge bg-warning">Translation</span>
+                                                        }
+                                                        @if (denial.MadeThroughCompany && denial.Mode != "Company")
+                                                        {
+                                                            <span class="badge bg-info">Made through Company</span>
+                                                            @if (!string.IsNullOrEmpty(denial.BaseMode) && denial.BaseMode != denial.Mode)
+                                                            {
+                                                                <span class="badge bg-secondary">Base: @denial.BaseMode</span>
+                                                            }
+                                                        }
+                                                    }
+                                                </h6>
+                                            </div>
+
+                                            <!-- Aspect Information -->
+                                            @if (!string.IsNullOrEmpty(denial.AspectBetweenSignificators) && denial.AspectBetweenSignificators != "None")
+                                            {
+                                                <p class="mb-1"><strong>Aspect:</strong> <span class="text-danger">@denial.AspectBetweenSignificators</span></p>
+                                            }
+
+                                            <!-- Translator Information -->
+                                            @if (denial.TranslatorHouse > 0)
+                                            {
+                                                <p class="mb-1">
+                                                    <strong>Translator:</strong> House @denial.TranslatorHouse
+                                                    @if (!string.IsNullOrEmpty(denial.TranslatorFigure))
+                                                    {
+                                                        <span>(@denial.TranslatorFigure)</span>
+                                                    }
+                                                </p>
+                                            }
+
+                                            <!-- Querent/Quesited Figures -->
+                                            @if (!string.IsNullOrEmpty(denial.QuerentFigure) || !string.IsNullOrEmpty(denial.QuesitedFigure))
+                                            {
+                                                <p class="mb-1 small">
+                                                    @if (!string.IsNullOrEmpty(denial.QuerentFigure))
+                                                    {
+                                                        <span><strong>Querent:</strong> House @denial.QuerentHouse (@denial.QuerentFigure)</span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(denial.QuesitedFigure))
+                                                    {
+                                                        <span class="ms-2"><strong>Quesited:</strong> House @denial.QuesitedHouse (@denial.QuesitedFigure)</span>
+                                                    }
+                                                </p>
+                                            }
+
+                                            <!-- Notes -->
+                                            @if (denial.Notes != null && denial.Notes.Count > 0)
+                                            {
+                                                <div class="notes-section mt-2">
+                                                    <strong>Notes:</strong>
+                                                    <ul class="list-unstyled mt-1 mb-0">
+                                                        @foreach (var note in denial.Notes)
+                                                        {
+                                                            <li class="small text-muted">
+                                                                • @note
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning">
+                                        <p class="mb-0">@denial.Message</p>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Positive Aspects (Collapsible) -->
+        <div class="accordion mb-3" id="positiveAspectsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showPositiveAspects ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#positiveAspectsCollapse" @onclick="() => showPositiveAspects = !showPositiveAspects">
+                        Positive Aspects (@Analysis.PositiveAspects.Count)
+                    </button>
+                </h2>
+                <div id="positiveAspectsCollapse" class="accordion-collapse collapse @(showPositiveAspects ? "show" : "")">
+                    <div class="accordion-body">
+                        @if (Analysis.PositiveAspects.Count == 0)
+                        {
+                            <p class="text-muted">No positive aspects found.</p>
+                        }
+                        else
+                        {
+                            @foreach (var aspect in Analysis.PositiveAspects)
+                            {
+                                <div class="card mb-2 border-success @(aspect.IsMajorAspect ? "border-2" : "")">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            @aspect.AspectType
+                                            @if (aspect.IsMajorAspect)
+                                            {
+                                                <span class="badge bg-success ms-2">Major</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary ms-2">Minor</span>
+                                            }
+                                        </h6>
+                                        <p class="mb-1"><strong>Direction:</strong> @aspect.Direction</p>
+                                        <p class="mb-1"><strong>From House @aspect.FromHouse</strong> → <strong>House @aspect.ToHouse</strong></p>
+                                        @if (aspect.MadeThroughCompany)
+                                        {
+                                            <span class="badge bg-info">Made through Company</span>
+                                        }
+                                        <p class="small text-muted mt-2">@aspect.Description</p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Negative Aspects (Collapsible) -->
+        <div class="accordion mb-3" id="negativeAspectsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showNegativeAspects ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#negativeAspectsCollapse" @onclick="() => showNegativeAspects = !showNegativeAspects">
+                        Negative Aspects (@Analysis.NegativeAspects.Count)
+                    </button>
+                </h2>
+                <div id="negativeAspectsCollapse" class="accordion-collapse collapse @(showNegativeAspects ? "show" : "")">
+                    <div class="accordion-body">
+                        @if (Analysis.NegativeAspects.Count == 0)
+                        {
+                            <p class="text-muted">No negative aspects found.</p>
+                        }
+                        else
+                        {
+                            @foreach (var aspect in Analysis.NegativeAspects)
+                            {
+                                <div class="card mb-2 border-danger @(aspect.IsMajorAspect ? "border-2" : "")">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-danger">
+                                            @aspect.AspectType
+                                            @if (aspect.IsMajorAspect)
+                                            {
+                                                <span class="badge bg-danger ms-2">Major</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary ms-2">Minor</span>
+                                            }
+                                        </h6>
+                                        <p class="mb-1"><strong>Direction:</strong> @aspect.Direction</p>
+                                        <p class="mb-1"><strong>From House @aspect.FromHouse</strong> → <strong>House @aspect.ToHouse</strong></p>
+                                        @if (aspect.MadeThroughCompany)
+                                        {
+                                            <span class="badge bg-info">Made through Company</span>
+                                        }
+                                        <p class="small text-muted mt-2">@aspect.Description</p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public PerfectionAnalysisModel? Analysis { get; set; }
+
+    private bool showPerfections = true;
+    private bool showDenials = false;
+    private bool showPositiveAspects = false;
+    private bool showNegativeAspects = false;
+}
+
