@@ -72,6 +72,8 @@
     <Compile Include="PerfectionCalculator.cs" />
     <Compile Include="PerfectionResult.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="WayOfPoints.cs" />
+    <Compile Include="WayOfPointsResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FigureWiki.resx">
       <DependentUpon>FigureWiki.cs</DependentUpon>

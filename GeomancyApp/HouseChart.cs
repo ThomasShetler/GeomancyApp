@@ -532,6 +532,80 @@ namespace GeomancyApp
             return FirstHouse != null && SecondHouse != null && ThirdHouse != null && FourthHouse != null &&
                    RightWitness != null && LeftWitness != null && Judge != null && Sentence != null;
         }
+
+        // Method to get triplicities
+        public List<Triplicity> GetTriplicities()
+        {
+            var triplicities = new List<Triplicity>();
+
+            // 1st Triplicity: Houses 1, 2, 9 (First & Second Mother + First Niece)
+            // Represents the querent, including their circumstances, health, habits, and outlook on life
+            if (FirstHouse != null && SecondHouse != null && NinthHouse != null)
+            {
+                triplicities.Add(new Triplicity
+                {
+                    Number = 1,
+                    FirstFigure = FirstHouse,
+                    SecondFigure = SecondHouse,
+                    ThirdFigure = NinthHouse,
+                    Description = "Represents the querent, including their circumstances, health, habits, and outlook on life"
+                });
+            }
+
+            // 2nd Triplicity: Houses 3, 4, 10 (Third & Fourth Mothers + Second Niece)
+            // Represents the events shaping the querent's life at the time of the reading
+            if (ThirdHouse != null && FourthHouse != null && TenthHouse != null)
+            {
+                triplicities.Add(new Triplicity
+                {
+                    Number = 2,
+                    FirstFigure = ThirdHouse,
+                    SecondFigure = FourthHouse,
+                    ThirdFigure = TenthHouse,
+                    Description = "Represents the events shaping the querent's life at the time of the reading"
+                });
+            }
+
+            // 3rd Triplicity: Houses 5, 6, 11 (First & Second Daughters + Third Niece)
+            // Represents the querent's home and work environment, places they frequent, and the people they meet there
+            if (FifthHouse != null && SixthHouse != null && EleventhHouse != null)
+            {
+                triplicities.Add(new Triplicity
+                {
+                    Number = 3,
+                    FirstFigure = FifthHouse,
+                    SecondFigure = SixthHouse,
+                    ThirdFigure = EleventhHouse,
+                    Description = "Represents the querent's home and work environment, places they frequent, and the people they meet there, including family members and housemates"
+                });
+            }
+
+            // 4th Triplicity: Houses 7, 8, 12 (Third & Fourth Daughters + Fourth Niece)
+            // Represents the querent's friends, associates, and authority figures
+            if (SeventhHouse != null && EighthHouse != null && TwelfthHouse != null)
+            {
+                triplicities.Add(new Triplicity
+                {
+                    Number = 4,
+                    FirstFigure = SeventhHouse,
+                    SecondFigure = EighthHouse,
+                    ThirdFigure = TwelfthHouse,
+                    Description = "Represents the querent's friends, associates, and authority figures"
+                });
+            }
+
+            return triplicities;
+        }
+    }
+
+    // Triplicity class representing a set of three figures
+    public class Triplicity
+    {
+        public int Number { get; set; }
+        public GeomanticFigure FirstFigure { get; set; }
+        public GeomanticFigure SecondFigure { get; set; }
+        public GeomanticFigure ThirdFigure { get; set; }
+        public string Description { get; set; }
     }
 
     // Legacy compatibility - keep the old figure class for backward compatibility

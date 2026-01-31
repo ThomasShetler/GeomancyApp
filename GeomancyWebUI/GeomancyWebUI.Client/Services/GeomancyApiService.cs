@@ -152,7 +152,9 @@ namespace GeomancyWebUI.Client.Services
                     ToHouse = a.ToHouse,
                     Description = a.Description ?? string.Empty,
                     MadeThroughCompany = a.MadeThroughCompany,
-                    IsMajorAspect = a.IsMajorAspect
+                    IsMajorAspect = a.IsMajorAspect,
+                    FavorableScore = a.FavorableScore,
+                    UnfavorableScore = a.UnfavorableScore
                 }).ToList() ?? new List<AspectRecordModel>(),
                 NegativeAspects = apiResponse.NegativeAspects?.Select(a => new AspectRecordModel
                 {
@@ -160,11 +162,13 @@ namespace GeomancyWebUI.Client.Services
                     Direction = a.Direction ?? string.Empty,
                     FromHouse = a.FromHouse,
                     ToHouse = a.ToHouse,
-                    Description = a.Description ?? string.Empty,
-                    MadeThroughCompany = a.MadeThroughCompany,
-                    IsMajorAspect = a.IsMajorAspect
-                }).ToList() ?? new List<AspectRecordModel>(),
-                TotalFavorableScore = apiResponse.TotalFavorableScore,
+                      Description = a.Description ?? string.Empty,
+                      MadeThroughCompany = a.MadeThroughCompany,
+                      IsMajorAspect = a.IsMajorAspect,
+                      FavorableScore = a.FavorableScore,
+                      UnfavorableScore = a.UnfavorableScore
+                  }).ToList() ?? new List<AspectRecordModel>(),
+                  TotalFavorableScore = apiResponse.TotalFavorableScore,
                 TotalUnfavorableScore = apiResponse.TotalUnfavorableScore,
                 NetScore = apiResponse.NetScore,
                 QuerentHouse = apiResponse.QuerentHouse,
@@ -193,6 +197,38 @@ namespace GeomancyWebUI.Client.Services
             
             var apiResponse = await response.Content.ReadFromJsonAsync<AspectAnalysisResponse>();
             return MapToAspectAnalysisModel(apiResponse);
+        }
+
+        public async Task<WayOfPointsAnalysisModel> CalculateWayOfPointsAsync(GenerateFourFiguresRequest request)
+        {
+            // Use absolute URI to bypass service discovery issues
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/way-of-points";
+            
+            var apiRequest = new
+            {
+                House1 = new { request.House1.HeadLine, request.House1.NeckLine, request.House1.BodyLine, request.House1.FootLine },
+                House2 = new { request.House2.HeadLine, request.House2.NeckLine, request.House2.BodyLine, request.House2.FootLine },
+                House3 = new { request.House3.HeadLine, request.House3.NeckLine, request.House3.BodyLine, request.House3.FootLine },
+                House4 = new { request.House4.HeadLine, request.House4.NeckLine, request.House4.BodyLine, request.House4.FootLine }
+            };
+            
+            var response = await _httpClient.PostAsJsonAsync(new Uri(endpoint), apiRequest);
+            response.EnsureSuccessStatusCode();
+            
+            var apiResponse = await response.Content.ReadFromJsonAsync<WayOfPointsAnalysisResponse>();
+            if (apiResponse == null)
+                return new WayOfPointsAnalysisModel();
+            
+            return new WayOfPointsAnalysisModel
+            {
+                Success = apiResponse.Success,
+                Message = apiResponse.Message ?? string.Empty,
+                FireWay = MapToWayOfPointsResultModel(apiResponse.FireWay),
+                AirWay = MapToWayOfPointsResultModel(apiResponse.AirWay),
+                WaterWay = MapToWayOfPointsResultModel(apiResponse.WaterWay),
+                EarthWay = MapToWayOfPointsResultModel(apiResponse.EarthWay)
+            };
         }
 
         private AspectAnalysisModel MapToAspectAnalysisModel(AspectAnalysisResponse? apiResponse)
@@ -280,6 +316,14 @@ namespace GeomancyWebUI.Client.Services
                 LeftWitness = MapToFigureModel(apiChart.LeftWitness),
                 Judge = MapToFigureModel(apiChart.Judge),
                 Sentence = MapToFigureModel(apiChart.Sentence),
+                Triplicities = apiChart.Triplicities?.Select(t => new TriplicityModel
+                {
+                    Number = t.Number,
+                    FirstFigure = MapToFigureModel(t.FirstFigure),
+                    SecondFigure = MapToFigureModel(t.SecondFigure),
+                    ThirdFigure = MapToFigureModel(t.ThirdFigure),
+                    Description = t.Description ?? string.Empty
+                }).ToList() ?? new List<TriplicityModel>(),
                 ChartSummary = apiChart.ChartSummary ?? string.Empty,
                 IsComplete = apiChart.IsComplete,
                 GeneratedAt = apiChart.GeneratedAt
@@ -324,6 +368,15 @@ namespace GeomancyWebUI.Client.Services
             public FigureResponse? Figure { get; set; }
         }
 
+        private class TriplicityResponse
+        {
+            public int Number { get; set; }
+            public FigureResponse? FirstFigure { get; set; }
+            public FigureResponse? SecondFigure { get; set; }
+            public FigureResponse? ThirdFigure { get; set; }
+            public string? Description { get; set; }
+        }
+
         private class HouseChartResponse
         {
             public List<HouseResponse>? Houses { get; set; }
@@ -331,6 +384,7 @@ namespace GeomancyWebUI.Client.Services
             public FigureResponse? LeftWitness { get; set; }
             public FigureResponse? Judge { get; set; }
             public FigureResponse? Sentence { get; set; }
+            public List<TriplicityResponse>? Triplicities { get; set; }
             public string ChartSummary { get; set; } = string.Empty;
             public bool IsComplete { get; set; }
             public DateTime GeneratedAt { get; set; }
@@ -349,6 +403,7 @@ namespace GeomancyWebUI.Client.Services
             public string Message { get; set; } = string.Empty;
             public string Mode { get; set; } = string.Empty;
             public string AspectBetweenSignificators { get; set; } = string.Empty;
+            public string AspectDirection { get; set; } = string.Empty;
             public int TranslatorHouse { get; set; }
             public string TranslatorFigure { get; set; } = string.Empty;
             public List<string>? Notes { get; set; }
@@ -360,6 +415,8 @@ namespace GeomancyWebUI.Client.Services
             public IndentScoreResponse? TranslatorIndentation { get; set; }
             public bool MadeThroughCompany { get; set; }
             public string BaseMode { get; set; } = string.Empty;
+            public string CompanyType { get; set; } = string.Empty;
+            public string CompanyTypeDescription { get; set; } = string.Empty;
             public int FavorableScore { get; set; }
             public int UnfavorableScore { get; set; }
             public int NetScore { get; set; }
@@ -413,6 +470,8 @@ namespace GeomancyWebUI.Client.Services
             public string? Description { get; set; }
             public bool MadeThroughCompany { get; set; }
             public bool IsMajorAspect { get; set; }
+            public int FavorableScore { get; set; }
+            public int UnfavorableScore { get; set; }
         }
 
         private class PerfectionAnalysisResponse
@@ -436,6 +495,38 @@ namespace GeomancyWebUI.Client.Services
             public string Message { get; set; } = string.Empty;
             public List<PerfectionResponse>? Perfections { get; set; }
             public int TotalPerfections { get; set; }
+        }
+
+        private class WayOfPointsPathResponse
+        {
+            public List<int>? Houses { get; set; }
+            public int RowReached { get; set; }
+            public string? PathType { get; set; }
+            public int EndpointHouse { get; set; }
+            public string? Description { get; set; }
+        }
+
+        private class WayOfPointsResultResponse
+        {
+            public string? WayName { get; set; }
+            public string? LineType { get; set; }
+            public bool CanBeEstablished { get; set; }
+            public List<WayOfPointsPathResponse>? AllPaths { get; set; }
+            public List<WayOfPointsPathResponse>? StrongPaths { get; set; }
+            public List<WayOfPointsPathResponse>? PassivePaths { get; set; }
+            public List<WayOfPointsPathResponse>? StrongPassivePaths { get; set; }
+            public List<WayOfPointsPathResponse>? WeakerPassivePaths { get; set; }
+            public List<string>? Notes { get; set; }
+        }
+
+        private class WayOfPointsAnalysisResponse
+        {
+            public bool Success { get; set; }
+            public string? Message { get; set; }
+            public WayOfPointsResultResponse? FireWay { get; set; }
+            public WayOfPointsResultResponse? AirWay { get; set; }
+            public WayOfPointsResultResponse? WaterWay { get; set; }
+            public WayOfPointsResultResponse? EarthWay { get; set; }
         }
 
         private PerfectionModel MapToPerfectionModel(PerfectionResponse? apiResponse)
@@ -474,9 +565,45 @@ namespace GeomancyWebUI.Client.Services
                 } : null,
                 MadeThroughCompany = apiResponse.MadeThroughCompany,
                 BaseMode = apiResponse.BaseMode ?? string.Empty,
+                CompanyType = apiResponse.CompanyType ?? string.Empty,
+                CompanyTypeDescription = apiResponse.CompanyTypeDescription ?? string.Empty,
                 FavorableScore = apiResponse.FavorableScore,
                 UnfavorableScore = apiResponse.UnfavorableScore,
                 NetScore = apiResponse.NetScore
+            };
+        }
+
+        private WayOfPointsPathModel MapToWayOfPointsPathModel(WayOfPointsPathResponse? apiPath)
+        {
+            if (apiPath == null)
+                return new WayOfPointsPathModel();
+
+            return new WayOfPointsPathModel
+            {
+                Houses = apiPath.Houses ?? new List<int>(),
+                RowReached = apiPath.RowReached,
+                PathType = apiPath.PathType ?? string.Empty,
+                EndpointHouse = apiPath.EndpointHouse,
+                Description = apiPath.Description ?? string.Empty
+            };
+        }
+
+        private WayOfPointsResultModel MapToWayOfPointsResultModel(WayOfPointsResultResponse? apiResult)
+        {
+            if (apiResult == null)
+                return new WayOfPointsResultModel();
+
+            return new WayOfPointsResultModel
+            {
+                WayName = apiResult.WayName ?? string.Empty,
+                LineType = apiResult.LineType ?? string.Empty,
+                CanBeEstablished = apiResult.CanBeEstablished,
+                AllPaths = apiResult.AllPaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
+                StrongPaths = apiResult.StrongPaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
+                PassivePaths = apiResult.PassivePaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
+                StrongPassivePaths = apiResult.StrongPassivePaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
+                WeakerPassivePaths = apiResult.WeakerPassivePaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
+                Notes = apiResult.Notes ?? new List<string>()
             };
         }
     }

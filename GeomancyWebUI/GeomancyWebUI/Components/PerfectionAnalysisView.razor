@@ -60,45 +60,83 @@ else
                                 @if (perfection.Success)
                                 {
                                     <div class="card mb-2">
-                                        <div class="card-body">
-                                            <!-- Perfection Mode with Company Indicator -->
-                                            <div class="perfection-mode-section mb-2">
-                                                <h6 class="card-title">
-                                                    <strong>Mode:</strong>
-                                                    @if (perfection.Mode == "Company" && perfection.MadeThroughCompany && !string.IsNullOrEmpty(perfection.BaseMode))
+                                        <div class="card-body position-relative">
+                                            <!-- Score Indicator (top right) -->
+                                            @if (perfection.FavorableScore != 0 || perfection.UnfavorableScore != 0)
+                                            {
+                                                <div class="position-absolute top-0 end-0 p-2">
+                                                    @if (perfection.FavorableScore > 0)
                                                     {
-                                                        <span class="badge bg-primary">@perfection.BaseMode</span>
-                                                        <span class="badge bg-info">Company</span>
+                                                        <span class="badge bg-success">+@perfection.FavorableScore</span>
+                                                    }
+                                                    @if (perfection.UnfavorableScore < 0)
+                                                    {
+                                                        <span class="badge bg-danger">@perfection.UnfavorableScore</span>
+                                                    }
+                                                </div>
+                                            }
+                                            <!-- Mode with Aspect Info Combined -->
+                                            <div class="perfection-mode-section mb-2">
+                                                <h6 class="card-title mb-1">
+                                                    @{
+                                                        var companyTypeDisplay = GetCompanyTypeDisplay(perfection);
+                                                        var baseMode = GetBaseModeName(perfection);
+                                                    }
+                                                    @if (perfection.Mode == "Company")
+                                                    {
+                                                        // Company mode - show company type if available
+                                                        if (!string.IsNullOrEmpty(companyTypeDisplay))
+                                                        {
+                                                            <span class="badge bg-primary">@companyTypeDisplay</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-primary">@perfection.Mode</span>
+                                                        }
+                                                        // Show the base mode (Aspect, Trine, etc.) that was made through company
+                                                        if (!string.IsNullOrEmpty(baseMode))
+                                                        {
+                                                            <span class="badge bg-info">@baseMode</span>
+                                                        }
                                                     }
                                                     else
                                                     {
+                                                        // Regular mode
                                                         <span class="badge bg-primary">@perfection.Mode</span>
-                                                        @if (perfection.Mode == "Aspect" && perfection.TranslatorHouse > 0)
+                                                        @if (perfection.MadeThroughCompany)
                                                         {
-                                                            <span class="badge bg-warning">Translation</span>
-                                                        }
-                                                        @if (perfection.MadeThroughCompany && perfection.Mode != "Company")
-                                                        {
-                                                            <span class="badge bg-info">Made through Company</span>
-                                                            @if (!string.IsNullOrEmpty(perfection.BaseMode) && perfection.BaseMode != perfection.Mode)
+                                                            // Show company type when aspect is made through company
+                                                            if (!string.IsNullOrEmpty(companyTypeDisplay))
                                                             {
-                                                                <span class="badge bg-secondary">Base: @perfection.BaseMode</span>
+                                                                <span class="badge bg-info">@companyTypeDisplay</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-info">Made through Company</span>
                                                             }
                                                         }
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(perfection.AspectBetweenSignificators) && perfection.AspectBetweenSignificators != "None")
+                                                    {
+                                                        <span class="badge bg-info">
+                                                            @perfection.AspectBetweenSignificators
+                                                            @if (!string.IsNullOrEmpty(perfection.AspectDirection))
+                                                            {
+                                                                <text> (@perfection.AspectDirection)</text>
+                                                            }
+                                                        </span>
+                                                    }
+                                                    @if (perfection.Mode == "Aspect" && perfection.TranslatorHouse > 0)
+                                                    {
+                                                        <span class="badge bg-warning">Translation</span>
                                                     }
                                                 </h6>
                                             </div>
 
-                                            <!-- Aspect Information -->
-                                            @if (!string.IsNullOrEmpty(perfection.AspectBetweenSignificators) && perfection.AspectBetweenSignificators != "None")
-                                            {
-                                                <p class="mb-1"><strong>Aspect:</strong> @perfection.AspectBetweenSignificators</p>
-                                            }
-
-                                            <!-- Translator Information -->
+                                            <!-- Translator Information (if applicable) -->
                                             @if (perfection.TranslatorHouse > 0)
                                             {
-                                                <p class="mb-1">
+                                                <p class="mb-1 small text-muted">
                                                     <strong>Translator:</strong> House @perfection.TranslatorHouse
                                                     @if (!string.IsNullOrEmpty(perfection.TranslatorFigure))
                                                     {
@@ -107,27 +145,11 @@ else
                                                 </p>
                                             }
 
-                                            <!-- Querent/Quesited Figures -->
-                                            @if (!string.IsNullOrEmpty(perfection.QuerentFigure) || !string.IsNullOrEmpty(perfection.QuesitedFigure))
-                                            {
-                                                <p class="mb-1 small">
-                                                    @if (!string.IsNullOrEmpty(perfection.QuerentFigure))
-                                                    {
-                                                        <span><strong>Querent:</strong> House @perfection.QuerentHouse (@perfection.QuerentFigure)</span>
-                                                    }
-                                                    @if (!string.IsNullOrEmpty(perfection.QuesitedFigure))
-                                                    {
-                                                        <span class="ms-2"><strong>Quesited:</strong> House @perfection.QuesitedHouse (@perfection.QuesitedFigure)</span>
-                                                    }
-                                                </p>
-                                            }
-
                                             <!-- Notes -->
                                             @if (perfection.Notes != null && perfection.Notes.Count > 0)
                                             {
                                                 <div class="notes-section mt-2">
-                                                    <strong>Notes:</strong>
-                                                    <ul class="list-unstyled mt-1 mb-0">
+                                                    <ul class="list-unstyled mb-0">
                                                         @foreach (var note in perfection.Notes)
                                                         {
                                                             <li class="small text-muted">
@@ -165,66 +187,127 @@ else
                     </h2>
                     <div id="denialsCollapse" class="accordion-collapse collapse @(showDenials ? "show" : "")">
                         <div class="accordion-body">
-                            @{
-                                var hasImpedition = Analysis.Denials.Any(d => d.Mode == "None");
-                                var hasUnfavorableAspects = Analysis.Denials.Any(d => d.AspectBetweenSignificators == "Square" || d.AspectBetweenSignificators == "Opposition");
-                            }
-                            @if (hasImpedition)
-                            {
-                                <div class="alert alert-warning">
-                                    <strong>No connection found between significators - the question cannot be answered (Impedition).</strong>
-                                </div>
-                            }
-                            else if (hasUnfavorableAspects)
-                            {
-                                <div class="alert alert-warning">
-                                    <strong>Unfavorable aspects are the only connection - indirect factors are too strong to overcome. Impedition is also present, indicating no positive connection exists.</strong>
-                                </div>
-                            }
                             @foreach (var denial in Analysis.Denials)
                             {
                                 @if (denial.Success)
                                 {
-                                    <div class="card mb-2 border-warning">
-                                        <div class="card-body">
-                                            <!-- Denial Mode with Company Indicator -->
-                                            <div class="perfection-mode-section mb-2">
-                                                <h6 class="card-title text-warning">
-                                                    <strong>Mode:</strong>
-                                                    @if (denial.Mode == "Company" && denial.MadeThroughCompany && !string.IsNullOrEmpty(denial.BaseMode))
+                                    @if (denial.Mode == "None" || denial.Mode == "Impedition")
+                                    {
+                                        <!-- Impedition Card -->
+                                        <div class="card mb-2 border-warning">
+                                            <div class="card-body position-relative">
+                                                <!-- Score Indicator (top right) -->
+                                                @if (denial.UnfavorableScore < 0)
+                                                {
+                                                    <div class="position-absolute top-0 end-0 p-2">
+                                                        <span class="badge bg-danger">@denial.UnfavorableScore</span>
+                                                    </div>
+                                                }
+                                                <!-- Impedition Mode -->
+                                                <div class="perfection-mode-section mb-2">
+                                                    <h6 class="card-title mb-1">
+                                                        <span class="badge bg-warning">Impedition</span>
+                                                    </h6>
+                                                </div>
+
+                                                <!-- Notes -->
+                                                @if (denial.Notes != null && denial.Notes.Count > 0)
+                                                {
+                                                    <div class="notes-section mt-2">
+                                                        <ul class="list-unstyled mb-0">
+                                                            @foreach (var note in denial.Notes)
+                                                            {
+                                                                <li class="small text-muted">
+                                                                    • @note
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- Regular Denial Card -->
+                                        <div class="card mb-2 border-warning">
+                                            <div class="card-body position-relative">
+                                                <!-- Score Indicator (top right) -->
+                                                @if (denial.FavorableScore != 0 || denial.UnfavorableScore != 0)
+                                                {
+                                                    <div class="position-absolute top-0 end-0 p-2">
+                                                        @if (denial.FavorableScore > 0)
+                                                        {
+                                                            <span class="badge bg-success">+@denial.FavorableScore</span>
+                                                        }
+                                                        @if (denial.UnfavorableScore < 0)
+                                                        {
+                                                            <span class="badge bg-danger">@denial.UnfavorableScore</span>
+                                                        }
+                                                    </div>
+                                                }
+                                                <!-- Mode with Aspect Info Combined -->
+                                                <div class="perfection-mode-section mb-2">
+                                                    <h6 class="card-title mb-1">
+                                                    @{
+                                                        var denialCompanyTypeDisplay = GetCompanyTypeDisplay(denial);
+                                                        var denialBaseMode = GetBaseModeName(denial);
+                                                    }
+                                                    @if (denial.Mode == "Company")
                                                     {
-                                                        <span class="badge bg-warning">@denial.BaseMode</span>
-                                                        <span class="badge bg-info">Company</span>
+                                                        // Company mode - show company type if available
+                                                        if (!string.IsNullOrEmpty(denialCompanyTypeDisplay))
+                                                        {
+                                                            <span class="badge bg-warning">@denialCompanyTypeDisplay</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-warning">@denial.Mode</span>
+                                                        }
+                                                        // Show the base mode (Aspect, Trine, etc.) that was made through company
+                                                        if (!string.IsNullOrEmpty(denialBaseMode))
+                                                        {
+                                                            <span class="badge bg-danger">@denialBaseMode</span>
+                                                        }
                                                     }
                                                     else
                                                     {
+                                                        // Regular mode
                                                         <span class="badge bg-warning">@denial.Mode</span>
-                                                        @if (denial.Mode == "Aspect" && denial.TranslatorHouse > 0)
+                                                        @if (denial.MadeThroughCompany)
                                                         {
-                                                            <span class="badge bg-warning">Translation</span>
-                                                        }
-                                                        @if (denial.MadeThroughCompany && denial.Mode != "Company")
-                                                        {
-                                                            <span class="badge bg-info">Made through Company</span>
-                                                            @if (!string.IsNullOrEmpty(denial.BaseMode) && denial.BaseMode != denial.Mode)
+                                                            // Show company type when aspect is made through company
+                                                            if (!string.IsNullOrEmpty(denialCompanyTypeDisplay))
                                                             {
-                                                                <span class="badge bg-secondary">Base: @denial.BaseMode</span>
+                                                                <span class="badge bg-info">@denialCompanyTypeDisplay</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-info">Made through Company</span>
                                                             }
                                                         }
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(denial.AspectBetweenSignificators) && denial.AspectBetweenSignificators != "None")
+                                                    {
+                                                        <span class="badge bg-danger">
+                                                            @denial.AspectBetweenSignificators
+                                                            @if (!string.IsNullOrEmpty(denial.AspectDirection))
+                                                            {
+                                                                <text> (@denial.AspectDirection)</text>
+                                                            }
+                                                        </span>
+                                                    }
+                                                    @if (denial.Mode == "Aspect" && denial.TranslatorHouse > 0)
+                                                    {
+                                                        <span class="badge bg-warning">Translation</span>
                                                     }
                                                 </h6>
                                             </div>
 
-                                            <!-- Aspect Information -->
-                                            @if (!string.IsNullOrEmpty(denial.AspectBetweenSignificators) && denial.AspectBetweenSignificators != "None")
-                                            {
-                                                <p class="mb-1"><strong>Aspect:</strong> <span class="text-danger">@denial.AspectBetweenSignificators</span></p>
-                                            }
-
-                                            <!-- Translator Information -->
+                                            <!-- Translator Information (if applicable) -->
                                             @if (denial.TranslatorHouse > 0)
                                             {
-                                                <p class="mb-1">
+                                                <p class="mb-1 small text-muted">
                                                     <strong>Translator:</strong> House @denial.TranslatorHouse
                                                     @if (!string.IsNullOrEmpty(denial.TranslatorFigure))
                                                     {
@@ -233,27 +316,11 @@ else
                                                 </p>
                                             }
 
-                                            <!-- Querent/Quesited Figures -->
-                                            @if (!string.IsNullOrEmpty(denial.QuerentFigure) || !string.IsNullOrEmpty(denial.QuesitedFigure))
-                                            {
-                                                <p class="mb-1 small">
-                                                    @if (!string.IsNullOrEmpty(denial.QuerentFigure))
-                                                    {
-                                                        <span><strong>Querent:</strong> House @denial.QuerentHouse (@denial.QuerentFigure)</span>
-                                                    }
-                                                    @if (!string.IsNullOrEmpty(denial.QuesitedFigure))
-                                                    {
-                                                        <span class="ms-2"><strong>Quesited:</strong> House @denial.QuesitedHouse (@denial.QuesitedFigure)</span>
-                                                    }
-                                                </p>
-                                            }
-
                                             <!-- Notes -->
                                             @if (denial.Notes != null && denial.Notes.Count > 0)
                                             {
                                                 <div class="notes-section mt-2">
-                                                    <strong>Notes:</strong>
-                                                    <ul class="list-unstyled mt-1 mb-0">
+                                                    <ul class="list-unstyled mb-0">
                                                         @foreach (var note in denial.Notes)
                                                         {
                                                             <li class="small text-muted">
@@ -265,6 +332,7 @@ else
                                             }
                                         </div>
                                     </div>
+                                    }
                                 }
                                 else
                                 {
@@ -298,7 +366,14 @@ else
                             @foreach (var aspect in Analysis.PositiveAspects)
                             {
                                 <div class="card mb-2 border-success @(aspect.IsMajorAspect ? "border-2" : "")">
-                                    <div class="card-body">
+                                    <div class="card-body position-relative">
+                                        <!-- Score Indicator (top right) -->
+                                        @if (aspect.FavorableScore > 0)
+                                        {
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <span class="badge bg-success">+@aspect.FavorableScore</span>
+                                            </div>
+                                        }
                                         <h6 class="card-title text-success">
                                             @aspect.AspectType
                                             @if (aspect.IsMajorAspect)
@@ -345,7 +420,14 @@ else
                             @foreach (var aspect in Analysis.NegativeAspects)
                             {
                                 <div class="card mb-2 border-danger @(aspect.IsMajorAspect ? "border-2" : "")">
-                                    <div class="card-body">
+                                    <div class="card-body position-relative">
+                                        <!-- Score Indicator (top right) -->
+                                        @if (aspect.UnfavorableScore < 0)
+                                        {
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <span class="badge bg-danger">@aspect.UnfavorableScore</span>
+                                            </div>
+                                        }
                                         <h6 class="card-title text-danger">
                                             @aspect.AspectType
                                             @if (aspect.IsMajorAspect)
@@ -383,5 +465,37 @@ else
     private bool showDenials = false;
     private bool showPositiveAspects = false;
     private bool showNegativeAspects = false;
+
+    // Get company type display name from the CompanyType property
+    private string GetCompanyTypeDisplay(PerfectionModel perfection)
+    {
+        if (string.IsNullOrEmpty(perfection.CompanyType) || perfection.CompanyType == "None")
+            return string.Empty;
+
+        // Convert enum value to display name
+        switch (perfection.CompanyType)
+        {
+            case "Simple":
+                return "Company Simple";
+            case "DemiSimple":
+                return "Company Demi-Simple";
+            case "Compound":
+                return "Company Compound";
+            case "Capitular":
+                return "Company Capitular";
+            default:
+                return string.Empty;
+        }
+    }
+
+    // Get the base mode name when made through company
+    private string GetBaseModeName(PerfectionModel perfection)
+    {
+        if (!string.IsNullOrEmpty(perfection.BaseMode))
+        {
+            return perfection.BaseMode;
+        }
+        return string.Empty;
+    }
 }
 

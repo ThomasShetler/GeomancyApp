@@ -244,5 +244,66 @@ namespace GeomancyApp
             var figures = GetAllFigures();
             return figures.Where(f => f.Planet.Equals(planet, StringComparison.OrdinalIgnoreCase)).ToList();
         }
+
+        /// <summary>
+        /// Calculates the way of points for a specific line type
+        /// </summary>
+        /// <param name="chart">The HouseChart to analyze</param>
+        /// <param name="lineType">The line type to calculate (HeadLine, NeckLine, BodyLine, FootLine)</param>
+        /// <returns>WayOfPointsResult for the specified line type</returns>
+        public static WayOfPointsResult CalculateWayOfPoints(HouseChart chart, LineType lineType)
+        {
+            return WayOfPoints.CalculateWay(chart, lineType);
+        }
+
+        /// <summary>
+        /// Calculates all four ways of points (Fire, Air, Water, Earth) for a chart
+        /// </summary>
+        /// <param name="chart">The HouseChart to analyze</param>
+        /// <returns>WayOfPointsAnalysis containing results for all four ways</returns>
+        public static WayOfPointsAnalysis CalculateWayOfPoints(HouseChart chart)
+        {
+            return WayOfPoints.CalculateAllWays(chart);
+        }
+
+        /// <summary>
+        /// Calculates the way of points for Fire (Via Puncti Ignis - HeadLine)
+        /// </summary>
+        /// <param name="chart">The HouseChart to analyze</param>
+        /// <returns>WayOfPointsResult for Fire way</returns>
+        public static WayOfPointsResult CalculateWayOfPointsFire(HouseChart chart)
+        {
+            return WayOfPoints.CalculateWay(chart, LineType.HeadLine);
+        }
+
+        /// <summary>
+        /// Calculates the way of points for Air (Via Puncti Aeris - NeckLine)
+        /// </summary>
+        /// <param name="chart">The HouseChart to analyze</param>
+        /// <returns>WayOfPointsResult for Air way</returns>
+        public static WayOfPointsResult CalculateWayOfPointsAir(HouseChart chart)
+        {
+            return WayOfPoints.CalculateWay(chart, LineType.NeckLine);
+        }
+
+        /// <summary>
+        /// Calculates the way of points for Water (Via Puncti Aquae - BodyLine)
+        /// </summary>
+        /// <param name="chart">The HouseChart to analyze</param>
+        /// <returns>WayOfPointsResult for Water way</returns>
+        public static WayOfPointsResult CalculateWayOfPointsWater(HouseChart chart)
+        {
+            return WayOfPoints.CalculateWay(chart, LineType.BodyLine);
+        }
+
+        /// <summary>
+        /// Calculates the way of points for Earth (Via Puncti Terrae - FootLine)
+        /// </summary>
+        /// <param name="chart">The HouseChart to analyze</param>
+        /// <returns>WayOfPointsResult for Earth way</returns>
+        public static WayOfPointsResult CalculateWayOfPointsEarth(HouseChart chart)
+        {
+            return WayOfPoints.CalculateWay(chart, LineType.FootLine);
+        }
     }
 } 

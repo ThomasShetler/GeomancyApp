@@ -10,6 +10,7 @@ namespace GeomancyWebUI.Client.Services
         Task<List<PerfectionModel>> CalculatePerfectionAsync(PerfectionRequestModel request);
         Task<PerfectionAnalysisModel> AnalyzePerfectionsAsync(PerfectionRequestModel request);
         Task<AspectAnalysisModel> GetAspectAnalysisAsync(GenerateFourFiguresRequest request);
+        Task<WayOfPointsAnalysisModel> CalculateWayOfPointsAsync(GenerateFourFiguresRequest request);
     }
 }
 

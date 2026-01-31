@@ -13,6 +13,15 @@ namespace GeomancyApp
         Company
     }
 
+    public enum CompanyType
+    {
+        None,
+        Simple,           // Same figure
+        DemiSimple,       // Same planet
+        Compound,         // Opposite figures
+        Capitular         // Same Fire line (HeadLine)
+    }
+
     public class PerfectionResult
     {
         public PerfectionType Mode { get; set; } = PerfectionType.None;
@@ -24,6 +33,8 @@ namespace GeomancyApp
         public int QuesitedHouse { get; set; }   // which house supplied X
         public bool MadeThroughCompany { get; set; } = false;  // True if perfection is made through company of houses
         public PerfectionType BaseMode { get; set; } = PerfectionType.None;  // The underlying mode when made through company
+        public CompanyType CompanyType { get; set; } = CompanyType.None;  // Type of company (Simple, DemiSimple, Compound, Capitular)
+        public string CompanyTypeDescription { get; set; } = string.Empty;  // Detailed description of company type (e.g., "Company Compound (opposite figures)")
     }
 
     /// <summary>

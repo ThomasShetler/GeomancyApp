@@ -1192,6 +1192,16 @@ namespace GeomancyAPI.Controllers
                 }
             }
 
+            // Convert triplicities
+            var triplicities = houseChart.GetTriplicities().Select(t => new TriplicityResponse
+            {
+                Number = t.Number,
+                FirstFigure = ConvertToFigureResponse(t.FirstFigure),
+                SecondFigure = ConvertToFigureResponse(t.SecondFigure),
+                ThirdFigure = ConvertToFigureResponse(t.ThirdFigure),
+                Description = t.Description
+            }).ToList();
+
             return new HouseChartResponse
             {
                 Houses = houses,
@@ -1199,6 +1209,7 @@ namespace GeomancyAPI.Controllers
                 LeftWitness = houseChart.LeftWitness != null ? ConvertToFigureResponse(houseChart.LeftWitness) : null,
                 Judge = houseChart.Judge != null ? ConvertToFigureResponse(houseChart.Judge) : null,
                 Sentence = houseChart.Sentence != null ? ConvertToFigureResponse(houseChart.Sentence) : null,
+                Triplicities = triplicities,
                 ChartSummary = houseChart.GetChartSummary(),
                 IsComplete = houseChart.IsChartComplete(),
                 GeneratedAt = DateTime.UtcNow
@@ -1220,7 +1231,6 @@ namespace GeomancyAPI.Controllers
         // Helper to convert PerfectionResult to PerfectionResponse without scoring (for aggregate calculation)
         private static PerfectionResponse ToPerfectionResponseWithoutScoring(PerfectionResult perfection, HouseChart houseChart, int querentHouse, int quesitedHouse)
         {
-            // Build mode string with aspect direction if applicable
             string modeString = perfection.Mode.ToString();
             if (perfection.Mode == PerfectionType.None)
             {
@@ -1228,28 +1238,31 @@ namespace GeomancyAPI.Controllers
             }
             else if (perfection.Mode == PerfectionType.Aspect && !string.IsNullOrEmpty(perfection.AspectDirection))
             {
-                modeString = $"Aspect ({perfection.AspectDirection})";
+                modeString = "Aspect";
             }
-            
+
             return new PerfectionResponse
             {
+                // For Impedition (None), Success should be true so it displays as a card
+                Success = true, // Always true - we want to display all results as cards
+                Message = perfection.Mode == PerfectionType.None ? "No perfection found." : "Perfection found.",
                 Mode = modeString,
                 AspectBetweenSignificators = perfection.AspectBetweenSignificators.ToString(),
-                AspectDirection = perfection.AspectDirection ?? string.Empty,
+                AspectDirection = perfection.AspectDirection,
                 TranslatorHouse = perfection.TranslatorHouse,
-                TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : null,
-                Notes = perfection.Notes,
-                QuerentHouse = querentHouse,
-                QuesitedHouse = quesitedHouse,
-                QuerentFigure = houseChart.GetHouseFigure(querentHouse)?.Name,
-                QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
+                TranslatorFigure = perfection.TranslatorHouse > 0 ? houseChart.GetHouseFigure(perfection.TranslatorHouse)?.Name : string.Empty,
+                Notes = perfection.Notes.ToList(),
+                QuerentHouse = perfection.QuerentHouse > 0 ? perfection.QuerentHouse : querentHouse,
+                QuesitedHouse = perfection.QuesitedHouse > 0 ? perfection.QuesitedHouse : quesitedHouse,
+                QuerentFigure = houseChart.GetHouseFigure(perfection.QuerentHouse > 0 ? perfection.QuerentHouse : querentHouse)?.Name ?? string.Empty,
+                QuesitedFigure = houseChart.GetHouseFigure(perfection.QuesitedHouse > 0 ? perfection.QuesitedHouse : quesitedHouse)?.Name ?? string.Empty,
                 MadeThroughCompany = perfection.MadeThroughCompany,
-                BaseMode = perfection.BaseMode != PerfectionType.None ? perfection.BaseMode.ToString() : null,
-                FavorableScore = 0,  // Will be set after aggregate calculation
-                UnfavorableScore = 0,  // Will be set after aggregate calculation
-                NetScore = 0,  // Will be set after aggregate calculation
-                Success = true,
-                Message = "Perfection calculation completed successfully"
+                BaseMode = perfection.BaseMode != PerfectionType.None ? perfection.BaseMode.ToString() : string.Empty,
+                CompanyType = perfection.CompanyType.ToString(),
+                CompanyTypeDescription = perfection.CompanyTypeDescription ?? string.Empty,
+                FavorableScore = 0,
+                UnfavorableScore = 0,
+                NetScore = 0
             };
         }
 
@@ -1282,11 +1295,15 @@ namespace GeomancyAPI.Controllers
                 // Use the new AnalyzePerfections method
                 var analysis = PerfectionCalculator.AnalyzePerfections(houseChart, request.QuerentHouse, request.QuesitedHouse);
 
-                // Convert to response models
+                // Convert to response models with individual scores
                 var perfectionResponses = new List<PerfectionResponse>();
                 foreach (var perfection in analysis.Perfections)
                 {
                     var perfectionResponse = ToPerfectionResponseWithoutScoring(perfection, houseChart, request.QuerentHouse, request.QuesitedHouse);
+                    // Calculate individual scores for this perfection
+                    perfectionResponse.FavorableScore = PerfectionCalculator.CalculateScore(perfection);
+                    perfectionResponse.UnfavorableScore = PerfectionCalculator.CalculateUnfavorableScore(perfection);
+                    perfectionResponse.NetScore = perfectionResponse.FavorableScore + perfectionResponse.UnfavorableScore;
                     perfectionResponses.Add(perfectionResponse);
                 }
 
@@ -1294,29 +1311,51 @@ namespace GeomancyAPI.Controllers
                 foreach (var denial in analysis.Denials)
                 {
                     var denialResponse = ToPerfectionResponseWithoutScoring(denial, houseChart, request.QuerentHouse, request.QuesitedHouse);
+                    // Calculate individual scores for this denial
+                    denialResponse.FavorableScore = PerfectionCalculator.CalculateScore(denial);
+                    denialResponse.UnfavorableScore = PerfectionCalculator.CalculateUnfavorableScore(denial);
+                    // For Impedition (Mode == None), always set -5
+                    if (denial.Mode == PerfectionType.None)
+                    {
+                        denialResponse.UnfavorableScore = -5;
+                        denialResponse.Success = true; // Set to true so it displays as a card
+                    }
+                    denialResponse.NetScore = denialResponse.FavorableScore + denialResponse.UnfavorableScore;
                     denialResponses.Add(denialResponse);
                 }
 
-                var positiveAspects = analysis.PositiveAspects.Select(a => new AspectRecordResponse
+                var positiveAspects = analysis.PositiveAspects.Select(a => 
                 {
-                    AspectType = a.AspectType.ToString(),
-                    Direction = a.Direction,
-                    FromHouse = a.FromHouse,
-                    ToHouse = a.ToHouse,
-                    Description = a.Description,
-                    MadeThroughCompany = a.MadeThroughCompany,
-                    IsMajorAspect = a.IsMajorAspect
+                    var aspectType = a.AspectType;
+                    return new AspectRecordResponse
+                    {
+                        AspectType = aspectType.ToString(),
+                        Direction = a.Direction,
+                        FromHouse = a.FromHouse,
+                        ToHouse = a.ToHouse,
+                        Description = a.Description,
+                        MadeThroughCompany = a.MadeThroughCompany,
+                        IsMajorAspect = a.IsMajorAspect,
+                        FavorableScore = CalculateAspectScore(aspectType, a.MadeThroughCompany),
+                        UnfavorableScore = 0
+                    };
                 }).ToList();
 
-                var negativeAspects = analysis.NegativeAspects.Select(a => new AspectRecordResponse
+                var negativeAspects = analysis.NegativeAspects.Select(a => 
                 {
-                    AspectType = a.AspectType.ToString(),
-                    Direction = a.Direction,
-                    FromHouse = a.FromHouse,
-                    ToHouse = a.ToHouse,
-                    Description = a.Description,
-                    MadeThroughCompany = a.MadeThroughCompany,
-                    IsMajorAspect = a.IsMajorAspect
+                    var aspectType = a.AspectType;
+                    return new AspectRecordResponse
+                    {
+                        AspectType = aspectType.ToString(),
+                        Direction = a.Direction,
+                        FromHouse = a.FromHouse,
+                        ToHouse = a.ToHouse,
+                        Description = a.Description,
+                        MadeThroughCompany = a.MadeThroughCompany,
+                        IsMajorAspect = a.IsMajorAspect,
+                        FavorableScore = 0,
+                        UnfavorableScore = CalculateAspectUnfavorableScore(aspectType, a.MadeThroughCompany)
+                    };
                 }).ToList();
 
                 var response = new PerfectionAnalysisResponse
@@ -1384,11 +1423,166 @@ namespace GeomancyAPI.Controllers
                 QuesitedFigure = houseChart.GetHouseFigure(quesitedHouse)?.Name,
                 MadeThroughCompany = perfection.MadeThroughCompany,
                 BaseMode = perfection.BaseMode != PerfectionType.None ? perfection.BaseMode.ToString() : null,
+                CompanyType = perfection.CompanyType.ToString(),
+                CompanyTypeDescription = perfection.CompanyTypeDescription ?? string.Empty,
                 FavorableScore = favorableScore,
                 UnfavorableScore = unfavorableScore,
                 NetScore = netScore,
                 Success = true,
                 Message = "Perfection calculation completed successfully"
+            };
+        }
+
+        // Helper method to calculate favorable score for an aspect (Table 6-3)
+        private static int CalculateAspectScore(AspectType aspectType, bool madeThroughCompany)
+        {
+            int baseScore = 0;
+            
+            // Favorable aspects
+            if (aspectType == AspectType.Trine)
+                baseScore = 3;
+            else if (aspectType == AspectType.Sextile)
+                baseScore = 3;
+            else
+                return 0; // Not a favorable aspect
+            
+            // If made through company, subtract 1 (Table 6-3 rule)
+            if (madeThroughCompany)
+            {
+                baseScore = Math.Max(0, baseScore - 1);
+            }
+            
+            return baseScore;
+        }
+
+        // Helper method to calculate unfavorable score for an aspect (Table 6-3)
+        private static int CalculateAspectUnfavorableScore(AspectType aspectType, bool madeThroughCompany)
+        {
+            int baseScore = 0;
+            
+            // Unfavorable aspects
+            if (aspectType == AspectType.Opposition)
+                baseScore = -4;
+            else if (aspectType == AspectType.Square)
+                baseScore = -3;
+            else
+                return 0; // Not an unfavorable aspect
+            
+            // If made through company, subtract 1 more (Table 6-3 rule)
+            if (madeThroughCompany)
+            {
+                baseScore -= 1; // e.g., -3 becomes -4
+            }
+            
+            return baseScore;
+        }
+
+        /// <summary>
+        /// Calculate way of points for a chart
+        /// </summary>
+        /// <param name="request">Chart data (four mothers)</param>
+        /// <returns>Way of points analysis for all four ways (Fire, Air, Water, Earth)</returns>
+        [HttpPost]
+        [Route("way-of-points")]
+        [ResponseType(typeof(WayOfPointsAnalysisResponse))]
+        public HttpResponseMessage CalculateWayOfPoints([FromBody] GenerateFourFiguresRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+                }
+
+                // Create the house chart from the provided mothers
+                var houseChart = new HouseChart();
+                houseChart.SetFirstFourHousesAndCalculate(
+                    request.House1.HeadLine, request.House1.NeckLine, request.House1.BodyLine, request.House1.FootLine,
+                    request.House2.HeadLine, request.House2.NeckLine, request.House2.BodyLine, request.House2.FootLine,
+                    request.House3.HeadLine, request.House3.NeckLine, request.House3.BodyLine, request.House3.FootLine,
+                    request.House4.HeadLine, request.House4.NeckLine, request.House4.BodyLine, request.House4.FootLine
+                );
+
+                // Calculate all ways of points
+                var analysis = WayOfPoints.CalculateAllWays(houseChart);
+
+                // Convert to response models
+                var response = new WayOfPointsAnalysisResponse
+                {
+                    Success = true,
+                    Message = "Way of points calculation completed successfully",
+                    FireWay = ToWayOfPointsResultResponse(analysis.FireWay),
+                    AirWay = ToWayOfPointsResultResponse(analysis.AirWay),
+                    WaterWay = ToWayOfPointsResultResponse(analysis.WaterWay),
+                    EarthWay = ToWayOfPointsResultResponse(analysis.EarthWay)
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new WayOfPointsAnalysisResponse
+                {
+                    Success = false,
+                    Message = $"Error calculating way of points: {ex.Message}",
+                    FireWay = new WayOfPointsResultResponse(),
+                    AirWay = new WayOfPointsResultResponse(),
+                    WaterWay = new WayOfPointsResultResponse(),
+                    EarthWay = new WayOfPointsResultResponse()
+                };
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, errorResponse);
+            }
+        }
+
+        // Helper to convert WayOfPointsResult to WayOfPointsResultResponse
+        private static WayOfPointsResultResponse ToWayOfPointsResultResponse(WayOfPointsResult result)
+        {
+            return new WayOfPointsResultResponse
+            {
+                WayName = result.WayName ?? string.Empty,
+                LineType = result.LineType ?? string.Empty,
+                CanBeEstablished = result.CanBeEstablished,
+                AllPaths = result.AllPaths.Select(p => new WayOfPointsPathResponse
+                {
+                    Houses = p.Houses ?? new List<int>(),
+                    RowReached = p.RowReached,
+                    PathType = p.PathType.ToString(),
+                    EndpointHouse = p.EndpointHouse,
+                    Description = p.Description ?? string.Empty
+                }).ToList(),
+                StrongPaths = result.StrongPaths.Select(p => new WayOfPointsPathResponse
+                {
+                    Houses = p.Houses ?? new List<int>(),
+                    RowReached = p.RowReached,
+                    PathType = p.PathType.ToString(),
+                    EndpointHouse = p.EndpointHouse,
+                    Description = p.Description ?? string.Empty
+                }).ToList(),
+                PassivePaths = result.PassivePaths.Select(p => new WayOfPointsPathResponse
+                {
+                    Houses = p.Houses ?? new List<int>(),
+                    RowReached = p.RowReached,
+                    PathType = p.PathType.ToString(),
+                    EndpointHouse = p.EndpointHouse,
+                    Description = p.Description ?? string.Empty
+                }).ToList(),
+                StrongPassivePaths = result.StrongPassivePaths.Select(p => new WayOfPointsPathResponse
+                {
+                    Houses = p.Houses ?? new List<int>(),
+                    RowReached = p.RowReached,
+                    PathType = p.PathType.ToString(),
+                    EndpointHouse = p.EndpointHouse,
+                    Description = p.Description ?? string.Empty
+                }).ToList(),
+                WeakerPassivePaths = result.WeakerPassivePaths.Select(p => new WayOfPointsPathResponse
+                {
+                    Houses = p.Houses ?? new List<int>(),
+                    RowReached = p.RowReached,
+                    PathType = p.PathType.ToString(),
+                    EndpointHouse = p.EndpointHouse,
+                    Description = p.Description ?? string.Empty
+                }).ToList(),
+                Notes = result.Notes ?? new List<string>()
             };
         }
 

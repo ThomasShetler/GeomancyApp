@@ -1,0 +1,415 @@
+@using GeomancyWebUI.Client.Models
+
+@if (Analysis == null)
+{
+    <div class="alert alert-info">No way of points analysis available.</div>
+}
+else
+{
+    <div class="way-of-points-analysis">
+        <h3>Way of Points</h3>
+        
+        <!-- Fire Way (Via Puncti Ignis) -->
+        <div class="accordion mb-3" id="wayOfPointsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showFireWay ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#fireWayCollapse" @onclick="() => showFireWay = !showFireWay">
+                        🔥 Via Puncti Ignis (Way of Fire) - @GetPathSummary(Analysis.FireWay)
+                    </button>
+                </h2>
+                <div id="fireWayCollapse" class="accordion-collapse collapse @(showFireWay ? "show" : "")">
+                    <div class="accordion-body">
+                        @RenderWayContent(Analysis.FireWay)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Air Way (Via Puncti Aeris) -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showAirWay ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#airWayCollapse" @onclick="() => showAirWay = !showAirWay">
+                        💨 Via Puncti Aeris (Way of Air) - @GetPathSummary(Analysis.AirWay)
+                    </button>
+                </h2>
+                <div id="airWayCollapse" class="accordion-collapse collapse @(showAirWay ? "show" : "")">
+                    <div class="accordion-body">
+                        @RenderWayContent(Analysis.AirWay)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Water Way (Via Puncti Aquae) -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showWaterWay ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#waterWayCollapse" @onclick="() => showWaterWay = !showWaterWay">
+                        💧 Via Puncti Aquae (Way of Water) - @GetPathSummary(Analysis.WaterWay)
+                    </button>
+                </h2>
+                <div id="waterWayCollapse" class="accordion-collapse collapse @(showWaterWay ? "show" : "")">
+                    <div class="accordion-body">
+                        @RenderWayContent(Analysis.WaterWay)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earth Way (Via Puncti Terrae) -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(showEarthWay ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#earthWayCollapse" @onclick="() => showEarthWay = !showEarthWay">
+                        🌍 Via Puncti Terrae (Way of Earth) - @GetPathSummary(Analysis.EarthWay)
+                    </button>
+                </h2>
+                <div id="earthWayCollapse" class="accordion-collapse collapse @(showEarthWay ? "show" : "")">
+                    <div class="accordion-body">
+                        @RenderWayContent(Analysis.EarthWay)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public WayOfPointsAnalysisModel? Analysis { get; set; }
+
+    [Parameter]
+    public HouseChartModel? Chart { get; set; }
+
+    private bool showFireWay = true;
+    private bool showAirWay = false;
+    private bool showWaterWay = false;
+    private bool showEarthWay = false;
+
+    // Helper method to get family member name for a house number
+    private string GetFamilyMemberName(int houseNumber)
+    {
+        if (houseNumber >= 1 && houseNumber <= 4)
+        {
+            string[] mothers = { "First Mother", "Second Mother", "Third Mother", "Fourth Mother" };
+            return mothers[houseNumber - 1];
+        }
+        else if (houseNumber >= 5 && houseNumber <= 8)
+        {
+            string[] daughters = { "First Daughter", "Second Daughter", "Third Daughter", "Fourth Daughter" };
+            return daughters[houseNumber - 5];
+        }
+        else if (houseNumber >= 9 && houseNumber <= 12)
+        {
+            string[] nieces = { "First Niece", "Second Niece", "Third Niece", "Fourth Niece" };
+            return nieces[houseNumber - 9];
+        }
+        return $"House {houseNumber}";
+    }
+
+    // Helper method to get position label (Judge, Witnesses, or family member)
+    private string GetPositionLabel(int houseNumber)
+    {
+        if (houseNumber == 0)
+            return "Judge";
+        if (houseNumber == 13)
+            return "Right Witness";
+        if (houseNumber == 14)
+            return "Left Witness";
+        return GetFamilyMemberName(houseNumber);
+    }
+
+    // Helper method to get figure name from chart
+    private string GetFigureName(int houseNumber)
+    {
+        if (Chart == null) return string.Empty;
+
+        if (houseNumber == 0)
+            return Chart.Judge?.Name ?? string.Empty;
+        if (houseNumber == 13)
+            return Chart.RightWitness?.Name ?? string.Empty;
+        if (houseNumber == 14)
+            return Chart.LeftWitness?.Name ?? string.Empty;
+        
+        if (houseNumber >= 1 && houseNumber <= 12)
+        {
+            var house = Chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber);
+            return house?.Figure?.Name ?? string.Empty;
+        }
+
+        return string.Empty;
+    }
+
+    // Helper method to format position with figure name (for path ending)
+    private string FormatPosition(int houseNumber)
+    {
+        string label = GetPositionLabel(houseNumber);
+        string figureName = GetFigureName(houseNumber);
+        
+        if (string.IsNullOrEmpty(figureName))
+            return label;
+        
+        // For houses, show both family member name and house number
+        if (houseNumber >= 1 && houseNumber <= 12)
+        {
+            return $"{label} (House {houseNumber}, {figureName})";
+        }
+        
+        // For Judge and Witnesses, just show name and figure
+        return $"{label} ({figureName})";
+    }
+
+    // Helper method to format position for path display (no figure names)
+    private string FormatPositionForPath(int houseNumber)
+    {
+        string label = GetPositionLabel(houseNumber);
+        
+        // For houses, show family member name and house number (no figure name)
+        if (houseNumber >= 1 && houseNumber <= 12)
+        {
+            return $"{label} (House {houseNumber})";
+        }
+        
+        // For Judge and Witnesses, just show the label
+        return label;
+    }
+
+    // Helper method to get path summary for accordion header
+    private string GetPathSummary(WayOfPointsResultModel way)
+    {
+        if (!way.CanBeEstablished)
+            return "Not Established";
+        
+        var endpointLabels = new List<string>();
+        
+        if (way.StrongPaths.Count > 0)
+        {
+            foreach (var path in way.StrongPaths)
+            {
+                string label = GetPositionLabel(path.EndpointHouse);
+                string figureName = GetFigureName(path.EndpointHouse);
+                if (!string.IsNullOrEmpty(figureName))
+                    endpointLabels.Add($"{label} ({figureName})");
+                else
+                    endpointLabels.Add(label);
+            }
+            return $"Strong: {string.Join(", ", endpointLabels)}";
+        }
+        
+        if (way.StrongPassivePaths.Count > 0)
+        {
+            foreach (var path in way.StrongPassivePaths)
+            {
+                string label = GetPositionLabel(path.EndpointHouse);
+                string figureName = GetFigureName(path.EndpointHouse);
+                if (!string.IsNullOrEmpty(figureName))
+                    endpointLabels.Add($"{label} ({figureName})");
+                else
+                    endpointLabels.Add(label);
+            }
+            return $"Strong Passive: {string.Join(", ", endpointLabels)}";
+        }
+        
+        if (way.WeakerPassivePaths.Count > 0)
+        {
+            foreach (var path in way.WeakerPassivePaths)
+            {
+                string label = GetPositionLabel(path.EndpointHouse);
+                string figureName = GetFigureName(path.EndpointHouse);
+                if (!string.IsNullOrEmpty(figureName))
+                    endpointLabels.Add($"{label} ({figureName})");
+                else
+                    endpointLabels.Add(label);
+            }
+            return $"Weaker Passive: {string.Join(", ", endpointLabels)}";
+        }
+        
+        if (way.PassivePaths.Count > 0)
+        {
+            return $"Passive: {way.PassivePaths.Count} path(s)";
+        }
+        
+        return "No Paths";
+    }
+
+
+    private RenderFragment RenderWayContent(WayOfPointsResultModel way)
+    {
+        if (!way.CanBeEstablished)
+        {
+            return builder =>
+            {
+                builder.OpenElement(0, "div");
+                builder.AddAttribute(1, "class", "alert alert-warning");
+                builder.OpenElement(2, "p");
+                builder.AddAttribute(3, "class", "mb-0");
+                builder.AddContent(4, "This way cannot be established. Judge's line value does not match both Witnesses.");
+                builder.CloseElement();
+                builder.CloseElement();
+            };
+        }
+        
+        if (way.AllPaths.Count == 0)
+        {
+            return builder =>
+            {
+                builder.OpenElement(0, "div");
+                builder.AddAttribute(1, "class", "alert alert-info");
+                builder.OpenElement(2, "p");
+                builder.AddAttribute(3, "class", "mb-0");
+                builder.AddContent(4, "No valid paths found for this way.");
+                builder.CloseElement();
+                builder.CloseElement();
+            };
+        }
+        
+        return builder =>
+        {
+            // Strong Paths
+            if (way.StrongPaths.Count > 0)
+            {
+                builder.OpenElement(0, "div");
+                builder.AddAttribute(1, "class", "mb-3");
+                builder.OpenElement(2, "h6");
+                builder.AddAttribute(3, "class", "text-success");
+                builder.AddContent(4, $"Strong Paths ({way.StrongPaths.Count})");
+                builder.CloseElement();
+                
+                foreach (var path in way.StrongPaths)
+                {
+                    RenderPath(builder, path, "success");
+                }
+                builder.CloseElement();
+            }
+
+            // Strong Passive Paths
+            if (way.StrongPassivePaths.Count > 0)
+            {
+                builder.OpenElement(5, "div");
+                builder.AddAttribute(6, "class", "mb-3");
+                builder.OpenElement(7, "h6");
+                builder.AddAttribute(8, "class", "text-primary");
+                builder.AddContent(9, $"Strong Passive Paths ({way.StrongPassivePaths.Count})");
+                builder.CloseElement();
+                
+                foreach (var path in way.StrongPassivePaths)
+                {
+                    RenderPath(builder, path, "primary");
+                }
+                builder.CloseElement();
+            }
+
+            // Weaker Passive Paths
+            if (way.WeakerPassivePaths.Count > 0)
+            {
+                builder.OpenElement(10, "div");
+                builder.AddAttribute(11, "class", "mb-3");
+                builder.OpenElement(12, "h6");
+                builder.AddAttribute(13, "class", "text-secondary");
+                builder.AddContent(14, $"Weaker Passive Paths ({way.WeakerPassivePaths.Count})");
+                builder.CloseElement();
+                
+                foreach (var path in way.WeakerPassivePaths)
+                {
+                    RenderPath(builder, path, "secondary");
+                }
+                builder.CloseElement();
+            }
+
+            // Passive Paths (when all are the same type)
+            if (way.PassivePaths.Count > 0 && way.StrongPassivePaths.Count == 0 && way.WeakerPassivePaths.Count == 0)
+            {
+                builder.OpenElement(15, "div");
+                builder.AddAttribute(16, "class", "mb-3");
+                builder.OpenElement(17, "h6");
+                builder.AddAttribute(18, "class", "text-info");
+                builder.AddContent(19, $"Passive Paths ({way.PassivePaths.Count})");
+                builder.CloseElement();
+                
+                foreach (var path in way.PassivePaths)
+                {
+                    RenderPath(builder, path, "info");
+                }
+                builder.CloseElement();
+            }
+
+            // Notes
+            if (way.Notes != null && way.Notes.Count > 0)
+            {
+                builder.OpenElement(20, "div");
+                builder.AddAttribute(21, "class", "mt-3");
+                builder.OpenElement(22, "strong");
+                builder.AddContent(23, "Notes:");
+                builder.CloseElement();
+                builder.OpenElement(24, "ul");
+                builder.AddAttribute(25, "class", "list-unstyled mt-1 mb-0");
+                
+                foreach (var note in way.Notes)
+                {
+                    builder.OpenElement(26, "li");
+                    builder.AddAttribute(27, "class", "small text-muted");
+                    builder.AddContent(28, "• ");
+                    builder.AddContent(29, note);
+                    builder.CloseElement();
+                }
+                builder.CloseElement();
+                builder.CloseElement();
+            }
+        };
+    }
+
+    private void RenderPath(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder, WayOfPointsPathModel path, string colorClass)
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", $"card mb-2 border-{colorClass}");
+        builder.OpenElement(2, "div");
+        builder.AddAttribute(3, "class", "card-body");
+        
+        // Path Type Badge
+        builder.OpenElement(4, "span");
+        builder.AddAttribute(5, "class", $"badge bg-{colorClass} mb-2");
+        builder.AddContent(6, path.PathType);
+        builder.CloseElement();
+        
+        // Path Chain - Build full path including Judge (no figure names in path)
+        if (path.Houses != null && path.Houses.Count > 0)
+        {
+            builder.OpenElement(7, "p");
+            builder.AddAttribute(8, "class", "mb-1");
+            builder.AddContent(9, "Path: ");
+            
+            // Always start with Judge
+            builder.OpenElement(10, "strong");
+            builder.AddContent(11, "Judge");
+            builder.CloseElement();
+            
+            // Then show the houses in the path (placement names only, no figure names)
+            for (int i = 0; i < path.Houses.Count; i++)
+            {
+                builder.AddContent(12, " → ");
+                builder.OpenElement(13, "strong");
+                builder.AddContent(14, FormatPositionForPath(path.Houses[i]));
+                builder.CloseElement();
+            }
+            builder.CloseElement();
+        }
+        
+        // Path Ending (with full information including figure name)
+        builder.OpenElement(15, "p");
+        builder.AddAttribute(16, "class", "mb-1");
+        builder.AddContent(17, "Path Ending: ");
+        builder.OpenElement(18, "strong");
+        builder.AddContent(19, FormatPosition(path.EndpointHouse));
+        builder.CloseElement();
+        builder.AddContent(20, $" (Row {path.RowReached})");
+        builder.CloseElement();
+        
+        // Description
+        if (!string.IsNullOrEmpty(path.Description))
+        {
+            builder.OpenElement(22, "p");
+            builder.AddAttribute(23, "class", "small text-muted mb-0");
+            builder.AddContent(24, path.Description);
+            builder.CloseElement();
+        }
+        
+        builder.CloseElement(); // card-body
+        builder.CloseElement(); // card
+    }
+}
+

@@ -87,6 +87,16 @@ namespace GeomancyAPI.Models
         public FigureResponse Figure { get; set; }
     }
 
+    // Response model for a triplicity
+    public class TriplicityResponse
+    {
+        public int Number { get; set; }
+        public FigureResponse FirstFigure { get; set; }
+        public FigureResponse SecondFigure { get; set; }
+        public FigureResponse ThirdFigure { get; set; }
+        public string Description { get; set; }
+    }
+
     // Response model for the complete house chart
     public class HouseChartResponse
     {
@@ -95,6 +105,7 @@ namespace GeomancyAPI.Models
         public FigureResponse LeftWitness { get; set; }
         public FigureResponse Judge { get; set; }
         public FigureResponse Sentence { get; set; }
+        public List<TriplicityResponse> Triplicities { get; set; }
         public string ChartSummary { get; set; }
         public bool IsComplete { get; set; }
         public DateTime GeneratedAt { get; set; }
@@ -149,6 +160,8 @@ namespace GeomancyAPI.Models
         public IndentScoreResponse TranslatorIndentation { get; set; }
         public bool MadeThroughCompany { get; set; }
         public string BaseMode { get; set; }
+        public string CompanyType { get; set; } // Enum as string: None, Simple, DemiSimple, Compound, Capitular
+        public string CompanyTypeDescription { get; set; } // Full description like "Company Compound (opposite figures)"
         public int FavorableScore { get; set; }
         public int UnfavorableScore { get; set; }
         public int NetScore { get; set; }
@@ -244,6 +257,8 @@ namespace GeomancyAPI.Models
         public string Description { get; set; }
         public bool MadeThroughCompany { get; set; }
         public bool IsMajorAspect { get; set; }
+        public int FavorableScore { get; set; }
+        public int UnfavorableScore { get; set; }
     }
 
     public class PerfectionAnalysisResponse
@@ -259,5 +274,37 @@ namespace GeomancyAPI.Models
         public int NetScore { get; set; }
         public int QuerentHouse { get; set; }
         public int QuesitedHouse { get; set; }
+    }
+
+    public class WayOfPointsPathResponse
+    {
+        public List<int> Houses { get; set; } = new List<int>();
+        public int RowReached { get; set; }
+        public string PathType { get; set; }
+        public int EndpointHouse { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class WayOfPointsResultResponse
+    {
+        public string WayName { get; set; }
+        public string LineType { get; set; }
+        public bool CanBeEstablished { get; set; }
+        public List<WayOfPointsPathResponse> AllPaths { get; set; } = new List<WayOfPointsPathResponse>();
+        public List<WayOfPointsPathResponse> StrongPaths { get; set; } = new List<WayOfPointsPathResponse>();
+        public List<WayOfPointsPathResponse> PassivePaths { get; set; } = new List<WayOfPointsPathResponse>();
+        public List<WayOfPointsPathResponse> StrongPassivePaths { get; set; } = new List<WayOfPointsPathResponse>();
+        public List<WayOfPointsPathResponse> WeakerPassivePaths { get; set; } = new List<WayOfPointsPathResponse>();
+        public List<string> Notes { get; set; } = new List<string>();
+    }
+
+    public class WayOfPointsAnalysisResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public WayOfPointsResultResponse FireWay { get; set; } = new WayOfPointsResultResponse();
+        public WayOfPointsResultResponse AirWay { get; set; } = new WayOfPointsResultResponse();
+        public WayOfPointsResultResponse WaterWay { get; set; } = new WayOfPointsResultResponse();
+        public WayOfPointsResultResponse EarthWay { get; set; } = new WayOfPointsResultResponse();
     }
 } 

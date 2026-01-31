@@ -34,6 +34,8 @@ namespace GeomancyWebUI.Client.Models
         public IndentScoreModel? TranslatorIndentation { get; set; }
         public bool MadeThroughCompany { get; set; }
         public string BaseMode { get; set; } = string.Empty;
+        public string CompanyType { get; set; } = string.Empty; // None, Simple, DemiSimple, Compound, Capitular
+        public string CompanyTypeDescription { get; set; } = string.Empty; // Full description like "Company Compound (opposite figures)"
         public int FavorableScore { get; set; }
         public int UnfavorableScore { get; set; }
         public int NetScore { get; set; }
@@ -48,6 +50,8 @@ namespace GeomancyWebUI.Client.Models
         public string Description { get; set; } = string.Empty;
         public bool MadeThroughCompany { get; set; }
         public bool IsMajorAspect { get; set; }
+        public int FavorableScore { get; set; }
+        public int UnfavorableScore { get; set; }
     }
 
     public class PerfectionAnalysisModel

@@ -11,6 +11,7 @@ namespace GeomancyApp
     {
         public string FigureID {get; set;}
         public string Name { get; set; }
+        public string EnglishName { get; set; }
         public string OtherNames { get; set; }
         public string Quality { get; set; }
         public string Keyword { get; set; }
@@ -47,7 +48,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "1",
-                    Name = "Puer (Boy)",
+                    Name = "Puer",
+                    EnglishName = "Boy",
                     OtherNames = "Beardless, yellow, warrior, man, sword",
                     Quality = "Mobile",
                     Keyword = "Energy",
@@ -75,7 +77,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "2",
-                    Name = "Amissio (Loss)",
+                    Name = "Amissio",
+                    EnglishName = "Loss",
                     OtherNames = "Grasping externally, outer wealth, something escaped or lost",
                     Quality = "Mobile",
                     Keyword = "Loss",
@@ -103,7 +106,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "3",
-                    Name = "Albus (White)",
+                    Name = "Albus",
+                    EnglishName = "White",
                     OtherNames = "None",
                     Quality = "Stable",
                     Keyword = "Peace",
@@ -131,7 +135,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "4",
-                    Name = "Populus (People)",
+                    Name = "Populus",
+                    EnglishName = "People",
                     OtherNames = "Congregation, multitude, double path",
                     Quality = "Stable",
                     Keyword = "Stability",
@@ -159,7 +164,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "5",
-                    Name = "Fortuna Major (Greater Fortune)",
+                    Name = "Fortuna Major",
+                    EnglishName = "Greater Fortune",
                     OtherNames = "Inward fortune, protection going in, greater omen, inside or hidden help",
                     Quality = "Stable",
                     Keyword = "Power",
@@ -187,7 +193,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "6",
-                    Name = "Conjunctio (Conjunction)",
+                    Name = "Conjunctio",
+                    EnglishName = "Conjunction",
                     OtherNames = "Association, gathering together",
                     Quality = "Mobile",
                     Keyword = "Interaction",
@@ -215,7 +222,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "7",
-                    Name = "Puella (Girl)",
+                    Name = "Puella",
+                    EnglishName = "Girl",
                     OtherNames = "Beauty, purity",
                     Quality = "Stable",
                     Keyword = "Harmony",
@@ -243,7 +251,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "8",
-                    Name = "Rubeus (Red)",
+                    Name = "Rubeus",
+                    EnglishName = "Red",
                     OtherNames = "Burning, danger",
                     Quality = "Mobile",
                     Keyword = "Passion",
@@ -271,7 +280,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "9",
-                    Name = "Acquisitio (Gain)",
+                    Name = "Acquisitio",
+                    EnglishName = "Gain",
                     OtherNames = "Grasping internally, inner wealth, something gained or picked up",
                     Quality = "Stable",
                     Keyword = "Gain",
@@ -299,7 +309,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "10",
-                    Name = "Carcer (Prison)",
+                    Name = "Carcer",
+                    EnglishName = "Prison",
                     OtherNames = "Constricted, lock",
                     Quality = "Stable",
                     Keyword = "Isolation",
@@ -327,7 +338,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "11",
-                    Name = "Tristitia (Sorrow)",
+                    Name = "Tristitia",
+                    EnglishName = "Sorrow",
                     OtherNames = "Crosswise, diminished, accursed, head down, fallen tower, cross",
                     Quality = "Stable",
                     Keyword = "Sorrow",
@@ -355,7 +367,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "12",
-                    Name = "Laetitia (Joy)",
+                    Name = "Laetitia",
+                    EnglishName = "Joy",
                     OtherNames = "Bearded, laughing, singing, high tower, head lifted, candelabrum, high mountain",
                     Quality = "Mobile",
                     Keyword = "Joy",
@@ -383,7 +396,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "13",
-                    Name = "Cauda Draconis (Tail of the Dragon)",
+                    Name = "Cauda Draconis",
+                    EnglishName = "Tail of the Dragon",
                     OtherNames = "Outer threshold, threshold going out, lower boundary, stepping outside",
                     Quality = "Mobile",
                     Keyword = "Ending",
@@ -411,7 +425,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "14",
-                    Name = "Caput Draconis (Head of the Dragon)",
+                    Name = "Caput Draconis",
+                    EnglishName = "Head of the Dragon",
                     OtherNames = "Inner threshold, threshold coming in, upper boundary, high tree, upright staff, stepping inside",
                     Quality = "Stable",
                     Keyword = "Beginning",
@@ -439,7 +454,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "15",
-                    Name = "Fortuna Minor (Lesser Fortune)",
+                    Name = "Fortuna Minor",
+                    EnglishName = "Lesser Fortune",
                     OtherNames = "Outward fortune, protection going out, lesser omen, outside or apparent help",
                     Quality = "Mobile",
                     Keyword = "Swiftness",
@@ -467,7 +483,8 @@ namespace GeomancyApp
                 new FigureData
                 {
                     FigureID = "16",
-                    Name = "Via (Way)",
+                    Name = "Via",
+                    EnglishName = "Way",
                     OtherNames = "Wayfarer, candle, journey",
                     Quality = "Mobile",
                     Keyword = "Change",
@@ -538,6 +555,7 @@ namespace GeomancyApp
             return GetFigureByName(name) ?? new FigureData
             {
                 Name = "NA",
+                EnglishName = "NA",
                 OtherNames = "NA",
                 Quality = "NA",
                 Keyword = "NA",

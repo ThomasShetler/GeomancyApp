@@ -877,37 +877,58 @@ namespace GeomancyApp
             return false;
         }
 
-        // Helper method to get detailed company type information
-        private static string GetCompanyTypeDescription(GeomanticFigure figure1, GeomanticFigure figure2)
+        // Helper method to determine the CompanyType enum from two figures
+        private static CompanyType GetCompanyType(GeomanticFigure figure1, GeomanticFigure figure2)
         {
-            if (figure1 == null || figure2 == null) return "";
+            if (figure1 == null || figure2 == null) return CompanyType.None;
 
             // Company simple: same figure
             if (Root(figure1.Name).Equals(Root(figure2.Name), StringComparison.OrdinalIgnoreCase))
             {
-                return "Company Simple (same figure)";
+                return CompanyType.Simple;
             }
 
             // Company demi-simple: same planet (with special handling for Dragon nodes)
-            var demiSimpleInfo = GetDemiSimpleCompanyInfo(figure1, figure2);
-            if (!string.IsNullOrEmpty(demiSimpleInfo))
+            if (AreInDemiSimpleCompany(figure1, figure2))
             {
-                return demiSimpleInfo;
+                return CompanyType.DemiSimple;
             }
 
             // Company compound: opposite figures
             if (AreOppositeFigures(figure1, figure2))
             {
-                return "Company Compound (opposite figures)";
+                return CompanyType.Compound;
             }
 
             // Company capitular: same Fire line (HeadLine)
             if (figure1.HeadLine == figure2.HeadLine)
             {
-                return "Company Capitular (same Fire line/HeadLine)";
+                return CompanyType.Capitular;
             }
 
-            return "";
+            return CompanyType.None;
+        }
+
+        // Helper method to get detailed company type information
+        private static string GetCompanyTypeDescription(GeomanticFigure figure1, GeomanticFigure figure2)
+        {
+            if (figure1 == null || figure2 == null) return "";
+
+            var companyType = GetCompanyType(figure1, figure2);
+            
+            switch (companyType)
+            {
+                case CompanyType.Simple:
+                    return "Company Simple (same figure)";
+                case CompanyType.DemiSimple:
+                    return GetDemiSimpleCompanyInfo(figure1, figure2);
+                case CompanyType.Compound:
+                    return "Company Compound (opposite figures)";
+                case CompanyType.Capitular:
+                    return "Company Capitular (same Fire line/HeadLine)";
+                default:
+                    return "";
+            }
         }
 
         // Helper method to get demi-simple company information with planet details
@@ -1068,12 +1089,15 @@ namespace GeomancyApp
                     companyPerfection.QuerentHouse = querentHouse;
                     companyPerfection.QuesitedHouse = quesitedHouse;
                     
-                    // Get detailed company type information
-                    var companyType = GetCompanyTypeDescription(querentFigure, querentPairedFigure);
+                    // Set company type enum and description
+                    companyPerfection.CompanyType = GetCompanyType(querentFigure, querentPairedFigure);
+                    var companyTypeDescription = GetCompanyTypeDescription(querentFigure, querentPairedFigure);
+                    companyPerfection.CompanyTypeDescription = companyTypeDescription;
+                    
                     var companyNote = $"Company of houses: {Root(querentFigure.Name)} in house {querentHouse} is in company with {Root(querentPairedFigure.Name)} in house {querentPairedHouse}.";
-                    if (!string.IsNullOrEmpty(companyType))
+                    if (!string.IsNullOrEmpty(companyTypeDescription))
                     {
-                        companyNote += $" Type: {companyType}.";
+                        companyNote += $" Type: {companyTypeDescription}.";
                     }
                     companyPerfection.Notes.Insert(0, companyNote);
                     AddInterpretationTip(companyPerfection, chart, querentHouse, quesitedHouse);
@@ -1102,12 +1126,15 @@ namespace GeomancyApp
                     companyPerfection.QuerentHouse = querentHouse;
                     companyPerfection.QuesitedHouse = quesitedHouse;
                     
-                    // Get detailed company type information
-                    var companyType = GetCompanyTypeDescription(quesitedFigure, quesitedPairedFigure);
+                    // Set company type enum and description
+                    companyPerfection.CompanyType = GetCompanyType(quesitedFigure, quesitedPairedFigure);
+                    var companyTypeDescription = GetCompanyTypeDescription(quesitedFigure, quesitedPairedFigure);
+                    companyPerfection.CompanyTypeDescription = companyTypeDescription;
+                    
                     var companyNote = $"Company of houses: {Root(quesitedFigure.Name)} in house {quesitedHouse} is in company with {Root(quesitedPairedFigure.Name)} in house {quesitedPairedHouse}.";
-                    if (!string.IsNullOrEmpty(companyType))
+                    if (!string.IsNullOrEmpty(companyTypeDescription))
                     {
-                        companyNote += $" Type: {companyType}.";
+                        companyNote += $" Type: {companyTypeDescription}.";
                     }
                     companyPerfection.Notes.Insert(0, companyNote);
                     AddInterpretationTip(companyPerfection, chart, querentHouse, quesitedHouse);
@@ -1605,54 +1632,41 @@ namespace GeomancyApp
                 allDenials.AddRange(unfavorableAspects);
                 allDenials.AddRange(unfavorableCompany);
                 
-                if (allDenials.Any())
+                // Always create Impedition when there are no perfections
+                // (whether there are negative aspects or not)
+                var impeditionResult = results.FirstOrDefault(r => r.Mode == PerfectionType.None);
+                if (impeditionResult == null)
                 {
-                    // Unfavorable aspects/company are the only connection - these are denials
-                    // Add Impedition as a denial when only unfavorable aspects exist
-                    analysis.Denials = allDenials;
-                    
-                    // Add Impedition to denials list
-                    var impeditionResult = results.FirstOrDefault(r => r.Mode == PerfectionType.None);
-                    if (impeditionResult == null)
+                    // Create Impedition result if it doesn't exist
+                    impeditionResult = new PerfectionResult
                     {
-                        // Create Impedition result if it doesn't exist
-                        impeditionResult = new PerfectionResult
-                        {
-                            Mode = PerfectionType.None,
-                            AspectBetweenSignificators = AspectType.None,
-                            QuerentHouse = querentHouse,
-                            QuesitedHouse = quesitedHouse
-                        };
-                        impeditionResult.Notes.Add("No classical mode of perfection found. Impedition: indirect factors are too strong for the querent to overcome.");
-                        AddInterpretationTip(impeditionResult, chart, querentHouse, quesitedHouse);
-                        // Add to results list so it's included in scoring
-                        results.Add(impeditionResult);
-                    }
-                    else
-                    {
-                        // Ensure interpretation tip is added if it wasn't already
-                        if (!impeditionResult.Notes.Any(n => n.Contains("Interpretation")))
-                        {
-                            AddInterpretationTip(impeditionResult, chart, querentHouse, quesitedHouse);
-                        }
-                    }
-                    analysis.Denials.Add(impeditionResult);
-                    analysis.Perfections = new List<PerfectionResult>(); // Empty - no perfections
+                        Mode = PerfectionType.None,
+                        AspectBetweenSignificators = AspectType.None,
+                        QuerentHouse = querentHouse,
+                        QuesitedHouse = quesitedHouse
+                    };
+                    impeditionResult.Notes.Add("No classical mode of perfection found. Impedition: indirect factors are too strong for the querent to overcome.");
+                    AddInterpretationTip(impeditionResult, chart, querentHouse, quesitedHouse);
+                    // Add to results list so it's included in scoring
+                    results.Add(impeditionResult);
                 }
                 else
                 {
-                    // Impedition: no connection at all (only show if no unfavorable aspects)
-                    var impeditionResult = results.FirstOrDefault(r => r.Mode == PerfectionType.None);
-                    if (impeditionResult != null)
+                    // Ensure interpretation tip is added if it wasn't already
+                    if (!impeditionResult.Notes.Any(n => n.Contains("Interpretation")))
                     {
-                        analysis.Denials = new List<PerfectionResult> { impeditionResult };
+                        AddInterpretationTip(impeditionResult, chart, querentHouse, quesitedHouse);
                     }
-                    else
-                    {
-                        analysis.Denials = new List<PerfectionResult>();
-                    }
-                    analysis.Perfections = new List<PerfectionResult>();
                 }
+                
+                // Add all denials (unfavorable aspects + impedition)
+                analysis.Denials = allDenials;
+                // Always add impedition to denials (if not already there)
+                if (!analysis.Denials.Any(d => d.Mode == PerfectionType.None))
+                {
+                    analysis.Denials.Add(impeditionResult);
+                }
+                analysis.Perfections = new List<PerfectionResult>(); // Empty - no perfections
             }
 
             // Extract all aspects from results and categorize them
@@ -1746,17 +1760,20 @@ namespace GeomancyApp
                 }
             }
 
-            // Calculate total favorable score
+            // Calculate scores for each result and totals
             foreach (var result in results)
             {
-                analysis.TotalFavorableScore += CalculateScore(result);
-            }
-
-            // Calculate total unfavorable score
-            // CalculateUnfavorableScore now handles Impedition (-5) for PerfectionType.None
-            foreach (var result in results)
-            {
-                analysis.TotalUnfavorableScore += CalculateUnfavorableScore(result);
+                // Calculate individual scores for each result (for display purposes)
+                // These will be used by the API to show per-result scoring
+                int favorableScore = CalculateScore(result);
+                int unfavorableScore = CalculateUnfavorableScore(result);
+                
+                // Store in a way that can be accessed (we'll need to add properties or use notes)
+                // For now, we'll calculate these on-demand in the API layer
+                
+                // Add to totals
+                analysis.TotalFavorableScore += favorableScore;
+                analysis.TotalUnfavorableScore += unfavorableScore;
             }
 
             // Calculate net score
