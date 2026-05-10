@@ -221,9 +221,17 @@
    from a 360px-wide budget device up to a tablet, with zero compression
    artifacts and zero internal scrolling. */
 .mobile-chart-stage {
+    /* Vertical budget breakdown (subtracted from 100dvh):
+         - 3.5rem  top nav
+         - 2.2rem  chart drawer handle
+         - 2.4rem  chart toolbar (Switch Chart Type + label)
+         - 7.5rem  Mother input strip (label + 4 lines + name + cell padding)
+         - 1.2rem  body padding + flex gaps
+       Total ~16.8rem. The 70dvh ceiling still applies on tall phones so the
+       chart never dominates the screen even when there's headroom. */
     --chart-fit: min(
         calc(100dvw - 1rem),
-        calc(100dvh - 3.5rem - 2.2rem - 5rem),
+        calc(100dvh - 3.5rem - 2.2rem - 13rem),
         70dvh
     );
     width: var(--chart-fit);
@@ -232,6 +240,121 @@
     flex: 0 0 auto;
     position: relative;
     overflow: hidden;
+}
+
+/* ============================================================
+ * Mother input strip
+ *
+ * Four large tap targets, one per Mother, that sit between the
+ * chart toolbar and the chart stage inside the mobile drawer.
+ * Each cell hosts a child FigureContainer in interactive mode,
+ * so we use Blazor's ::deep combinator to scale up its line
+ * targets and tighten its padding without affecting the same
+ * FigureContainer's appearance inside the chart itself.
+ *
+ * Layout: a CSS grid with four equal columns. On the very
+ * narrowest phones the columns stay equal (auto sized down by
+ * the grid) rather than reflowing to two rows, because two
+ * 2x2 rows would steal vertical space from the chart.
+ * ============================================================ */
+.mobile-mother-inputs {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.35rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-mother-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    padding: 0.3rem 0.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 6px var(--shadow);
+    text-align: center;
+}
+
+.mobile-mother-label {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-color);
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-mother-figure {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+/* Reach into FigureContainer (a child component, so Blazor's
+   per-component scope attribute lives on its own classes; we
+   need ::deep to bypass that). Goal: make the four tap rows
+   thumb-sized while keeping the cell compact enough that the
+   strip never pushes the chart off-screen. */
+.mobile-mother-figure ::deep .figure-container {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0.25rem;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.mobile-mother-figure ::deep .figure-container:hover {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
+.mobile-mother-figure ::deep .figure-lines {
+    gap: 3px;
+    flex: 1 1 auto;
+    justify-content: center;
+}
+
+.mobile-mother-figure ::deep .figure-line {
+    font-size: 1rem;
+    min-height: 32px;
+    height: 32px;
+    line-height: 1;
+}
+
+/* Scale-on-hover transforms fight touch interaction (the figure
+   visibly jumps just before regeneration), so suppress them on
+   the strip cells where the cell itself is the affordance. */
+.mobile-mother-figure ::deep .figure-line.interactive:hover,
+.mobile-mother-figure ::deep .figure-line.interactive:active {
+    transform: none;
+}
+
+.mobile-mother-figure ::deep .figure-name {
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+    line-height: 1.15;
+    word-break: break-word;
+    color: var(--text-primary);
+    font-style: normal;
+    font-weight: 600;
 }
 
 /* Render the hosted ChartSurface at a fixed roomy native size, then

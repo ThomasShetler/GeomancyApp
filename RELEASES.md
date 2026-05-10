@@ -12,6 +12,7 @@ The chart engine, perfection analyzer, Way of Points module, and the entire inte
 ### Highlights
 
 - **Two purpose-built workspaces.** A wide desktop layout that gives the chart and details room to breathe, and a mobile-first layout where the chart fills the screen and tabs collapse into focused detail panels. Phones are auto-routed to the mobile workspace.
+- **Mobile Mother input strip.** A row of four full-width tap targets — labeled Fourth, Third, Second, and First Mother — sits above the chart inside the mobile drawer. Each cell drives the same state as the in-chart Mother inputs, giving thumbs a comfortable place to set lines without zooming in on the small chart.
 - **Original interpretive corpus.** Every interpretive line — figure data, house data, court placements, and the contextual "this figure in this slot" blurbs (64 in total) — was written from primary sources (Agrippa, Cattan, Fludd, Heydon, Hartmann) and the author's practice. No third-party reference material is reproduced.
 - **Themed card-based detail panel.** Contextual in-slot callout, split favorable / unfavorable cards, person and body correspondences, house affinity pills, themed imagery cards, and a citation footer with sources.
 - **Perfection analyzer.** Querent / Quesited selection with per-perfection commentary covering Occupation, Conjunction, Translation, Mutation, Mutual Reception, and the supporting and denying aspects.
