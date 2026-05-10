@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>GeomancyApp</RootNamespace>
+    <AssemblyName>Geomancy.Core</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ProjectGuid>{B0A1C9D2-3E4F-4A5B-6C7D-8E9F0A1B2C3D}</ProjectGuid>
+  </PropertyGroup>
+
+</Project>

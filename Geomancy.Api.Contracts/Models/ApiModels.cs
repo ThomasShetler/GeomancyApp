@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 
 namespace GeomancyAPI.Models
@@ -15,19 +14,19 @@ namespace GeomancyAPI.Models
     // Request model for generating a single figure
     public class GenerateFigureRequest
     {
-        [Microsoft.Build.Framework.Required]
+        [Required]
         [Range(1, 2)]
         public int HeadLine { get; set; }
 
-        [Microsoft.Build.Framework.Required]
+        [Required]
         [Range(1, 2)]
         public int NeckLine { get; set; }
 
-        [Microsoft.Build.Framework.Required]
+        [Required]
         [Range(1, 2)]
         public int BodyLine { get; set; }
 
-        [Microsoft.Build.Framework.Required]
+        [Required]
         [Range(1, 2)]
         public int FootLine { get; set; }
     }
@@ -35,16 +34,16 @@ namespace GeomancyAPI.Models
     // Request model for generating 4 figures
     public class GenerateFourFiguresRequest
     {
-        [Microsoft.Build.Framework.Required]
+        [Required]
         public GenerateFigureRequest House1 { get; set; }
 
-        [Microsoft.Build.Framework.Required]
+        [Required]
         public GenerateFigureRequest House2 { get; set; }
 
-        [Microsoft.Build.Framework.Required]
+        [Required]
         public GenerateFigureRequest House3 { get; set; }
 
-        [Microsoft.Build.Framework.Required]
+        [Required]
         public GenerateFigureRequest House4 { get; set; }
     }
 

@@ -61,6 +61,10 @@
       <Project>{4e7070d6-9a74-4c2c-9b15-aee0cd954fce}</Project>
       <Name>GeomancyApp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Geomancy.Core\Geomancy.Core.csproj">
+      <Project>{B0A1C9D2-3E4F-4A5B-6C7D-8E9F0A1B2C3D}</Project>
+      <Name>Geomancy.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -51,9 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartAspectAnalysis.cs" />
-    <Compile Include="DignityTables.cs" />
-    <Compile Include="FigureData.cs" />
     <Compile Include="FigureWiki.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,14 +63,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="GeomanticAspects.cs" />
-    <Compile Include="GeomancyAPI.cs" />
-    <Compile Include="HouseChart.cs" />
-    <Compile Include="PerfectionCalculator.cs" />
-    <Compile Include="PerfectionResult.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="WayOfPoints.cs" />
-    <Compile Include="WayOfPointsResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FigureWiki.resx">
       <DependentUpon>FigureWiki.cs</DependentUpon>
@@ -103,6 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Geomancy.Core\Geomancy.Core.csproj">
+      <Project>{B0A1C9D2-3E4F-4A5B-6C7D-8E9F0A1B2C3D}</Project>
+      <Name>Geomancy.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

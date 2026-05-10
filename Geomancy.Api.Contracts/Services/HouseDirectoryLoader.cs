@@ -101,7 +101,7 @@ namespace GeomancyAPI.Services
         /// </summary>
         private static string ResolveDataFile(string fileName)
         {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var baseDir = AppContext.BaseDirectory;
 
             // 1. Linked content next to binary: <baseDir>/HouseAndCourtDirectory/<file>
             var beside = Path.Combine(baseDir, DirectoryFolderName, fileName);
