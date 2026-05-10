@@ -53,6 +53,7 @@
     justify-content: center;
     gap: 0.75rem;
     flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .workspace-pill-btn {
@@ -469,9 +470,6 @@
  * save / archive a reading.
  */
 .chart-export-section {
-    /* Reuse .workspace-subsection's framing, but lay out the description
-       column + button column in a row so the action sits to the right at
-       eye-level with the heading. */
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -479,13 +477,13 @@
 
 .chart-export-header {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1.25rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
 }
 
-.chart-export-header > div {
-    flex: 1 1 auto;
+.chart-export-header > div:first-child {
+    width: 100%;
     min-width: 0;
 }
 
@@ -503,7 +501,7 @@
     line-height: 1.45;
 }
 
-.chart-export-header .workspace-pill-btn[disabled] {
+.chart-export-actions .workspace-pill-btn[disabled] {
     opacity: 0.55;
     cursor: not-allowed;
     box-shadow: none;
@@ -511,22 +509,20 @@
 }
 
 /*
- * Two-button cluster: "Copy JSON" + "Download JSON". Stacks vertically on
- * narrower viewports so neither button truncates while the description
- * keeps room to breathe alongside.
+ * Actions sit below the heading + help text (never beside), full-width,
+ * stacked so long toast labels never push off the tab pane.
  */
 .chart-export-actions {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     align-items: stretch;
-    flex-shrink: 0;
+    width: 100%;
 }
 
 .chart-export-actions .workspace-pill-btn {
-    /* Prevent the buttons from collapsing to text-width and looking
-       inconsistent when one says "Copied!" and the other "Download JSON". */
-    min-width: 11rem;
+    width: 100%;
+    min-width: 0;
     text-align: center;
     justify-content: center;
 }

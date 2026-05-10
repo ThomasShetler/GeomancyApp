@@ -173,6 +173,7 @@
     justify-content: center;
     gap: 0.6rem;
     flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .mobile-pill-btn {
@@ -679,15 +680,7 @@
  * .workspace-share-btn treatment: same pill shape as the existing toolbar
  * buttons, but accent-coloured so it reads as the secondary action and
  * inverts on tap as the "Copied!" / "Couldn't copy" confirmation flashes.
- *
- * Sized identically to .mobile-pill-btn so the toolbar row keeps a clean
- * baseline; we let the wrapping toolbar flex onto two rows on the smallest
- * viewports rather than shrinking the buttons below tappable size.
  */
-.mobile-chart-toolbar {
-    flex-wrap: wrap;
-}
-
 .mobile-share-btn {
     border-color: var(--accent-color);
     color: var(--accent-color);
@@ -708,16 +701,11 @@
  * lines up with the surrounding cards visually.
  */
 .mobile-chart-export-section {
-    /* Slightly tighter than the other mobile-subsection cards so the action
-       button sits comfortably with the heading on a single row. */
     padding: 0.7rem 0.85rem;
 }
 
 .mobile-chart-export-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.6rem;
+    margin-bottom: 0.35rem;
 }
 
 .mobile-chart-export-header h3 {
@@ -728,7 +716,7 @@
 }
 
 .mobile-chart-export-help {
-    margin: 0;
+    margin: 0 0 0.65rem 0;
     color: var(--text-secondary);
     font-size: 0.8rem;
     line-height: 1.4;
@@ -742,19 +730,19 @@
 }
 
 /*
- * Two-button row: "Copy JSON" + "Download JSON". Lays out side-by-side
- * with each button taking equal share so both stay thumb-tappable on
- * narrow viewports without one dominating.
+ * Actions below help text: stacked full-width so toast labels never clip.
  */
 .mobile-chart-export-actions {
     display: flex;
+    flex-direction: column;
     gap: 0.5rem;
     align-items: stretch;
     width: 100%;
 }
 
 .mobile-chart-export-actions .mobile-pill-btn {
-    flex: 1 1 0;
+    flex: none;
+    width: 100%;
     min-width: 0;
     text-align: center;
     justify-content: center;
