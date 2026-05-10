@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>GeomancyAPI</RootNamespace>
+    <AssemblyName>Geomancy.Api.Handlers</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ProjectGuid>{D2C3E4F5-6A7B-4C8D-9E0F-1A2B3C4D5E6F}</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Geomancy.Core\Geomancy.Core.csproj" />
+    <ProjectReference Include="..\Geomancy.Api.Contracts\Geomancy.Api.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

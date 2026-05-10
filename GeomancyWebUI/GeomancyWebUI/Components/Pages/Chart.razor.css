@@ -1,0 +1,1990 @@
+/* Main layout - charts and info column on top, analysis sections below */
+.chart-main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin: 2rem 0;
+}
+
+/* Mobile: Reduce gaps and margins */
+@media (max-width: 768px) {
+    .chart-main-layout {
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .houses-column {
+        min-width: 100%;
+        max-width: 100%;
+        padding: 1rem;
+    }
+    
+    .houses-column .houses-list.condensed li {
+        font-size: 0.8rem;
+        padding: 0.6rem 0.4rem;
+    }
+    
+    .chart-controls-wrapper {
+        margin-bottom: 1rem;
+    }
+    
+    .toggle-button {
+        min-width: 140px;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Charts and Houses Row */
+.charts-and-houses-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.houses-column {
+    min-width: 220px;
+    max-width: 250px;
+}
+
+/* Mobile: Stack charts and houses column vertically */
+@media (max-width: 992px) {
+    .charts-and-houses-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .houses-column {
+        order: 2;
+    }
+    
+    .charts-side-by-side {
+        order: 1;
+    }
+}
+
+/* Houses Column on Right */
+.houses-column {
+    background: linear-gradient(to bottom, 
+        var(--bg-primary) 0%, 
+        var(--bg-secondary) 100%);
+    border-radius: 12px;
+    padding: clamp(0.75rem, 4cqw, 1rem);
+    box-shadow: 0 4px 12px var(--shadow), 
+                0 2px 4px var(--shadow);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    align-self: stretch;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    animation: fadeIn 0.4s ease-out;
+    overflow: hidden;
+    box-sizing: border-box;
+    container-type: inline-size;
+}
+
+.houses-column:hover {
+    box-shadow: 0 6px 16px var(--shadow-hover), 
+                0 3px 6px var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.houses-column h3 {
+    font-size: clamp(0.6rem, 3.2cqw, 0.75rem);
+    margin: 0 0 clamp(0.4rem, 2.5cqw, 0.6rem) 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: clamp(0.3rem, 2cqw, 0.4rem);
+    flex-shrink: 0;
+}
+
+.houses-column .houses-list.condensed {
+    flex: 1 1 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+.houses-column .houses-list.condensed li {
+    padding: clamp(0.2rem, 1.2cqw, 0.35rem) clamp(0.15rem, 1cqw, 0.25rem);
+    font-size: clamp(0.45rem, 2.5cqw, 0.65rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+    border-left: 3px solid transparent;
+    padding-left: clamp(0.25rem, 1.5cqw, 0.35rem);
+    line-height: 1.1;
+    gap: clamp(0.1rem, 0.8cqw, 0.2rem);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.houses-column .houses-list.condensed li:hover {
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    border-left-color: var(--accent-color);
+}
+
+.houses-column .houses-list.condensed li span {
+    white-space: nowrap;
+}
+
+.houses-column .houses-list.condensed li div {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.houses-column .houses-list.condensed li div:first-child {
+    flex-shrink: 1;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: clamp(0.4rem, 2.2cqw, 0.55rem);
+    line-height: 1.15;
+}
+
+.houses-column .houses-list.condensed li div:last-child {
+    flex-shrink: 1;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: clamp(0.5rem, 2.8cqw, 0.65rem);
+    line-height: 1.25;
+}
+
+.houses-column .houses-list.condensed li.house-separator {
+    margin-top: clamp(0.4rem, 2.5cqw, 0.6rem);
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+    background: none;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-shrink: 0;
+    padding-left: 0;
+}
+
+.houses-column .houses-list.condensed li.house-separator .court-label {
+    font-size: clamp(0.6rem, 3.2cqw, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: clamp(0.3rem, 2cqw, 0.4rem);
+    width: 100%;
+    text-align: left;
+}
+
+/* Analysis Row: Triplicities, Way of Points, Perfection */
+.analysis-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    align-items: start; /* Each column maintains its own height */
+}
+
+/* Tablet: 2 columns for analysis row */
+@media (max-width: 992px) and (min-width: 769px) {
+    .analysis-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .analysis-row .analysis-column:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Mobile: Stack analysis columns vertically */
+@media (max-width: 768px) {
+    .analysis-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.analysis-column {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px var(--shadow), 
+                0 2px 4px var(--shadow);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    min-height: fit-content; /* Column height based on content */
+    align-self: start; /* Don't stretch to match other columns */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.analysis-column:hover {
+    box-shadow: 0 6px 16px var(--shadow-hover), 
+                0 3px 6px var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.analysis-column h3 {
+    font-size: 1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.analysis-column .triplicities-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.analysis-column .triplicities-list li {
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.analysis-column .triplicity-item {
+    gap: 0.25rem;
+    padding: 0.5rem 0.6rem;
+}
+
+.analysis-column .triplicity-header {
+    gap: 0.15rem;
+}
+
+.analysis-column .triplicity-description {
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+.analysis-column .triplicity-figures {
+    font-size: 0.9rem;
+}
+
+.analysis-column .triplicity-number {
+    font-size: 0.9rem;
+}
+
+/* Charts side-by-side container */
+.charts-side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Mobile: Stack charts vertically */
+@media (max-width: 768px) {
+    .charts-side-by-side {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Info sections in the 3-column row */
+.info-sections-row .info-section {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px var(--shadow), 
+                0 2px 4px var(--shadow);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0; /* Allow text to wrap */
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.info-sections-row .info-section:hover {
+    box-shadow: 0 6px 16px var(--shadow-hover), 
+                0 3px 6px var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.info-sections-row .info-section h3 {
+    font-size: 1rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.info-sections-row .triplicity-description {
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+.info-sections-row .triplicity-figures {
+    font-size: 0.9rem;
+}
+
+.info-sections-row .triplicity-number {
+    font-size: 0.9rem;
+}
+
+.info-sections-row .court-list,
+.info-sections-row .houses-list,
+.info-sections-row .triplicities-list {
+    font-size: 0.9rem;
+    margin: 0;
+    padding: 0;
+}
+
+.info-sections-row .court-list li,
+.info-sections-row .houses-list li,
+.info-sections-row .triplicities-list li {
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.info-sections-row .houses-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.info-sections-row .houses-list.condensed {
+    max-height: none;
+    overflow-y: visible;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-sections-row .houses-list.condensed li {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+    line-height: 1.2;
+    gap: 0.2rem;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.info-sections-row .houses-list.condensed li div {
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+}
+
+.info-sections-row .houses-list.condensed li:last-child {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-sections-row .houses-list.condensed li.house-separator {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 2px solid var(--border-color);
+    border-bottom: none;
+    justify-content: center;
+}
+
+.info-sections-row .houses-list.condensed li.house-separator .court-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-sections-row .triplicity-item {
+    gap: 0.25rem;
+    padding: 0.5rem 0.6rem;
+}
+
+.info-sections-row .triplicity-header {
+    gap: 0.15rem;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chart-info-column .info-section h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.4rem;
+}
+
+/* Analysis sections below */
+.analysis-sections {
+    background: var(--bg-primary, #fff);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow, rgba(0, 0, 0, 0.1));
+}
+
+/* Single chart display - add margins to keep it smaller */
+.charts-side-by-side > .shield-chart-container:only-child,
+.charts-side-by-side > .traditional-house-chart-container:only-child {
+    grid-column: 1 / -1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Shield chart container (existing layout) */
+.shield-chart-container {
+    position: relative;
+    padding: clamp(0.5rem, 1.5%, 0.75rem);
+    background: var(--bg-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 
+                0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, transform 0.2s ease;
+    aspect-ratio: 1;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    }
+
+/* Keep old class name for backward compatibility with existing CSS */
+.house-chart-container {
+    position: relative;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 
+                0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Shield chart rows and columns */
+.shield-chart-container .row {
+    margin: 0 !important;
+    padding: 0;
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+/* Override Bootstrap mb-3 class on shield chart rows */
+.shield-chart-container .row.mb-3 {
+    margin-bottom: 0 !important;
+}
+
+.house-chart-container .row {
+    margin-bottom: 0;
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.shield-chart-container .row.row-1,
+.house-chart-container .row.row-1 {
+    position: relative;
+}
+
+.shield-chart-container .row.row-2,
+.house-chart-container .row.row-2 {
+    position: relative;
+}
+
+.shield-chart-container .col,
+.shield-chart-container .col-3,
+.shield-chart-container .col-4,
+.shield-chart-container .col-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(0.25rem, 1%, 0.5rem);
+    position: relative;
+    contain: layout style;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    border-right: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-dark);
+    box-sizing: border-box;
+}
+
+.shield-chart-container .row:first-child .col,
+.shield-chart-container .row:first-child .col-3,
+.shield-chart-container .row:first-child .col-4,
+.shield-chart-container .row:first-child .col-6 {
+    border-top: 1px solid var(--border-dark);
+}
+
+.shield-chart-container .row .col:first-child,
+.shield-chart-container .row .col-3:first-child,
+.shield-chart-container .row .col-4:first-child,
+.shield-chart-container .row .col-6:first-child {
+    border-left: 1px solid var(--border-dark);
+}
+
+.house-chart-container .col,
+.house-chart-container .col-3,
+.house-chart-container .col-4,
+.house-chart-container .col-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    position: relative;
+    contain: layout style;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Ensure figure containers fill their Bootstrap grid cells */
+.shield-chart-container ::deep .figure-container {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    padding: clamp(1px, 0.5%, 3px) !important;
+    box-sizing: border-box;
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Remove fixed heights to allow scaling */
+.shield-chart-container {
+    container-type: size;
+}
+
+.shield-chart-container ::deep .figure-line {
+    min-height: 0 !important;
+    height: auto !important;
+    font-size: clamp(14px, 2.5cqw, 24px) !important;
+}
+
+.shield-chart-container ::deep .figure-lines {
+    flex: 1 1 auto !important;
+    gap: clamp(1px, 0.3cqw, 3px) !important;
+}
+
+.shield-chart-container ::deep .figure-label {
+    font-size: clamp(8px, 1.2cqw, 12px) !important;
+    margin-bottom: clamp(1px, 0.3cqw, 2px) !important;
+    margin-top: 0 !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+}
+
+.shield-chart-container ::deep .figure-name {
+    font-size: clamp(9px, 1.1cqw, 11px) !important;
+    margin-top: clamp(2px, 0.4cqw, 3px) !important;
+    margin-bottom: 0 !important;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.3;
+    text-align: center;
+    word-break: break-word;
+}
+
+.house-chart-container ::deep .figure-container {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.house-chart-container {
+    position: relative;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.25s ease;
+}
+
+.house-chart-container .row {
+    margin-bottom: 1rem;
+    position: relative;
+    display: flex;
+}
+
+.house-chart-container .row.row-1 {
+    position: relative;
+}
+
+.house-chart-container .row.row-2 {
+    position: relative;
+}
+
+.house-chart-container .col,
+.house-chart-container .col-3,
+.house-chart-container .col-4,
+.house-chart-container .col-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    position: relative;
+    min-height: 150px;
+    contain: layout style;
+}
+
+/* Ensure figure containers are properly sized */
+.house-chart-container ::deep .figure-container {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Section color coding - removed backgrounds for clean grid */
+.section-mothers {
+    background-color: transparent;
+}
+
+.section-daughters {
+    background-color: transparent;
+}
+
+.section-nieces {
+    background-color: transparent;
+}
+
+.section-court {
+    background-color: transparent;
+}
+
+/* Section label overlays - positioned relative to rows */
+.section-label-overlay {
+    position: absolute;
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 10;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.section-label-overlay.hidden {
+    display: none;
+}
+
+/* Position section labels relative to specific rows */
+.shield-chart-container .row-1 .section-label-mothers,
+.house-chart-container .row-1 .section-label-mothers {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    z-index: 10;
+}
+
+.shield-chart-container .row-1 .section-label-daughters,
+.house-chart-container .row-1 .section-label-daughters {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    z-index: 10;
+}
+
+.shield-chart-container .row-2 .section-label-nieces,
+.house-chart-container .row-2 .section-label-nieces {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.shield-chart-container .row:nth-child(5) .section-label-court,
+.shield-chart-container .row:nth-child(6) .section-label-court,
+.house-chart-container .row:nth-child(5) .section-label-court,
+.house-chart-container .row:nth-child(6) .section-label-court {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+/* Triplicate overlays - add borders directly to cells using data attributes for reliable targeting */
+/* Triplicate 1: Houses 1-2 (row 1) + House 9 (row 2) */
+.shield-chart-container.show-triplicates .row-1 .col[data-house="1"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="2"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="9"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="1"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="2"],
+.house-chart-container.show-triplicates .row-2 .col-3[data-house="9"] {
+    border: 3px solid rgba(255, 0, 0, 0.6) !important;
+    background: rgba(255, 0, 0, 0.08) !important;
+    border-radius: 8px;
+    position: relative;
+}
+
+.shield-chart-container.show-triplicates .row-1 .col[data-house="1"]::after,
+.shield-chart-container.show-triplicates .row-1 .col[data-house="2"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="1"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="2"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 1rem;
+    background: rgba(255, 0, 0, 0.6);
+    z-index: 6;
+}
+
+/* Triplicate 2: Houses 3-4 (row 1) + House 10 (row 2) */
+.shield-chart-container.show-triplicates .row-1 .col[data-house="3"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="4"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="10"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="3"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="4"],
+.house-chart-container.show-triplicates .row-2 .col-3[data-house="10"] {
+    border: 3px solid rgba(255, 0, 0, 0.6) !important;
+    background: rgba(255, 0, 0, 0.08) !important;
+    border-radius: 8px;
+    position: relative;
+}
+
+.shield-chart-container.show-triplicates .row-1 .col[data-house="3"]::after,
+.shield-chart-container.show-triplicates .row-1 .col[data-house="4"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="3"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="4"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 1rem;
+    background: rgba(255, 0, 0, 0.6);
+    z-index: 6;
+}
+
+/* Triplicate 3: Houses 5-6 (row 1) + House 11 (row 2) */
+.shield-chart-container.show-triplicates .row-1 .col[data-house="5"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="6"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="11"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="5"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="6"],
+.house-chart-container.show-triplicates .row-2 .col-3[data-house="11"] {
+    border: 3px solid rgba(255, 0, 0, 0.6) !important;
+    background: rgba(255, 0, 0, 0.08) !important;
+    border-radius: 8px;
+    position: relative;
+}
+
+.shield-chart-container.show-triplicates .row-1 .col[data-house="5"]::after,
+.shield-chart-container.show-triplicates .row-1 .col[data-house="6"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="5"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="6"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 1rem;
+    background: rgba(255, 0, 0, 0.6);
+    z-index: 6;
+}
+
+/* Triplicate 4: Houses 7-8 (row 1) + House 12 (row 2) */
+.shield-chart-container.show-triplicates .row-1 .col[data-house="7"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="8"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="12"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="7"],
+.house-chart-container.show-triplicates .row-1 .col[data-house="8"],
+.house-chart-container.show-triplicates .row-2 .col-3[data-house="12"] {
+    border: 3px solid rgba(255, 0, 0, 0.6) !important;
+    background: rgba(255, 0, 0, 0.08) !important;
+    border-radius: 8px;
+    position: relative;
+}
+
+.house-chart-container.show-triplicates .row-1 .col[data-house="7"]::after,
+.house-chart-container.show-triplicates .row-1 .col[data-house="8"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 1rem;
+    background: rgba(255, 0, 0, 0.6);
+    z-index: 6;
+}
+
+/* Hide the overlay divs since we're using direct cell styling */
+.triplicate-overlay {
+    display: none !important;
+}
+
+/* Traditional 12-House Chart Layout */
+.traditional-house-chart-container {
+    position: relative;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 
+                0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, transform 0.2s ease;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+/* SVG for house chart - single SVG with both boundaries and figures */
+.house-chart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* SVG stroke colors for dark mode - override inline stroke attributes */
+.house-chart-svg rect,
+.house-chart-svg polygon,
+.house-chart-svg line {
+    stroke: var(--border-dark) !important;
+    transition: stroke 0.3s ease;
+}
+
+.house-chart-svg foreignObject {
+    pointer-events: auto;
+    overflow: visible;
+}
+
+.house-figure-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.9);
+    box-sizing: border-box;
+}
+
+.house-figure-wrapper ::deep .figure-container {
+    width: 100%;
+    height: 100%;
+    max-width: 100px;
+    max-height: 100px;
+    min-width: 70px;
+    min-height: 70px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.house-figure-wrapper ::deep .figure-container:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+/* Centroid anchoring for traditional house chart */
+/* Create a zero-size anchor point at the exact SVG coordinate */
+.house-anchor {
+    position: relative;
+    width: 0;
+    height: 0;
+    overflow: visible;
+    z-index: 10;
+}
+
+/* The card itself: Centered on the anchor, and scaled to fit */
+.house-card-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* This moves the card's center to the anchor point */
+    transform: translate(-50%, -50%) scale(1.5); 
+    
+    /* Fixed size for the container to ensure centering works consistently */
+    width: 200px; 
+    height: 180px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.house-card-container ::deep .figure-container {
+    width: 100%;
+    height: 100%;
+    max-width: 180px;
+    max-height: 180px;
+    min-width: 110px;
+    min-height: 110px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Override figure container styling for traditional house chart - remove padding and background */
+.traditional-house-chart-container .house-card-container ::deep .figure-container {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    gap: 0 !important;
+}
+
+/* Hide labels in traditional house chart */
+.traditional-house-chart-container .house-card-container ::deep .figure-label {
+    display: none !important;
+}
+
+.traditional-house-chart-container .house-card-container ::deep .figure-name {
+    display: none !important;
+}
+
+/* Reduce gap between figure lines in traditional house chart */
+.traditional-house-chart-container .house-card-container ::deep .figure-lines {
+    gap: 0px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.house-card-container ::deep .figure-container:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+/* Ensure interactive houses (1-4) have higher z-index than non-interactive houses */
+/* This prevents House 12's hover overlay from interfering with House 1's clickability */
+/* Target interactive figure containers by checking for interactive class on figure-line elements */
+.traditional-house-chart-container .house-card-container:has(::deep .figure-line.interactive) {
+    z-index: 20;
+}
+
+.traditional-house-chart-container .house-anchor:has(.house-card-container:has(::deep .figure-line.interactive)) {
+    z-index: 20;
+}
+
+/* Ensure interactive figure containers have higher z-index on hover */
+.traditional-house-chart-container .house-card-container:has(::deep .figure-line.interactive) ::deep .figure-container:hover {
+    z-index: 25;
+}
+
+/* Non-interactive houses should have lower base z-index to prevent interference */
+/* This ensures House 12 and other non-interactive houses don't block interactive ones */
+.traditional-house-chart-container .house-anchor:not(:has(.house-card-container:has(::deep .figure-line.interactive))) {
+    z-index: 5;
+}
+
+.traditional-house-chart-container .house-card-container:not(:has(::deep .figure-line.interactive)) {
+    z-index: 5;
+}
+
+/* Responsive design - stack charts vertically on smaller screens */
+@media (max-width: 1200px) {
+    .charts-side-by-side {
+        grid-template-columns: 1fr;
+    }
+    
+    .traditional-house-chart-container {
+        aspect-ratio: 1;
+        max-width: 100%;
+        min-height: 400px;
+    }
+}
+
+/* Sidebar styling - now below charts */
+.sidebar-header {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sidebar-header button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.chart-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* Sidebar grid layout - 2 rows, 2 columns */
+.sidebar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+}
+
+@media (max-width: 992px) {
+    .sidebar-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+}
+
+.sidebar-section {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    background: var(--bg-primary);
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: box-shadow 0.25s ease, transform 0.25s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-section:hover {
+    box-shadow: 0 4px 12px var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+.sidebar-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.6rem;
+    color: var(--text-primary);
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.perfection-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.perfection-dropdowns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.perfection-dropdowns label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.perfection-dropdowns .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.perfection-dropdowns .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 158, 255, 0.15);
+    outline: none;
+}
+
+.perfection-results {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.perfection-results.hidden {
+    display: none;
+}
+
+.court-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.court-list li {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.court-list li:hover {
+    background-color: #f8f9fa;
+}
+
+.court-list li:last-child {
+    border-bottom: none;
+}
+
+.triplicities-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.triplicities-list li {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.triplicities-list li:last-child {
+    border-bottom: none;
+}
+
+.triplicity-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.triplicity-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.triplicity-number {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.triplicity-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.3;
+}
+
+.triplicity-figures {
+    font-family: var(--font-mono, monospace);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.houses-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 6px;
+}
+
+.houses-list li {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.houses-list li:hover {
+    background-color: #f8f9fa;
+}
+
+.houses-list li:last-child {
+    border-bottom: none;
+}
+
+/* Toggle controls wrapper - isolated from chart updates */
+.chart-controls-wrapper {
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 10;
+    contain: layout style paint;
+    isolation: isolate;
+}
+
+/* Toggle controls */
+.chart-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    min-height: 48px;
+    contain: layout style paint;
+    position: relative;
+}
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.toolbar-button {
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--accent-color);
+    background: var(--bg-primary);
+    color: var(--accent-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 2px 4px var(--shadow);
+    min-width: 48px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    contain: layout style paint;
+    font-size: 1.2rem;
+}
+
+.toolbar-button:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-hover);
+}
+
+.toolbar-button.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 2px 6px var(--shadow-hover);
+}
+
+.chart-visibility-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-primary, #fff);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.chart-visibility-selector label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.chart-visibility-selector .form-select-sm {
+    min-width: 140px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+}
+
+.chart-visibility-selector select:focus-visible {
+    outline: 3px solid var(--accent-color, #007bff);
+    outline-offset: 2px;
+}
+
+.toggle-button {
+    padding: 0.6rem 1.2rem;
+    border: 2px solid var(--accent-color);
+    background: var(--bg-primary);
+    color: var(--accent-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 2px 4px var(--shadow);
+    min-width: 160px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    contain: layout style paint;
+    position: relative;
+}
+
+.toggle-button-text {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.toggle-button:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-hover);
+}
+
+.toggle-button.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 2px 6px var(--shadow-hover);
+}
+
+.toggle-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: var(--accent-color, #007bff);
+    border-radius: 2px;
+}
+
+.toggle-button:focus-visible {
+    outline: 3px solid var(--accent-color, #007bff);
+    outline-offset: 2px;
+}
+
+/* Perfection Mode Styling */
+.perfection-mode-section {
+    margin-bottom: 1rem;
+}
+
+.perfection-mode-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.mode-occupation {
+    background-color: #28a745;
+    color: white;
+}
+
+.mode-conjunction {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.mode-aspect {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.mode-translation {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.mode-mutation {
+    background-color: #20c997;
+    color: white;
+}
+
+.mode-company {
+    background-color: #e83e8c;
+    color: white;
+}
+
+.mode-none {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Company of Houses Badge */
+.company-badge {
+    display: inline-block;
+    padding: 0.2rem 0.4rem;
+    background-color: #ffc107;
+    color: #000;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    cursor: help;
+}
+
+.base-mode-indicator {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+    margin-left: 0.25rem;
+}
+
+/* Scoring Section */
+.scoring-section {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+}
+
+.scoring-section h6 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+.score-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 3px;
+}
+
+.favorable-score {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.unfavorable-score {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.net-score {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border: 2px solid;
+}
+
+.score-strong-positive {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #28a745;
+}
+
+.score-moderate-positive {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #17a2b8;
+}
+
+.score-neutral {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border-color: #6c757d;
+}
+
+.score-negative {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #dc3545;
+}
+
+.score-label {
+    font-weight: 500;
+}
+
+.score-value {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+/* Aggregate Scoring Section */
+.aggregate-scoring-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #007bff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+}
+
+.aggregate-scoring-section h6 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1em;
+    color: #007bff;
+    font-weight: 600;
+}
+
+.scoring-note {
+    font-size: 0.85em;
+    color: #6c757d;
+    font-style: italic;
+    margin-bottom: 0.75rem;
+}
+
+/* Notes Section */
+.notes-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.notes-section ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+}
+
+.company-note {
+    color: #856404;
+    font-weight: 500;
+    background-color: #fff3cd;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    margin: 0.25rem 0;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Multiple Perfections */
+.perfection-item {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.perfection-item:not(:last-child) {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 1.5rem;
+}
+
+.perfection-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Aspect Analysis Section */
+.aspect-analysis-section {
+    margin-bottom: 1rem;
+}
+
+.aspect-analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.aspect-analysis-header h3 {
+    margin: 0;
+}
+
+.expand-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.expand-button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
+}
+
+.expand-button:active {
+    transform: scale(0.95);
+}
+
+.aspect-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.aspect-summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.aspect-summary-item:hover {
+    background-color: #e9ecef;
+}
+
+.aspect-summary-item .label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.aspect-summary-item .value {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.aspect-details {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid #dee2e6;
+}
+
+.polarity-breakdown,
+.aspect-counts,
+.aspect-list {
+    margin-bottom: 1.5rem;
+}
+
+.polarity-breakdown h5,
+.aspect-counts h5,
+.aspect-list h5 {
+    margin-bottom: 0.75rem;
+    font-size: 1em;
+    color: #495057;
+    font-weight: 600;
+}
+
+.polarity-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0.5rem;
+    margin-bottom: 0.25rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+}
+
+.aspect-counts ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.aspect-counts li {
+    padding: 0.4rem 0.5rem;
+    margin-bottom: 0.25rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+}
+
+.aspect-items {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.aspect-item {
+    padding: 0.875rem;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    border-left: 3px solid #007bff;
+    transition: all 0.2s ease;
+}
+
+.aspect-item:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transform: translateX(2px);
+}
+
+.aspect-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.aspect-houses {
+    font-weight: 600;
+    color: #495057;
+}
+
+.aspect-type {
+    padding: 0.2rem 0.5rem;
+    background-color: #e7f3ff;
+    color: #004085;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.aspect-weight {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.aspect-figures {
+    font-size: 0.9em;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Polarity verdict colors */
+.polarity-favorable,
+.polarity-positive {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.polarity-unfavorable,
+.polarity-negative {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.polarity-neutral {
+    color: #6c757d;
+    font-weight: 600;
+}
+
+/* Smooth transitions for accordion and collapsible content */
+.accordion {
+    --bs-accordion-bg: var(--bg-primary);
+    --bs-accordion-color: var(--text-primary);
+    --bs-accordion-border-color: var(--border-color);
+}
+
+.accordion-item {
+    background-color: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+.accordion-button {
+    transition: all 0.25s ease;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    box-shadow: inset 0 -1px 0 var(--border-color);
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(74, 158, 255, 0.25);
+    border-color: var(--accent-color);
+}
+
+.accordion-collapse {
+    transition: height 0.3s ease;
+}
+
+.accordion-body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.accordion-body * {
+    color: var(--text-primary) !important;
+}
+
+.accordion-body .text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.accordion-body p,
+.accordion-body h6,
+.accordion-body strong,
+.accordion-body ul,
+.accordion-body li {
+    color: var(--text-primary) !important;
+}
+
+/* Loading state improvements */
+.alert {
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Card improvements */
+.card {
+    border-radius: 8px;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 4px var(--shadow);
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.card-body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.card-title {
+    color: var(--text-primary) !important;
+}
+
+.card-title h3,
+.card-title h5 {
+    color: var(--text-primary) !important;
+}
+
+.score-summary .card,
+.score-summary .card-body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.score-summary .card *,
+.score-summary .card-body * {
+    color: var(--text-primary) !important;
+}
+
+.score-summary .card .text-success {
+    color: #28a745 !important;
+}
+
+.score-summary .card .text-danger {
+    color: #dc3545 !important;
+}
+
+.score-summary .card .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Dark mode support for Bootstrap utility classes */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Ensure card borders work in dark mode */
+.card.border-success {
+    border-color: #28a745 !important;
+}
+
+.card.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.card.border-secondary {
+    border-color: var(--border-color) !important;
+}
+
+/* Smooth appearance for perfection analysis */
+.perfection-analysis {
+    animation: fadeIn 0.3s ease-in;
+    color: var(--text-primary);
+}
+
+/* Scoped dark mode styles for perfection analysis section */
+.perfection-analysis h3 {
+    color: var(--text-primary) !important;
+}
+
+.perfection-analysis .card,
+.perfection-analysis .card-body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.perfection-analysis .card * {
+    color: var(--text-primary) !important;
+}
+
+.perfection-analysis .card .text-success {
+    color: #28a745 !important;
+}
+
+.perfection-analysis .card .text-danger {
+    color: #dc3545 !important;
+}
+
+.perfection-analysis .card .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.perfection-analysis .accordion,
+.perfection-analysis .accordion-item,
+.perfection-analysis .accordion-button,
+.perfection-analysis .accordion-body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.perfection-analysis .accordion-button:not(.collapsed) {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+.perfection-analysis .accordion-body * {
+    color: var(--text-primary) !important;
+}
+
+.perfection-analysis .accordion-body .text-muted {
+    color: var(--text-secondary) !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

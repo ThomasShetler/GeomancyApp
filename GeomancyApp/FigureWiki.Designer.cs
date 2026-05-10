@@ -105,10 +105,12 @@
             // 
             // label17
             // 
+            this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label17.ForeColor = System.Drawing.Color.Red;
-            this.label17.Location = new System.Drawing.Point(23, 435);
+            this.label17.Location = new System.Drawing.Point(24, 435);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(94, 16);
             this.label17.TabIndex = 27;
@@ -462,7 +464,8 @@
             // 
             // OutterElement
             // 
-            this.OutterElement.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.OutterElement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.OutterElement.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OutterElement.Location = new System.Drawing.Point(12, 411);
             this.OutterElement.Name = "OutterElement";
@@ -505,7 +508,7 @@
             this.FireElement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FireElement.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FireElement.Location = new System.Drawing.Point(13, 454);
+            this.FireElement.Location = new System.Drawing.Point(14, 454);
             this.FireElement.Name = "FireElement";
             this.FireElement.Size = new System.Drawing.Size(253, 21);
             this.FireElement.TabIndex = 26;

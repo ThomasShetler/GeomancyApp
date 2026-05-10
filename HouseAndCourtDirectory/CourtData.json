@@ -1,0 +1,114 @@
+{
+  "CourtData": {
+    "Placements": [
+      {
+        "id": 13,
+        "placement": "Right Witness",
+        "traditional_name": "Testis Dexter",
+        "generated_by": "Adding the figures of the 9th and 10th Houses (the First and Second Nieces).",
+        "meaning": [
+          "Past vector: how the querent arrived at the question",
+          "Inner stance—courage, denial, fatigue, or appetite for change",
+          "Root fuel: habit, debt, loyalty, or old grief still accruing interest"
+        ],
+        "utility_in_reading": "Turn to the Right Witness before you grant full authority to the Judge: it sorts motive from melodrama and history from hype. It is the querent-side lane—what they confess aloud and what the chart confesses on their behalf.",
+        "essence": "The dexter witness is upstream weather—momentum, bias, and unfinished business tinting the present. It seldom contradicts the First; more often it thickens the portrait until temperament reads honestly.",
+        "read_when": [
+          "Career turns where years of burnout precede the résumé question",
+          "Relationship charts where an old attachment still sets the thermostat",
+          "Money crises where spending rhythms antedate the emergency"
+        ],
+        "pitfalls": [
+          "Reading it as prophecy of the future rather than soil in which the future grows",
+          "Under-weighting agreement with the First—when they align, lean into candor",
+          "Overwriting the figure with the story the querent prefers"
+        ],
+        "examples": [
+          "Founder admits they already chose to sell—Via in the Right Witness names motion decided before the casting",
+          "Student asks about an exam while Carcer names schedules and obligation—the Witness speaks study debt, not drama"
+        ]
+      },
+      {
+        "id": 14,
+        "placement": "Left Witness",
+        "traditional_name": "Testis Sinister",
+        "generated_by": "Adding the figures of the 11th and 12th Houses (the Third and Fourth Nieces).",
+        "meaning": [
+          "Incoming vector: what presses against the querent now",
+          "Environmental tone—market, kin network, boss, or literal weather",
+          "Near-future hinge: offers, deadlines, rivals advancing pieces"
+        ],
+        "utility_in_reading": "Balance Left Witness against Right: the tension between yesterday’s momentum and tomorrow’s lever is often the whole drama. Think of it as the board’s reply to the square where the querent stands.",
+        "essence": "The sinister witness names outer leverage—partners, regulators, lovers, cycles—that do not originate in the querent’s skull yet still bend outcomes.",
+        "read_when": [
+          "A hiring freeze lands on an offer already drafted",
+          "A partner’s visa timeline collides with wedding plans",
+          "A landlord sells the building—tenant’s chart wants environmental facts"
+        ],
+        "pitfalls": [
+          "Defaulting to secret enemy; sometimes the Left Witness is timely aid",
+          "Forgetting mobile figures turn faster than stable ones",
+          "Mistaking long-tail Sentence for this nearer hinge"
+        ],
+        "examples": [
+          "Left Witness Acquisitio with Right Witness Amissio—resources arrive as pride or liquidity drains; trace which witness leads the exchange",
+          "Populus left with Puer right—crowd noise encouraging a rash move; counsel pacing before commitment"
+        ]
+      },
+      {
+        "id": 15,
+        "placement": "The Judge",
+        "traditional_name": "Iudex",
+        "generated_by": "Adding the figures of the Right Witness (13) and Left Witness (14).",
+        "meaning": [
+          "Verdict plane—yes, no, wait, or mixed with teeth",
+          "Synthesis of both witnesses through elemental addition",
+          "Integrity check: paired dots must read even; if odd, recount the Mothers"
+        ],
+        "utility_in_reading": "The Judge compresses the witnesses into one hue once vectors have had their say. Geomantic arithmetic is prior art—confirm the math, then narrate the mercy or severity with proportion.",
+        "essence": "Judges crystallize the quarrel between witnesses into a single quality—benefic, malefic, mixed, or diffuse. They headline the chart; houses and court-mates supply the fine print.",
+        "read_when": [
+          "Binary business go or no-go after context is named",
+          "Medical layouts once specialists and sites are identified",
+          "Legal questions where counsel is already engaged"
+        ],
+        "pitfalls": [
+          "Discarding a Judge because the emotional answer disagrees",
+          "Skipping even-dot validation on the paired lines",
+          "Isolating the Judge from the rest of the court"
+        ],
+        "examples": [
+          "Judge Fortuna Major with Sentence Tristitia—success lands with a quieter cost; name the sleepless clause",
+          "Judge Populus—outcome tracks allies and rumor; glance toward the Eleventh before closing"
+        ]
+      },
+      {
+        "id": 16,
+        "placement": "The Reconciler",
+        "traditional_name": "Sentence / Fallout / Superjudge / Vindex",
+        "generated_by": "Adding the figure of the Judge (15) to the figure of the First House (1 - The First Mother).",
+        "meaning": [
+          "Aftermath: how the verdict settles into the querent’s life",
+          "Coping arc—relief, regret, or hunger for the next crisis",
+          "Slow variables: leases, visas, therapy cadence, vesting cliffs"
+        ],
+        "utility_in_reading": "Sentence narrates the second wave—feelings, cash flow, and body six months past the headline. It keeps readings from stopping at champagne and rescues proportion when optimism runs ahead of structure.",
+        "essence": "The Reconciler is epilogue: whether promotion nourishes partnership, whether settlement restores sleep, whether grant terms mature into golden handcuffs or genuine freedom.",
+        "read_when": [
+          "Merger charts asking what culture feels like after the ink dries",
+          "Breakups where life after the lease matters as much as the split",
+          "Litigation ends leaving tax and stamina bills to pay"
+        ],
+        "pitfalls": [
+          "Granting Sentence the same constitutional weight as Judge—related voice, different tempo",
+          "Missing when Sentence repeats Judge—then the outcome tends to stick",
+          "Forcing catastrophe when repetition simply underscores caution"
+        ],
+        "examples": [
+          "Sentence Carcer after Judge Laetitia—celebration followed by structure that limits spontaneity",
+          "Caput following Cauda—new role or resource after a closing chapter"
+        ]
+      }
+    ]
+  }
+}

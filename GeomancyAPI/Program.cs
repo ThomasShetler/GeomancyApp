@@ -10,7 +10,7 @@ namespace GeomancyAPI
         static void Main(string[] args)
         {
             // Use higher port numbers that don't require admin privileges
-            string[] ports = { "9000", "9001", "9002", "9003", "9004" };
+            string[] ports = { "5000" }; //{ "9000", "9001", "9002", "9003", "9004" };
             string selectedPort = null;
             HttpSelfHostServer server = null;
 

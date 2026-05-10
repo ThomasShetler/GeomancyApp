@@ -1,0 +1,104 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+
+<PageTitle>Geofancy</PageTitle>
+
+<div class="landing">
+    <section class="landing-hero" aria-labelledby="landing-title">
+        <p class="landing-eyebrow">Beta</p>
+        <img src="img/logo.png"
+             alt=""
+             aria-hidden="true"
+             class="landing-logo"
+             width="512"
+             height="512"
+             decoding="async"
+             fetchpriority="high" />
+        <h1 id="landing-title" class="landing-title sr-only">Geofancy</h1>
+        <p class="landing-tagline">
+            The most advanced geomancy software available—built with practitioners in mind,
+            developed by a devoted reader, and powered by the <strong>Geofancy API</strong>.
+        </p>
+        <button type="button" class="landing-cta" @onclick="CastAChartAsync">
+            Cast a chart!
+        </button>
+        <p class="landing-cta-hint">
+            Opens the workspace suited to your screen size (desktop workspace or mobile layout).
+        </p>
+    </section>
+
+    <section class="landing-section" aria-labelledby="intro-heading">
+        <h2 id="intro-heading" class="landing-h2">What is geomancy?</h2>
+        <div class="landing-prose">
+            <p>
+                <strong>Geomancy</strong> is a traditional divinatory method built from binary patterns:
+                each figure is four rows of one or two marks, yielding sixteen distinct symbols with elemental
+                and planetary associations. Practitioners cast random marks to form <strong>Mothers</strong>,
+                derive <strong>Daughters</strong> and <strong>Nieces</strong>, then assemble the familiar
+                <strong>Shield chart</strong> before projecting the twelve astrological <strong>Houses</strong>.
+            </p>
+            <p>
+                Readings interpret how figures occupy houses, how significators relate through
+                <strong>perfections</strong> (occupation, conjunction, mutation, translation, and more),
+                and how elemental routes trace the <strong>Way of Points</strong>. Like other symbolic arts,
+                geomancy frames timing, parties, and obstacles as patterns you reflect on—not guarantees.
+            </p>
+        </div>
+    </section>
+
+    <section class="landing-section" aria-labelledby="features-heading">
+        <h2 id="features-heading" class="landing-h2">What you can do</h2>
+        <ul class="landing-features">
+            <li class="landing-card">
+                <h3 class="landing-h3">Charts</h3>
+                <p>Generate shield and traditional twelve-house charts with interactive figures.</p>
+            </li>
+            <li class="landing-card">
+                <h3 class="landing-h3">Court &amp; Houses</h3>
+                <p>Explore court roles and house placements with directory-backed detail panels.</p>
+            </li>
+            <li class="landing-card">
+                <h3 class="landing-h3">Perfections &amp; aspects</h3>
+                <p>Browse perfections, denials, and aspect lists with structured interpretations.</p>
+            </li>
+            <li class="landing-card">
+                <h3 class="landing-h3">Way of Points</h3>
+                <p>Follow elemental paths with interpretive notes for elements and path types.</p>
+            </li>
+            <li class="landing-card">
+                <h3 class="landing-h3">Desktop &amp; mobile workspaces</h3>
+                <p>A wide desktop workspace and a thumb-friendly mobile flow with a quick chart overlay.</p>
+            </li>
+            <li class="landing-card">
+                <h3 class="landing-h3">Light &amp; dark</h3>
+                <p>Theme follows your choice—toggle whenever you like from the navigation menu.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section class="landing-section landing-release" aria-labelledby="release-heading">
+        <h2 id="release-heading" class="landing-h2">Latest release notes</h2>
+        <details class="landing-details">
+            <summary class="landing-summary">Geofancy 0.9.0 — Beta</summary>
+            <div class="landing-details-body">
+                <ul class="landing-notes">
+                    <li>Dedicated <strong>Workspace</strong> (<code>/workspace</code>) for desktop chart and analysis tabs.</li>
+                    <li><strong>Mobile workspace</strong> (<code>/mobile</code>) with horizontal tabs, list/detail flow, and chart drawer overlay.</li>
+                    <li><strong>Court &amp; Houses</strong>, <strong>Perfections</strong>, and <strong>Way of Points</strong> tabs with rich detail panels.</li>
+                    <li>Theme toggle synced with the document on first click; navigation-friendly placement.</li>
+                    <li>Branding refresh to <strong>Geofancy</strong> and this landing page.</li>
+                </ul>
+            </div>
+        </details>
+    </section>
+</div>
+
+@code {
+    private async Task CastAChartAsync()
+    {
+        var isMobile = await JS.InvokeAsync<bool>("geofancyDeviceIsMobile");
+        Nav.NavigateTo(isMobile ? "/mobile" : "/workspace");
+    }
+}

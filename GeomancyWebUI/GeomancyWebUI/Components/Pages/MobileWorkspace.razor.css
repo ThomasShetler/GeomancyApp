@@ -1,0 +1,545 @@
+/*
+ * MobileWorkspace - vertical phone/tablet layout for /mobile.
+ *
+ * Stacked elements inside .mobile-shell:
+ *   1. .mobile-chart-drawer  - thin always-visible handle ("Show/Hide chart")
+ *                              with the chart body absolutely-positioned
+ *                              underneath the handle as an overlay over the
+ *                              tabstrip + panel. Toggles via a single bool.
+ *   2. .mobile-tabstrip      - horizontally scrollable tab buttons, snaps
+ *   3. .mobile-panel         - grows to fill remaining height, scrolls
+ *                               internally; hosts either the list view or
+ *                               the detail view for the active tab, with a
+ *                               sticky "Back to list" header in detail mode.
+ *
+ * All selectors are namespaced to .mobile-* so the desktop /workspace styles
+ * (which enforce min-width: 1380px and side-by-side layouts) are completely
+ * untouched.
+ */
+
+.mobile-shell {
+    /* Establishes the positioning context for the chart drawer's
+       absolutely-positioned body, so it overlays the tabstrip + panel
+       without reflowing them. */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Top nav strip is 3.5rem tall (.top-row in NavMenu.razor.css). The shell
+       claims the remaining viewport so the panel can scroll internally
+       without the page itself scrolling. */
+    height: calc(100dvh - 3.5rem);
+    min-height: 0;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.mobile-alert {
+    margin: 0.4rem 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+ * 1) Chart drawer (handle + overlay body)
+ * ============================================================ */
+
+/* Drawer wrapper. Reserves a fixed 2.2rem strip in the .mobile-shell flex
+   layout that the (separately fixed-positioned) handle occupies visually,
+   so the tabstrip + panel below start at the right offset whether the
+   chart is expanded or collapsed. */
+.mobile-chart-drawer {
+    position: relative;
+    flex: 0 0 2.2rem;
+    z-index: 20;
+}
+
+/* Always-visible handle pinned to the viewport just below the nav. Using
+   position: fixed (instead of riding the .mobile-shell flow) guarantees the
+   button is reachable in every state - chart expanded or collapsed, URL bar
+   visible or hidden, panel scrolled or not. z-index: 30 places it above the
+   chart body (z-index: 25) so it sits *on top of* the overlay's top edge,
+   visually anchoring the drawer like a sheet handle. */
+.mobile-chart-handle {
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
+    right: 0;
+    height: 2.2rem;
+    z-index: 30;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+/* In the expanded state lift the handle visually onto the chart sheet so it
+   reads as the sheet's own header rather than an unrelated nav strip. */
+.mobile-chart-drawer.is-expanded .mobile-chart-handle {
+    background: var(--bg-primary);
+    box-shadow: 0 2px 8px var(--shadow);
+    border-bottom-color: var(--accent-color);
+}
+
+.mobile-chart-handle:hover,
+.mobile-chart-handle:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+    outline: none;
+}
+
+.mobile-chart-handle .handle-grip {
+    width: 2.5rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+    margin-right: 0.4rem;
+}
+
+.mobile-chart-handle .handle-chevron {
+    font-family: monospace;
+    font-size: 1rem;
+    line-height: 1;
+    margin-left: 0.4rem;
+    transform: translateY(-1px);
+}
+
+/* The chart body is a FULL-VIEWPORT OVERLAY: position: fixed anchors it to
+   the viewport (not just the shell) so it can claim every pixel from the
+   nav strip to the bottom edge regardless of where in the page the user
+   has scrolled. Stays mounted in the DOM when collapsed (so ChartSurface's
+   circuit isn't torn down), but is faded + scaled out and non-interactive.
+   No internal scrolling: .mobile-chart-stage uses transform: scale() to
+   guarantee the chart always fits the available square region, even on
+   narrow phones, without compromising figure proportions. */
+.mobile-chart-body {
+    position: fixed;
+    top: calc(3.5rem + 2.2rem);    /* below nav (3.5rem) + handle (2.2rem) */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 6px 14px var(--shadow);
+    transform-origin: top center;
+    transition: transform 0.22s ease, opacity 0.22s ease,
+                visibility 0s linear 0.22s;
+    z-index: 25;
+    overflow: hidden;
+}
+
+.mobile-chart-drawer.is-collapsed .mobile-chart-body {
+    transform: translateY(-12px) scaleY(0.96);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.mobile-chart-drawer.is-expanded .mobile-chart-body {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    /* When expanding, drop the visibility delay so it appears immediately. */
+    transition: transform 0.22s ease, opacity 0.22s ease,
+                visibility 0s linear 0s;
+}
+
+.mobile-chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.mobile-pill-btn {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px var(--shadow);
+}
+
+.mobile-pill-btn:hover,
+.mobile-pill-btn:focus-visible {
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--shadow-hover);
+    outline: none;
+}
+
+.mobile-pill-btn:active {
+    transform: translateY(0);
+}
+
+.mobile-chart-type-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Square stage that always fits the available viewport region without
+   ever requiring the user to scroll inside the overlay. Strategy:
+     1. --chart-fit picks the smaller of (viewport width minus a tiny
+        gutter), (vertical room left in the overlay after the toolbar),
+        and a 70dvh ceiling so the chart never dominates a tall phone.
+     2. The hosted ChartSurface is rendered at a fixed comfortable
+        480x480 native size (well above the ~435 "things start to break"
+        threshold the user observed), then transform: scale()'d down by
+        the ratio --chart-fit/480 so the rendered output fits exactly
+        the calculated stage size.
+   This preserves figure proportions and glyph sharpness on every phone
+   from a 360px-wide budget device up to a tablet, with zero compression
+   artifacts and zero internal scrolling. */
+.mobile-chart-stage {
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - 2.2rem - 5rem),
+        70dvh
+    );
+    width: var(--chart-fit);
+    height: var(--chart-fit);
+    margin: 0 auto;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Render the hosted ChartSurface at a fixed roomy native size, then
+   visually scale it to fit the stage. Layout-wise the inner element
+   stays 480x480 (overflowing the stage), which the parent's
+   overflow: hidden clips - but visually the scale() ensures it fits
+   exactly. ::deep is required because ChartSurface is a child component. */
+.mobile-chart-stage ::deep > * {
+    width: 480px !important;
+    height: 480px !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    transform: scale(calc(var(--chart-fit) / 480px));
+}
+
+/* ============================================================
+ * 2) Horizontal tab strip
+ * ============================================================ */
+.mobile-tabstrip {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    /* Hide the scrollbar (kept scrollable via touch / wheel). */
+    scrollbar-width: none;
+}
+
+.mobile-tabstrip::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-tab-btn {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.4rem 0.95rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease,
+                border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.mobile-tab-btn:hover,
+.mobile-tab-btn:focus-visible {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.mobile-tab-btn.active {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
+    box-shadow: 0 2px 6px var(--shadow-hover);
+}
+
+/* ============================================================
+ * 3) Panel (list / detail body)
+ * ============================================================ */
+.mobile-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+/* Sticky "back" header that appears only when the panel is in detail mode
+   for one of the three list+detail tabs. Tappable and big enough to thumb. */
+.mobile-panel-back {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+}
+
+.mobile-panel-back:hover,
+.mobile-panel-back:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+    outline: none;
+}
+
+.mobile-panel-back .back-chevron {
+    font-size: 1.6rem;
+    line-height: 0.8;
+    font-weight: 700;
+    margin-top: -2px;
+}
+
+.mobile-panel-back .back-label {
+    line-height: 1.2;
+}
+
+/* Inner scroll container so the back header stays pinned while the content
+   scrolls. The hosted list/detail components grow to 100% width naturally. */
+.mobile-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Make the embedded components fill the panel width on mobile. They were
+   designed to live inside a fixed-width column on desktop, so we explicitly
+   relax those size constraints when they appear inside the mobile body. */
+.mobile-panel-body ::deep > * {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* The PerfectionDetailPanel / WayOfPointsDetailPanel / FigureDetailPanel have
+   their own overflow: auto + height: 100% rules which assume they sit inside
+   a fixed-height desktop column. Inside the mobile panel we want them to
+   grow with their content and let .mobile-panel-body do the scrolling. */
+.mobile-panel-body ::deep .perf-detail-panel,
+.mobile-panel-body ::deep .wop-detail-panel,
+.mobile-panel-body ::deep .figure-detail-panel,
+.mobile-panel-body ::deep .perfections-list,
+.mobile-panel-body ::deep .wop-list,
+.mobile-panel-body ::deep .court-houses-tables {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+}
+
+/* Inner scroll regions inside list components (e.g. .perf-lists, .wop-groups)
+   should also let the page handle scrolling on mobile - otherwise we'd nest
+   two scroll containers and the inner one would steal swipes. */
+.mobile-panel-body ::deep .perf-lists,
+.mobile-panel-body ::deep .wop-groups {
+    overflow: visible;
+    max-height: none;
+}
+
+/* ============================================================
+ * Triplicates (mobile)
+ * ============================================================ */
+.mobile-triplicities-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mobile-triplicity-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+}
+
+.mobile-triplicity-header {
+    display: flex;
+    gap: 0.45rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.mobile-triplicity-number {
+    font-weight: 700;
+    color: var(--accent-color);
+    font-size: 0.88rem;
+}
+
+.mobile-triplicity-description {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.mobile-triplicity-figures {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.mobile-empty {
+    margin: 1.5rem 0.5rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+}
+
+/* ============================================================
+ * Lots & Other (Experimental aspect analysis)
+ * ============================================================ */
+.mobile-experimental-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.mobile-experimental-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.65rem;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    background: rgba(255, 193, 7, 0.05);
+    flex-wrap: wrap;
+}
+
+.mobile-experimental-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b8860b;
+    background: rgba(255, 193, 7, 0.18);
+    border: 1px solid rgba(255, 193, 7, 0.5);
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+}
+
+.mobile-experimental-note {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+.mobile-subsection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+}
+
+.mobile-aspect-analysis-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.mobile-aspect-analysis-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.mobile-aspect-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.mobile-aspect-summary-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.mobile-aspect-summary-item .label {
+    color: var(--text-secondary);
+}
+
+.mobile-aspect-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.mobile-aspect-row:last-child {
+    border-bottom: none;
+}

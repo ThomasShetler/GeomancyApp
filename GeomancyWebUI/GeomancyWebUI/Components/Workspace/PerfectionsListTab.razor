@@ -1,0 +1,336 @@
+@using GeomancyWebUI.Client.Models
+
+@*
+    Left column of the revamped Perfections tab.
+
+    Layout:
+      1. Two house dropdowns (Querent / Quesited)
+      2. Verdict header (net score + favorable / unfavorable / neutral verdict)
+      3. Count-chip row (Perfections / Denials / Positive / Negative aspects)
+      4. Four scrollable lists, each row clickable; selected row highlights and
+         OnSelect raises a PerfectionSelection so the right-side detail panel
+         can render the full record.
+*@
+
+<div class="perfections-list">
+
+    <!-- Dropdowns -->
+    <div class="perf-dropdowns">
+        <div class="perf-dropdown">
+            <label>Querent</label>
+            <select class="form-select"
+                    value="@QuerentHouse"
+                    @onchange="OnQuerentSelectChange">
+                <option value="0">Select House</option>
+                @foreach (var (n, text) in HouseOptions)
+                {
+                    <option value="@n">@text</option>
+                }
+            </select>
+        </div>
+        <div class="perf-dropdown">
+            <label>Quesited</label>
+            <select class="form-select"
+                    value="@QuesitedHouse"
+                    @onchange="OnQuesitedSelectChange">
+                <option value="0">Select House</option>
+                @foreach (var (n, text) in HouseOptions)
+                {
+                    <option value="@n">@text</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    @if (Analysis == null || (QuerentHouse == 0 || QuesitedHouse == 0))
+    {
+        <div class="perf-empty">
+            <p>Pick a Querent and Quesited house to compute perfection.</p>
+        </div>
+    }
+    else if (!Analysis.Success)
+    {
+        <div class="perf-empty perf-error">
+            <p>@(string.IsNullOrEmpty(Analysis.Message) ? "Could not analyze perfection." : Analysis.Message)</p>
+        </div>
+    }
+    else
+    {
+        var verdictClass = Analysis.NetScore > 0
+            ? "verdict-favorable"
+            : Analysis.NetScore < 0 ? "verdict-unfavorable" : "verdict-neutral";
+        var verdictLabel = Analysis.NetScore > 0
+            ? "Favorable"
+            : Analysis.NetScore < 0 ? "Unfavorable" : "Neutral";
+
+        <!-- Verdict header -->
+        <div class="perf-verdict @verdictClass">
+            <div class="perf-verdict-score">
+                <span class="score-sign">@(Analysis.NetScore > 0 ? "+" : "")</span>@Analysis.NetScore
+            </div>
+            <div class="perf-verdict-meta">
+                <div class="perf-verdict-label">@verdictLabel</div>
+                <div class="perf-verdict-sub">
+                    <span class="favorable-text">+@Analysis.TotalFavorableScore</span>
+                    <span class="separator">/</span>
+                    <span class="unfavorable-text">@Analysis.TotalUnfavorableScore</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Count chips -->
+        <div class="perf-counts">
+            <span class="count-chip count-perfections">
+                <span class="count-num">@Analysis.Perfections.Count</span>
+                <span class="count-label">Perfections</span>
+            </span>
+            <span class="count-chip count-denials">
+                <span class="count-num">@Analysis.Denials.Count</span>
+                <span class="count-label">Denials</span>
+            </span>
+            <span class="count-chip count-positive">
+                <span class="count-num">@Analysis.PositiveAspects.Count</span>
+                <span class="count-label">+ Aspects</span>
+            </span>
+            <span class="count-chip count-negative">
+                <span class="count-num">@Analysis.NegativeAspects.Count</span>
+                <span class="count-label">- Aspects</span>
+            </span>
+        </div>
+
+        <!-- Lists -->
+        <div class="perf-lists">
+
+            @* Perfections *@
+            <section class="perf-group">
+                <h3 class="perf-group-title">
+                    <span>Perfections</span>
+                    <span class="perf-group-count">@Analysis.Perfections.Count</span>
+                </h3>
+                @if (Analysis.Perfections.Count == 0)
+                {
+                    <p class="perf-group-empty">None.</p>
+                }
+                else
+                {
+                    <ul class="perf-rows">
+                        @for (var i = 0; i < Analysis.Perfections.Count; i++)
+                        {
+                            var idx = i;
+                            var p = Analysis.Perfections[idx];
+                            var sel = new PerfectionSelection(PerfectionEntryKind.Perfection, idx, p, null);
+                            var isSel = IsSelected(sel);
+                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                                @onclick="() => RaiseSelect(sel)">
+                                <span class="perf-row-label">@BuildPerfectionLabel(p)</span>
+                                <span class="perf-row-score @ScoreClass(p.FavorableScore + p.UnfavorableScore)">
+                                    @FormatScore(p.FavorableScore + p.UnfavorableScore)
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+            @* Denials *@
+            <section class="perf-group">
+                <h3 class="perf-group-title">
+                    <span>Denials</span>
+                    <span class="perf-group-count">@Analysis.Denials.Count</span>
+                </h3>
+                @if (Analysis.Denials.Count == 0)
+                {
+                    <p class="perf-group-empty">None.</p>
+                }
+                else
+                {
+                    <ul class="perf-rows">
+                        @for (var i = 0; i < Analysis.Denials.Count; i++)
+                        {
+                            var idx = i;
+                            var d = Analysis.Denials[idx];
+                            var sel = new PerfectionSelection(PerfectionEntryKind.Denial, idx, d, null);
+                            var isSel = IsSelected(sel);
+                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                                @onclick="() => RaiseSelect(sel)">
+                                <span class="perf-row-label">@BuildDenialLabel(d)</span>
+                                <span class="perf-row-score @ScoreClass(d.FavorableScore + d.UnfavorableScore)">
+                                    @FormatScore(d.FavorableScore + d.UnfavorableScore)
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+            @* Positive Aspects *@
+            <section class="perf-group">
+                <h3 class="perf-group-title">
+                    <span>Positive Aspects</span>
+                    <span class="perf-group-count">@Analysis.PositiveAspects.Count</span>
+                </h3>
+                @if (Analysis.PositiveAspects.Count == 0)
+                {
+                    <p class="perf-group-empty">None.</p>
+                }
+                else
+                {
+                    <ul class="perf-rows">
+                        @for (var i = 0; i < Analysis.PositiveAspects.Count; i++)
+                        {
+                            var idx = i;
+                            var a = Analysis.PositiveAspects[idx];
+                            var sel = new PerfectionSelection(PerfectionEntryKind.PositiveAspect, idx, null, a);
+                            var isSel = IsSelected(sel);
+                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                                @onclick="() => RaiseSelect(sel)">
+                                <span class="perf-row-label">@BuildAspectLabel(a)</span>
+                                <span class="perf-row-score score-positive">+@a.FavorableScore</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+            @* Negative Aspects *@
+            <section class="perf-group">
+                <h3 class="perf-group-title">
+                    <span>Negative Aspects</span>
+                    <span class="perf-group-count">@Analysis.NegativeAspects.Count</span>
+                </h3>
+                @if (Analysis.NegativeAspects.Count == 0)
+                {
+                    <p class="perf-group-empty">None.</p>
+                }
+                else
+                {
+                    <ul class="perf-rows">
+                        @for (var i = 0; i < Analysis.NegativeAspects.Count; i++)
+                        {
+                            var idx = i;
+                            var a = Analysis.NegativeAspects[idx];
+                            var sel = new PerfectionSelection(PerfectionEntryKind.NegativeAspect, idx, null, a);
+                            var isSel = IsSelected(sel);
+                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                                @onclick="() => RaiseSelect(sel)">
+                                <span class="perf-row-label">@BuildAspectLabel(a)</span>
+                                <span class="perf-row-score score-negative">@a.UnfavorableScore</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public HouseChartModel? Chart { get; set; }
+    [Parameter] public PerfectionAnalysisModel? Analysis { get; set; }
+    [Parameter] public int QuerentHouse { get; set; }
+    [Parameter] public int QuesitedHouse { get; set; }
+    [Parameter] public List<(int Number, string DisplayText)> HouseOptions { get; set; } = new();
+    [Parameter] public PerfectionSelection? Selected { get; set; }
+    [Parameter] public EventCallback<int> OnQuerentChanged { get; set; }
+    [Parameter] public EventCallback<int> OnQuesitedChanged { get; set; }
+    [Parameter] public EventCallback<PerfectionSelection> OnSelect { get; set; }
+
+    private async Task OnQuerentSelectChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var n))
+        {
+            await OnQuerentChanged.InvokeAsync(n);
+        }
+    }
+
+    private async Task OnQuesitedSelectChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var n))
+        {
+            await OnQuesitedChanged.InvokeAsync(n);
+        }
+    }
+
+    private async Task RaiseSelect(PerfectionSelection sel)
+    {
+        await OnSelect.InvokeAsync(sel);
+    }
+
+    private bool IsSelected(PerfectionSelection sel)
+    {
+        return Selected != null
+            && Selected.Kind == sel.Kind
+            && Selected.Index == sel.Index;
+    }
+
+    // ----- Label / score helpers -----
+
+    private static string FormatScore(int n) => n > 0 ? $"+{n}" : n.ToString();
+
+    private static string ScoreClass(int n) => n > 0
+        ? "score-positive"
+        : n < 0 ? "score-negative" : "score-neutral";
+
+    private static string BuildPerfectionLabel(PerfectionModel p)
+    {
+        var parts = new List<string>();
+
+        // Mode (with company info if applicable)
+        var mode = p.Mode;
+        if (p.Mode == "Company")
+        {
+            var companyDisplay = GetCompanyTypeDisplay(p);
+            mode = !string.IsNullOrEmpty(companyDisplay) ? companyDisplay : "Company";
+            if (!string.IsNullOrEmpty(p.BaseMode))
+            {
+                mode += $" · {p.BaseMode}";
+            }
+        }
+        parts.Add(mode);
+
+        // Aspect type if present
+        if (!string.IsNullOrEmpty(p.AspectBetweenSignificators) && p.AspectBetweenSignificators != "None")
+        {
+            parts.Add(p.AspectBetweenSignificators);
+        }
+
+        // Houses
+        if (p.QuerentHouse > 0 && p.QuesitedHouse > 0)
+        {
+            parts.Add($"H{p.QuerentHouse} → H{p.QuesitedHouse}");
+        }
+
+        return string.Join(" · ", parts);
+    }
+
+    private static string BuildDenialLabel(PerfectionModel d)
+    {
+        if (d.Mode == "None" || d.Mode == "Impedition")
+        {
+            return d.Mode == "Impedition" ? "Impedition" : "No perfection";
+        }
+        return BuildPerfectionLabel(d);
+    }
+
+    private static string BuildAspectLabel(AspectRecordModel a)
+    {
+        var parts = new List<string>();
+        parts.Add(a.AspectType);
+        parts.Add(a.IsMajorAspect ? "Major" : "Minor");
+        if (a.FromHouse > 0 && a.ToHouse > 0)
+        {
+            parts.Add($"H{a.FromHouse} → H{a.ToHouse}");
+        }
+        return string.Join(" · ", parts);
+    }
+
+    private static string GetCompanyTypeDisplay(PerfectionModel p) => p.CompanyType switch
+    {
+        "Simple" => "Co. Simple",
+        "DemiSimple" => "Co. Demi-Simple",
+        "Compound" => "Co. Compound",
+        "Capitular" => "Co. Capitular",
+        _ => string.Empty
+    };
+}

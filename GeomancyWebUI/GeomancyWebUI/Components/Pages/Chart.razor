@@ -1,0 +1,1517 @@
+@page "/chart"
+@using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Components
+@using GeomancyWebUI.Services
+@using System.Text.Json
+@inject IGeomancyService GeomancyService
+@inject ThemeService ThemeService
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy - House Chart</PageTitle>
+
+<div class="container-fluid mt-4">
+    <h1>House Chart</h1>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <!-- Toggle Controls and Toolbar - Isolated Section -->
+    <div class="chart-controls-wrapper">
+    <div class="chart-controls">
+            <button class="toggle-button @(showSectionLabels ? "active" : "")" @onclick="ToggleSectionLabels" type="button" @key="@("section-labels-btn")">
+                <span class="toggle-button-text">@sectionLabelsButtonText Section Labels</span>
+        </button>
+            <button class="toggle-button @(showTriplicates ? "active" : "")" @onclick="ToggleTriplicates" type="button" @key="@("triplicates-btn")">
+                <span class="toggle-button-text">@triplicatesButtonText Triplicates</span>
+        </button>
+        </div>
+        <div class="toolbar">
+            <div class="chart-visibility-selector">
+                <label>Chart View:</label>
+                <select class="form-select form-select-sm" @bind="chartVisibility" @bind:after="OnChartVisibilityChanged">
+                    <option value="both">Both</option>
+                    <option value="shield">Shield Only</option>
+                    <option value="house">House Only</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout: Charts on top, Info sections below -->
+    <div class="chart-main-layout">
+        <!-- Charts and Houses Row -->
+        <div class="charts-and-houses-row">
+            <!-- Charts Side-by-Side Container -->
+            <div class="charts-side-by-side">
+            @if (chartVisibility == "both" || chartVisibility == "shield")
+            {
+            <!-- Shield Chart -->
+            <div class="shield-chart-container @(showTriplicates ? "show-triplicates" : "")">
+            <!-- Triplicate Overlays -->
+            @if (showTriplicates)
+            {
+                <!-- 1st Triplicate: Houses 1-2 (top) + House 9 (bottom) -->
+                <div class="triplicate-overlay triplicate-1">
+                    <div class="triplicate-top">
+                        <div class="triplicate-cell"></div>
+                        <div class="triplicate-cell"></div>
+                    </div>
+                    <div class="triplicate-bottom">
+                        <div class="triplicate-cell"></div>
+                    </div>
+                </div>
+                
+                <!-- 2nd Triplicate: Houses 3-4 (top) + House 10 (bottom) -->
+                <div class="triplicate-overlay triplicate-2">
+                    <div class="triplicate-top">
+                        <div class="triplicate-cell"></div>
+                        <div class="triplicate-cell"></div>
+                    </div>
+                    <div class="triplicate-bottom">
+                        <div class="triplicate-cell"></div>
+                    </div>
+                </div>
+                
+                <!-- 3rd Triplicate: Houses 5-6 (top) + House 11 (bottom) -->
+                <div class="triplicate-overlay triplicate-3">
+                    <div class="triplicate-top">
+                        <div class="triplicate-cell"></div>
+                        <div class="triplicate-cell"></div>
+                    </div>
+                    <div class="triplicate-bottom">
+                        <div class="triplicate-cell"></div>
+                    </div>
+                </div>
+                
+                <!-- 4th Triplicate: Houses 7-8 (top) + House 12 (bottom) -->
+                <div class="triplicate-overlay triplicate-4">
+                    <div class="triplicate-top">
+                        <div class="triplicate-cell"></div>
+                        <div class="triplicate-cell"></div>
+                    </div>
+                    <div class="triplicate-bottom">
+                        <div class="triplicate-cell"></div>
+                    </div>
+                </div>
+            }
+
+            <!-- Row 1: 8 columns for houses 8, 7, 6, 5, 4, 3, 2, 1 -->
+            <div class="row mb-3 row-1">
+                @if (showSectionLabels)
+                {
+                    <div class="section-label-overlay section-label-mothers">Mothers</div>
+                    <div class="section-label-overlay section-label-daughters">Daughters</div>
+                }
+                <div class="col text-center section-daughters" data-house="8">
+                    <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-daughters" data-house="7">
+                    <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-daughters" data-house="6">
+                    <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-daughters" data-house="5">
+                    <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-mothers" data-house="4">
+                    <FigureContainer Figure="@house4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
+                </div>
+                <div class="col text-center section-mothers" data-house="3">
+                    <FigureContainer Figure="@house3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
+                </div>
+                <div class="col text-center section-mothers" data-house="2">
+                    <FigureContainer Figure="@house2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
+                </div>
+                <div class="col text-center section-mothers" data-house="1">
+                    <FigureContainer Figure="@house1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
+                </div>
+            </div>
+
+            <!-- Row 2: 4 columns for houses 12, 11, 10, 9 (each spans 2 columns) -->
+            <div class="row mb-3 row-2">
+                @if (showSectionLabels)
+                {
+                    <div class="section-label-overlay section-label-nieces">Nieces</div>
+                }
+                <div class="col-3 text-center section-nieces" data-house="12">
+                    <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col-3 text-center section-nieces" data-house="11">
+                    <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col-3 text-center section-nieces" data-house="10">
+                    <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col-3 text-center section-nieces" data-house="9">
+                    <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
+                </div>
+            </div>
+
+            <!-- Row 3: 2 columns for Left Wit and Right Wit (each spans 4 columns) -->
+            <div class="row mb-3 section-court">
+                @if (showSectionLabels)
+                {
+                    <div class="section-label-overlay section-label-court">Court</div>
+                }
+                <div class="col-6 text-center">
+                    <FigureContainer Figure="@houseChart?.LeftWitness" Label="Left Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+                <div class="col-6 text-center">
+                    <FigureContainer Figure="@houseChart?.RightWitness" Label="Right Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+            </div>
+
+            <!-- Row 4: 3 columns - empty left, Judge in middle, Sentence (Fallout) in right -->
+            <div class="row section-court">
+                <div class="col-4"></div>
+                <div class="col-4 text-center">
+                    <FigureContainer Figure="@houseChart?.Judge" Label="Judge" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+                <div class="col-4 text-center">
+                    <FigureContainer Figure="@houseChart?.Sentence" Label="Fallout" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+            </div>
+            </div>
+            }
+            @if (chartVisibility == "both" || chartVisibility == "house")
+            {
+            <!-- Traditional 12-House Chart -->
+            <div class="traditional-house-chart-container">
+                <svg class="house-chart-svg" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outer Border: Square -->
+                    <rect x="0" y="0" width="1000" height="1000" fill="none" stroke="#333" stroke-width="2"/>
+
+                    <!-- Inner Diamond: Connect midpoints of outer square -->
+                    <polygon points="500,0 1000,500 500,1000 0,500" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <!-- Central Square: Inscribed in the diamond, touching all four sides -->
+                    <rect x="250" y="250" width="500" height="500" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <!-- Corner Splitters: Lines from outer corners to central square corners -->
+                    <line x1="0" y1="0" x2="250" y2="250" stroke="#333" stroke-width="1"/>
+                    <line x1="1000" y1="0" x2="750" y2="250" stroke="#333" stroke-width="1"/>
+                    <line x1="1000" y1="1000" x2="750" y2="750" stroke="#333" stroke-width="1"/>
+                    <line x1="0" y1="1000" x2="250" y2="750" stroke="#333" stroke-width="1"/>
+
+                    <foreignObject x="500" y="200" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="150" y="550" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@house1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="850" y="550" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="500" y="900" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@house4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="250" y="150" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <foreignObject x="100" y="300" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="750" y="150" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <foreignObject x="920" y="286" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="920" y="814" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <foreignObject x="750" y="935" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
+                            </div>
+                        </div>
+                    </foreignObject>
+
+                    <foreignObject x="80" y="814" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@house2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <foreignObject x="250" y="935" width="1" height="1">
+                        <div class="house-anchor">
+                            <div class="house-card-container">
+                                <FigureContainer Figure="@house3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
+                            </div>
+                        </div>
+                    </foreignObject>
+                </svg>
+            </div>
+            }
+            </div>
+
+            <!-- Houses Column on Right -->
+            <div class="houses-column">
+                <h3>Houses</h3>
+                <ul class="houses-list condensed">
+                    @foreach (var house in GetHouseList())
+                    {
+                        <li>
+                            <span>@house.Label</span>
+                            <span><strong>@(house.FigureName ?? "N/A")</strong></span>
+                        </li>
+                    }
+                    <li class="house-separator">
+                        <span class="court-label"><strong>Court</strong></span>
+                    </li>
+                    <li>
+                        <span><strong>Left Witness:</strong></span>
+                        <span><strong>@(houseChart?.LeftWitness?.Name ?? "N/A")</strong></span>
+                    </li>
+                    <li>
+                        <span><strong>Right Witness:</strong></span>
+                        <span><strong>@(houseChart?.RightWitness?.Name ?? "N/A")</strong></span>
+                    </li>
+                    <li>
+                        <span><strong>Judge:</strong></span>
+                        <span><strong>@(houseChart?.Judge?.Name ?? "N/A")</strong></span>
+                    </li>
+                    <li>
+                        <span><strong>Sentence (Fallout):</strong></span>
+                        <span><strong>@(houseChart?.Sentence?.Name ?? "N/A")</strong></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Analysis Row: Triplicities, Way of Points, Perfection -->
+        <div class="analysis-row">
+            <!-- Triplicities Section -->
+            <div class="analysis-column">
+                <h3>Triplicities/Triads</h3>
+                @if (houseChart?.Triplicities != null && houseChart.Triplicities.Any())
+                {
+                    <ul class="triplicities-list">
+                        @foreach (var triplicity in houseChart.Triplicities.OrderBy(t => t.Number))
+                        {
+                            <li class="triplicity-item">
+                                <div class="triplicity-header">
+                                    <span class="triplicity-number">@GetTriplicityOrdinal(triplicity.Number):</span>
+                                    @if (!string.IsNullOrEmpty(triplicity.Description))
+                                    {
+                                        <span class="triplicity-description">@triplicity.Description</span>
+                                    }
+                                </div>
+                                <span class="triplicity-figures">
+                                    @(triplicity.FirstFigure?.Name ?? "N/A") > @(triplicity.SecondFigure?.Name ?? "N/A") > @(triplicity.ThirdFigure?.Name ?? "N/A")
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No triplicities available</p>
+                }
+            </div>
+
+            <!-- Way of Points Section -->
+            <div class="analysis-column">
+                @if (wayOfPointsAnalysis != null)
+                {
+                    <WayOfPointsView Analysis="@wayOfPointsAnalysis" Chart="@houseChart" />
+                }
+            </div>
+
+            <!-- Perfection Section -->
+            <div class="analysis-column">
+                <h3>Perfection</h3>
+                <div class="perfection-controls">
+                    <div class="perfection-dropdowns">
+                        <div>
+                            <label>Querent:</label>
+                            <select class="form-select" @bind="selectedQuerentHouse" @bind:after="OnQuerentChanged">
+                                <option value="0">Select House</option>
+                                @foreach (var house in GetHouseOptions())
+                                {
+                                    <option value="@house.HouseNumber">@house.DisplayText</option>
+                                }
+                            </select>
+                        </div>
+                        <div>
+                            <label>Quesited:</label>
+                            <select class="form-select" @bind="selectedQuesitedHouse" @bind:after="OnQuesitedChanged">
+                                <option value="0">Select House</option>
+                                @foreach (var house in GetHouseOptions())
+                                {
+                                    <option value="@house.HouseNumber">@house.DisplayText</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    @if (perfectionAnalysis != null)
+                    {
+                        <PerfectionAnalysisView Analysis="@perfectionAnalysis" />
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Aspect Analysis Section Below -->
+        <div class="analysis-sections">
+            <div class="sidebar-header">
+                <button class="btn btn-primary btn-sm" @onclick="CopySidebarDataToJson" title="Copy sidebar data to clipboard as JSON">
+                    <span>📋</span> Copy Data to JSON
+                </button>
+            </div>
+            <div class="sidebar-grid">
+
+                <!-- Aspect Analysis Section -->
+                @if (aspectAnalysis != null && aspectAnalysis.Success)
+                {
+                    <div class="sidebar-section aspect-analysis-section">
+                        <div class="aspect-analysis-header">
+                            <h3>Aspect Analysis</h3>
+                            <button class="expand-button" @onclick="ToggleAspectAnalysisDetails">
+                                @(showAspectDetails ? "−" : "+")
+                            </button>
+                        </div>
+                        
+                        <div class="aspect-summary">
+                            <div class="aspect-summary-item">
+                                <span class="label">Total Score:</span>
+                                <span class="value score-@GetAspectScoreClass(aspectAnalysis.TotalScore)">@aspectAnalysis.TotalScore</span>
+                            </div>
+                            <div class="aspect-summary-item">
+                                <span class="label">Total Aspects:</span>
+                                <span class="value">@aspectAnalysis.TotalAspects</span>
+                            </div>
+                            @if (aspectAnalysis.Polarity != null)
+                            {
+                                <div class="aspect-summary-item">
+                                    <span class="label">Polarity:</span>
+                                    <span class="value polarity-@(aspectAnalysis.Polarity.Verdict.ToLower().Replace(" ", "-"))">@aspectAnalysis.Polarity.Verdict</span>
+                                </div>
+                                <div class="aspect-summary-item">
+                                    <span class="label">Polarity %:</span>
+                                    <span class="value">@aspectAnalysis.Polarity.Percent.ToString("F1")%</span>
+                                </div>
+                            }
+                        </div>
+
+                        @if (showAspectDetails)
+                        {
+                            <div class="aspect-details">
+                                @if (aspectAnalysis.Polarity != null)
+                                {
+                                    <div class="polarity-breakdown">
+                                        <h5>Polarity Breakdown</h5>
+                                        <div class="polarity-item">
+                                            <span>Easy:</span> <strong>@aspectAnalysis.Polarity.Easy</strong>
+                                        </div>
+                                        <div class="polarity-item">
+                                            <span>Hard:</span> <strong>@aspectAnalysis.Polarity.Hard</strong>
+                                        </div>
+                                        <div class="polarity-item">
+                                            <span>Delta:</span> <strong>@aspectAnalysis.Polarity.Delta</strong>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (aspectAnalysis.AspectCounts != null && aspectAnalysis.AspectCounts.Any())
+                                {
+                                    <div class="aspect-counts">
+                                        <h5>Aspect Counts</h5>
+                                        <ul>
+                                            @foreach (var count in aspectAnalysis.AspectCounts)
+                                            {
+                                                <li><strong>@count.Key:</strong> @count.Value</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+
+                                @if (aspectAnalysis.Aspects != null && aspectAnalysis.Aspects.Any())
+                                {
+                                    <div class="aspect-list">
+                                        <h5>All Aspects (@aspectAnalysis.Aspects.Count)</h5>
+                                        <div class="aspect-items">
+                                            @foreach (var aspect in aspectAnalysis.Aspects)
+                                            {
+                                                <div class="aspect-item">
+                                                    <div class="aspect-header">
+                                                        <span class="aspect-houses">House @aspect.FromHouse → House @aspect.ToHouse</span>
+                                                        <span class="aspect-type">@aspect.AspectType</span>
+                                                        <span class="aspect-weight">Weight: @aspect.Weight</span>
+                                                    </div>
+                                                    <div class="aspect-figures">
+                                                        @aspect.FromFigure → @aspect.ToFigure
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private HouseChartModel? houseChart;
+    private bool isLoading = false;
+    private string errorMessage = string.Empty;
+
+    // Interactive houses 1-4 maintain their own state
+    private FigureModel house1Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel house2Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel house3Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel house4Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+
+    // Toggle states
+    private bool showSectionLabels = false;
+    private bool showTriplicates = false;
+    
+    // Chart visibility
+    private string chartVisibility = "both";
+
+    // Perfection calculation
+    private int selectedQuerentHouse = 0;
+    private int selectedQuesitedHouse = 0;
+    private PerfectionAnalysisModel? perfectionAnalysis;
+
+    // Aspect analysis
+    private AspectAnalysisModel? aspectAnalysis;
+    private bool showAspectDetails = false;
+
+    // Way of points analysis
+    private WayOfPointsAnalysisModel? wayOfPointsAnalysis;
+
+    // House names mapping
+    private readonly Dictionary<int, string> houseNames = new()
+    {
+        { 1, "Vita" },
+        { 2, "Lucrum" },
+        { 3, "Fratres" },
+        { 4, "Genitor" },
+        { 5, "Nati" },
+        { 6, "Valetudo" },
+        { 7, "Uxor" },
+        { 8, "Mors" },
+        { 9, "Itineris" },
+        { 10, "Regnum" },
+        { 11, "Benefacta" },
+        { 12, "Carcer" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to theme changes (theme is already initialized by App.razor script)
+        ThemeService.ThemeChanged += OnThemeChanged;
+        
+        try
+        {
+            // Generate initial chart with default values (all Populus)
+            await GenerateChartAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error initializing chart: {ex.Message}";
+            // Don't rethrow - allow page to render even if API call fails
+        }
+    }
+
+    private FigureModel? GetHouseFigure(int houseNumber)
+    {
+        if (houseChart == null) return null;
+        return houseChart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+    }
+
+    private void UpdateFigureFromApi(FigureModel target, FigureModel source)
+    {
+        if (target == null || source == null) return;
+        
+        // Update all properties from the API response while preserving the line values
+        // (which should match, but we keep them as-is in case of any timing issues)
+        target.Name = source.Name ?? string.Empty;
+        target.OtherNames = source.OtherNames ?? string.Empty;
+        target.Quality = source.Quality ?? string.Empty;
+        target.Keyword = source.Keyword ?? string.Empty;
+        target.Imagery = source.Imagery ?? string.Empty;
+        target.StrongHouse = source.StrongHouse ?? string.Empty;
+        target.WeakHouse = source.WeakHouse ?? string.Empty;
+        target.Planet = source.Planet ?? string.Empty;
+        target.Sign = source.Sign ?? string.Empty;
+        target.InnerEl = source.InnerEl ?? string.Empty;
+        target.OuterEl = source.OuterEl ?? string.Empty;
+        target.FireElement = source.FireElement ?? string.Empty;
+        target.AirElement = source.AirElement ?? string.Empty;
+        target.WaterElement = source.WaterElement ?? string.Empty;
+        target.EarthElement = source.EarthElement ?? string.Empty;
+        target.Anatomy = source.Anatomy ?? string.Empty;
+        target.BodyType = source.BodyType ?? string.Empty;
+        target.CharacterType = source.CharacterType ?? string.Empty;
+        target.Colors = source.Colors ?? string.Empty;
+        target.Commentary = source.Commentary ?? string.Empty;
+        target.DivinatoryMeaning = source.DivinatoryMeaning ?? string.Empty;
+        target.ElementalPattern = source.ElementalPattern ?? string.Empty;
+        target.HouseStrength = source.HouseStrength;
+        // Line values (HeadLine, NeckLine, BodyLine, FootLine) are preserved from the local state
+        // This ensures user interactions are not lost
+    }
+
+    private string sectionLabelsButtonText => showSectionLabels ? "Hide" : "Show";
+    private string triplicatesButtonText => showTriplicates ? "Hide" : "Show";
+
+    private void ToggleSectionLabels()
+    {
+        showSectionLabels = !showSectionLabels;
+    }
+
+    private void ToggleTriplicates()
+    {
+        showTriplicates = !showTriplicates;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Theme is applied by wwwroot/theme.js on load and synced by ThemeToggleButton
+            // Just ensure CSS variables are applied
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnThemeChanged(bool isDark)
+    {
+        // Force re-render when theme changes to ensure all components update
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnChartVisibilityChanged()
+    {
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+
+    private List<(int HouseNumber, string DisplayText)> GetHouseOptions()
+    {
+        var options = new List<(int, string)>();
+        for (int i = 1; i <= 12; i++)
+        {
+            var figure = GetHouseFigure(i);
+            var houseName = houseNames.ContainsKey(i) ? houseNames[i] : $"House {i}";
+            var figureName = figure?.Name ?? "N/A";
+            options.Add((i, $"House {i} ({houseName}): {figureName}"));
+        }
+        return options;
+    }
+
+    private List<(string Label, string? FigureName)> GetHouseList()
+    {
+        var list = new List<(string, string?)>();
+        for (int i = 1; i <= 12; i++)
+        {
+            var figure = GetHouseFigure(i);
+            var houseName = houseNames.ContainsKey(i) ? houseNames[i] : $"House {i}";
+            list.Add(($"House {i} ({houseName})", figure?.Name));
+        }
+        return list;
+    }
+
+    private async Task OnQuerentChanged()
+    {
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task OnQuesitedChanged()
+    {
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task CalculatePerfectionAsync()
+    {
+        if (houseChart == null || selectedQuerentHouse == 0 || selectedQuesitedHouse == 0)
+        {
+            perfectionAnalysis = null;
+            return;
+        }
+
+        try
+        {
+            var request = new PerfectionRequestModel
+            {
+                Mothers = new GenerateFourFiguresRequest
+                {
+                    House1 = new GenerateFigureRequest
+                    {
+                        HeadLine = house1Figure.HeadLine,
+                        NeckLine = house1Figure.NeckLine,
+                        BodyLine = house1Figure.BodyLine,
+                        FootLine = house1Figure.FootLine
+                    },
+                    House2 = new GenerateFigureRequest
+                    {
+                        HeadLine = house2Figure.HeadLine,
+                        NeckLine = house2Figure.NeckLine,
+                        BodyLine = house2Figure.BodyLine,
+                        FootLine = house2Figure.FootLine
+                    },
+                    House3 = new GenerateFigureRequest
+                    {
+                        HeadLine = house3Figure.HeadLine,
+                        NeckLine = house3Figure.NeckLine,
+                        BodyLine = house3Figure.BodyLine,
+                        FootLine = house3Figure.FootLine
+                    },
+                    House4 = new GenerateFigureRequest
+                    {
+                        HeadLine = house4Figure.HeadLine,
+                        NeckLine = house4Figure.NeckLine,
+                        BodyLine = house4Figure.BodyLine,
+                        FootLine = house4Figure.FootLine
+                    }
+                },
+                QuerentHouse = selectedQuerentHouse,
+                QuesitedHouse = selectedQuesitedHouse
+            };
+
+            perfectionAnalysis = await GeomancyService.AnalyzePerfectionsAsync(request);
+        }
+        catch (Exception ex)
+        {
+            perfectionAnalysis = new PerfectionAnalysisModel
+            {
+                Success = false,
+                Message = $"Error analyzing perfections: {ex.Message}"
+            };
+        }
+    }
+
+    private async Task OnHouse1Changed(FigureModel figure)
+    {
+        // Update the existing object's properties instead of replacing the reference
+        // This maintains the object reference so Blazor can track changes properly
+        if (figure != null)
+        {
+            house1Figure.HeadLine = figure.HeadLine;
+            house1Figure.NeckLine = figure.NeckLine;
+            house1Figure.BodyLine = figure.BodyLine;
+            house1Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+        // Recalculate perfection if both houses are selected
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task OnHouse2Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house2Figure.HeadLine = figure.HeadLine;
+            house2Figure.NeckLine = figure.NeckLine;
+            house2Figure.BodyLine = figure.BodyLine;
+            house2Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task OnHouse3Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house3Figure.HeadLine = figure.HeadLine;
+            house3Figure.NeckLine = figure.NeckLine;
+            house3Figure.BodyLine = figure.BodyLine;
+            house3Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task OnHouse4Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house4Figure.HeadLine = figure.HeadLine;
+            house4Figure.NeckLine = figure.NeckLine;
+            house4Figure.BodyLine = figure.BodyLine;
+            house4Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task GenerateChartAsync()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            var request = new GenerateFourFiguresRequest
+            {
+                House1 = new GenerateFigureRequest
+                {
+                    HeadLine = house1Figure.HeadLine,
+                    NeckLine = house1Figure.NeckLine,
+                    BodyLine = house1Figure.BodyLine,
+                    FootLine = house1Figure.FootLine
+                },
+                House2 = new GenerateFigureRequest
+                {
+                    HeadLine = house2Figure.HeadLine,
+                    NeckLine = house2Figure.NeckLine,
+                    BodyLine = house2Figure.BodyLine,
+                    FootLine = house2Figure.FootLine
+                },
+                House3 = new GenerateFigureRequest
+                {
+                    HeadLine = house3Figure.HeadLine,
+                    NeckLine = house3Figure.NeckLine,
+                    BodyLine = house3Figure.BodyLine,
+                    FootLine = house3Figure.FootLine
+                },
+                House4 = new GenerateFigureRequest
+                {
+                    HeadLine = house4Figure.HeadLine,
+                    NeckLine = house4Figure.NeckLine,
+                    BodyLine = house4Figure.BodyLine,
+                    FootLine = house4Figure.FootLine
+                }
+            };
+
+            houseChart = await GeomancyService.GenerateChartAsync(request);
+            
+            // Update the interactive house figures with full data (including names) from the API response
+            if (houseChart != null)
+            {
+                var house1FromChart = houseChart.Houses?.FirstOrDefault(h => h.HouseNumber == 1)?.Figure;
+                var house2FromChart = houseChart.Houses?.FirstOrDefault(h => h.HouseNumber == 2)?.Figure;
+                var house3FromChart = houseChart.Houses?.FirstOrDefault(h => h.HouseNumber == 3)?.Figure;
+                var house4FromChart = houseChart.Houses?.FirstOrDefault(h => h.HouseNumber == 4)?.Figure;
+                
+                // Update the local figure objects with full data from API (line values should match)
+                // We update properties but keep the same object reference to maintain interactivity
+                if (house1FromChart != null)
+                {
+                    UpdateFigureFromApi(house1Figure, house1FromChart);
+                }
+                
+                if (house2FromChart != null)
+                {
+                    UpdateFigureFromApi(house2Figure, house2FromChart);
+                }
+                
+                if (house3FromChart != null)
+                {
+                    UpdateFigureFromApi(house3Figure, house3FromChart);
+                }
+                
+                if (house4FromChart != null)
+                {
+                    UpdateFigureFromApi(house4Figure, house4FromChart);
+                }
+                
+                // Load aspect analysis
+                await LoadAspectAnalysisAsync();
+                
+                // Load way of points analysis
+                await LoadWayOfPointsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error generating chart: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadAspectAnalysisAsync()
+    {
+        if (houseChart == null) return;
+        
+        try
+        {
+            var request = new GenerateFourFiguresRequest
+            {
+                House1 = new GenerateFigureRequest
+                {
+                    HeadLine = house1Figure.HeadLine,
+                    NeckLine = house1Figure.NeckLine,
+                    BodyLine = house1Figure.BodyLine,
+                    FootLine = house1Figure.FootLine
+                },
+                House2 = new GenerateFigureRequest
+                {
+                    HeadLine = house2Figure.HeadLine,
+                    NeckLine = house2Figure.NeckLine,
+                    BodyLine = house2Figure.BodyLine,
+                    FootLine = house2Figure.FootLine
+                },
+                House3 = new GenerateFigureRequest
+                {
+                    HeadLine = house3Figure.HeadLine,
+                    NeckLine = house3Figure.NeckLine,
+                    BodyLine = house3Figure.BodyLine,
+                    FootLine = house3Figure.FootLine
+                },
+                House4 = new GenerateFigureRequest
+                {
+                    HeadLine = house4Figure.HeadLine,
+                    NeckLine = house4Figure.NeckLine,
+                    BodyLine = house4Figure.BodyLine,
+                    FootLine = house4Figure.FootLine
+                }
+            };
+            
+            aspectAnalysis = await GeomancyService.GetAspectAnalysisAsync(request);
+        }
+        catch (Exception ex)
+        {
+            // Silently fail - aspect analysis is optional
+            aspectAnalysis = null;
+        }
+    }
+
+    private void ToggleAspectAnalysisDetails()
+    {
+        showAspectDetails = !showAspectDetails;
+    }
+
+    private async Task LoadWayOfPointsAsync()
+    {
+        if (houseChart == null) return;
+        
+        try
+        {
+            var request = new GenerateFourFiguresRequest
+            {
+                House1 = new GenerateFigureRequest
+                {
+                    HeadLine = house1Figure.HeadLine,
+                    NeckLine = house1Figure.NeckLine,
+                    BodyLine = house1Figure.BodyLine,
+                    FootLine = house1Figure.FootLine
+                },
+                House2 = new GenerateFigureRequest
+                {
+                    HeadLine = house2Figure.HeadLine,
+                    NeckLine = house2Figure.NeckLine,
+                    BodyLine = house2Figure.BodyLine,
+                    FootLine = house2Figure.FootLine
+                },
+                House3 = new GenerateFigureRequest
+                {
+                    HeadLine = house3Figure.HeadLine,
+                    NeckLine = house3Figure.NeckLine,
+                    BodyLine = house3Figure.BodyLine,
+                    FootLine = house3Figure.FootLine
+                },
+                House4 = new GenerateFigureRequest
+                {
+                    HeadLine = house4Figure.HeadLine,
+                    NeckLine = house4Figure.NeckLine,
+                    BodyLine = house4Figure.BodyLine,
+                    FootLine = house4Figure.FootLine
+                }
+            };
+            
+            wayOfPointsAnalysis = await GeomancyService.CalculateWayOfPointsAsync(request);
+        }
+        catch (Exception ex)
+        {
+            // Silently fail - way of points analysis is optional
+            wayOfPointsAnalysis = null;
+        }
+    }
+
+    // Helper method to get CSS class for score display
+    private string GetScoreClass(int netScore)
+    {
+        if (netScore > 5) return "strong-positive";
+        if (netScore > 0) return "moderate-positive";
+        if (netScore == 0) return "neutral";
+        return "negative";
+    }
+
+    // Helper method to get CSS class for aspect score display
+    private string GetAspectScoreClass(int score)
+    {
+        if (score > 20) return "strong-positive";
+        if (score > 10) return "moderate-positive";
+        if (score > 0) return "weak-positive";
+        if (score == 0) return "neutral";
+        return "negative";
+    }
+
+    // Helper method to convert number to ordinal (1st, 2nd, 3rd, 4th)
+    private string GetTriplicityOrdinal(int number)
+    {
+        return number switch
+        {
+            1 => "1st",
+            2 => "2nd",
+            3 => "3rd",
+            4 => "4th",
+            _ => number.ToString()
+        };
+    }
+
+    // Export sidebar data to JSON and copy to clipboard
+    private async Task CopySidebarDataToJson()
+    {
+        try
+        {
+            var exportData = new
+            {
+                GeneratedAt = DateTime.Now,
+                Chart = houseChart != null ? new
+                {
+                    IsComplete = houseChart.IsComplete,
+                    ChartSummary = houseChart.ChartSummary,
+                    GeneratedAt = houseChart.GeneratedAt,
+                    Mothers = new
+                    {
+                        House1 = new
+                        {
+                            HeadLine = house1Figure.HeadLine,
+                            NeckLine = house1Figure.NeckLine,
+                            BodyLine = house1Figure.BodyLine,
+                            FootLine = house1Figure.FootLine
+                        },
+                        House2 = new
+                        {
+                            HeadLine = house2Figure.HeadLine,
+                            NeckLine = house2Figure.NeckLine,
+                            BodyLine = house2Figure.BodyLine,
+                            FootLine = house2Figure.FootLine
+                        },
+                        House3 = new
+                        {
+                            HeadLine = house3Figure.HeadLine,
+                            NeckLine = house3Figure.NeckLine,
+                            BodyLine = house3Figure.BodyLine,
+                            FootLine = house3Figure.FootLine
+                        },
+                        House4 = new
+                        {
+                            HeadLine = house4Figure.HeadLine,
+                            NeckLine = house4Figure.NeckLine,
+                            BodyLine = house4Figure.BodyLine,
+                            FootLine = house4Figure.FootLine
+                        }
+                    },
+                    Houses = houseChart.Houses?.Select(h => new
+                    {
+                        HouseNumber = h.HouseNumber,
+                        Figure = h.Figure != null ? new
+                        {
+                            Name = h.Figure.Name,
+                            OtherNames = h.Figure.OtherNames,
+                            HeadLine = h.Figure.HeadLine,
+                            NeckLine = h.Figure.NeckLine,
+                            BodyLine = h.Figure.BodyLine,
+                            FootLine = h.Figure.FootLine,
+                            Planet = h.Figure.Planet,
+                            Sign = h.Figure.Sign,
+                            Quality = h.Figure.Quality,
+                            Keyword = h.Figure.Keyword,
+                            Imagery = h.Figure.Imagery,
+                            StrongHouse = h.Figure.StrongHouse,
+                            WeakHouse = h.Figure.WeakHouse,
+                            InnerEl = h.Figure.InnerEl,
+                            OuterEl = h.Figure.OuterEl,
+                            FireElement = h.Figure.FireElement,
+                            AirElement = h.Figure.AirElement,
+                            WaterElement = h.Figure.WaterElement,
+                            EarthElement = h.Figure.EarthElement,
+                            Anatomy = h.Figure.Anatomy,
+                            BodyType = h.Figure.BodyType,
+                            CharacterType = h.Figure.CharacterType,
+                            Colors = h.Figure.Colors,
+                            Commentary = h.Figure.Commentary,
+                            DivinatoryMeaning = h.Figure.DivinatoryMeaning,
+                            ElementalPattern = h.Figure.ElementalPattern,
+                            HouseStrength = h.Figure.HouseStrength.ToString()
+                        } : null
+                    }).OrderBy(h => h.HouseNumber).ToList(),
+                    RightWitness = houseChart.RightWitness != null ? new
+                    {
+                        Name = houseChart.RightWitness.Name,
+                        OtherNames = houseChart.RightWitness.OtherNames,
+                        HeadLine = houseChart.RightWitness.HeadLine,
+                        NeckLine = houseChart.RightWitness.NeckLine,
+                        BodyLine = houseChart.RightWitness.BodyLine,
+                        FootLine = houseChart.RightWitness.FootLine,
+                        Planet = houseChart.RightWitness.Planet,
+                        Sign = houseChart.RightWitness.Sign,
+                        Quality = houseChart.RightWitness.Quality,
+                        Keyword = houseChart.RightWitness.Keyword,
+                        Imagery = houseChart.RightWitness.Imagery,
+                        StrongHouse = houseChart.RightWitness.StrongHouse,
+                        WeakHouse = houseChart.RightWitness.WeakHouse,
+                        InnerEl = houseChart.RightWitness.InnerEl,
+                        OuterEl = houseChart.RightWitness.OuterEl,
+                        FireElement = houseChart.RightWitness.FireElement,
+                        AirElement = houseChart.RightWitness.AirElement,
+                        WaterElement = houseChart.RightWitness.WaterElement,
+                        EarthElement = houseChart.RightWitness.EarthElement,
+                        Anatomy = houseChart.RightWitness.Anatomy,
+                        BodyType = houseChart.RightWitness.BodyType,
+                        CharacterType = houseChart.RightWitness.CharacterType,
+                        Colors = houseChart.RightWitness.Colors,
+                        Commentary = houseChart.RightWitness.Commentary,
+                        DivinatoryMeaning = houseChart.RightWitness.DivinatoryMeaning,
+                        ElementalPattern = houseChart.RightWitness.ElementalPattern,
+                        HouseStrength = houseChart.RightWitness.HouseStrength.ToString()
+                    } : null,
+                    LeftWitness = houseChart.LeftWitness != null ? new
+                    {
+                        Name = houseChart.LeftWitness.Name,
+                        OtherNames = houseChart.LeftWitness.OtherNames,
+                        HeadLine = houseChart.LeftWitness.HeadLine,
+                        NeckLine = houseChart.LeftWitness.NeckLine,
+                        BodyLine = houseChart.LeftWitness.BodyLine,
+                        FootLine = houseChart.LeftWitness.FootLine,
+                        Planet = houseChart.LeftWitness.Planet,
+                        Sign = houseChart.LeftWitness.Sign,
+                        Quality = houseChart.LeftWitness.Quality,
+                        Keyword = houseChart.LeftWitness.Keyword,
+                        Imagery = houseChart.LeftWitness.Imagery,
+                        StrongHouse = houseChart.LeftWitness.StrongHouse,
+                        WeakHouse = houseChart.LeftWitness.WeakHouse,
+                        InnerEl = houseChart.LeftWitness.InnerEl,
+                        OuterEl = houseChart.LeftWitness.OuterEl,
+                        FireElement = houseChart.LeftWitness.FireElement,
+                        AirElement = houseChart.LeftWitness.AirElement,
+                        WaterElement = houseChart.LeftWitness.WaterElement,
+                        EarthElement = houseChart.LeftWitness.EarthElement,
+                        Anatomy = houseChart.LeftWitness.Anatomy,
+                        BodyType = houseChart.LeftWitness.BodyType,
+                        CharacterType = houseChart.LeftWitness.CharacterType,
+                        Colors = houseChart.LeftWitness.Colors,
+                        Commentary = houseChart.LeftWitness.Commentary,
+                        DivinatoryMeaning = houseChart.LeftWitness.DivinatoryMeaning,
+                        ElementalPattern = houseChart.LeftWitness.ElementalPattern,
+                        HouseStrength = houseChart.LeftWitness.HouseStrength.ToString()
+                    } : null,
+                    Judge = houseChart.Judge != null ? new
+                    {
+                        Name = houseChart.Judge.Name,
+                        OtherNames = houseChart.Judge.OtherNames,
+                        HeadLine = houseChart.Judge.HeadLine,
+                        NeckLine = houseChart.Judge.NeckLine,
+                        BodyLine = houseChart.Judge.BodyLine,
+                        FootLine = houseChart.Judge.FootLine,
+                        Planet = houseChart.Judge.Planet,
+                        Sign = houseChart.Judge.Sign,
+                        Quality = houseChart.Judge.Quality,
+                        Keyword = houseChart.Judge.Keyword,
+                        Imagery = houseChart.Judge.Imagery,
+                        StrongHouse = houseChart.Judge.StrongHouse,
+                        WeakHouse = houseChart.Judge.WeakHouse,
+                        InnerEl = houseChart.Judge.InnerEl,
+                        OuterEl = houseChart.Judge.OuterEl,
+                        FireElement = houseChart.Judge.FireElement,
+                        AirElement = houseChart.Judge.AirElement,
+                        WaterElement = houseChart.Judge.WaterElement,
+                        EarthElement = houseChart.Judge.EarthElement,
+                        Anatomy = houseChart.Judge.Anatomy,
+                        BodyType = houseChart.Judge.BodyType,
+                        CharacterType = houseChart.Judge.CharacterType,
+                        Colors = houseChart.Judge.Colors,
+                        Commentary = houseChart.Judge.Commentary,
+                        DivinatoryMeaning = houseChart.Judge.DivinatoryMeaning,
+                        ElementalPattern = houseChart.Judge.ElementalPattern,
+                        HouseStrength = houseChart.Judge.HouseStrength.ToString()
+                    } : null,
+                    Sentence = houseChart.Sentence != null ? new
+                    {
+                        Name = houseChart.Sentence.Name,
+                        OtherNames = houseChart.Sentence.OtherNames,
+                        HeadLine = houseChart.Sentence.HeadLine,
+                        NeckLine = houseChart.Sentence.NeckLine,
+                        BodyLine = houseChart.Sentence.BodyLine,
+                        FootLine = houseChart.Sentence.FootLine,
+                        Planet = houseChart.Sentence.Planet,
+                        Sign = houseChart.Sentence.Sign,
+                        Quality = houseChart.Sentence.Quality,
+                        Keyword = houseChart.Sentence.Keyword,
+                        Imagery = houseChart.Sentence.Imagery,
+                        StrongHouse = houseChart.Sentence.StrongHouse,
+                        WeakHouse = houseChart.Sentence.WeakHouse,
+                        InnerEl = houseChart.Sentence.InnerEl,
+                        OuterEl = houseChart.Sentence.OuterEl,
+                        FireElement = houseChart.Sentence.FireElement,
+                        AirElement = houseChart.Sentence.AirElement,
+                        WaterElement = houseChart.Sentence.WaterElement,
+                        EarthElement = houseChart.Sentence.EarthElement,
+                        Anatomy = houseChart.Sentence.Anatomy,
+                        BodyType = houseChart.Sentence.BodyType,
+                        CharacterType = houseChart.Sentence.CharacterType,
+                        Colors = houseChart.Sentence.Colors,
+                        Commentary = houseChart.Sentence.Commentary,
+                        DivinatoryMeaning = houseChart.Sentence.DivinatoryMeaning,
+                        ElementalPattern = houseChart.Sentence.ElementalPattern,
+                        HouseStrength = houseChart.Sentence.HouseStrength.ToString()
+                    } : null
+                } : null,
+                Perfection = perfectionAnalysis != null ? new
+                {
+                    QuerentHouse = selectedQuerentHouse,
+                    QuesitedHouse = selectedQuesitedHouse,
+                    QuerentFigure = GetHouseFigure(selectedQuerentHouse)?.Name ?? "N/A",
+                    QuesitedFigure = GetHouseFigure(selectedQuesitedHouse)?.Name ?? "N/A",
+                    TotalFavorableScore = perfectionAnalysis.TotalFavorableScore,
+                    TotalUnfavorableScore = perfectionAnalysis.TotalUnfavorableScore,
+                    NetScore = perfectionAnalysis.NetScore,
+                    Perfections = perfectionAnalysis.Perfections?.Select(p => new
+                    {
+                        Mode = p.Mode,
+                        AspectBetweenSignificators = p.AspectBetweenSignificators,
+                        AspectDirection = p.AspectDirection,
+                        TranslatorHouse = p.TranslatorHouse,
+                        TranslatorFigure = p.TranslatorFigure,
+                        MadeThroughCompany = p.MadeThroughCompany,
+                        BaseMode = p.BaseMode,
+                        CompanyType = p.CompanyType,
+                        CompanyTypeDescription = p.CompanyTypeDescription,
+                        FavorableScore = p.FavorableScore,
+                        UnfavorableScore = p.UnfavorableScore,
+                        NetScore = p.NetScore,
+                        Notes = p.Notes
+                    }).ToList(),
+                    Denials = perfectionAnalysis.Denials?.Select(d => new
+                    {
+                        Mode = d.Mode,
+                        AspectBetweenSignificators = d.AspectBetweenSignificators,
+                        AspectDirection = d.AspectDirection,
+                        TranslatorHouse = d.TranslatorHouse,
+                        TranslatorFigure = d.TranslatorFigure,
+                        MadeThroughCompany = d.MadeThroughCompany,
+                        BaseMode = d.BaseMode,
+                        CompanyType = d.CompanyType,
+                        CompanyTypeDescription = d.CompanyTypeDescription,
+                        FavorableScore = d.FavorableScore,
+                        UnfavorableScore = d.UnfavorableScore,
+                        NetScore = d.NetScore,
+                        Notes = d.Notes
+                    }).ToList(),
+                    PositiveAspects = perfectionAnalysis.PositiveAspects?.Select(a => new
+                    {
+                        AspectType = a.AspectType,
+                        Direction = a.Direction,
+                        FromHouse = a.FromHouse,
+                        ToHouse = a.ToHouse,
+                        IsMajorAspect = a.IsMajorAspect,
+                        MadeThroughCompany = a.MadeThroughCompany,
+                        FavorableScore = a.FavorableScore,
+                        UnfavorableScore = a.UnfavorableScore,
+                        Description = a.Description
+                    }).ToList(),
+                    NegativeAspects = perfectionAnalysis.NegativeAspects?.Select(a => new
+                    {
+                        AspectType = a.AspectType,
+                        Direction = a.Direction,
+                        FromHouse = a.FromHouse,
+                        ToHouse = a.ToHouse,
+                        IsMajorAspect = a.IsMajorAspect,
+                        MadeThroughCompany = a.MadeThroughCompany,
+                        FavorableScore = a.FavorableScore,
+                        UnfavorableScore = a.UnfavorableScore,
+                        Description = a.Description
+                    }).ToList()
+                } : null,
+                WayOfPoints = wayOfPointsAnalysis != null ? new
+                {
+                    Success = wayOfPointsAnalysis.Success,
+                    Message = wayOfPointsAnalysis.Message,
+                    FireWay = new
+                    {
+                        WayName = wayOfPointsAnalysis.FireWay.WayName,
+                        LineType = wayOfPointsAnalysis.FireWay.LineType,
+                        CanBeEstablished = wayOfPointsAnalysis.FireWay.CanBeEstablished,
+                        AllPaths = wayOfPointsAnalysis.FireWay.AllPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPaths = wayOfPointsAnalysis.FireWay.StrongPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        PassivePaths = wayOfPointsAnalysis.FireWay.PassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPassivePaths = wayOfPointsAnalysis.FireWay.StrongPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        WeakerPassivePaths = wayOfPointsAnalysis.FireWay.WeakerPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        Notes = wayOfPointsAnalysis.FireWay.Notes
+                    },
+                    AirWay = new
+                    {
+                        WayName = wayOfPointsAnalysis.AirWay.WayName,
+                        LineType = wayOfPointsAnalysis.AirWay.LineType,
+                        CanBeEstablished = wayOfPointsAnalysis.AirWay.CanBeEstablished,
+                        AllPaths = wayOfPointsAnalysis.AirWay.AllPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPaths = wayOfPointsAnalysis.AirWay.StrongPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        PassivePaths = wayOfPointsAnalysis.AirWay.PassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPassivePaths = wayOfPointsAnalysis.AirWay.StrongPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        WeakerPassivePaths = wayOfPointsAnalysis.AirWay.WeakerPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        Notes = wayOfPointsAnalysis.AirWay.Notes
+                    },
+                    WaterWay = new
+                    {
+                        WayName = wayOfPointsAnalysis.WaterWay.WayName,
+                        LineType = wayOfPointsAnalysis.WaterWay.LineType,
+                        CanBeEstablished = wayOfPointsAnalysis.WaterWay.CanBeEstablished,
+                        AllPaths = wayOfPointsAnalysis.WaterWay.AllPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPaths = wayOfPointsAnalysis.WaterWay.StrongPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        PassivePaths = wayOfPointsAnalysis.WaterWay.PassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPassivePaths = wayOfPointsAnalysis.WaterWay.StrongPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        WeakerPassivePaths = wayOfPointsAnalysis.WaterWay.WeakerPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        Notes = wayOfPointsAnalysis.WaterWay.Notes
+                    },
+                    EarthWay = new
+                    {
+                        WayName = wayOfPointsAnalysis.EarthWay.WayName,
+                        LineType = wayOfPointsAnalysis.EarthWay.LineType,
+                        CanBeEstablished = wayOfPointsAnalysis.EarthWay.CanBeEstablished,
+                        AllPaths = wayOfPointsAnalysis.EarthWay.AllPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPaths = wayOfPointsAnalysis.EarthWay.StrongPaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        PassivePaths = wayOfPointsAnalysis.EarthWay.PassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        StrongPassivePaths = wayOfPointsAnalysis.EarthWay.StrongPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        WeakerPassivePaths = wayOfPointsAnalysis.EarthWay.WeakerPassivePaths?.Select(p => new
+                        {
+                            Houses = p.Houses,
+                            EndpointHouse = p.EndpointHouse,
+                            RowReached = p.RowReached,
+                            PathType = p.PathType,
+                            Description = p.Description
+                        }).ToList(),
+                        Notes = wayOfPointsAnalysis.EarthWay.Notes
+                    }
+                } : null
+            };
+
+            var json = JsonSerializer.Serialize(exportData, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            // Use minimal JSInterop for clipboard - call the function directly
+            await JSRuntime.InvokeVoidAsync("copyToClipboard", json);
+            
+            // Show a brief success message
+            errorMessage = string.Empty; // Clear any previous errors
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error copying data to clipboard: {ex.Message}";
+        }
+    }
+}
+
+

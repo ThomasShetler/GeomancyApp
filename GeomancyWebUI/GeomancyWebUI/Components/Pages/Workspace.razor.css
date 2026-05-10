@@ -1,0 +1,444 @@
+/*
+ * Desktop-only workspace.
+ *
+ * Reference design (from mockup):
+ *   - Total surface: 1380w x 700h
+ *   - Left chart pane:  625w x 700h with a 535x535 chart inside
+ *   - Right tabs pane:  755w x 700h with tab nav on top, then a
+ *                       330w tables column + 37px gap + 390w detail column
+ *
+ * We enforce min-width / min-height matching those numbers so the layout
+ * NEVER collapses below the design - on narrower viewports the workspace
+ * shell allows scroll, on wider viewports everything scales up proportionally.
+ */
+.workspace-shell {
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+    height: calc(100dvh - 9rem);
+    min-height: 700px;
+    min-width: 1380px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: hidden;
+}
+
+.workspace-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    /* Same 625:755 proportion as the mockup */
+    grid-template-columns: minmax(625px, 625fr) minmax(755px, 755fr);
+    gap: 0;
+    align-items: stretch;
+}
+
+/* LEFT: chart pane (625x700 by default, scales up). */
+.workspace-chart-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 625px;
+    min-height: 0;
+    box-sizing: border-box;
+    /* Vertical padding matches the ~80px of breathing room above and below
+       the 535x535 chart in the mockup. */
+    padding: 1.25rem 2.5rem 4rem;
+}
+
+.workspace-chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.workspace-pill-btn {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px var(--shadow);
+}
+
+.workspace-pill-btn:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--shadow-hover);
+}
+
+.workspace-pill-btn:active {
+    transform: translateY(0);
+}
+
+.workspace-chart-type-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.workspace-chart-stage {
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 535px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
+}
+
+/*
+ * Chart sizing: square that fills the smaller of the stage's width / height.
+ * Hard floor at 535px so the chart never compresses past the design size.
+ * Overrides the default :only-child 600px cap from chart-surface.css.
+ */
+.workspace-chart-stage ::deep .charts-side-by-side {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.workspace-chart-stage ::deep .charts-side-by-side > .shield-chart-container:only-child,
+.workspace-chart-stage ::deep .charts-side-by-side > .traditional-house-chart-container:only-child {
+    grid-column: auto;
+    margin: 0;
+    width: max(535px, min(100cqw, 100cqh));
+    height: max(535px, min(100cqw, 100cqh));
+    max-width: none;
+    min-height: 535px;
+}
+
+/* RIGHT: tabs pane (755x700 by default, scales up).
+   Tab strip is fixed at top; each tab body manages its own internal scroll
+   so the workspace shell never scrolls. */
+.workspace-tabs-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 755px;
+    min-height: 0;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    /* Some breathing room around the tab content */
+    padding: 0.5rem 1rem 1rem;
+}
+
+.workspace-tabs-nav {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    overflow-x: auto;
+    flex-shrink: 0;
+    margin-bottom: 0.75rem;
+}
+
+.workspace-tab-btn {
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.workspace-tab-btn:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.workspace-tab-btn.active {
+    color: var(--accent-color);
+}
+
+.workspace-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent-color);
+    border-radius: 2px 2px 0 0;
+}
+
+.workspace-tab-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+    /* Inner tab bodies own their own scroll containers so nothing leaks
+       to the tab strip. */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.workspace-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 12rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/*
+ * Court & Houses tab body matches the mockup's right pane internals:
+ *   - Tables column (Court + Houses) on the left, ~330w
+ *   - 37px gap
+ *   - Detail panel on the right, ~390w
+ *   - Both columns share the same height (~535)
+ */
+.court-houses-layout {
+    display: grid;
+    grid-template-columns: minmax(330px, 330fr) minmax(390px, 390fr);
+    column-gap: 37px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 0;
+    height: 100%;
+}
+
+.court-houses-tables-col {
+    min-width: 330px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.court-houses-detail-col {
+    min-width: 390px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/*
+ * Perfections tab matches the Court & Houses layout: a list column on the
+ * left (~330w), 37px gap, then a detail panel column on the right (~390w).
+ * Both columns share the available height and own their own scroll.
+ */
+.perfections-layout {
+    display: grid;
+    grid-template-columns: minmax(330px, 330fr) minmax(390px, 390fr);
+    column-gap: 37px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 0;
+    height: 100%;
+}
+
+.perfections-list-col {
+    min-width: 330px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.perfections-detail-col {
+    min-width: 390px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/*
+ * Way Of Points tab mirrors the Perfections layout one-for-one: a list
+ * column on the left (~330w) with the four element groups, 37px gap, and a
+ * rich detail panel on the right (~390w). Element-color tokens are used
+ * inside the child components via inline `--wop-element-color` styles, so
+ * this layer only needs the same grid + sizing as Perfections.
+ */
+.way-of-points-layout {
+    display: grid;
+    grid-template-columns: minmax(330px, 330fr) minmax(390px, 390fr);
+    column-gap: 37px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 0;
+    height: 100%;
+}
+
+.way-of-points-list-col {
+    min-width: 330px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.way-of-points-detail-col {
+    min-width: 390px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/*
+ * Lots & Other (currently houses the legacy Aspect Analysis behind an
+ * Experimental banner). Scrolls internally so it doesn't push the tab strip.
+ */
+.experimental-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.experimental-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border: 1px dashed rgba(255, 152, 0, 0.55);
+    border-radius: 8px;
+    background: rgba(255, 152, 0, 0.06);
+}
+
+.experimental-badge {
+    flex-shrink: 0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255, 152, 0, 0.18);
+    color: #ff9800;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid rgba(255, 152, 0, 0.45);
+}
+
+.experimental-note {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Other simple tab bodies that need their own scroll */
+.workspace-tab-body > .triplicities-list,
+.workspace-tab-body > .workspace-placeholder {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.workspace-subsection {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    background: var(--bg-primary);
+}
+
+.workspace-subsection > h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.4rem;
+    color: var(--text-primary);
+}
+
+.aspect-analysis-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.aspect-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.aspect-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.9rem;
+}
+
+.aspect-summary-item .label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.aspect-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+/* Triplicates tab */
+.triplicities-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.triplicities-list .triplicity-item {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.triplicities-list .triplicity-header {
+    display: flex;
+    gap: 0.4rem;
+    align-items: baseline;
+}
+
+.triplicities-list .triplicity-number {
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.triplicities-list .triplicity-description {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.triplicities-list .triplicity-figures {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}

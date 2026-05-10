@@ -1,0 +1,90 @@
+{
+  "ElementData": {
+    "Elements": [
+      {
+        "id": 1,
+        "element": "Fire",
+        "latin_name": "Via Puncti Ignis",
+        "line_name": "HeadLine (Fire)",
+        "line_index": 1,
+        "glyph": "🜂",
+        "color_hint": "#e74c3c",
+        "quality": "Hot and Dry",
+        "polarity": "Active / Yang",
+        "tagline": "Fire — the Way of Will, drive, and outward action.",
+        "domain": "Fire on the Head Line names the chart's vital force, courage, leadership, and spark of initiative. When this Way runs strongly it speaks to ambition, conflict, and the energy that turns thought into motion.",
+        "when_established": "Establishment on the Head Line means the Judge's Fire point matches at least one Witness, so an unbroken current of will can flow downward through the chart. Read this as the querent (or the matter itself) having visible drive that the situation is willing to receive.",
+        "when_not_established": "When Fire cannot be established the chart's outward push is broken at the Witnesses: action is contemplated but not socially supported, or willpower stalls at the first practical test. Look elsewhere — Air for ideas, Water for desire, Earth for resources — to see what is actually carrying the matter.",
+        "endpoint_house_emphasis": "Endpoint houses on a Fire path show where the chart's drive lands: which arena of life will actually feel the heat. A Fire Way landing in House 1 makes the querent the actor; landing in House 7, an open opponent or partner; landing in House 10, a public stage.",
+        "interpretation_paragraphs": [
+          "Fire — Via Puncti Ignis traces the chart's appetite for action. When the Head Line current carries from Judge through a Witness and down into the lower houses, it tells you the situation has a willing mover — an agent ready to spend energy to make something happen.",
+          "Read the endpoint houses as the practical battlegrounds: every Fire path lit up here marks a place where the querent's drive will visibly land. Multiple endpoints mean diffused effort, while a single strong endpoint concentrates the force where the chart points.",
+          "Temper the reading by the figures along the path. Mars-ruled or hot figures double the heat; cool figures (Albus, Populus, Tristitia) describe a will that is technically present but slow, indirect, or even reluctant despite the geometry."
+        ]
+      },
+      {
+        "id": 2,
+        "element": "Air",
+        "latin_name": "Via Puncti Aeris",
+        "line_name": "NeckLine (Air)",
+        "line_index": 2,
+        "glyph": "🜁",
+        "color_hint": "#f1c40f",
+        "quality": "Hot and Moist",
+        "polarity": "Active / Social",
+        "tagline": "Air — the Way of Mind, speech, and signal.",
+        "domain": "Air on the Neck Line names the chart's thinking, speech, and information flow. When this Way runs strongly it speaks to plans, conversations, contracts, news, and the social channels through which the matter is being talked into shape.",
+        "when_established": "Establishment on the Neck Line means the Judge's Air point passes through a Witness — the matter is being communicated, recognized, or negotiated rather than only felt. Expect words, messages, paperwork, or witnesses (in the literal sense) to play a real role in how it unfolds.",
+        "when_not_established": "When Air cannot be established the chart's information flow is muffled. The querent may be acting on assumptions, the parties may be talking past each other, or critical news has not yet arrived. Decisions taken without an established Air Way often look right but rest on incomplete intelligence.",
+        "endpoint_house_emphasis": "Endpoint houses on an Air path mark where ideas, messages, and agreements actually land. Air ending in House 3 emphasises everyday talk and short trips; in House 9, formal teaching, publishing, or long journeys; in House 11, friends, allies, and shared hopes carrying the message.",
+        "interpretation_paragraphs": [
+          "Air — Via Puncti Aeris traces how mind, language, and signal move through the chart. A clean Air current from Judge through Witness shows that the matter is being thought out and talked about — the truth of it is in motion socially, not only privately.",
+          "Pay attention to whose figure carries each step. A friendly figure in the Witness seat reads as a constructive interlocutor; a hostile or mute figure (Carcer, Tristitia) reads as a guarded conversation, secrecy, or someone holding back the key piece of information.",
+          "Endpoint houses tell you where the conversation finally lodges. Multiple Air endpoints can be a sign of competing narratives or many channels open at once; a single, sharp endpoint says the matter will be settled by one decisive message or document."
+        ]
+      },
+      {
+        "id": 3,
+        "element": "Water",
+        "latin_name": "Via Puncti Aquae",
+        "line_name": "BodyLine (Water)",
+        "line_index": 3,
+        "glyph": "🜄",
+        "color_hint": "#3498db",
+        "quality": "Cold and Moist",
+        "polarity": "Receptive / Yin",
+        "tagline": "Water — the Way of Feeling, desire, and connection.",
+        "domain": "Water on the Body Line names the chart's emotions, attachments, dreams, and relational currents. When this Way runs strongly it speaks to love, resentment, longing, intuition, and the felt sense people carry into the situation that no contract can fully name.",
+        "when_established": "Establishment on the Body Line means the Judge's Water point reaches a Witness — feeling and desire are flowing toward visibility, not buried. The matter has emotional momentum: someone genuinely wants the outcome (or genuinely fears it), and that current will move the chart.",
+        "when_not_established": "When Water cannot be established the chart's emotional charge is dammed up. The parties may be polite but unmoved, or the querent may be talking themselves into a feeling they don't actually have. Outcomes built on an unestablished Water Way tend to feel hollow even when they technically succeed.",
+        "endpoint_house_emphasis": "Endpoint houses on a Water path show where feeling actually lands. Water ending in House 4 names home and family currents; in House 5, romance, pleasure, or children; in House 12, hidden grief, secret love, or the unconscious; in House 8, intimacy, debt, and shared resources.",
+        "interpretation_paragraphs": [
+          "Water — Via Puncti Aquae traces the chart's emotional bloodstream. A flowing Body Line current from Judge through Witness shows that the matter has a true feeling-engine driving it, whether that feeling is love, fear, devotion, jealousy, or simple longing.",
+          "Look at which Witness the current passes through. Friendly water figures (Laetitia, Populus, Albus) describe nourishing emotion; harsh or stagnant ones (Tristitia, Carcer, Rubeus) describe grief, entrapment, or volatile feeling that still moves the chart but at a cost.",
+          "Endpoint houses reveal where the emotional charge will actually be discharged. Several endpoints scatter the feeling across many domains; a single, definite endpoint marks a relationship, place, or family bond as the true heart of the question."
+        ]
+      },
+      {
+        "id": 4,
+        "element": "Earth",
+        "latin_name": "Via Puncti Terrae",
+        "line_name": "FootLine (Earth)",
+        "line_index": 4,
+        "glyph": "🜃",
+        "color_hint": "#2ecc71",
+        "quality": "Cold and Dry",
+        "polarity": "Receptive / Material",
+        "tagline": "Earth — the Way of Body, work, and material outcome.",
+        "domain": "Earth on the Foot Line names the chart's physical realities: money, property, labor, land, the body itself, and the durable consequences a question leaves behind. When this Way runs strongly it speaks to whether the matter will actually solidify into something you can touch.",
+        "when_established": "Establishment on the Foot Line means the Judge's Earth point reaches a Witness — the matter has real footing, real resources, and a real path into manifestation. The chart is telling you that the situation can take physical form rather than remain a wish or a worry.",
+        "when_not_established": "When Earth cannot be established, the chart describes a matter that may be felt, talked about, or willed, but is not yet anchored. Expect funding gaps, missing materials, postponed paperwork, or a body/property issue that quietly undermines the case until it is addressed directly.",
+        "endpoint_house_emphasis": "Endpoint houses on an Earth path show where material weight will actually settle. Earth ending in House 2 marks money and personal property; in House 4, land, home, or inheritance; in House 6, daily work, employees, or health; in House 10, career, reputation, or institutional standing.",
+        "interpretation_paragraphs": [
+          "Earth — Via Puncti Terrae traces the chart's spine of material reality. A strong Foot Line current from Judge through Witness shows that the matter is supported by, or will produce, durable physical effects: bills paid, doors built, contracts signed, bodies fed, ground gained.",
+          "The figures along the path describe how friendly or grudging that material support is. Acquisitio or Fortuna Major in the chain promises generous resourcing; Carcer or Amissio warn that resources are present but constrained, or are quietly leaking away as you act.",
+          "Endpoint houses pinpoint where the physical outcome will actually settle. Many endpoints describe a matter touching many practical domains at once; a single endpoint marks the one concrete arena (money, property, body, work) where the question will literally be resolved."
+        ]
+      }
+    ]
+  }
+}

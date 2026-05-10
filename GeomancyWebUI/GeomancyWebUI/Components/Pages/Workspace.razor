@@ -1,0 +1,631 @@
+@page "/workspace"
+@using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Components
+@using GeomancyWebUI.Components.Workspace
+@using GeomancyWebUI.Services
+@inject IGeomancyService GeomancyService
+@inject ThemeService ThemeService
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy - Workspace</PageTitle>
+
+<div class="workspace-shell">
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <div class="workspace-grid">
+        <!-- LEFT: Chart area -->
+        <section class="workspace-chart-pane">
+            <div class="workspace-chart-toolbar">
+                <button type="button"
+                        class="workspace-pill-btn"
+                        @onclick="ToggleChartType"
+                        title="Switch between the shield chart and the traditional 12-house chart">
+                    Switch Chart Type
+                </button>
+                <span class="workspace-chart-type-label">@CurrentChartTypeLabel</span>
+            </div>
+
+            <div class="workspace-chart-stage">
+                <ChartSurface Chart="@houseChart"
+                              House1Figure="@house1Figure"
+                              House2Figure="@house2Figure"
+                              House3Figure="@house3Figure"
+                              House4Figure="@house4Figure"
+                              OnHouse1Changed="OnHouse1Changed"
+                              OnHouse2Changed="OnHouse2Changed"
+                              OnHouse3Changed="OnHouse3Changed"
+                              OnHouse4Changed="OnHouse4Changed"
+                              View="@chartView" />
+            </div>
+        </section>
+
+        <!-- RIGHT: Tabbed analysis area -->
+        <section class="workspace-tabs-pane">
+            <nav class="workspace-tabs-nav" role="tablist">
+                @foreach (var tab in Tabs)
+                {
+                    <button type="button"
+                            role="tab"
+                            class="workspace-tab-btn @(activeTab == tab.Id ? "active" : "")"
+                            @onclick="() => activeTab = tab.Id">
+                        @tab.Label
+                    </button>
+                }
+            </nav>
+
+            <div class="workspace-tab-body" role="tabpanel">
+                @switch (activeTab)
+                {
+                    case WorkspaceTab.CourtAndHouses:
+                        <div class="court-houses-layout">
+                            <div class="court-houses-tables-col">
+                                <CourtAndHousesTab Chart="@houseChart"
+                                                   Selected="@selectedSlot"
+                                                   HousesDirectory="@housesDirectory"
+                                                   CourtsDirectory="@courtsDirectory"
+                                                   OnSelect="OnSlotSelected" />
+                            </div>
+                            <div class="court-houses-detail-col">
+                                <FigureDetailPanel Selection="@selectedSlot"
+                                                   Houses="@housesDirectory"
+                                                   Courts="@courtsDirectory" />
+                            </div>
+                        </div>
+                        break;
+
+                    case WorkspaceTab.PerfectionsAndAspects:
+                        <div class="perfections-layout">
+                            <div class="perfections-list-col">
+                                <PerfectionsListTab Chart="@houseChart"
+                                                    Analysis="@perfectionAnalysis"
+                                                    QuerentHouse="@selectedQuerentHouse"
+                                                    QuesitedHouse="@selectedQuesitedHouse"
+                                                    HouseOptions="@GetHouseOptions()"
+                                                    Selected="@selectedPerfection"
+                                                    OnQuerentChanged="OnQuerentSelectChanged"
+                                                    OnQuesitedChanged="OnQuesitedSelectChanged"
+                                                    OnSelect="OnPerfectionSelected" />
+                            </div>
+                            <div class="perfections-detail-col">
+                                <PerfectionDetailPanel Selection="@selectedPerfection"
+                                                       Analysis="@perfectionAnalysis" />
+                            </div>
+                        </div>
+                        break;
+
+                    case WorkspaceTab.WayOfPoints:
+                        <div class="way-of-points-layout">
+                            <div class="way-of-points-list-col">
+                                <WayOfPointsListTab Analysis="@wayOfPointsAnalysis"
+                                                    Chart="@houseChart"
+                                                    Elements="@wayOfPointsElements"
+                                                    PathTypes="@wayOfPointsPathTypes"
+                                                    Selected="@selectedWayOfPoints"
+                                                    OnSelect="OnWayOfPointsSelected" />
+                            </div>
+                            <div class="way-of-points-detail-col">
+                                <WayOfPointsDetailPanel Selection="@selectedWayOfPoints"
+                                                        Chart="@houseChart"
+                                                        Elements="@wayOfPointsElements"
+                                                        PathTypes="@wayOfPointsPathTypes" />
+                            </div>
+                        </div>
+                        break;
+
+                    case WorkspaceTab.Triplicates:
+                        @if (houseChart?.Triplicities != null && houseChart.Triplicities.Any())
+                        {
+                            <ul class="triplicities-list">
+                                @foreach (var t in houseChart.Triplicities.OrderBy(x => x.Number))
+                                {
+                                    <li class="triplicity-item">
+                                        <div class="triplicity-header">
+                                            <span class="triplicity-number">@GetTriplicityOrdinal(t.Number):</span>
+                                            @if (!string.IsNullOrEmpty(t.Description))
+                                            {
+                                                <span class="triplicity-description">@t.Description</span>
+                                            }
+                                        </div>
+                                        <span class="triplicity-figures">
+                                            @(t.FirstFigure?.Name ?? "N/A") &gt; @(t.SecondFigure?.Name ?? "N/A") &gt; @(t.ThirdFigure?.Name ?? "N/A")
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No triplicities available.</p>
+                        }
+                        break;
+
+                    case WorkspaceTab.LotsAndOther:
+                        <div class="experimental-section">
+                            <div class="experimental-banner">
+                                <span class="experimental-badge">Experimental</span>
+                                <span class="experimental-note">
+                                    Replaced by the Perfection Analysis on the Perfections tab. Kept here for reference.
+                                </span>
+                            </div>
+
+                            @if (aspectAnalysis != null && aspectAnalysis.Success)
+                            {
+                                <section class="workspace-subsection">
+                                    <div class="aspect-analysis-header">
+                                        <h3>Aspect Analysis</h3>
+                                        <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleAspectAnalysisDetails">
+                                            @(showAspectDetails ? "Hide details" : "Show details")
+                                        </button>
+                                    </div>
+                                    <div class="aspect-summary">
+                                        <div class="aspect-summary-item">
+                                            <span class="label">Total Score:</span>
+                                            <strong>@aspectAnalysis.TotalScore</strong>
+                                        </div>
+                                        <div class="aspect-summary-item">
+                                            <span class="label">Total Aspects:</span>
+                                            <strong>@aspectAnalysis.TotalAspects</strong>
+                                        </div>
+                                        @if (aspectAnalysis.Polarity != null)
+                                        {
+                                            <div class="aspect-summary-item">
+                                                <span class="label">Polarity:</span>
+                                                <strong>@aspectAnalysis.Polarity.Verdict (@aspectAnalysis.Polarity.Percent.ToString("F1")%)</strong>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (showAspectDetails)
+                                    {
+                                        @if (aspectAnalysis.AspectCounts != null && aspectAnalysis.AspectCounts.Any())
+                                        {
+                                            <div>
+                                                <h5>Aspect Counts</h5>
+                                                <ul>
+                                                    @foreach (var c in aspectAnalysis.AspectCounts)
+                                                    {
+                                                        <li><strong>@c.Key:</strong> @c.Value</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        @if (aspectAnalysis.Aspects != null && aspectAnalysis.Aspects.Any())
+                                        {
+                                            <div>
+                                                <h5>All Aspects (@aspectAnalysis.Aspects.Count)</h5>
+                                                @foreach (var a in aspectAnalysis.Aspects)
+                                                {
+                                                    <div class="aspect-row">
+                                                        <span>House @a.FromHouse → House @a.ToHouse</span>
+                                                        <span>@a.AspectType</span>
+                                                        <span>Weight: @a.Weight</span>
+                                                        <span>@a.FromFigure → @a.ToFigure</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                </section>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Aspect analysis is loading…</p>
+                            }
+                        </div>
+                        break;
+                }
+            </div>
+        </section>
+    </div>
+</div>
+
+@code {
+    // ----- Chart state -----
+    private HouseChartModel? houseChart;
+    private string errorMessage = string.Empty;
+
+    private FigureModel house1Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel house2Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel house3Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel house4Figure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+
+    // ----- View toggles -----
+    private ChartSurfaceView chartView = ChartSurfaceView.Shield;
+
+    private string CurrentChartTypeLabel => chartView switch
+    {
+        ChartSurfaceView.Shield => "Shield Chart",
+        ChartSurfaceView.House => "12-House Chart",
+        _ => "Both"
+    };
+
+    // ----- Tab state -----
+    private enum WorkspaceTab
+    {
+        CourtAndHouses,
+        PerfectionsAndAspects,
+        WayOfPoints,
+        Triplicates,
+        LotsAndOther
+    }
+
+    private record TabDef(WorkspaceTab Id, string Label);
+
+    private static readonly TabDef[] Tabs = new[]
+    {
+        new TabDef(WorkspaceTab.CourtAndHouses, "Court & Houses"),
+        new TabDef(WorkspaceTab.PerfectionsAndAspects, "Perfections & Aspects"),
+        new TabDef(WorkspaceTab.WayOfPoints, "Way Of Points"),
+        new TabDef(WorkspaceTab.Triplicates, "Triplicates"),
+        new TabDef(WorkspaceTab.LotsAndOther, "Lots & Other")
+    };
+
+    private WorkspaceTab activeTab = WorkspaceTab.CourtAndHouses;
+
+    // ----- Selection state shared between tab and detail panel -----
+    private SlotSelection? selectedSlot;
+    private PerfectionSelection? selectedPerfection;
+    private WayOfPointsSelection? selectedWayOfPoints;
+
+    // ----- Reference directories -----
+    private List<HouseDirectoryEntry> housesDirectory = new();
+    private List<CourtDirectoryEntry> courtsDirectory = new();
+    private List<WayOfPointsElementEntry>? wayOfPointsElements;
+    private List<WayOfPointsPathTypeEntry>? wayOfPointsPathTypes;
+
+    // ----- Analysis state (Perfections / Aspects / Way of Points) -----
+    private int selectedQuerentHouse = 0;
+    private int selectedQuesitedHouse = 0;
+    private PerfectionAnalysisModel? perfectionAnalysis;
+    private AspectAnalysisModel? aspectAnalysis;
+    private WayOfPointsAnalysisModel? wayOfPointsAnalysis;
+    private bool showAspectDetails = false;
+
+    private static readonly Dictionary<int, string> houseNames = new()
+    {
+        { 1, "Vita" }, { 2, "Lucrum" }, { 3, "Fratres" }, { 4, "Genitor" },
+        { 5, "Nati" }, { 6, "Valetudo" }, { 7, "Uxor" }, { 8, "Mors" },
+        { 9, "Itineris" }, { 10, "Regnum" }, { 11, "Benefacta" }, { 12, "Carcer" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        ThemeService.ThemeChanged += OnThemeChanged;
+
+        try
+        {
+            await GenerateChartAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error initializing workspace chart: {ex.Message}";
+        }
+
+        try
+        {
+            housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
+            courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
+        }
+        catch (Exception ex)
+        {
+            // Non-fatal: directory data is supplemental. Surface a small notice but allow page to function.
+            errorMessage = string.IsNullOrEmpty(errorMessage)
+                ? $"Reference directory unavailable: {ex.Message}"
+                : errorMessage;
+        }
+
+        try
+        {
+            wayOfPointsElements = await GeomancyService.GetWayOfPointsElementsDirectoryAsync();
+            wayOfPointsPathTypes = await GeomancyService.GetWayOfPointsPathTypesDirectoryAsync();
+        }
+        catch (Exception ex)
+        {
+            // Non-fatal: WayOfPoints directory data is supplemental — the
+            // tab will fall back to inline glyphs/labels if the API call
+            // fails (e.g. legacy API server without the new endpoints).
+            errorMessage = string.IsNullOrEmpty(errorMessage)
+                ? $"Way of Points directory unavailable: {ex.Message}"
+                : errorMessage;
+        }
+    }
+
+    private void ToggleChartType()
+    {
+        chartView = chartView == ChartSurfaceView.Shield
+            ? ChartSurfaceView.House
+            : ChartSurfaceView.Shield;
+    }
+
+    private void OnSlotSelected(SlotSelection selection)
+    {
+        selectedSlot = selection;
+    }
+
+    private void OnPerfectionSelected(PerfectionSelection selection)
+    {
+        selectedPerfection = selection;
+    }
+
+    private void OnWayOfPointsSelected(WayOfPointsSelection selection)
+    {
+        selectedWayOfPoints = selection;
+    }
+
+    private async Task OnQuerentSelectChanged(int n)
+    {
+        selectedQuerentHouse = n;
+        selectedPerfection = null;
+        await OnQuerentChanged();
+    }
+
+    private async Task OnQuesitedSelectChanged(int n)
+    {
+        selectedQuesitedHouse = n;
+        selectedPerfection = null;
+        await OnQuesitedChanged();
+    }
+
+    private List<(int Number, string DisplayText)> GetHouseOptions()
+    {
+        var options = new List<(int, string)>();
+        for (var i = 1; i <= 12; i++)
+        {
+            var figure = houseChart?.Houses?.FirstOrDefault(h => h.HouseNumber == i)?.Figure;
+            var name = houseNames.TryGetValue(i, out var n) ? n : $"House {i}";
+            var figureName = figure?.Name ?? "N/A";
+            options.Add((i, $"House {i} ({name}): {figureName}"));
+        }
+        return options;
+    }
+
+    private static string GetTriplicityOrdinal(int n) => n switch
+    {
+        1 => "1st", 2 => "2nd", 3 => "3rd", 4 => "4th",
+        _ => n.ToString()
+    };
+
+    private async Task OnQuerentChanged()
+    {
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private async Task OnQuesitedChanged()
+    {
+        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+        {
+            await CalculatePerfectionAsync();
+        }
+    }
+
+    private void ToggleAspectAnalysisDetails() => showAspectDetails = !showAspectDetails;
+
+    private async Task CalculatePerfectionAsync()
+    {
+        if (houseChart == null || selectedQuerentHouse == 0 || selectedQuesitedHouse == 0)
+        {
+            perfectionAnalysis = null;
+            selectedPerfection = null;
+            return;
+        }
+
+        try
+        {
+            var request = new PerfectionRequestModel
+            {
+                Mothers = BuildFourFiguresRequest(),
+                QuerentHouse = selectedQuerentHouse,
+                QuesitedHouse = selectedQuesitedHouse
+            };
+            perfectionAnalysis = await GeomancyService.AnalyzePerfectionsAsync(request);
+            // Drop any stale selection that was pointing at a previous result set.
+            selectedPerfection = null;
+        }
+        catch (Exception ex)
+        {
+            perfectionAnalysis = new PerfectionAnalysisModel
+            {
+                Success = false,
+                Message = $"Error analyzing perfections: {ex.Message}"
+            };
+            selectedPerfection = null;
+        }
+    }
+
+    private async Task LoadAspectAnalysisAsync()
+    {
+        if (houseChart == null) return;
+        try
+        {
+            aspectAnalysis = await GeomancyService.GetAspectAnalysisAsync(BuildFourFiguresRequest());
+        }
+        catch
+        {
+            aspectAnalysis = null;
+        }
+    }
+
+    private async Task LoadWayOfPointsAsync()
+    {
+        if (houseChart == null) return;
+        try
+        {
+            wayOfPointsAnalysis = await GeomancyService.CalculateWayOfPointsAsync(BuildFourFiguresRequest());
+        }
+        catch
+        {
+            wayOfPointsAnalysis = null;
+        }
+        // Drop any stale selection that was pointing at the previous chart's analysis.
+        selectedWayOfPoints = null;
+    }
+
+    // ----- Chart generation (copied from Chart.razor and trimmed to what /workspace needs) -----
+    private async Task GenerateChartAsync()
+    {
+        errorMessage = string.Empty;
+
+        try
+        {
+            var request = BuildFourFiguresRequest();
+            houseChart = await GeomancyService.GenerateChartAsync(request);
+
+            if (houseChart != null)
+            {
+                SyncMotherFromChart(1, house1Figure);
+                SyncMotherFromChart(2, house2Figure);
+                SyncMotherFromChart(3, house3Figure);
+                SyncMotherFromChart(4, house4Figure);
+
+                // Refresh the current selection so the detail panel reflects the new chart.
+                if (selectedSlot != null)
+                {
+                    selectedSlot = ResolveSelection(selectedSlot);
+                }
+
+                // Refresh analysis tabs in parallel; failures are non-fatal.
+                await LoadAspectAnalysisAsync();
+                await LoadWayOfPointsAsync();
+                if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+                {
+                    await CalculatePerfectionAsync();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error generating chart: {ex.Message}";
+        }
+    }
+
+    private GenerateFourFiguresRequest BuildFourFiguresRequest() => new()
+    {
+        House1 = ToFigureRequest(house1Figure),
+        House2 = ToFigureRequest(house2Figure),
+        House3 = ToFigureRequest(house3Figure),
+        House4 = ToFigureRequest(house4Figure)
+    };
+
+    private static GenerateFigureRequest ToFigureRequest(FigureModel f) => new()
+    {
+        HeadLine = f.HeadLine,
+        NeckLine = f.NeckLine,
+        BodyLine = f.BodyLine,
+        FootLine = f.FootLine
+    };
+
+    private void SyncMotherFromChart(int houseNumber, FigureModel target)
+    {
+        var source = houseChart?.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+        if (source == null) return;
+
+        target.Name = source.Name ?? string.Empty;
+        target.OtherNames = source.OtherNames ?? string.Empty;
+        target.Quality = source.Quality ?? string.Empty;
+        target.Keyword = source.Keyword ?? string.Empty;
+        target.Imagery = source.Imagery ?? string.Empty;
+        target.StrongHouse = source.StrongHouse ?? string.Empty;
+        target.WeakHouse = source.WeakHouse ?? string.Empty;
+        target.Planet = source.Planet ?? string.Empty;
+        target.Sign = source.Sign ?? string.Empty;
+        target.InnerEl = source.InnerEl ?? string.Empty;
+        target.OuterEl = source.OuterEl ?? string.Empty;
+        target.FireElement = source.FireElement ?? string.Empty;
+        target.AirElement = source.AirElement ?? string.Empty;
+        target.WaterElement = source.WaterElement ?? string.Empty;
+        target.EarthElement = source.EarthElement ?? string.Empty;
+        target.Anatomy = source.Anatomy ?? string.Empty;
+        target.BodyType = source.BodyType ?? string.Empty;
+        target.CharacterType = source.CharacterType ?? string.Empty;
+        target.Colors = source.Colors ?? string.Empty;
+        target.Commentary = source.Commentary ?? string.Empty;
+        target.DivinatoryMeaning = source.DivinatoryMeaning ?? string.Empty;
+        target.ElementalPattern = source.ElementalPattern ?? string.Empty;
+        target.HouseStrength = source.HouseStrength;
+        // Preserve target's HeadLine/NeckLine/BodyLine/FootLine - they should match anyway.
+    }
+
+    /// <summary>
+    /// After a chart regeneration, refresh the cached figure inside the SlotSelection
+    /// so the detail panel shows the new occupant.
+    /// </summary>
+    private SlotSelection ResolveSelection(SlotSelection prior)
+    {
+        FigureModel? figure = prior.Kind switch
+        {
+            SlotKind.House when prior.HouseNumber.HasValue
+                => houseChart?.Houses?.FirstOrDefault(h => h.HouseNumber == prior.HouseNumber.Value)?.Figure,
+            SlotKind.RightWitness => houseChart?.RightWitness,
+            SlotKind.LeftWitness => houseChart?.LeftWitness,
+            SlotKind.Judge => houseChart?.Judge,
+            SlotKind.Sentence => houseChart?.Sentence,
+            _ => prior.Figure
+        };
+        return prior with { Figure = figure };
+    }
+
+    private async Task OnHouse1Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house1Figure.HeadLine = figure.HeadLine;
+            house1Figure.NeckLine = figure.NeckLine;
+            house1Figure.BodyLine = figure.BodyLine;
+            house1Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+    }
+
+    private async Task OnHouse2Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house2Figure.HeadLine = figure.HeadLine;
+            house2Figure.NeckLine = figure.NeckLine;
+            house2Figure.BodyLine = figure.BodyLine;
+            house2Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+    }
+
+    private async Task OnHouse3Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house3Figure.HeadLine = figure.HeadLine;
+            house3Figure.NeckLine = figure.NeckLine;
+            house3Figure.BodyLine = figure.BodyLine;
+            house3Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+    }
+
+    private async Task OnHouse4Changed(FigureModel figure)
+    {
+        if (figure != null)
+        {
+            house4Figure.HeadLine = figure.HeadLine;
+            house4Figure.NeckLine = figure.NeckLine;
+            house4Figure.BodyLine = figure.BodyLine;
+            house4Figure.FootLine = figure.FootLine;
+        }
+        await GenerateChartAsync();
+    }
+
+    private void OnThemeChanged(bool isDark) => InvokeAsync(StateHasChanged);
+
+    public ValueTask DisposeAsync()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+        return ValueTask.CompletedTask;
+    }
+}

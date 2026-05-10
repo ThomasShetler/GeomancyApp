@@ -1,0 +1,305 @@
+/*
+ * Left-column list pane for the Perfections tab. Owns the dropdowns,
+ * verdict header, count chips, and the four scrollable lists. The lists
+ * area is the only inner scroll container so the dropdowns + verdict
+ * stay pinned at the top while the user scans through entries.
+ */
+.perfections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+/* ============================================================
+ * Dropdowns
+ * ============================================================ */
+.perf-dropdowns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.perf-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.perf-dropdown label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+.perf-dropdown select {
+    width: 100%;
+    min-width: 0;
+}
+
+/* ============================================================
+ * Empty / error state
+ * ============================================================ */
+.perf-empty {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+}
+
+.perf-error {
+    color: #f44336;
+    font-style: normal;
+    border-color: rgba(244, 67, 54, 0.4);
+    background: rgba(244, 67, 54, 0.06);
+}
+
+/* ============================================================
+ * Verdict header
+ * ============================================================ */
+.perf-verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+}
+
+.perf-verdict-score {
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    min-width: 3rem;
+    text-align: center;
+}
+
+.perf-verdict-score .score-sign {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.perf-verdict-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    line-height: 1.15;
+}
+
+.perf-verdict-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.perf-verdict-sub {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.perf-verdict-sub .favorable-text { color: #4caf50; font-weight: 600; }
+.perf-verdict-sub .unfavorable-text { color: #f44336; font-weight: 600; }
+.perf-verdict-sub .separator { margin: 0 0.3rem; opacity: 0.6; }
+
+.perf-verdict.verdict-favorable {
+    border-color: rgba(76, 175, 80, 0.5);
+    background: linear-gradient(180deg, rgba(76, 175, 80, 0.12), rgba(76, 175, 80, 0.04));
+}
+.perf-verdict.verdict-favorable .perf-verdict-score { color: #4caf50; }
+
+.perf-verdict.verdict-unfavorable {
+    border-color: rgba(244, 67, 54, 0.5);
+    background: linear-gradient(180deg, rgba(244, 67, 54, 0.12), rgba(244, 67, 54, 0.04));
+}
+.perf-verdict.verdict-unfavorable .perf-verdict-score { color: #f44336; }
+
+.perf-verdict.verdict-neutral {
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+ * Count chips
+ * ============================================================ */
+.perf-counts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.count-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    padding: 0.35rem 0.25rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    text-align: center;
+    line-height: 1;
+}
+
+.count-num {
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.count-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+}
+
+.count-perfections { border-color: rgba(76, 175, 80, 0.4); }
+.count-perfections .count-num { color: #4caf50; }
+
+.count-denials { border-color: rgba(255, 152, 0, 0.4); }
+.count-denials .count-num { color: #ff9800; }
+
+.count-positive { border-color: rgba(76, 175, 80, 0.4); }
+.count-positive .count-num { color: #4caf50; }
+
+.count-negative { border-color: rgba(244, 67, 54, 0.4); }
+.count-negative .count-num { color: #f44336; }
+
+/* ============================================================
+ * Lists
+ * ============================================================ */
+.perf-lists {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.perf-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.perf-group-title {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.15rem 0 0.25rem;
+}
+
+.perf-group-count {
+    color: var(--accent-color);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.perf-group-empty {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-style: italic;
+    padding: 0.15rem 0.25rem;
+}
+
+.perf-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.perf-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.perf-row:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.perf-row.is-selected {
+    background-color: rgba(120, 80, 200, 0.18);
+    border-color: rgba(120, 80, 200, 0.4);
+}
+
+.perf-row.is-selected .perf-row-label {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.perf-row-label {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.perf-row-score {
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    line-height: 1.3;
+}
+
+.score-positive {
+    color: #4caf50;
+    background: rgba(76, 175, 80, 0.12);
+    border-color: rgba(76, 175, 80, 0.35);
+}
+
+.score-negative {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.12);
+    border-color: rgba(244, 67, 54, 0.35);
+}
+
+.score-neutral {
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}

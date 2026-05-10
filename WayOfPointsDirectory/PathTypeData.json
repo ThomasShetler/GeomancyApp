@@ -1,0 +1,66 @@
+{
+  "PathTypeData": {
+    "PathTypes": [
+      {
+        "id": "Strong",
+        "name": "Strong Path",
+        "glyph": "★",
+        "color_hint": "#28a745",
+        "badge_class": "bg-success",
+        "tagline": "Strong — a clean, decisive channel for this Way.",
+        "mechanism_summary": "A Strong path appears when the Way as a whole is established by exactly one or two valid traversals from Judge through a Witness down to a leaf in the lower rows. Because the chart offers so few channels for the Judge's point on this line, the ones it does offer carry the matter directly and without dilution.",
+        "co_reads": "Strong paths concentrate the element's force into the endpoint house — read that house as the arena where the Way's energy actually lands, with little hedging or distraction from competing channels.",
+        "interpretation_paragraphs": [
+          "Strong — The chart offers only one or two ways for this line's current to descend from the Judge, and you are looking at one of them. Treat it as the chart's clearest, least negotiable statement on this element: the matter has a direct route into the endpoint house with no diversion.",
+          "Read the endpoint house as the focal arena. With so few competing channels, whatever the Way means for this element is fixed onto that single house — pay close attention to its figure, traditional rulership, and Latin name when telling the story of how the matter resolves.",
+          "Be careful not to over-soften a Strong path with caveats from elsewhere in the chart. Other indicators may color it, but a Strong reading on the Way of Points is one of the chart's most direct yes/no signals on the element it carries."
+        ]
+      },
+      {
+        "id": "StrongPassive",
+        "name": "Strong Passive Path",
+        "glyph": "◆",
+        "color_hint": "#0d6efd",
+        "badge_class": "bg-primary",
+        "tagline": "Strong Passive — a respected, top-row channel within a busier Way.",
+        "mechanism_summary": "A Strong Passive path appears when the Way has three or more valid traversals split across both lower rows, and at most two of those paths reach Row 1 (the Mothers and Daughters). Those few Row-1-reaching paths are promoted to Strong Passive: they are not as singular as a true Strong path, but they outrank the rest of the field by virtue of touching the chart's more authoritative row.",
+        "co_reads": "Strong Passive paths describe forces that work through indirect channels but still carry real authority. Treat the endpoint house as a respected stakeholder, not the loudest voice in the room — its influence is structural rather than dramatic.",
+        "interpretation_paragraphs": [
+          "Strong Passive — This Way is busy: three or more channels descend, but only one or two of them reach the chart's deeper Row 1, and yours is one of them. Read it as the influential minority — a respected voice among many, carrying real weight without dominating the conversation.",
+          "Because the Way's energy is spread thinner than a true Strong path, the endpoint here describes an arena that quietly anchors the matter rather than visibly driving it. Look there for the ally, asset, or condition that makes the rest of the chart possible.",
+          "When several indicators in the wider reading agree with a Strong Passive endpoint, treat the agreement as a confirmation: this is where the chart consistently returns when other lines are followed home."
+        ]
+      },
+      {
+        "id": "WeakerPassive",
+        "name": "Weaker Passive Path",
+        "glyph": "▫",
+        "color_hint": "#6c757d",
+        "badge_class": "bg-secondary",
+        "tagline": "Weaker Passive — a supporting Row 2 channel within a busy Way.",
+        "mechanism_summary": "A Weaker Passive path appears alongside Strong Passive paths in the same Way: when three or more traversals exist split across both rows and the Strong Passive promotion has already taken Row 1's two spots, the remaining Row-2 (Niece) paths are tagged Weaker Passive. They are still valid channels, just outranked by the Row-1 ones in the same Way.",
+        "co_reads": "Weaker Passive paths describe supporting circumstances — atmosphere, context, or background contributors that color the matter without steering it. Read the endpoint house as a contributing influence whose role is real but secondary to the Strong Passive endpoints in the same Way.",
+        "interpretation_paragraphs": [
+          "Weaker Passive — Your path reaches only the chart's middle row (the Nieces) while one or two stronger siblings push deeper into Row 1. Read it as a supporting actor: the endpoint house contributes context, atmosphere, or backup, but is not where the Way's most decisive action lands.",
+          "Do not dismiss a Weaker Passive endpoint — it is still a valid channel. A house tagged here often turns out to be the practical setting in which the Strong Passive endpoint actually plays out: the workshop, the meeting room, the social context.",
+          "When stacked together, Weaker Passive endpoints describe the surrounding conditions of the matter. Read the cluster as a tone or mood rather than a single decisive influence on the question."
+        ]
+      },
+      {
+        "id": "Passive",
+        "name": "Passive Path",
+        "glyph": "◯",
+        "color_hint": "#0dcaf0",
+        "badge_class": "bg-info",
+        "tagline": "Passive — one of many channels in an over-active Way.",
+        "mechanism_summary": "A Passive path appears when the Way descends through three or more traversals that either all land in the same row, or distribute themselves so that more than two paths reach Row 1. In either case the chart offers no clear standout, so every path is flattened to Passive: the Way is technically established but its force is diluted across too many channels to grant any single endpoint priority.",
+        "co_reads": "Passive paths describe an element that is present everywhere and decisive nowhere — the matter is being touched at many points but committed to none. Read the endpoint house as one of several contributing voices, weighted by other indicators rather than by this Way alone.",
+        "interpretation_paragraphs": [
+          "Passive — The Way runs, but it runs everywhere at once. With three or more channels and no standout, the chart is telling you that this element is in play across many parts of the situation — present and active, but not focused enough to single out one outcome.",
+          "Read each Passive endpoint as a contributing voice rather than a final answer. The element is genuinely engaged in this house, but you will need other indicators (perfections, aspects, the figure itself) to decide which Passive path actually carries the weight of the question.",
+          "An over-rich Passive Way often describes situations where many people, many resources, or many ideas are involved at once — the matter has momentum but lacks priority, and the querent's task is usually to choose the channel rather than to wait for the chart to choose it for them."
+        ]
+      }
+    ]
+  }
+}
