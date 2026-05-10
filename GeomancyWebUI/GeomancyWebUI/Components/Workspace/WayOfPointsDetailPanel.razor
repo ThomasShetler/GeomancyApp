@@ -7,11 +7,12 @@
     Renders structured detail for whichever entry was clicked on the left.
       - When `Selection.Path` is null we render the whole-Way summary
         (element header, glossary tagline, established/not chip,
-        element-interpretation tip stack, raw notes).
-      - When `Selection.Path` is non-null we additionally render the
-        path-type label, mechanism graph (Judge -> Witness -> Niece ->
-        endpoint with figure names), and the path-type interpretation
-        tip stack.
+        element-interpretation tip stack, raw notes). No Mechanism card:
+        that copy was path-gating language and read as "not established"
+        even when the way was open.
+      - When `Selection.Path` is non-null we render the path-type label,
+        mechanism graph (Judge -> Witness -> Niece -> endpoint with figure
+        names), and the path-type interpretation tip stack.
 
     The panel itself is the only scroll container in the right column.
 *@
@@ -122,13 +123,13 @@
             </section>
         }
 
-        @* Mechanism card: visualizes either the path graph or the gating mechanism. *@
-        <section class="detail-card mechanism-card">
-            <h3 class="card-title">
-                <span class="card-title-icon">⚙</span> Mechanism
-            </h3>
-            @if (hasPath)
-            {
+        @* Mechanism card only when a specific path is selected (graph + endpoint). *@
+        @if (hasPath)
+        {
+            <section class="detail-card mechanism-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">⚙</span> Mechanism
+                </h3>
                 <div class="mechanism-graph @(wayOfLightPath ? "is-way-of-light-graph" : "")">
                     @{
                         var nodes = BuildPathNodes(Selection.Path!);
@@ -158,14 +159,8 @@
                         <span class="way-of-light-tail-note"> Active fire (single dot) is maintained from Judge through this chain.</span>
                     }
                 </p>
-            }
-            else
-            {
-                <p class="mechanism-tail">
-                    @GatingExplanation(elementKey)
-                </p>
-            }
-        </section>
+            </section>
+        }
 
         @* Element interpretation tip stack — same visual vocabulary as
            PerfectionDetailPanel's interpretation tips. *@
@@ -437,20 +432,6 @@
         "Earth" => "#2ecc71",
         _ => "#7e57c2"
     };
-
-    // Plain-language gating explanation when no path was found.
-    private string GatingExplanation(string elementKey)
-    {
-        if (Chart == null)
-            return $"The {elementKey} Way could not be established on this chart — no path was found from the Judge to a leaf in the lower rows.";
-
-        var judgeFig = Chart.Judge?.Name ?? "—";
-        var rwFig = Chart.RightWitness?.Name ?? "—";
-        var lwFig = Chart.LeftWitness?.Name ?? "—";
-        return $"The Judge's {elementKey} point does not match either Witness's {elementKey} point on this chart " +
-               $"(Judge {judgeFig} → Witnesses {rwFig} & {lwFig}), so the chart offers no traversal for this element. " +
-               "The Way is technically present but cannot be established.";
-    }
 
     // ----- Token highlighting (lifted from PerfectionDetailPanel) -----
     private static readonly Regex HouseRegex = new Regex(@"\b(?:H|house\s+)(\d{1,2})\b", RegexOptions.IgnoreCase);
