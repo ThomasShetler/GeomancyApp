@@ -463,72 +463,304 @@
     border: 1px solid var(--border-color);
 }
 
-.two-col-card .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-}
-
-@media (max-width: 560px) {
-    .two-col-card .two-col {
-        grid-template-columns: 1fr;
-    }
-}
-
-.two-col-block .card-title {
-    font-size: 0.82rem;
-    margin-bottom: 0.35rem;
-}
-
-.two-col-fav .card-title {
-    color: #66bb6a;
-}
-
-.two-col-unfav .card-title {
-    color: #ef5350;
-}
-
 .corpus-interpretation .interpretation-para + .interpretation-para {
     margin-top: 0.65rem;
 }
 
-.in-houses-card .in-houses-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+/* ============================================================
+ * In-slot contextual card: the most-relevant single piece of context.
+ * Sits right after the chip row so the eye lands on it before lore.
+ * ============================================================ */
+.in-slot-card {
+    border-left: 4px solid var(--accent-color);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent-color) 8%, var(--bg-secondary)) 0%, var(--bg-secondary) 100%);
+    box-shadow: 0 2px 10px var(--shadow);
+    gap: 0.4rem;
 }
 
-.house-note-fold {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.15rem 0.5rem;
-    background: var(--bg-secondary);
-}
-
-.house-note-fold summary {
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.82rem;
+.in-slot-eyebrow {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--accent-color);
 }
 
-.house-note-fold .prose-text {
-    margin: 0.4rem 0 0.35rem;
-    font-size: 0.84rem;
+.in-slot-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
 }
 
-.sources-footer {
-    margin-top: 0.25rem;
-    padding-top: 0.65rem;
+.in-slot-body {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+/* ============================================================
+ * Favorable / Unfavorable: themed cards (green / red chrome)
+ * ============================================================ */
+.fav-card {
+    border-left: 3px solid rgba(76, 175, 80, 0.7);
+    background: linear-gradient(180deg, rgba(76, 175, 80, 0.08), var(--bg-secondary) 60%);
+}
+
+.fav-card .card-title {
+    color: #66bb6a;
+}
+
+.unfav-card {
+    border-left: 3px solid rgba(244, 67, 54, 0.7);
+    background: linear-gradient(180deg, rgba(244, 67, 54, 0.07), var(--bg-secondary) 60%);
+}
+
+.unfav-card .card-title {
+    color: #ef5350;
+}
+
+/* ============================================================
+ * Imagery card: prose lead + bullet-listed traditional images
+ * ============================================================ */
+.imagery-card .imagery-primary {
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.imagery-card .imagery-bullets {
+    margin-top: 0.1rem;
+}
+
+/* ============================================================
+ * Person card: Body / Character labeled rows + Anatomy & Colors meta strip
+ * ============================================================ */
+.person-card {
+    gap: 0.7rem;
+}
+
+.person-row {
+    display: grid;
+    grid-template-columns: minmax(4.5rem, 5.5rem) 1fr;
+    gap: 0.6rem;
+    align-items: start;
+}
+
+.person-label {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    padding-top: 0.15rem;
+}
+
+.person-body {
+    margin: 0;
+}
+
+.person-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding-top: 0.25rem;
     border-top: 1px dashed var(--border-color);
+}
+
+.person-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.82rem;
+}
+
+.person-meta-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--text-secondary);
 }
 
-.sources-heading {
-    margin: 0 0 0.35rem 0;
-    font-size: 0.72rem;
+.person-meta-value {
+    color: var(--text-primary);
+}
+
+/* ============================================================
+ * House Affinity: two big pills with a "vs." separator
+ * ============================================================ */
+.house-affinity-card .affinity-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.6rem;
+}
+
+.affinity-pill {
+    flex: 1 1 9rem;
+    min-width: 8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-primary);
+}
+
+.affinity-strong {
+    background: linear-gradient(180deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.04));
+    border-color: rgba(76, 175, 80, 0.5);
+}
+
+.affinity-weak {
+    background: linear-gradient(180deg, rgba(244, 67, 54, 0.13), rgba(244, 67, 54, 0.04));
+    border-color: rgba(244, 67, 54, 0.5);
+}
+
+.affinity-glyph {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.affinity-strong .affinity-glyph {
+    color: #66bb6a;
+}
+
+.affinity-weak .affinity-glyph {
+    color: #ef5350;
+}
+
+.affinity-label {
+    font-size: 0.68rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+.affinity-strong .affinity-label {
+    color: #66bb6a;
+}
+
+.affinity-weak .affinity-label {
+    color: #ef5350;
+}
+
+.affinity-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.affinity-vs {
+    align-self: center;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    padding: 0 0.15rem;
+}
+
+/* ============================================================
+ * Reference section eyebrow: a slim divider/label that introduces the
+ * House Reference and Court Reference card sequences.
+ * ============================================================ */
+.reference-section-eyebrow {
+    margin: 0.4rem 0 -0.15rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px dashed var(--border-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-color);
+}
+
+.reference-title-line {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.reference-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Governs bullets: snap to two columns when the card is wide enough */
+.two-col-bullets {
+    columns: 2;
+    column-gap: 1.25rem;
+}
+
+.two-col-bullets li {
+    break-inside: avoid;
+}
+
+@media (max-width: 540px) {
+    .two-col-bullets {
+        columns: 1;
+    }
+}
+
+/* ============================================================
+ * Reading Craft card: practitioner tips grouped under one card with
+ * subtle dividers between the three subsections.
+ * ============================================================ */
+.reading-craft-card {
+    gap: 0.85rem;
+}
+
+.craft-subsection + .craft-subsection {
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.craft-subheading {
+    margin: 0 0 0.4rem 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+/* Red-tinted bullets for misreadings & pitfalls */
+.bullet-warning {
+    color: var(--text-primary);
+}
+
+.bullet-warning li::marker {
+    color: #ef5350;
+}
+
+/* ============================================================
+ * Sources card: muted footer-style chrome to read as citation, dead last
+ * ============================================================ */
+.sources-card,
+.sources-footer {
+    background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+    border: 1px dashed var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.75rem 1rem;
+    margin-top: 0.5rem;
+}
+
+.sources-heading {
+    margin: 0 0 0.45rem 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--text-secondary);
 }
 
@@ -536,10 +768,19 @@
     margin: 0;
     padding-left: 1rem;
     font-size: 0.78rem;
-    line-height: 1.45;
+    line-height: 1.5;
 }
 
 .src-author {
     font-weight: 600;
     color: var(--text-primary);
+}
+
+.src-work {
+    color: var(--text-primary);
+}
+
+.src-sec,
+.src-year {
+    color: var(--text-secondary);
 }

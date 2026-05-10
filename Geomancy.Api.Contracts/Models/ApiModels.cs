@@ -117,6 +117,9 @@ namespace GeomancyAPI.Models
         [JsonProperty("in_houses")]
         public Dictionary<string, string> InHouses { get; set; } = new Dictionary<string, string>();
 
+        [JsonProperty("in_court_roles")]
+        public Dictionary<string, string> InCourtRoles { get; set; } = new Dictionary<string, string>();
+
         [JsonProperty("modern_examples")]
         public List<string> ModernExamples { get; set; } = new List<string>();
 

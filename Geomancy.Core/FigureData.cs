@@ -42,6 +42,7 @@ namespace GeomancyApp
         public List<string> TraditionalImagery { get; set; } = new List<string>();
         public List<string> Interpretation { get; set; } = new List<string>();
         public Dictionary<string, string> InHouses { get; set; } = new Dictionary<string, string>(StringComparer.Ordinal);
+        public Dictionary<string, string> InCourtRoles { get; set; } = new Dictionary<string, string>(StringComparer.Ordinal);
         public List<string> ModernExamples { get; set; } = new List<string>();
         public List<TraditionalSourceEntry> TraditionalSources { get; set; } = new List<TraditionalSourceEntry>();
 
@@ -83,6 +84,9 @@ namespace GeomancyApp
             target.Interpretation = source.Interpretation != null ? new List<string>(source.Interpretation) : new List<string>();
             target.InHouses = source.InHouses != null
                 ? new Dictionary<string, string>(source.InHouses, StringComparer.Ordinal)
+                : new Dictionary<string, string>(StringComparer.Ordinal);
+            target.InCourtRoles = source.InCourtRoles != null
+                ? new Dictionary<string, string>(source.InCourtRoles, StringComparer.Ordinal)
                 : new Dictionary<string, string>(StringComparer.Ordinal);
             target.ModernExamples = source.ModernExamples != null ? new List<string>(source.ModernExamples) : new List<string>();
             target.TraditionalSources = source.TraditionalSources != null

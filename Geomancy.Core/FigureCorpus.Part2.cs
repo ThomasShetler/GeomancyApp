@@ -58,6 +58,12 @@ namespace GeomancyApp
                 (11, "Benefactors who write checks, not just likes."),
                 (12, "Isolation that becomes retreat; monastery, artist residency.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is genuine standing—skill, status, or resources the querent earned over time precede the question.",
+                leftWitness: "External pull is favorable—visibility, allies, or daylight conditions are working in the querent's direction.",
+                judge: "Verdict is solid yes: the matter resolves with the querent's authority intact and the outcome clearly theirs.",
+                reconciler: "Aftermath compounds—success here builds capital that opens the next door without further struggle."
+            ),
             ModernExamples = new List<string>
             {
                 "Accepting a lower title at a stable firm during a recession",
@@ -124,6 +130,12 @@ namespace GeomancyApp
                 (10, "Matrix org; mentor introduces board."),
                 (11, "DAO vote; mutual aid spreadsheet."),
                 (12, "Anonymous tip line; twelve-step sponsor chain.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is a recent meeting or convergence—the question crystallized after a contact, message, or chance overlap.",
+                leftWitness: "External flow is bringing parties or threads together—introductions, deals, or coincidences keep arriving.",
+                judge: "Verdict is union: the matter resolves through an alliance, contract, or merger that locks the situation into a new shape.",
+                reconciler: "Aftermath ties the querent into a relationship or system—the connection persists past the original transaction."
             ),
             ModernExamples = new List<string>
             {
@@ -192,6 +204,12 @@ namespace GeomancyApp
                 (11, "Galentine energy; Kickstarter pretty page."),
                 (12, "Fantasy life rich; check for escapism.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is the querent's appeal—charm, beauty, or social grace shapes how the matter has been received so far.",
+                leftWitness: "Environment is welcoming the querent—doors open, smiles meet them, surfaces look easy.",
+                judge: "Verdict is pleasant on the surface: the matter resolves agreeably, though depth and durability are unproven.",
+                reconciler: "Aftermath is congenial but light—the situation leaves goodwill, not necessarily commitment."
+            ),
             ModernExamples = new List<string>
             {
                 "Choosing the Airbnb with better photos—and better hosts",
@@ -258,6 +276,12 @@ namespace GeomancyApp
                 (10, "Scandal-boss; whistleblower sexism case."),
                 (11, "Underground rave hopes; friend with benefits politics."),
                 (12, "Addiction spiral; psychiatric hold; revenge porn fear.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is something compromised—the querent walked in with mixed motives, hidden grudge, or substances clouding the question itself.",
+                leftWitness: "External climate is hostile or chaotic—deception, hostility, or unsafe systems are driving the trajectory.",
+                judge: "Verdict warns off: the matter resolves badly, often through revealed corruption or a fight that should not have been picked.",
+                reconciler: "Aftermath leaves wreckage—reputation, trust, or health pay a price that lasts longer than the conflict."
             ),
             ModernExamples = new List<string>
             {

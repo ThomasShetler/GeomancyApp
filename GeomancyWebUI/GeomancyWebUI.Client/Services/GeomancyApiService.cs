@@ -443,6 +443,7 @@ namespace GeomancyWebUI.Client.Services
                 TraditionalImagery = apiFigure.TraditionalImagery ?? new List<string>(),
                 Interpretation = apiFigure.Interpretation ?? new List<string>(),
                 InHouses = apiFigure.InHouses ?? new Dictionary<string, string>(),
+                InCourtRoles = apiFigure.InCourtRoles ?? new Dictionary<string, string>(),
                 ModernExamples = apiFigure.ModernExamples ?? new List<string>(),
                 TraditionalSources = apiFigure.TraditionalSources?.Select(s => new TraditionalSourceModel
                 {
@@ -543,6 +544,9 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("in_houses")]
             public Dictionary<string, string>? InHouses { get; set; }
+
+            [JsonPropertyName("in_court_roles")]
+            public Dictionary<string, string>? InCourtRoles { get; set; }
 
             [JsonPropertyName("modern_examples")]
             public List<string>? ModernExamples { get; set; }

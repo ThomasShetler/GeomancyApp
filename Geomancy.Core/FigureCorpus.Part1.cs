@@ -15,6 +15,20 @@ namespace GeomancyApp
             return d;
         }
 
+        // Court-role companion to H(): keys are "RightWitness", "LeftWitness",
+        // "Judge", "Reconciler" so the FigureDetailPanel can do a direct lookup
+        // off SlotKind without massaging strings.
+        private static Dictionary<string, string> C(string rightWitness, string leftWitness, string judge, string reconciler)
+        {
+            return new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["RightWitness"] = rightWitness,
+                ["LeftWitness"] = leftWitness,
+                ["Judge"] = judge,
+                ["Reconciler"] = reconciler,
+            };
+        }
+
         private static FigureData Fig01Puer() => new FigureData
         {
             FigureID = "1",
@@ -67,6 +81,12 @@ namespace GeomancyApp
                 (10, "Career visibility spikes—promotion push or public friction with authority."),
                 (11, "Friends rally as a war-band; hopes are pursued aggressively."),
                 (12, "Hidden irritants surface; self-sabotage through anger or late-night decisions.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin energy is martial pressure already on—the querent arrived hot, with adrenaline shaping the question more than reflection.",
+                leftWitness: "External climate is escalating—rivals, deadlines, or systems are pushing the matter toward open contest.",
+                judge: "Verdict by force: the matter resolves through a decisive thrust, but at the cost of bystanders and bridges.",
+                reconciler: "Long tail is collateral—victory in the moment leaves a brittle edge that the querent will keep sharpening or apologizing for."
             ),
             ModernExamples = new List<string>
             {
@@ -135,6 +155,12 @@ namespace GeomancyApp
                 (11, "Crowdfunding misses goal; friend group splinters after loan."),
                 (12, "Anonymous leak; hospital bill; hidden subscription cancels savings.")
             ),
+            InCourtRoles = C(
+                rightWitness: "The querent walked in already letting go—an asset, attachment, or expectation has been quietly slipping for months.",
+                leftWitness: "External flow is outward—markets, partners, or platforms are draining value the querent does not yet see leaving.",
+                judge: "Verdict is parting: the matter resolves by something leaving the querent's hands—a relief if intended, a setback if not.",
+                reconciler: "Aftermath is lighter pockets and more honest shelves—what stays after the loss is the real holding."
+            ),
             ModernExamples = new List<string>
             {
                 "Closing a brokerage account to fund a move abroad",
@@ -202,6 +228,12 @@ namespace GeomancyApp
                 (11, "Book club or union steward offers wise counsel; hopes modest but sound."),
                 (12, "Dream journal yields insight; insomnia eases when phone leaves bedroom.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is reflection: the querent has been studying, journaling, or quietly preparing rather than acting.",
+                leftWitness: "Environment leans cooperative—mediators, paperwork, or institutional sympathy is moving toward the querent.",
+                judge: "Verdict is settled by clarity: a paper, a ruling, or an honest conversation closes the matter without spectacle.",
+                reconciler: "Aftermath is documented and durable—the resolution holds because it was reasoned, not improvised."
+            ),
             ModernExamples = new List<string>
             {
                 "Switching to plaintext documentation before a compliance audit",
@@ -268,6 +300,12 @@ namespace GeomancyApp
                 (10, "Org chart crowd; middle management consensus."),
                 (11, "Mutuals, Patreon backers, activist listserv."),
                 (12, "Hospital ward, subreddit lurkers, unseen online pile-on.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is the room the querent is standing in—family, team, audience—they did not arrive alone with this question.",
+                leftWitness: "External momentum is collective: a crowd, algorithm, or quorum is shaping the trajectory more than any individual actor.",
+                judge: "Verdict reflects the assembly—whatever the larger group decides becomes the answer; the querent has limited solo leverage.",
+                reconciler: "Aftermath ripples through the network—reputation, group memory, and ongoing roles outlast the immediate event."
             ),
             ModernExamples = new List<string>
             {

@@ -222,6 +222,7 @@ namespace GeomancyWebUI.Services
                 TraditionalImagery = src.TraditionalImagery ?? new List<string>(),
                 Interpretation = src.Interpretation ?? new List<string>(),
                 InHouses = src.InHouses ?? new Dictionary<string, string>(),
+                InCourtRoles = src.InCourtRoles ?? new Dictionary<string, string>(),
                 ModernExamples = src.ModernExamples ?? new List<string>(),
                 TraditionalSources = src.TraditionalSources?.Select(s => new TraditionalSourceModel
                 {

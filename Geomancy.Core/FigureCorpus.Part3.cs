@@ -58,6 +58,12 @@ namespace GeomancyApp
                 (11, "Crowdfund exceeds goal; mentor opens rolodex."),
                 (12, "Anonymous donation; settlement windfall.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is upward momentum—the querent already has wind at their back and arrived with resources to deploy.",
+                leftWitness: "External flow is bringing in—offers, payments, or opportunities are converging toward the querent.",
+                judge: "Verdict is gain: the matter resolves with something added to the querent's column—money, contract, or rank.",
+                reconciler: "Aftermath enlarges the situation—what is acquired now reshapes future obligations and choices."
+            ),
             ModernExamples = new List<string>
             {
                 "RSUs vesting the month rent is due",
@@ -124,6 +130,12 @@ namespace GeomancyApp
                 (10, "Corporate ladder guardrails; security clearance."),
                 (11, "Union rules; Patreon tier freeze."),
                 (12, "Psych ward hold; house arrest ankle monitor.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is constraint already binding—the querent walked in already locked into a contract, role, or repeating pattern.",
+                leftWitness: "External climate is restrictive—rules, gatekeepers, or material limits are tightening the trajectory.",
+                judge: "Verdict is closure or hold: the matter resolves by being fixed in place—either secured for good or shut down.",
+                reconciler: "Aftermath is structural—the boundary set here becomes a permanent feature the querent must learn to live inside."
             ),
             ModernExamples = new List<string>
             {
@@ -192,6 +204,12 @@ namespace GeomancyApp
                 (11, "Dream deferred; activist burnout."),
                 (12, "Hospital depression; secret weight.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is grief or fatigue—the querent has been carrying weight that long predates the question.",
+                leftWitness: "External climate is grinding—delays, scarcity, or institutional indifference are wearing the situation down.",
+                judge: "Verdict is heavy: the matter resolves slowly and against the querent's hopes; what comes is real but costly.",
+                reconciler: "Aftermath is depth, not damage—what hurts here teaches a discipline the querent will carry as quiet authority."
+            ),
             ModernExamples = new List<string>
             {
                 "Layoffs announced same day as product launch",
@@ -258,6 +276,12 @@ namespace GeomancyApp
                 (10, "Viral CEO moment; Emmy nom."),
                 (11, "Kickstarter confetti; hope restored."),
                 (12, "Spiritual retreat high; watch disclosure.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is rising mood—the querent arrived already lifted by recent good news, healing, or a creative wave.",
+                leftWitness: "External flow is buoyant—celebrations, blessings, or favorable currents are coming toward the querent.",
+                judge: "Verdict is joyous: the matter resolves with relief, success, or a freedom the querent has been waiting for.",
+                reconciler: "Aftermath is genuine elevation—not a fluke; the new altitude becomes the querent's working baseline."
             ),
             ModernExamples = new List<string>
             {

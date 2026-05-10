@@ -677,6 +677,7 @@ namespace GeomancyAPI.Handlers
                 TraditionalImagery = figure.TraditionalImagery ?? new List<string>(),
                 Interpretation = figure.Interpretation ?? new List<string>(),
                 InHouses = figure.InHouses ?? new Dictionary<string, string>(),
+                InCourtRoles = figure.InCourtRoles ?? new Dictionary<string, string>(),
                 ModernExamples = figure.ModernExamples ?? new List<string>(),
                 TraditionalSources = figure.TraditionalSources == null
                     ? new List<TraditionalSourceResponse>()

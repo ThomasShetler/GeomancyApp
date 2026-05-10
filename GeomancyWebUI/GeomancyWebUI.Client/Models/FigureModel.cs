@@ -74,6 +74,9 @@ namespace GeomancyWebUI.Client.Models
         [JsonPropertyName("in_houses")]
         public Dictionary<string, string> InHouses { get; set; } = new Dictionary<string, string>();
 
+        [JsonPropertyName("in_court_roles")]
+        public Dictionary<string, string> InCourtRoles { get; set; } = new Dictionary<string, string>();
+
         [JsonPropertyName("modern_examples")]
         public List<string> ModernExamples { get; set; } = new List<string>();
 

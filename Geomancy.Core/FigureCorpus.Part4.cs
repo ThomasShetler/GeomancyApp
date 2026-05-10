@@ -58,6 +58,12 @@ namespace GeomancyApp
                 (11, "Dream abandoned consciously; network prune."),
                 (12, "Hospital discharge; secret exposed then closed.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is something concluding—the question rises out of an exit, divorce, or closing chapter the querent has been navigating.",
+                leftWitness: "External climate is closing doors—platforms shutting, partners departing, options narrowing in the trajectory.",
+                judge: "Verdict is ending: the matter resolves by termination—a release if needed, a loss if clung to.",
+                reconciler: "Aftermath is the empty room—what remains after the door shuts becomes the querent's new starting point."
+            ),
             ModernExamples = new List<string>
             {
                 "Deleting Twitter after acquisition meltdown",
@@ -124,6 +130,12 @@ namespace GeomancyApp
                 (10, "Title change; press release draft."),
                 (11, "Discord mod promotion; hope project greenlit."),
                 (12, "Dream vision leads to rehab admit—start.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is fresh ground—the querent walked in with a new identity, residence, or commitment recently taken.",
+                leftWitness: "External climate offers a threshold—openings, invitations, or undiscovered paths waiting in the trajectory.",
+                judge: "Verdict is beginning: the matter resolves by initiating something—a chapter opens that will define the next phase.",
+                reconciler: "Aftermath is genesis—the choice made here seeds a project, relationship, or vocation that grows over years."
             ),
             ModernExamples = new List<string>
             {
@@ -192,6 +204,12 @@ namespace GeomancyApp
                 (11, "Kickstarter lightning round; Patreon spike."),
                 (12, "Anonymous benefactor wire—verify.")
             ),
+            InCourtRoles = C(
+                rightWitness: "Origin is borrowed momentum—the querent arrived leaning on someone else's wave or a recent lucky break.",
+                leftWitness: "External flow is fast and favorable but conditional—help arrives quickly with strings or short shelf life.",
+                judge: "Verdict is yes for now: the matter resolves favorably in the short term but rests on assistance the querent does not control.",
+                reconciler: "Aftermath thins as the loaned wind dies—what remains is what the querent built while the breeze was free."
+            ),
             ModernExamples = new List<string>
             {
                 "GPU cloud credits from mentor for AI demo",
@@ -258,6 +276,12 @@ namespace GeomancyApp
                 (10, "Consulting fly week; political campaign bus."),
                 (11, "Activist carpool; hope on the march."),
                 (12, "Ferry between hospitals; dream highway.")
+            ),
+            InCourtRoles = C(
+                rightWitness: "Origin is transit—the querent walked in already in motion, between places, jobs, or commitments.",
+                leftWitness: "External climate is in flux—routes, schedules, and circumstances keep moving in the trajectory.",
+                judge: "Verdict is travel: the matter resolves through movement—a relocation, pivot, or literal trip that changes everything.",
+                reconciler: "Aftermath is a new address—where the querent ends up, geographically or in life, is the lasting answer."
             ),
             ModernExamples = new List<string>
             {
