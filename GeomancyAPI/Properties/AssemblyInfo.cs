@@ -2,34 +2,25 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about an assembly is controlled through the following
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("GeomancyAPI")]
-[assembly: AssemblyDescription("Geomancy API for generating geomantic figures and house charts")]
+// Geofancy - legacy self-hosted Web API (.NET Framework 4.8).
+//
+// Version metadata is kept in lockstep across:
+//   1) Geomancy.Core/GeofancyVersion.cs    (UI display strings)
+//   2) Directory.Build.props               (SDK-style projects)
+//   3) GeomancyApp + this file + GeomancyUnitTesting (legacy projects)
+
+[assembly: AssemblyTitle("Geofancy.Api")]
+[assembly: AssemblyDescription("Geofancy self-hosted Web API for chart generation, perfections, and Way of Points.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GeomancyAPI")]
-[assembly: AssemblyCopyright("Copyright © 2025")]
+[assembly: AssemblyCompany("Thomas Shetler")]
+[assembly: AssemblyProduct("Geofancy")]
+[assembly: AssemblyCopyright("Copyright (c) 2026 Thomas Shetler")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Setting ComVisible to false makes the types in this assembly not visible
-// to COM components.  If you need to access a type in this assembly from
-// COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("a1b2c3d4-e5f6-7890-abcd-ef1234567890")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")] 
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyInformationalVersion("0.1.0-beta")]

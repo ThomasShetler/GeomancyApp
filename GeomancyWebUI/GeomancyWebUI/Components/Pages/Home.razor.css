@@ -13,9 +13,11 @@
 }
 
 .landing-eyebrow {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     margin: 0 0 0.75rem;
-    padding: 0.2rem 0.65rem;
+    padding: 0.2rem 0.75rem;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -24,6 +26,18 @@
     border: 1px solid var(--border-color);
     border-radius: 999px;
     background: var(--bg-secondary);
+}
+
+.landing-eyebrow-sep {
+    color: var(--border-color);
+    font-weight: 400;
+}
+
+.landing-eyebrow-version {
+    color: var(--text-secondary);
+    font-feature-settings: "tnum";
+    letter-spacing: 0.08em;
+    text-transform: none;
 }
 
 .landing-title {
@@ -212,6 +226,141 @@
     border-radius: 4px;
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
+}
+
+/* ============================================================
+ * Latest-release card on the landing page
+ *
+ * Renders the top entry from RELEASES.md inline so visitors get
+ * the version, date, headline, and full highlights without
+ * leaving the home page. The "Known limitations" sub-block
+ * collapses inside a <details> using the existing .landing-details
+ * styles above. The version string is sourced from
+ * GeomancyApp.GeofancyVersion (Geomancy.Core).
+ * ============================================================ */
+.landing-release-card {
+    padding: 1.25rem 1.25rem 1.1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 10px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.landing-release-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.landing-release-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    line-height: 1.25;
+}
+
+.landing-release-channel {
+    display: inline-block;
+    padding: 0.12rem 0.55rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
+    border-radius: 999px;
+    line-height: 1.4;
+}
+
+.landing-release-meta {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.landing-release-summary {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.landing-release-summary strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.landing-release-h4 {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+}
+
+.landing-release-card .landing-notes {
+    /* Reset the default top margin from the highlights block since the
+       h4 above already provides spacing. */
+    margin: -0.25rem 0 0;
+}
+
+.landing-release-card .landing-notes li {
+    margin-bottom: 0.6rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+.landing-release-card .landing-notes li:last-child {
+    margin-bottom: 0;
+}
+
+.landing-release-card .landing-notes strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.landing-release-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem 1.25rem;
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.landing-release-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.landing-release-link:hover,
+.landing-release-link:focus-visible {
+    color: var(--accent-hover);
+    text-decoration: underline;
+    outline: none;
+}
+
+.landing-release-link-secondary {
+    color: var(--text-secondary);
+}
+
+.landing-release-link-secondary:hover,
+.landing-release-link-secondary:focus-visible {
+    color: var(--text-primary);
 }
 
 @media (min-width: 900px) {

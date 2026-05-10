@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using GeomancyApp
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
@@ -7,7 +8,11 @@
 
 <div class="landing">
     <section class="landing-hero" aria-labelledby="landing-title">
-        <p class="landing-eyebrow">Beta</p>
+        <p class="landing-eyebrow">
+            <span class="landing-eyebrow-channel">@GeofancyVersion.Channel</span>
+            <span class="landing-eyebrow-sep" aria-hidden="true">·</span>
+            <span class="landing-eyebrow-version">v@GeofancyVersion.Display</span>
+        </p>
         <img src="img/logo.png"
              alt=""
              aria-hidden="true"
@@ -79,19 +84,95 @@
     </section>
 
     <section class="landing-section landing-release" aria-labelledby="release-heading">
-        <h2 id="release-heading" class="landing-h2">Latest release notes</h2>
-        <details class="landing-details">
-            <summary class="landing-summary">Geofancy 0.9.0 — Beta</summary>
-            <div class="landing-details-body">
-                <ul class="landing-notes">
-                    <li>Dedicated <strong>Workspace</strong> (<code>/workspace</code>) for desktop chart and analysis tabs.</li>
-                    <li><strong>Mobile workspace</strong> (<code>/mobile</code>) with horizontal tabs, list/detail flow, and chart drawer overlay.</li>
-                    <li><strong>Court &amp; Houses</strong>, <strong>Perfections</strong>, and <strong>Way of Points</strong> tabs with rich detail panels.</li>
-                    <li>Theme toggle synced with the document on first click; navigation-friendly placement.</li>
-                    <li>Branding refresh to <strong>Geofancy</strong> and this landing page.</li>
-                </ul>
-            </div>
-        </details>
+        <h2 id="release-heading" class="landing-h2">Latest release</h2>
+
+        <article class="landing-release-card">
+            <header class="landing-release-header">
+                <h3 class="landing-release-title">
+                    Geofancy v@GeofancyVersion.Display
+                    <span class="landing-release-channel">@GeofancyVersion.Channel</span>
+                </h3>
+                <p class="landing-release-meta">Released @GeofancyVersion.ReleaseDate</p>
+            </header>
+
+            <p class="landing-release-summary">
+                The first public release of <strong>Geofancy</strong>, a digital tool for traditional Western
+                geomancy. The chart engine, perfection analyzer, Way of Points module, and the entire
+                interpretive corpus are production-ready; the surrounding app continues to evolve, which
+                is why this release is tagged <strong>beta</strong>.
+            </p>
+
+            <h4 class="landing-release-h4">Highlights</h4>
+            <ul class="landing-notes">
+                <li>
+                    <strong>Two purpose-built workspaces.</strong> A wide desktop layout that gives the
+                    chart and details room to breathe, and a mobile-first layout where the chart fills the
+                    screen and tabs collapse into focused detail panels. Phones are auto-routed to the
+                    mobile workspace at <code>/mobile</code>.
+                </li>
+                <li>
+                    <strong>Mobile Mother input strip.</strong> Four full-width tap targets — Fourth,
+                    Third, Second, First Mother — sit above the chart in the mobile drawer, giving thumbs
+                    a comfortable place to set lines without zooming in on the small chart.
+                </li>
+                <li>
+                    <strong>Original interpretive corpus.</strong> Every interpretive line — figure data,
+                    house data, court placements, and contextual <em>"this figure in this slot"</em>
+                    blurbs (64 in total) — was written from primary sources and the author's practice.
+                    No third-party reference material is reproduced.
+                </li>
+                <li>
+                    <strong>Themed card-based detail panel.</strong> Contextual in-slot callout, split
+                    favorable / unfavorable cards, person and body correspondences, house affinity pills,
+                    themed imagery cards, and a citation footer with sources.
+                </li>
+                <li>
+                    <strong>Perfection analyzer.</strong> Querent / Quesited selection with per-perfection
+                    commentary covering Occupation, Conjunction, Translation, Mutation, Mutual Reception,
+                    and the supporting and denying aspects.
+                </li>
+                <li>
+                    <strong>Way of Points module.</strong> Element and path-type explanations with
+                    structured, scannable tips.
+                </li>
+                <li>
+                    <strong>Light and dark modes</strong> that follow your choice and persist across sessions.
+                </li>
+                <li>
+                    <strong>Apple home-screen ready.</strong> PWA-style favicon, apple-touch-icon, and dark
+                    theme color so it lives nicely on a phone's home screen.
+                </li>
+            </ul>
+
+            <details class="landing-details">
+                <summary class="landing-summary">Known limitations</summary>
+                <div class="landing-details-body">
+                    <ul class="landing-notes">
+                        <li>Charts are not yet persisted across sessions; refreshing the page resets the workspace.</li>
+                        <li>The legacy WinForms desktop app remains available for offline use but does not yet reflect the full corpus rewrite or the new card layout. The web app is the recommended surface.</li>
+                        <li>The Aspect Analysis page is marked <strong>experimental</strong> in places where its interpretive layer is still being expanded.</li>
+                        <li>Mobile chart minimum render size is enforced at 435 × 435 to preserve diagram integrity; on very narrow screens the chart drawer scales rather than reflows.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <footer class="landing-release-footer">
+                <a class="landing-release-link"
+                   href="https://github.com/ThomasShetler/GeomancyApp/blob/master/RELEASES.md"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Full changelog &amp; release history
+                    <span aria-hidden="true">&nbsp;&rarr;</span>
+                </a>
+                <a class="landing-release-link landing-release-link-secondary"
+                   href="https://github.com/ThomasShetler/GeomancyApp/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Report a bug or send feedback
+                    <span aria-hidden="true">&nbsp;&rarr;</span>
+                </a>
+            </footer>
+        </article>
     </section>
 </div>
 
