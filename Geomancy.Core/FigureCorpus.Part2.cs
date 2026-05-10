@@ -32,12 +32,12 @@ namespace GeomancyApp
             Colors = "Green, yellow, or gold",
             Commentary = @"Fortuna Major is the sheltered valley that gathers water: Sun in Leo, yet the outer fire rests while inner earth and the active water and earth lines shape the terrain. The classical authors place this figure in deliberate contrast with the ridge of Fortuna Minor—here fortune is deep, slow, and structural. The help arriving for the querent comes from foundations, elders, savings, or an institution with room enough to absorb shock. Agrippa's lineage ties the figure to inward protection, and the practitioner should therefore look for durable, accumulating luck rather than for a sudden visible spike.",
             DivinatoryMeaning = "Substantial fortune obtained through persistence, the inheritance of one's own past effort, institutional backing, or an integrity recognized late. The figure favors promotions earned by record, properties that appreciate on fundamentals, and recoveries that succeed through patient regimen. It disfavors short-horizon transactions that rest on attention alone.",
-            Tagline = "Deep luck, sheltered gain, earned crown",
+            Tagline = "Deep fortune, sheltered gain, earned stature",
             CoreMeaning = new List<string> { "durability", "patronage", "inheritance", "gravitas", "reserve", "sanctuary" },
-            FavorableFor = new List<string> { "Mortgage on solid land", "Tenure review", "Rehab after injury", "Family trust restructuring", "Scholarship renewal" },
-            UnfavorableFor = new List<string> { "Day-trading on rumor", "Ghosting accountability", "Burning bridges for clout" },
+            FavorableFor = new List<string> { "Mortgage on well-chosen land", "Tenure or long-service review", "Structured rehabilitation after injury", "Family trust restructuring", "Renewal of merit-based aid" },
+            UnfavorableFor = new List<string> { "Speculation driven chiefly by rumor", "Avoiding accountability after commitments", "Sacrificing durable ties for spectacle" },
             ElementalSynthesis = "Fire and air lie passive while water and earth move: heat and debate quiet themselves as moisture and ground cooperate, after the manner of agriculture in a sheltered valley. Inner earth anchors the outer fire of the solar sign, so that the pride of Leo expresses itself as stewardship rather than display.",
-            TraditionalImagery = new List<string> { "Valley and river", "Greater fortune mark in old keys", "Solar dignity imagery" },
+            TraditionalImagery = new List<string> { "Sheltered valley and flowing water", "Greater Fortune in classical keys", "Solar dignity in emblem tables" },
             Interpretation = new List<string>
             {
                 "Read this figure as the compounding interest of virtue: small, correct choices accumulate until the world begins to notice.",
@@ -45,30 +45,30 @@ namespace GeomancyApp
                 "When the figure occupies a court position—particularly Judge or Reconciler—it suggests an effect on legacy that reaches well beyond the immediate question."
             },
             InHouses = H(
-                (1, "Core confidence rooted in lineage or training; body recovers with rest."),
-                (2, "Wealth accrues through property, pension, or slow equity."),
-                (3, "Mentor network; documents that protect the querent."),
-                (4, "Ancestral land, well-maintained home, generational recipes."),
-                (5, "Children thrive with steady support; art patronage."),
-                (6, "Chronic condition stabilizes; union job security."),
-                (7, "Marriage of equals; contract favors long horizon."),
-                (8, "Insurance pays; shared asset appreciates."),
-                (9, "University endowment; pilgrimage scholarship."),
-                (10, "Reputation for reliability; corner office earned."),
-                (11, "Benefactors who write checks, not just likes."),
-                (12, "Isolation that becomes retreat; monastery, artist residency.")
+                (1, "Confidence grounded in lineage or formation; the frame restores itself when pace allows."),
+                (2, "Resources deepen through real property, pension, or patient equity."),
+                (3, "Circle of mentors; instruments and filings that shelter the querent."),
+                (4, "Ancestral holding; a tended hearth; continuity carried through household craft."),
+                (5, "Young dependents flourish under steadiness; patronage of arts or learning."),
+                (6, "Long-standing ailment finds steadier footing; livelihood anchored by durable collective agreement."),
+                (7, "Partnership between peers; covenants weighted toward the distant horizon."),
+                (8, "Coverage fulfills its promise; joint holdings gain sober value."),
+                (9, "Endowment or structured study away; pilgrimage or scholarship as blessing with form."),
+                (10, "Standing earned by reliability; authority consonant with demonstrated tenure."),
+                (11, "Patrons who commit substance, not only applause."),
+                (12, "Withdrawal that ripens into retreat—cloister, residency, or chosen solitude.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is genuine standing—skill, status, or resources the querent earned over time precede the question.",
-                leftWitness: "External pull is favorable—visibility, allies, or daylight conditions are working in the querent's direction.",
-                judge: "Verdict is solid yes: the matter resolves with the querent's authority intact and the outcome clearly theirs.",
-                reconciler: "Aftermath compounds—success here builds capital that opens the next door without further struggle."
+                rightWitness: "Origin is genuine standing—skill, reputation, or resources accumulated over time precede the question.",
+                leftWitness: "External conditions favor the querent—visibility, allies, and timing tend toward openness rather than obstruction.",
+                judge: "Verdict affirms clearly: the matter settles with the querent's authority intact and the outcome recognizably theirs.",
+                reconciler: "Aftermath compounds wisely—success here leaves reserves that ease what follows without needless friction."
             ),
             ModernExamples = new List<string>
             {
-                "Accepting a lower title at a stable firm during a recession",
-                "Paying extra for earthquake retrofit that later saves the house",
-                "Trust fund released at 30 after milestones met"
+                "Accepting a modest title at a durable institution when the wider economy contracts",
+                "Investing in seismic retrofit before the shock that would have tested the structure",
+                "A trust released when stated milestones, not appetite alone, have been met"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -105,12 +105,12 @@ namespace GeomancyApp
             Colors = "Purple or pale gray, sometimes black speckled with blue",
             Commentary = @"Conjunctio is the crossroads at which streams meet: Mercury in Virgo, inner air over outer earth, with air and water carrying the motion. Fire sleeps at the head and earth at the feet, leaving the middle realm to do the negotiation. The medieval geomancers turned to this figure for messengers, brokers, and the recovery of lost goods, on the principle that links reappear. The contemporary practitioner may translate that intuition into the language of supply chains, networks, and the introductions that re-route a vocation. The figure is, by nature, morally mixed: contacts multiply outcomes; they do not guarantee virtue.",
             DivinatoryMeaning = "Networks, mediation, logistics, reconciliations of accounts, the recovery of items through a chain of acquaintances, and conversations that bring previously separate parties into agreement. The figure favors questions in which connection itself is the missing variable, and disfavors questions in which isolation, confidentiality, or strict separation is required.",
-            Tagline = "Crossroads, brokers, APIs of fate",
-            CoreMeaning = new List<string> { "linkage", "exchange", "mediation", "data", "mixing", "routing" },
-            FavorableFor = new List<string> { "Recruiting", "Import/export", "Couples therapy", "Blockchain bridges", "Conference networking" },
-            UnfavorableFor = new List<string> { "Air-gapped classified work", "Hermit phase", "Monopoly without partners" },
+            Tagline = "Crossroads, mediation, converging threads",
+            CoreMeaning = new List<string> { "linkage", "exchange", "mediation", "intelligence", "mixing", "routing" },
+            FavorableFor = new List<string> { "Talent acquisition and placement", "Import and export", "Couples or contract mediation", "Bridging separate accounts or networks", "Conference and alliance building" },
+            UnfavorableFor = new List<string> { "Isolated classified systems", "Deliberate solitary retreat", "Exclusive control without partners" },
             ElementalSynthesis = "Active air and water braid through passive fire and earth: information and feeling circulate while ignition and ground wait their turn. The inner air steers the outer earth, so that analysis sorts the soil before any planting begins.",
-            TraditionalImagery = new List<string> { "Crossroads", "Mercury caduceus echoes", "Virgo harvest sorting" },
+            TraditionalImagery = new List<string> { "Crossroads", "Caduceus and messenger emblems", "Virgo's sorting of the harvest" },
             Interpretation = new List<string>
             {
                 "Read Conjunctio in the manner of a graph: the nodes themselves matter less than the edges between them, and the practical question is who in the network will actually answer when called.",
@@ -118,30 +118,30 @@ namespace GeomancyApp
                 "If the Judge is harsh but Conjunctio sits on the ruler of the relevant house, a translator or intermediary may yet open the case."
             },
             InHouses = H(
-                (1, "Querent is hub; many introductions define them."),
-                (2, "Split payments, joint accounts, gig stack income."),
-                (3, "Slack threads, cousin connectors, short trips chaining."),
-                (4, "Roommates, duplex, Airbnb co-host."),
-                (5, "A collaborative creative project; the careful coordination of layered relationships."),
-                (6, "Shift swap board; integrative medicine team."),
-                (7, "Co-counsel, agent, or matchmaker in deal."),
-                (8, "Debt restructuring; escrow handshake."),
-                (9, "Study abroad buddy; publisher introduces editor."),
-                (10, "Matrix org; mentor introduces board."),
-                (11, "DAO vote; mutual aid spreadsheet."),
-                (12, "Anonymous tip line; twelve-step sponsor chain.")
+                (1, "The querent sits at a hub; introductions and referrals define their path."),
+                (2, "Split payments, joint holdings, income from several coordinated streams."),
+                (3, "Dense messages and short hops; kin or neighbors who broker useful ties."),
+                (4, "Shared dwelling or divided title; hospitality that links households."),
+                (5, "Collaborative making; affection or artistry sustained through careful coordination."),
+                (6, "Shift swaps and handoffs; multidisciplinary care around one regimen."),
+                (7, "Co-counsel, agent, or matchmaker at the heart of the agreement."),
+                (8, "Debt restructuring; funds released through escrow and timed conditions."),
+                (9, "Travel companionship; teacher or publisher opens the next gate."),
+                (10, "Matrix reporting lines; mentor sponsors access to authority."),
+                (11, "Collective allocation; mutual aid or governance that depends on many small links."),
+                (12, "Anonymous channels; mentor chains in recovery; confidential lines that still connect.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is a recent meeting or convergence—the question crystallized after a contact, message, or chance overlap.",
-                leftWitness: "External flow is bringing parties or threads together—introductions, deals, or coincidences keep arriving.",
-                judge: "Verdict is union: the matter resolves through an alliance, contract, or merger that locks the situation into a new shape.",
-                reconciler: "Aftermath ties the querent into a relationship or system—the connection persists past the original transaction."
+                rightWitness: "Origin is a recent meeting or convergence—the question took shape after a contact, dispatch, or timely overlap.",
+                leftWitness: "Outside circumstance keeps joining threads—introductions, agreements, or unlikely parallels recur.",
+                judge: "Verdict is union: resolution comes through alliance, contract, or merger that sets a lasting configuration.",
+                reconciler: "Aftermath binds the querent into a relationship or system—the tie outlasts the first transaction."
             ),
             ModernExamples = new List<string>
             {
-                "LinkedIn intro that lands the interview",
-                "Package rerouted through neighbor's porch cam",
-                "Zoom breakout room that solves the bug"
+                "A measured introduction that secures the interview without exaggeration",
+                "A parcel traced through a neighbor's witness, yielding the decisive clue",
+                "A small facilitated group where the obstructing detail finally surfaces"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -179,11 +179,11 @@ namespace GeomancyApp
             Commentary = @"Puella stands in counterpoise to Puer: Venus in Libra, outer air over inner water, with fire, water, and earth active and only air at rest. The mirror in the figure's image hints at reciprocity—beauty understood as negotiation. The older authors warn that the joys conferred here can be short-lived unless the purse of earth and the feeling of water remain in alignment. The figure is favorable but inclined to fickleness; it loves the dance more readily than it loves the contract. The practitioner should therefore weigh whether the charm in question is structural or merely a finish.",
             DivinatoryMeaning = "Courtship, the care of surfaces, diplomacy, the fair division of goods, regimens of grooming, the elegance of a settlement. The figure favors first encounters and occasions that depend on grace, and is weak for instruments such as binding agreements unless other figures supply the necessary weight.",
             Tagline = "Charm, balance, mirrored desire",
-            CoreMeaning = new List<string> { "beauty", "reciprocity", "flirtation", "design", "fairness", "seasonal joy" },
-            FavorableFor = new List<string> { "Interior design pitch", "Peace treaty signing", "Album art direction", "Couples counseling intake", "Cosmetic procedure consult" },
-            UnfavorableFor = new List<string> { "Solo polar expedition", "Brutalist truth serum", "Long bear market grit" },
+            CoreMeaning = new List<string> { "beauty", "reciprocity", "grace", "design", "fairness", "seasonal joy" },
+            FavorableFor = new List<string> { "Interior design presentation", "Formal reconciliation or treaty", "Visual direction for a lasting work", "Couples counseling intake", "Elective aesthetic consultation" },
+            UnfavorableFor = new List<string> { "Solo expedition without alliance", "Coerced blunt disclosure without tact", "Long austerity demanding blunt endurance alone" },
             ElementalSynthesis = "Fire, water, and earth all act while air alone is passive: heat, feeling, and matter co-produce, while the cool intellectual distance thins. The scales of Libra here tip by mood more than by memorandum.",
-            TraditionalImagery = new List<string> { "Mirror", "Venusian symmetry", "Breast glyph in woodcuts" },
+            TraditionalImagery = new List<string> { "Mirror", "Venusian symmetry", "Traditional breast motif in woodcuts" },
             Interpretation = new List<string>
             {
                 "Puella invites the practitioner to ask what is being polished for presentation, and what beneath the polish will hold once the audience departs.",
@@ -191,30 +191,30 @@ namespace GeomancyApp
                 "Paired with Amissio, beauty exacts a cost; paired with Acquisitio, charm attracts the patron willing to underwrite it."
             },
             InHouses = H(
-                (1, "Querent polishes image; charisma carries the ask."),
-                (2, "Styled spending; Etsy side, floral budget."),
-                (3, "Diplomatic sibling; curated Instagram grid."),
-                (4, "Home staging; domestic harmony project."),
-                (5, "Rom-com arc; design sprint; baby shower aesthetics."),
-                (6, "Spa shift; aesthetic nursing; diet balance."),
-                (7, "Wedding planner; opposing counsel respects tone."),
-                (8, "Elegant divorce settlement; cosmetic inheritance."),
-                (9, "Study abroad romance; museum fellowship."),
-                (10, "Brand relaunch; executive headshot season."),
-                (11, "A circle of friends gathers around shared aesthetics; a campaign succeeds on presentation."),
-                (12, "An interior fantasy life grows rich; the practitioner should distinguish solace from escape.")
+                (1, "The querent refines self-presentation; gracious bearing advances the request."),
+                (2, "Spending shaped by taste; supplementary craft income; budget tuned to beauty."),
+                (3, "Diplomatic sibling or peer; public face of one's affairs carefully composed."),
+                (4, "Home staging; deliberate cultivation of domestic harmony."),
+                (5, "Romantic beginnings; collaborative design; celebration arranged with care."),
+                (6, "Restorative care; nursing touched by aesthetics; equilibrium in daily regimen."),
+                (7, "Partnership planning or mediation; opposing counsel yields civility."),
+                (8, "Graceful settlement of joint affairs; inheritance with a cosmetic dimension."),
+                (9, "Romance or study abroad; fellowship in arts or letters."),
+                (10, "Brand renewal; deliberate refresh of public reputation."),
+                (11, "Friends drawn by shared taste; support won through coherent presentation."),
+                (12, "Interior life grows vivid; distinguish genuine consolation from avoidance.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is the querent's appeal—charm, beauty, or social grace shapes how the matter has been received so far.",
-                leftWitness: "Environment is welcoming the querent—doors open, smiles meet them, surfaces look easy.",
-                judge: "Verdict is pleasant on the surface: the matter resolves agreeably, though depth and durability are unproven.",
-                reconciler: "Aftermath is congenial but light—the situation leaves goodwill, not necessarily commitment."
+                rightWitness: "Origin lies in the querent's appeal—comeliness, tact, or cultivated grace has shaped reception thus far.",
+                leftWitness: "The setting welcomes the querent—access eases, warmth meets them, first impressions run favorable.",
+                judge: "Verdict pleases on the surface: resolution comes agreeably, while depth and endurance remain to be tested.",
+                reconciler: "Aftermath stays congenial yet light—goodwill lingers without a binding pledge."
             ),
             ModernExamples = new List<string>
             {
-                "Choosing the lodging whose careful presentation reflects the care of its hosts",
-                "An acquaintance that flourishes in conversation and falters at the first practical demand",
-                "A rebrand that gains attention while leaving the underlying instrument unchanged"
+                "Choosing lodging whose order signals the hosts' genuine care",
+                "An acquaintance eloquent in conversation yet tentative when duty calls",
+                "A rebranding that wins notice while the underlying offering stays familiar"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -251,12 +251,12 @@ namespace GeomancyApp
             Colors = "Red, flecked or streaked with brown",
             Commentary = @"Rubeus is the cup overturned: Mars in Scorpio, outer water over inner air, with only air in motion while fire rests at the head. Passion that finds no upward outlet runs downward, and the medieval authors warned that this figure is good in evil things and evil in good ones. The practitioner must not moralize too quickly: at times Rubeus names a necessary surgery, a long-postponed honesty, or the investigation that will inevitably scorch its sources. The inner air steers obsession into narrative, while the outer water keeps the whole composition tidal.",
             DivinatoryMeaning = "Intensity that strips the surface from a matter—the encounter that cannot remain decorous, the purge, the investigation, the long-postponed reckoning. The figure favors questions in which a controlled descent is itself the medicine, and disfavors questions that depend on a clean public surface.",
-            Tagline = "Spilled cup, underground heat",
-            CoreMeaning = new List<string> { "intensity", "purge", "taboo", "nightlife", "investigation", "risk" },
-            FavorableFor = new List<string> { "Therapy breakthrough", "Penetration test", "Journalistic exposé", "Radical honesty in affair recovery", "Controlled burn forestry" },
-            UnfavorableFor = new List<string> { "IPO roadshow polish", "Visa interview decorum", "Silent retreat vows" },
+            Tagline = "Cup overturned, heat beneath the surface",
+            CoreMeaning = new List<string> { "intensity", "purge", "taboo", "nocturnal strain", "investigation", "risk" },
+            FavorableFor = new List<string> { "Therapeutic breakthrough after resistance", "Security audit with invasive scope", "Journalistic exposé grounded in evidence", "Frank disclosure within relationship repair", "Prescribed burn or controlled clearance" },
+            UnfavorableFor = new List<string> { "Polished public capital raise", "Formal immigration interview requiring restraint", "Structured silent retreat governed by vows" },
             ElementalSynthesis = "Only air is active above passive fire, water, and earth: breath and story do all the steering while fuel, feeling, and ground stay inert—a pressure vessel that holds until something gives it vent.",
-            TraditionalImagery = new List<string> { "Inverted cup", "Scorpionic mars red", "Danger house joy in old texts" },
+            TraditionalImagery = new List<string> { "Inverted cup", "Scorpionic Mars and emblematic red", "Malefic joy in classical house lore" },
             Interpretation = new List<string>
             {
                 "The querent who draws Rubeus should never be shamed for it. The proper question is where the heat must be honored, and how it can be honored without scorching the people who depend on the querent.",
@@ -278,16 +278,16 @@ namespace GeomancyApp
                 (12, "An old habit reasserts itself; a private fear that has waited too long to be named.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is something compromised—the querent walked in with mixed motives, hidden grudge, or substances clouding the question itself.",
-                leftWitness: "External climate is hostile or chaotic—deception, hostility, or unsafe systems are driving the trajectory.",
-                judge: "Verdict warns off: the matter resolves badly, often through revealed corruption or a fight that should not have been picked.",
-                reconciler: "Aftermath leaves wreckage—reputation, trust, or health pay a price that lasts longer than the conflict."
+                rightWitness: "Origin carries compromise—the querent enters with mixed motives, suppressed resentment, or impairment clouding the question.",
+                leftWitness: "The outer climate skews hostile or volatile—deception, aggression, or unstable structures steer events.",
+                judge: "Verdict counsels restraint or withdrawal: resolution tends harsh, often through exposure or a clash better left unfought.",
+                reconciler: "Aftermath costs endure—standing, trust, or vitality bear harm that outlasts the immediate quarrel."
             ),
             ModernExamples = new List<string>
             {
-                "A truthful public account of a difficult workplace, which is both accurate and consequential",
-                "A relapse during a high-pressure season followed by honest commitment to recovery",
-                "An exposed vulnerability whose disclosure provokes a difficult ethical debate"
+                "A careful public account of a troubled workplace, accurate yet far-reaching",
+                "A lapse under strain answered by renewed, accountable commitment to healing",
+                "A vulnerability disclosed that forces an unavoidable ethical reckoning"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {

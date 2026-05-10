@@ -32,12 +32,12 @@ namespace GeomancyApp
             Colors = "Green, white, dark crimson, or pale tawny brown",
             Commentary = @"Cauda Draconis marks the threshold of the southern lunar node: three active lines stand against a passive earth, so that fire, air, and water rush outward while the ground withholds its receipt. The medieval authors mixed good and evil in a single breath under this figure, because endings, properly understood, fertilize the field they leave behind. Sagittarius adds the dimension of travel and of doctrine: the leaving of a church, a country, a working paradigm. The practitioner should read this figure as egress, as the final invoice, as the last episode of a long undertaking. The motion is not cruelty; it is completion with teeth.",
             DivinatoryMeaning = "Closure, the residual risk that gathers at an exit, the formal end of a binding tie, the graduation, the decommissioning of a system, the resignation from work that has worn the querent down. The figure favors questions in which release, detoxification, or a final reckoning is required, and disfavors questions that depend on retention, renewal, or quiet preservation.",
-            Tagline = "Exit stamp, tail risk, burnt bridge",
-            CoreMeaning = new List<string> { "closure", "exhaust", "migration", "karma", "write-off", "last mile" },
-            FavorableFor = new List<string> { "Deleting account", "Ending lease", "Hospice acceptance", "Sunsetting app", "Leaving cult" },
-            UnfavorableFor = new List<string> { "Renewing vows", "IPO lockup extension", "Tenure clock freeze" },
+            Tagline = "Closure at the threshold; what exits carries consequence.",
+            CoreMeaning = new List<string> { "closure", "release", "migration", "karma", "reckoning", "completion" },
+            FavorableFor = new List<string> { "Formally ending what honesty no longer sustains", "Closing a lease or tenancy with clear papers", "Accepting palliative or hospice transition", "Sunsetting a product or duty by design", "Stepping away from restrictive alliances or dogmas" },
+            UnfavorableFor = new List<string> { "Renewing vows or bonds meant to endure", "Extending provisional locks or freezes indefinitely", "Preserving tenure or standing when integrity asks release" },
             ElementalSynthesis = "Three active lines press above a passive earth: heat, idea, and tear all move outward without soil to receive them—the figure releases what it carries, after the manner of a stage discarded once its work is done.",
-            TraditionalImagery = new List<string> { "Footprints away", "Dragon tail south node", "Sagittarian departure" },
+            TraditionalImagery = new List<string> { "Footprints leading outward", "The lunar south node", "Departure under Sagittarius" },
             Interpretation = new List<string>
             {
                 "Read with Caput Draconis, the figure tells a complete lifecycle question: the head proposes, and the tail disposes.",
@@ -45,30 +45,30 @@ namespace GeomancyApp
                 "In matters of the spirit, the figure points to the initiation that requires the querent to leave an old name at the door before crossing."
             },
             InHouses = H(
-                (1, "An old identity is set aside; a former name is formally retired."),
-                (2, "Bankruptcy discharge; crypto loss realized."),
-                (3, "Unsubscribe tour; sibling cutoff."),
-                (4, "Move-out sale; parents downsizing."),
-                (5, "Series finale; miscarriage acknowledged."),
-                (6, "Resignation letter; treatment ends."),
-                (7, "Divorce decree; client churn."),
-                (8, "Will executed; debt forgiven."),
-                (9, "Graduation walk; visa expiry."),
-                (10, "CEO steps down; reputation pivot."),
-                (11, "Dream abandoned consciously; network prune."),
-                (12, "Hospital discharge; secret exposed then closed.")
+                (1, "An established self is laid down; a former name or role is honorably retired."),
+                (2, "Formal discharge of debt; losses booked and acknowledged without denial."),
+                (3, "Correspondence or kin ties shortened by deliberate, humane closure."),
+                (4, "Household clearing; elders downsizing or leaving the family home."),
+                (5, "A creative arc concludes; grief or acceptance after loss of work or pregnancy."),
+                (6, "Resignation from ill-suited employment; a course of care reaches its natural end."),
+                (7, "Partnership dissolution settled; steady patrons or allies quietly drift away."),
+                (8, "Will executed; debt forgiven or estate matters closed."),
+                (9, "Credential completed; visa or study permission reaches lawful expiry."),
+                (10, "Leadership handed off; public standing pivots away from an old narrative."),
+                (11, "A hope consciously relinquished; the circle of allies thoughtfully narrowed."),
+                (12, "Discharge after acute care; a hidden truth surfaces, then the chapter seals.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is something concluding—the question rises out of an exit, divorce, or closing chapter the querent has been navigating.",
-                leftWitness: "External climate is closing doors—platforms shutting, partners departing, options narrowing in the trajectory.",
-                judge: "Verdict is ending: the matter resolves by termination—a release if needed, a loss if clung to.",
-                reconciler: "Aftermath is the empty room—what remains after the door shuts becomes the querent's new starting point."
+                rightWitness: "Origin is conclusion—the matter arises from an exit, severance, or chapter the querent has been closing with care.",
+                leftWitness: "The outer field narrows—openings shutter, allies withdraw, and the trajectory favors ending over extension.",
+                judge: "Verdict is termination: resolution comes by release; clinging turns closure into needless loss.",
+                reconciler: "Aftermath is the cleared space—what remains after the threshold is crossed becomes honest ground for what follows."
             ),
             ModernExamples = new List<string>
             {
-                "Closing a long-standing public account whose climate has decisively turned",
-                "A final shift at a workplace being phased out by a successor system",
-                "A concluding session of long counsel, at which the work at last finds its rest"
+                "Closing a long-held public affiliation once its climate has turned decisively hostile",
+                "A last scheduled shift before a workplace is folded into a successor organization",
+                "The final meeting of sustained counsel, when the work is honored and laid to rest"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -105,12 +105,12 @@ namespace GeomancyApp
             Colors = "White, flecked with citrine",
             Commentary = @"Caput Draconis greets the threshold of the northern lunar node: earth doubled within and without, while air and water move and fire keeps watch—a fertile furrow. The medieval texts promise new doors here, but doors with thresholds that are seldom smooth: a scholarship, an arrival, a major commitment, the first stage of a long work. Virgo refines appetite into craft. The practitioner should ask what seed is actually being planted, since the earth in the figure is rich while the sun stays passive—until the labor chosen by the querent supplies the necessary heat.",
             DivinatoryMeaning = "The new offer of work, the news of a child, the formal invitation, the first stage of a project, the arrival of a mentor. The figure favors beginnings, upgrades, and the careful work of taking up new responsibility, and disfavors questions in which the matter requires endings, silence, or the discharge of an existing obligation.",
-            Tagline = "Threshold in, fertile rough start",
-            CoreMeaning = new List<string> { "ingress", "upgrade", "apprenticeship", "visa", "seed", "mentor" },
-            FavorableFor = new List<string> { "First day oncall", "Adoption placement call", "Scholarship start", "Green card biometrics", "Sabbatical plan" },
-            UnfavorableFor = new List<string> { "Final paycheck", "Deleting data", "Closing franchise" },
+            Tagline = "A fertile threshold; beginnings ask disciplined tending.",
+            CoreMeaning = new List<string> { "ingress", "foundation", "apprenticeship", "permission", "seed", "mentorship" },
+            FavorableFor = new List<string> { "First day carrying formal duty or on-call responsibility", "Call confirming adoption or guardianship placement", "Commencement of scholarship or funded study", "Immigration milestone such as biometrics or interview", "Structuring a sabbatical or renewal leave with intent" },
+            UnfavorableFor = new List<string> { "Final severance or terminal payout scenes", "Erasing archives contrary to obligation", "Shuttering an institution meant to endure" },
             ElementalSynthesis = "Air, water, and earth all act while fire waits in passivity: craft, care, and soil cooperate while the raw ignition holds in reserve—the seedling held in greenhouse conditions until the season permits its planting outdoors.",
-            TraditionalImagery = new List<string> { "Footprints inward", "North node head", "Virgo harvest start" },
+            TraditionalImagery = new List<string> { "Footprints toward the door", "The lunar north node", "First furrow under Virgo" },
             Interpretation = new List<string>
             {
                 "Caput Draconis tends to favor the paperwork that unlocks. The practitioner should verify deadlines carefully, so that the door is not closed by a lapse the querent could have prevented.",
@@ -118,30 +118,30 @@ namespace GeomancyApp
                 "In matters of resource, the grant or award most often arrives accompanied by conditions, and those conditions deserve the same attention as the gift itself."
             },
             InHouses = H(
-                (1, "New wardrobe era; therapy intake."),
-                (2, "First paycheck new job; grant deposit."),
-                (3, "College acceptance; cousin introduces job."),
-                (4, "House keys; nursery paint."),
-                (5, "Positive test; art residency admit."),
-                (6, "New hire training; wellness coach."),
-                (7, "First date that matters; co-founder agreement."),
-                (8, "Investor SAFE signed; surgery scheduled to fix."),
-                (9, "Visa stamp; syllabus week one."),
-                (10, "Title change; press release draft."),
-                (11, "Discord mod promotion; hope project greenlit."),
-                (12, "Dream vision leads to rehab admit—start.")
+                (1, "Renewed presentation of self; first therapeutic intake or intentional habit."),
+                (2, "Initial wages from new employment; grant funds deposited."),
+                (3, "Admission letter or credential advance; kin or peer opens vocational door."),
+                (4, "Keys to a new dwelling; room prepared for arrival or growth."),
+                (5, "Confirmed conception or creative acceptance to a residency or cohort."),
+                (6, "Structured onboarding; partnership with coach or clinician for upkeep."),
+                (7, "Meaningful first union under sincerity; compact among founders signed."),
+                (8, "Investment instrument executed; corrective surgery booked with clarity."),
+                (9, "Travel permission stamped; study begins under a mapped syllabus."),
+                (10, "Elevation of role; outward narrative drafted with care."),
+                (11, "Trusted ally elevated within community; initiative dear to hope gains sanction."),
+                (12, "Dream or ordeal redirects toward admitted care—a sanctioned beginning.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is fresh ground—the querent walked in with a new identity, residence, or commitment recently taken.",
-                leftWitness: "External climate offers a threshold—openings, invitations, or undiscovered paths waiting in the trajectory.",
-                judge: "Verdict is beginning: the matter resolves by initiating something—a chapter opens that will define the next phase.",
-                reconciler: "Aftermath is genesis—the choice made here seeds a project, relationship, or vocation that grows over years."
+                rightWitness: "Origin is fresh ground—the querent arrives carrying a recent arrival: identity, home, or binding pledge.",
+                leftWitness: "The field presents thresholds—invitations, openings, or roads not yet walked.",
+                judge: "Verdict is inception: resolution favors beginning—the chapter opened here shapes what follows.",
+                reconciler: "Aftermath is the planted seed—the commitment taken roots into vocation, bond, or long craft."
             ),
             ModernExamples = new List<string>
             {
-                "Receiving access to one's new institutional environment on the first day of work",
-                "A residency status confirmed and the long process of formal arrangement begun",
-                "An unexpected call to receive a child, met with the practical preparation of the household"
+                "Badge or credential admitting entry on the first day of service",
+                "Residency status affirmed and the slow lattice of lawful paperwork commenced",
+                "Word that a child will join the household, met with proportionate preparation"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -178,12 +178,12 @@ namespace GeomancyApp
             Colors = "Gold or yellow",
             Commentary = @"Fortuna Minor crowns the ridge: Sun in Leo, yet with outer air over inner fire—fire and air move while water and earth lie still. The classical contrast with the valley of Fortuna Major is exact: here, fortune rides on the wind. The gift comes from a referral, a sudden spotlight, a willing patron, or a moment of public attention. It is easily won and easily spent. The practitioner should look carefully at the source: borrowed influence, lent resources, the favor of a third party. The dignity of Leo without the ballast of inner earth carries less weight than it appears to.",
             DivinatoryMeaning = "The brief win, the surge of attention, the borrowed ladder, the bonus that lands at the right moment, the moment of public favor. The figure favors questions in which speed matters more than depth, and disfavors instruments that require decades to mature, such as long marriages, long bonds, or research conducted away from view.",
-            Tagline = "Flash win, borrowed spotlight",
-            CoreMeaning = new List<string> { "velocity", "patron", "hype", "surface", "gift", "volatility" },
-            FavorableFor = new List<string> { "Launch week spike", "Rescue helicopter", "VIP line skip", "24h hackathon prize" },
-            UnfavorableFor = new List<string> { "Century bond", "Monastic stability", "Undercover years" },
+            Tagline = "Swift favor from without; depth must be earned afterward.",
+            CoreMeaning = new List<string> { "velocity", "patronage", "visibility", "surface", "gift", "volatility" },
+            FavorableFor = new List<string> { "Launch windows where momentum decides outcomes", "Emergency extraction or urgent rescue logistics", "Expedited access granted by trusted gatekeepers", "Short competitive sprints with transparent criteria" },
+            UnfavorableFor = new List<string> { "Instruments meant to mature across generations", "Communities built on stable enclosure", "Undetected long-running assignments" },
             ElementalSynthesis = "Fire and air move while water and earth lie still: heat and wind cooperate, while moisture and soil wait their turn—a banner upon the battlements rather than a root within the slope.",
-            TraditionalImagery = new List<string> { "Mountain staff", "Lesser fortune", "Leo air outer emblems" },
+            TraditionalImagery = new List<string> { "Staff upon the summit", "Fortune that rides the ridge", "Leo crowned by outward air" },
             Interpretation = new List<string>
             {
                 "The first practitioner question is who owns the platform beneath the moment of visibility, since the answer determines how long the visibility itself can be sustained.",
@@ -191,30 +191,30 @@ namespace GeomancyApp
                 "The instructive contrast is with Fortuna Major: the same solar sign, but very different depths of soil beneath the same crown."
             },
             InHouses = H(
-                (1, "15 minutes fame; personal brand stunt."),
-                (2, "Side hustle surge; tips night."),
-                (3, "Retweet storm; rideshare streak earnings."),
-                (4, "Open house bidding war one weekend."),
-                (5, "One-hit wonder chart; festival slot."),
-                (6, "Overtime surge pay; ER fast lane luck."),
-                (7, "Wedding sponsored; influencer collab."),
-                (8, "Angel swoops; bridge loan."),
-                (9, "Conference keynote invite sudden."),
-                (10, "Viral LinkedIn CEO thread."),
-                (11, "Kickstarter lightning round; Patreon spike."),
-                (12, "Anonymous benefactor wire—verify.")
+                (1, "Brief public notice; reputation sharpened by a deliberate showing."),
+                (2, "Secondary income spikes; gratuities pile on one fortunate evening."),
+                (3, "Sudden amplification of message; transport or gig earnings cluster."),
+                (4, "Competitive offers over a single open weekend."),
+                (5, "Sudden chart attention; invitation to perform before a wide crowd."),
+                (6, "Premium pay for surge hours; expedited care when timing favors."),
+                (7, "Celebration underwritten by patrons; partnership riding borrowed visibility."),
+                (8, "Patron intervenes; bridging finance arrives under pressure."),
+                (9, "Unexpected podium or lecture; reputation lifts on one gesture."),
+                (10, "Executive praise spreads quickly through professional networks."),
+                (11, "Crowdfunding crests in days; supporters rally in a burst."),
+                (12, "Anonymous transfer or gift—due diligence before trust.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is borrowed momentum—the querent arrived leaning on someone else's wave or a recent lucky break.",
-                leftWitness: "External flow is fast and favorable but conditional—help arrives quickly with strings or short shelf life.",
-                judge: "Verdict is yes for now: the matter resolves favorably in the short term but rests on assistance the querent does not control.",
-                reconciler: "Aftermath thins as the loaned wind dies—what remains is what the querent built while the breeze was free."
+                rightWitness: "Origin is lent momentum—the querent enters riding another's wave or a recent stroke of luck.",
+                leftWitness: "Outside motion runs fast and kindly yet carries conditions—help is timely but not guaranteed to hold.",
+                judge: "Verdict favors the near horizon: success now rests on patronage or circumstance beyond full ownership.",
+                reconciler: "Aftermath thins when the borrowed wind stills—only what was anchored in skill or ethic endures."
             ),
             ModernExamples = new List<string>
             {
-                "Borrowed computing resources from a mentor that make a demonstration possible",
-                "A small group booked to perform on the strength of a brief recording that traveled widely",
-                "An award won inside a brief application window that few were prepared to meet"
+                "Equipment or hosting lent by a mentor until a proof can be shown",
+                "An ensemble engaged after one recording traveled farther than years of local work",
+                "A prize captured in a narrow window few rivals had prepared to meet"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -256,7 +256,7 @@ namespace GeomancyApp
             FavorableFor = new List<string> { "Digital nomad visa", "Kubernetes rollout", "Solo motorcycle leg", "Gender care pathway", "Agile sprint" },
             UnfavorableFor = new List<string> { "Tenure committee", "Monastic stability", "Sealed deposition hold" },
             ElementalSynthesis = "All four lines act: fire, air, water, and earth cycle without rest. The figure presents the complete permutation, and the doubled water of Cancer asks intuition itself to do much of the steering as the logistics unfold.",
-            TraditionalImagery = new List<string> { "Road fork", "Wayfarer", "Lunar journey glyphs" },
+            TraditionalImagery = new List<string> { "Forked road under moonlight", "The wayfarer's staff", "Lunar glyphs of passage" },
             Interpretation = new List<string>
             {
                 "Via answers the question of how rather than the question of where, and process tends to dominate outcome until the Judge of the chart freezes the frame.",
@@ -264,30 +264,30 @@ namespace GeomancyApp
                 "In matters of finance, the figure points more readily to cash flow than to savings: value moves through the querent's hands rather than accumulating within them."
             },
             InHouses = H(
-                (1, "Identity in flux; name change pipeline."),
-                (2, "Gig income streams; variable rent."),
-                (3, "Rideshare thesis; newsletter pivot weekly."),
-                (4, "Digital nomad parents; RV retrofit."),
-                (5, "Touring band; dating travel mode."),
-                (6, "Travel nurse contract; diet experiment loop."),
-                (7, "Long-distance relating; import partner goods."),
-                (8, "Crypto bridge hopping; shared custody rotation."),
-                (9, "Study abroad; pilgrimage miles."),
-                (10, "Consulting fly week; political campaign bus."),
-                (11, "Activist carpool; hope on the march."),
-                (12, "Ferry between hospitals; dream highway.")
+                (1, "Selfhood under revision; lawful name or presentation change in progress."),
+                (2, "Income from shifting assignments; housing cost that follows the route."),
+                (3, "Commute as thesis; publishing rhythm that retrains weekly."),
+                (4, "Parents raising children across bases; dwelling retrofitted for travel."),
+                (5, "Creative life on circuit; affection sustained across distance."),
+                (6, "Contract care across facilities; regimen tuned by successive trials."),
+                (7, "Partnership spanning regions; goods sourced through mobile alliance."),
+                (8, "Assets moved across jurisdictions; custody rhythm that alternates households."),
+                (9, "Education abroad; devotional miles accumulated deliberately."),
+                (10, "Profession lived airport to airport; vocation staged from vehicles and halls."),
+                (11, "Shared transport toward shared aim; collective hope expressed as march."),
+                (12, "Transfer between healing centers; dream imagery dense with roads.")
             ),
             InCourtRoles = C(
-                rightWitness: "Origin is transit—the querent walked in already in motion, between places, jobs, or commitments.",
-                leftWitness: "External climate is in flux—routes, schedules, and circumstances keep moving in the trajectory.",
-                judge: "Verdict is travel: the matter resolves through movement—a relocation, pivot, or literal trip that changes everything.",
-                reconciler: "Aftermath is a new address—where the querent ends up, geographically or in life, is the lasting answer."
+                rightWitness: "Origin is passage—the querent arrives mid-transition among homes, roles, or vows.",
+                leftWitness: "The outer field keeps reshaping—timelines, corridors, and contingencies refuse stasis.",
+                judge: "Verdict is motion: resolution travels—by removal, pivot, or journey that resets the frame.",
+                reconciler: "Aftermath is a new coordinate—where body or calling settles after the miles is the durable lesson."
             ),
             ModernExamples = new List<string>
             {
-                "Four cities in a single quarter, with personal life adjusted to the constant motion",
-                "A shipment rerouted across continents because of a distant logistical bottleneck",
-                "A working system that changes nightly, requiring stability to be sourced from elsewhere"
+                "Several cities in one season, domestic rhythm bent around continual relocation",
+                "Freight rerouted across continents after disruption far upstream",
+                "Operations revised nightly so steadiness must be borrowed from ritual or bond outside the task"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
