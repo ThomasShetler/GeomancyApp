@@ -1,0 +1,403 @@
+/*
+ * MobileWorkspace - vertical phone/tablet layout for /mobile.
+ *
+ * Three stacked sections inside .mobile-shell:
+ *   1. .mobile-chart-section  - chart toggle + chart, chart fills width (1:1)
+ *   2. .mobile-tabstrip       - horizontally scrollable tab buttons, snaps
+ *   3. .mobile-panel          - grows to fill remaining height, scrolls
+ *                                internally; hosts either the list view or
+ *                                the detail view for the active tab, with a
+ *                                sticky "Back to list" header in detail mode.
+ *
+ * All selectors are namespaced to .mobile-* so the desktop /workspace styles
+ * (which enforce min-width: 1380px and side-by-side layouts) are completely
+ * untouched.
+ */
+
+.mobile-shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100dvh - 4.5rem);
+    min-height: 0;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.mobile-alert {
+    margin: 0.4rem 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+ * 1) Chart section
+ * ============================================================ */
+.mobile-chart-section {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.5rem 0.5rem 0.25rem;
+    box-sizing: border-box;
+}
+
+.mobile-chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.mobile-pill-btn {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px var(--shadow);
+}
+
+.mobile-pill-btn:hover,
+.mobile-pill-btn:focus-visible {
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--shadow-hover);
+    outline: none;
+}
+
+.mobile-pill-btn:active {
+    transform: translateY(0);
+}
+
+.mobile-chart-type-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Square stage so the chart never overflows the viewport width.
+   ChartSurface paints its own SVG inside this box. */
+.mobile-chart-stage {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+}
+
+/* The hosted ChartSurface paints inside this stage. Use ::deep so the
+   isolation-scoped selector still reaches into the child component. */
+.mobile-chart-stage ::deep > * {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* ============================================================
+ * 2) Horizontal tab strip
+ * ============================================================ */
+.mobile-tabstrip {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    /* Hide the scrollbar (kept scrollable via touch / wheel). */
+    scrollbar-width: none;
+}
+
+.mobile-tabstrip::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-tab-btn {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.4rem 0.95rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease,
+                border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.mobile-tab-btn:hover,
+.mobile-tab-btn:focus-visible {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.mobile-tab-btn.active {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
+    box-shadow: 0 2px 6px var(--shadow-hover);
+}
+
+/* ============================================================
+ * 3) Panel (list / detail body)
+ * ============================================================ */
+.mobile-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+/* Sticky "back" header that appears only when the panel is in detail mode
+   for one of the three list+detail tabs. Tappable and big enough to thumb. */
+.mobile-panel-back {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+}
+
+.mobile-panel-back:hover,
+.mobile-panel-back:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+    outline: none;
+}
+
+.mobile-panel-back .back-chevron {
+    font-size: 1.6rem;
+    line-height: 0.8;
+    font-weight: 700;
+    margin-top: -2px;
+}
+
+.mobile-panel-back .back-label {
+    line-height: 1.2;
+}
+
+/* Inner scroll container so the back header stays pinned while the content
+   scrolls. The hosted list/detail components grow to 100% width naturally. */
+.mobile-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Make the embedded components fill the panel width on mobile. They were
+   designed to live inside a fixed-width column on desktop, so we explicitly
+   relax those size constraints when they appear inside the mobile body. */
+.mobile-panel-body ::deep > * {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* The PerfectionDetailPanel / WayOfPointsDetailPanel have their own
+   overflow: auto + height: 100% rules which assume they sit inside a
+   fixed-height column. Inside the mobile panel we want them to grow with
+   their content and let .mobile-panel-body do the scrolling. */
+.mobile-panel-body ::deep .perf-detail-panel,
+.mobile-panel-body ::deep .wop-detail-panel,
+.mobile-panel-body ::deep .figure-detail-panel,
+.mobile-panel-body ::deep .perfections-list,
+.mobile-panel-body ::deep .wop-list,
+.mobile-panel-body ::deep .court-houses-tab {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+}
+
+/* Inner scroll regions inside list components (e.g. .perf-lists, .wop-groups)
+   should also let the page handle scrolling on mobile - otherwise we'd nest
+   two scroll containers and the inner one would steal swipes. */
+.mobile-panel-body ::deep .perf-lists,
+.mobile-panel-body ::deep .wop-groups {
+    overflow: visible;
+    max-height: none;
+}
+
+/* ============================================================
+ * Triplicates (mobile)
+ * ============================================================ */
+.mobile-triplicities-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mobile-triplicity-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+}
+
+.mobile-triplicity-header {
+    display: flex;
+    gap: 0.45rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.mobile-triplicity-number {
+    font-weight: 700;
+    color: var(--accent-color);
+    font-size: 0.88rem;
+}
+
+.mobile-triplicity-description {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.mobile-triplicity-figures {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.mobile-empty {
+    margin: 1.5rem 0.5rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+}
+
+/* ============================================================
+ * Lots & Other (Experimental aspect analysis)
+ * ============================================================ */
+.mobile-experimental-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.mobile-experimental-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.65rem;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    background: rgba(255, 193, 7, 0.05);
+    flex-wrap: wrap;
+}
+
+.mobile-experimental-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b8860b;
+    background: rgba(255, 193, 7, 0.18);
+    border: 1px solid rgba(255, 193, 7, 0.5);
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+}
+
+.mobile-experimental-note {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+.mobile-subsection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+}
+
+.mobile-aspect-analysis-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.mobile-aspect-analysis-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.mobile-aspect-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.mobile-aspect-summary-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.mobile-aspect-summary-item .label {
+    color: var(--text-secondary);
+}
+
+.mobile-aspect-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.mobile-aspect-row:last-child {
+    border-bottom: none;
+}
