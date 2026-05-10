@@ -77,17 +77,33 @@
                 <span class="mobile-chart-type-label">@CurrentChartTypeLabel</span>
             </div>
 
+            <div class="mobile-chart-stage">
+                <ChartSurface Chart="@houseChart"
+                              House1Figure="@house1Figure"
+                              House2Figure="@house2Figure"
+                              House3Figure="@house3Figure"
+                              House4Figure="@house4Figure"
+                              OnHouse1Changed="OnHouse1Changed"
+                              OnHouse2Changed="OnHouse2Changed"
+                              OnHouse3Changed="OnHouse3Changed"
+                              OnHouse4Changed="OnHouse4Changed"
+                              View="@chartView" />
+            </div>
+
             <!--
                 Four large Mother input cells, displayed left -> right as
                 4th, 3rd, 2nd, 1st (the same right-to-left reading order
-                that the in-chart Mother row uses). Each cell hosts the same
-                FigureContainer the chart uses, bound to the same houseNFigure
-                instance and the same OnHouseNChanged handler - so taps here
-                and taps on the chart mutate identical state and trigger the
-                same regeneration pipeline. These exist because the in-chart
-                Mother taps are tiny on small phones; the strip gives users
-                full-width, thumb-sized targets while keeping the chart and
-                everything else in lockstep.
+                that the in-chart Mother row uses). Sits below the chart so
+                the chart stays the visual focus when the drawer opens and
+                the user's thumb naturally lands on the inputs. Each cell
+                hosts the same FigureContainer the chart uses, bound to the
+                same houseNFigure instance and the same OnHouseNChanged
+                handler - so taps here and taps on the chart mutate identical
+                state and trigger the same regeneration pipeline. These
+                exist because the in-chart Mother taps are tiny on small
+                phones; the strip gives users full-width, thumb-sized
+                targets while keeping the chart and everything else in
+                lockstep.
             -->
             <div class="mobile-mother-inputs"
                  role="group"
@@ -132,19 +148,6 @@
                                          OnFigureChanged="OnHouse1Changed" />
                     </div>
                 </div>
-            </div>
-
-            <div class="mobile-chart-stage">
-                <ChartSurface Chart="@houseChart"
-                              House1Figure="@house1Figure"
-                              House2Figure="@house2Figure"
-                              House3Figure="@house3Figure"
-                              House4Figure="@house4Figure"
-                              OnHouse1Changed="OnHouse1Changed"
-                              OnHouse2Changed="OnHouse2Changed"
-                              OnHouse3Changed="OnHouse3Changed"
-                              OnHouse4Changed="OnHouse4Changed"
-                              View="@chartView" />
             </div>
         </div>
     </div>
