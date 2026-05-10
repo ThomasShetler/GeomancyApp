@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -13,6 +13,22 @@
     <script src="theme.js"></script>
     <script>
         window.geofancyTheme.applyInitial();
+
+        // Auto-route mobile viewports off /workspace (which enforces min-width
+        // 1380px and breaks visually on phones). Runs synchronously before
+        // Blazor boots, so phones never see a flash of the broken desktop
+        // layout. The inverse redirect (mobile -> workspace) is intentionally
+        // omitted: /mobile renders fine on desktop too, so a desktop user
+        // who lands there - whether by clicking "Mobile View" in the nav,
+        // pasting a deep link, or testing - stays put.
+        (function () {
+            var path = (window.location.pathname || '').toLowerCase();
+            var isPhone = window.matchMedia &&
+                window.matchMedia('(max-width: 900px)').matches;
+            if (path === '/workspace' && isPhone) {
+                window.location.replace('/mobile' + window.location.search + window.location.hash);
+            }
+        })();
     </script>
     <HeadOutlet />
 </head>
