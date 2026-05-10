@@ -5,8 +5,10 @@
 @using GeomancyWebUI.Components
 @using GeomancyWebUI.Services
 @using System.Text.Json
+@using Microsoft.AspNetCore.WebUtilities
 @inject IGeomancyService GeomancyService
 @inject ThemeService ThemeService
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
 @rendermode InteractiveServer
@@ -40,6 +42,16 @@
                     <option value="house">House Only</option>
                 </select>
             </div>
+            <button type="button"
+                    class="toggle-button chart-share-btn"
+                    @onclick="CopyShareLinkAsync"
+                    title="Copy a shareable link that re-creates this exact chart">
+                <span class="toggle-button-text">
+                    @(shareToast == ShareToast.Copied ? "Link copied!"
+                        : shareToast == ShareToast.Failed ? "Couldn't copy"
+                        : "Share Chart")
+                </span>
+            </button>
         </div>
     </div>
 
@@ -558,7 +570,12 @@
     {
         // Subscribe to theme changes (theme is already initialized by App.razor script)
         ThemeService.ThemeChanged += OnThemeChanged;
-        
+
+        // Honour "?seed=..." share links by hydrating the four Mothers from
+        // the URL before generating, so a follower lands on the shared chart
+        // without seeing the default fallback first.
+        TryApplySeedFromUrl();
+
         try
         {
             // Generate initial chart with default values (all Populus)
@@ -569,6 +586,73 @@
             errorMessage = $"Error initializing chart: {ex.Message}";
             // Don't rethrow - allow page to render even if API call fails
         }
+    }
+
+    // ----- Share chart link -----
+
+    private enum ShareToast { None, Copied, Failed }
+    private ShareToast shareToast = ShareToast.None;
+
+    private void TryApplySeedFromUrl()
+    {
+        try
+        {
+            var uri = new Uri(NavigationManager.Uri);
+            var query = QueryHelpers.ParseQuery(uri.Query);
+            if (!query.TryGetValue(ChartSeedCodec.ParamName, out var seedValues))
+            {
+                return;
+            }
+            if (!ChartSeedCodec.TryDecode(seedValues.ToString(), out var mothers))
+            {
+                return;
+            }
+
+            ApplySeedToFigure(house1Figure, mothers[0]);
+            ApplySeedToFigure(house2Figure, mothers[1]);
+            ApplySeedToFigure(house3Figure, mothers[2]);
+            ApplySeedToFigure(house4Figure, mothers[3]);
+        }
+        catch
+        {
+            // Bad URL or query: leave the default chart alone.
+        }
+    }
+
+    private static void ApplySeedToFigure(FigureModel target, (int Head, int Neck, int Body, int Foot) lines)
+    {
+        target.HeadLine = lines.Head;
+        target.NeckLine = lines.Neck;
+        target.BodyLine = lines.Body;
+        target.FootLine = lines.Foot;
+    }
+
+    private async Task CopyShareLinkAsync()
+    {
+        try
+        {
+            // Always use the canonical /workspace path so the link works
+            // identically across desktop and mobile (App.razor's redirect
+            // bumps phones to /mobile while preserving the query string).
+            var sharePath = ChartSeedCodec.BuildSharePath(
+                "/workspace", house1Figure, house2Figure, house3Figure, house4Figure);
+            var absolute = NavigationManager.ToAbsoluteUri(sharePath).ToString();
+            var ok = await JSRuntime.InvokeAsync<bool>("copyToClipboard", absolute);
+            shareToast = ok ? ShareToast.Copied : ShareToast.Failed;
+        }
+        catch
+        {
+            shareToast = ShareToast.Failed;
+        }
+        StateHasChanged();
+        _ = ResetShareToastAsync();
+    }
+
+    private async Task ResetShareToastAsync()
+    {
+        await Task.Delay(1800);
+        shareToast = ShareToast.None;
+        await InvokeAsync(StateHasChanged);
     }
 
     private FigureModel? GetHouseFigure(int houseNumber)

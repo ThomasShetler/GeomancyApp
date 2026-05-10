@@ -96,51 +96,49 @@
             </header>
 
             <p class="landing-release-summary">
-                The first public release of <strong>Geofancy</strong>, a digital tool for traditional Western
-                geomancy. The chart engine, perfection analyzer, Way of Points module, and the entire
-                interpretive corpus are production-ready; the surrounding app continues to evolve, which
-                is why this release is tagged <strong>beta</strong>.
+                A workflow release focused on getting readings <em>out</em> of the app. Share a chart with
+                one click via a self-contained URL, archive a reading as a JSON file, or paste it straight
+                into another tool — no more re-entering the four Mothers by hand to compare notes with a
+                teacher or a study group.
             </p>
 
             <h4 class="landing-release-h4">Highlights</h4>
             <ul class="landing-notes">
                 <li>
-                    <strong>Two purpose-built workspaces.</strong> A wide desktop layout that gives the
-                    chart and details room to breathe, and a mobile-first layout where the chart fills the
-                    screen and tabs collapse into focused detail panels. Phones are auto-routed to the
-                    mobile workspace at <code>/mobile</code>.
+                    <strong>Shareable chart links.</strong> A new <strong>Share Chart</strong> button on
+                    every workspace copies a self-contained URL like
+                    <code>?seed=2122.1212.2222.1122</code> to the clipboard. Anyone who opens that URL
+                    lands on the same chart on first paint — no flash of the default reading, no extra
+                    clicks. The seed format is fully readable and round-trips through any chat, email, or
+                    browser without escaping.
                 </li>
                 <li>
-                    <strong>Mobile Mother input strip.</strong> Four full-width tap targets — Fourth,
-                    Third, Second, First Mother — sit above the chart in the mobile drawer, giving thumbs
-                    a comfortable place to set lines without zooming in on the small chart.
+                    <strong>Mobile-aware redirect.</strong> Phones that open a <code>/workspace?seed=…</code>
+                    link are auto-redirected to <code>/mobile?seed=…</code> while preserving the seed, so
+                    a single canonical link works across desktop and mobile.
                 </li>
                 <li>
-                    <strong>Original interpretive corpus.</strong> Every interpretive line — figure data,
-                    house data, court placements, and contextual <em>"this figure in this slot"</em>
-                    blurbs (64 in total) — was written from primary sources and the author's practice.
-                    No third-party reference material is reproduced.
+                    <strong>Download JSON on Lots &amp; Other.</strong> A new export card pinned to the top
+                    of the <em>Lots &amp; Other</em> tab streams the full reading — the four Mothers, the
+                    resolved chart, the perfection analysis, the Way of Points result — into a single
+                    timestamped file like <code>geofancy-chart-20260510-103213.json</code>. The payload
+                    includes the share URL and seed so the file can also reproduce the chart by URL.
                 </li>
                 <li>
-                    <strong>Themed card-based detail panel.</strong> Contextual in-slot callout, split
-                    favorable / unfavorable cards, person and body correspondences, house affinity pills,
-                    themed imagery cards, and a citation footer with sources.
+                    <strong>Copy JSON for paste-into-anything use.</strong> A second button next to
+                    <em>Download JSON</em> copies the same payload to the clipboard, for users who want to
+                    drop a reading straight into an editor, a notebook, or a chat without the file
+                    roundtrip. Both buttons emit byte-identical output.
                 </li>
                 <li>
-                    <strong>Perfection analyzer.</strong> Querent / Quesited selection with per-perfection
-                    commentary covering Occupation, Conjunction, Translation, Mutation, Mutual Reception,
-                    and the supporting and denying aspects.
+                    <strong>Versioned export schema.</strong> Files are stamped with
+                    <code>schema: "geofancy.chart-export"</code> and <code>schemaVersion: 1</code> so
+                    future format evolution stays clean.
                 </li>
                 <li>
-                    <strong>Way of Points module.</strong> Element and path-type explanations with
-                    structured, scannable tips.
-                </li>
-                <li>
-                    <strong>Light and dark modes</strong> that follow your choice and persist across sessions.
-                </li>
-                <li>
-                    <strong>Apple home-screen ready.</strong> PWA-style favicon, apple-touch-icon, and dark
-                    theme color so it lives nicely on a phone's home screen.
+                    <strong>Forgiving share parser.</strong> Malformed <code>?seed=…</code> values silently
+                    fall back to the default chart instead of erroring out, so a tampered or truncated URL
+                    never throws in front of a user.
                 </li>
             </ul>
 
@@ -148,7 +146,7 @@
                 <summary class="landing-summary">Known limitations</summary>
                 <div class="landing-details-body">
                     <ul class="landing-notes">
-                        <li>Charts are not yet persisted across sessions; refreshing the page resets the workspace.</li>
+                        <li>Server-side chart persistence (named saved readings, history, accounts) is still on the roadmap. For now, share links and JSON exports are the way to keep a reading.</li>
                         <li>The legacy WinForms desktop app remains available for offline use but does not yet reflect the full corpus rewrite or the new card layout. The web app is the recommended surface.</li>
                         <li>The Aspect Analysis page is marked <strong>experimental</strong> in places where its interpretive layer is still being expanded.</li>
                         <li>Mobile chart minimum render size is enforced at 435 × 435 to preserve diagram integrity; on very narrow screens the chart drawer scales rather than reflows.</li>

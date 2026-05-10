@@ -1,12 +1,16 @@
 @page "/workspace"
+@using System.Text.Json
+@using GeomancyApp
 @using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Components
 @using GeomancyWebUI.Components.Workspace
 @using GeomancyWebUI.Services
+@using Microsoft.AspNetCore.WebUtilities
 @inject IGeomancyService GeomancyService
 @inject ThemeService ThemeService
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
 @rendermode InteractiveServer
@@ -30,6 +34,14 @@
                     Switch Chart Type
                 </button>
                 <span class="workspace-chart-type-label">@CurrentChartTypeLabel</span>
+                <button type="button"
+                        class="workspace-pill-btn workspace-share-btn"
+                        @onclick="CopyShareLinkAsync"
+                        title="Copy a shareable link that re-creates this exact chart">
+                    @(shareToast == ShareToast.Copied ? "Link copied!"
+                        : shareToast == ShareToast.Failed ? "Couldn't copy"
+                        : "Share chart")
+                </button>
             </div>
 
             <div class="workspace-chart-stage">
@@ -148,6 +160,40 @@
 
                     case WorkspaceTab.LotsAndOther:
                         <div class="experimental-section">
+                            <section class="workspace-subsection chart-export-section">
+                                <div class="chart-export-header">
+                                    <div>
+                                        <h3>Export chart</h3>
+                                        <p class="chart-export-help">
+                                            Download or copy the full reading - the four Mothers, the resolved
+                                            chart, the perfection analysis (if a querent and quesited are picked
+                                            on the Perfections tab), and the Way of Points result - as a single
+                                            JSON object for archiving, sharing, or feeding into other tools.
+                                        </p>
+                                    </div>
+                                    <div class="chart-export-actions">
+                                        <button type="button"
+                                                class="workspace-pill-btn"
+                                                @onclick="CopyChartJsonAsync"
+                                                disabled="@(houseChart == null)"
+                                                title="Copy this reading to the clipboard as JSON">
+                                            @(copyJsonToast == ExportToast.Saved ? "Copied!"
+                                                : copyJsonToast == ExportToast.Failed ? "Couldn't copy"
+                                                : "Copy JSON")
+                                        </button>
+                                        <button type="button"
+                                                class="workspace-pill-btn"
+                                                @onclick="ExportChartJsonAsync"
+                                                disabled="@(houseChart == null)"
+                                                title="Save this reading as a JSON file">
+                                            @(exportToast == ExportToast.Saved ? "Saved!"
+                                                : exportToast == ExportToast.Failed ? "Couldn't save"
+                                                : "Download JSON")
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+
                             <div class="experimental-banner">
                                 <span class="experimental-badge">Experimental</span>
                                 <span class="experimental-note">
@@ -297,6 +343,11 @@
     protected override async Task OnInitializedAsync()
     {
         ThemeService.ThemeChanged += OnThemeChanged;
+
+        // If the user followed a "?seed=..." share link, hydrate the four Mother
+        // line values from the URL BEFORE building the chart so the page renders
+        // the shared reading on first paint instead of the default chart.
+        TryApplySeedFromUrl();
 
         try
         {
@@ -622,6 +673,204 @@
     }
 
     private void OnThemeChanged(bool isDark) => InvokeAsync(StateHasChanged);
+
+    // ----- Share / Export -----
+
+    private enum ShareToast { None, Copied, Failed }
+    private enum ExportToast { None, Saved, Failed }
+
+    private ShareToast shareToast = ShareToast.None;
+    private ExportToast exportToast = ExportToast.None;
+    private ExportToast copyJsonToast = ExportToast.None;
+
+    /// <summary>
+    /// Read the "seed" query parameter from the current URL (if any) and
+    /// hydrate the four Mother figures from it. Silently no-ops on missing or
+    /// malformed seeds so a stripped/edited URL just falls back to the default
+    /// chart instead of erroring out.
+    /// </summary>
+    private void TryApplySeedFromUrl()
+    {
+        try
+        {
+            var uri = new Uri(NavigationManager.Uri);
+            var query = QueryHelpers.ParseQuery(uri.Query);
+            if (!query.TryGetValue(ChartSeedCodec.ParamName, out var seedValues))
+            {
+                return;
+            }
+            if (!ChartSeedCodec.TryDecode(seedValues.ToString(), out var mothers))
+            {
+                return;
+            }
+
+            ApplyMother(house1Figure, mothers[0]);
+            ApplyMother(house2Figure, mothers[1]);
+            ApplyMother(house3Figure, mothers[2]);
+            ApplyMother(house4Figure, mothers[3]);
+        }
+        catch
+        {
+            // Bad URL or query: leave the default chart alone.
+        }
+    }
+
+    private static void ApplyMother(FigureModel target, (int Head, int Neck, int Body, int Foot) lines)
+    {
+        target.HeadLine = lines.Head;
+        target.NeckLine = lines.Neck;
+        target.BodyLine = lines.Body;
+        target.FootLine = lines.Foot;
+    }
+
+    /// <summary>
+    /// Copy a shareable link (always pointed at "/workspace?seed=..." so it
+    /// is the canonical desktop URL; the App.razor mobile redirect will
+    /// re-route phones to "/mobile" while preserving the query) to the
+    /// clipboard, and flash a transient confirmation in the button label.
+    /// </summary>
+    private async Task CopyShareLinkAsync()
+    {
+        try
+        {
+            var sharePath = ChartSeedCodec.BuildSharePath(
+                "/workspace", house1Figure, house2Figure, house3Figure, house4Figure);
+            var absolute = NavigationManager.ToAbsoluteUri(sharePath).ToString();
+            var ok = await JSRuntime.InvokeAsync<bool>("copyToClipboard", absolute);
+            shareToast = ok ? ShareToast.Copied : ShareToast.Failed;
+        }
+        catch
+        {
+            shareToast = ShareToast.Failed;
+        }
+        StateHasChanged();
+        _ = ResetShareToastAsync();
+    }
+
+    private async Task ResetShareToastAsync()
+    {
+        await Task.Delay(1800);
+        shareToast = ShareToast.None;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Build a JSON snapshot of the current reading. Includes the seed (so
+    /// the file can reproduce the chart by URL), the four Mothers, the
+    /// resolved house chart, and any computed analyses currently in memory.
+    /// </summary>
+    private string BuildChartJsonPayload()
+    {
+        var seed = ChartSeedCodec.Encode(house1Figure, house2Figure, house3Figure, house4Figure);
+        var sharePath = $"/workspace?{ChartSeedCodec.ParamName}={seed}";
+        var shareUrl = NavigationManager.ToAbsoluteUri(sharePath).ToString();
+
+        var payload = new
+        {
+            schema = "geofancy.chart-export",
+            schemaVersion = 1,
+            generatedAt = DateTime.UtcNow.ToString("o"),
+            appVersion = GeofancyVersion.Display,
+            shareUrl,
+            seed,
+            mothers = new[]
+            {
+                SerializeMother(1, house1Figure),
+                SerializeMother(2, house2Figure),
+                SerializeMother(3, house3Figure),
+                SerializeMother(4, house4Figure)
+            },
+            chart = houseChart,
+            perfectionAnalysis,
+            wayOfPointsAnalysis,
+            aspectAnalysis
+        };
+
+        return JsonSerializer.Serialize(payload, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        });
+    }
+
+    private async Task ExportChartJsonAsync()
+    {
+        if (houseChart == null)
+        {
+            return;
+        }
+
+        try
+        {
+            var json = BuildChartJsonPayload();
+            var stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            var filename = $"geofancy-chart-{stamp}.json";
+            var ok = await JSRuntime.InvokeAsync<bool>(
+                "downloadTextFile", filename, json, "application/json");
+            exportToast = ok ? ExportToast.Saved : ExportToast.Failed;
+        }
+        catch
+        {
+            exportToast = ExportToast.Failed;
+        }
+        StateHasChanged();
+        _ = ResetExportToastAsync();
+    }
+
+    /// <summary>
+    /// Copy the same JSON payload as ExportChartJsonAsync to the clipboard,
+    /// for users who want to paste the reading straight into another tool
+    /// (an editor, a chat, a notebook) without the file roundtrip.
+    /// </summary>
+    private async Task CopyChartJsonAsync()
+    {
+        if (houseChart == null)
+        {
+            return;
+        }
+
+        try
+        {
+            var json = BuildChartJsonPayload();
+            var ok = await JSRuntime.InvokeAsync<bool>("copyToClipboard", json);
+            copyJsonToast = ok ? ExportToast.Saved : ExportToast.Failed;
+        }
+        catch
+        {
+            copyJsonToast = ExportToast.Failed;
+        }
+        StateHasChanged();
+        _ = ResetCopyJsonToastAsync();
+    }
+
+    private async Task ResetExportToastAsync()
+    {
+        await Task.Delay(1800);
+        exportToast = ExportToast.None;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ResetCopyJsonToastAsync()
+    {
+        await Task.Delay(1800);
+        copyJsonToast = ExportToast.None;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private static object SerializeMother(int houseNumber, FigureModel f) => new
+    {
+        houseNumber,
+        houseName = houseNames.TryGetValue(houseNumber, out var n) ? n : $"House {houseNumber}",
+        figureName = string.IsNullOrEmpty(f.Name) ? null : f.Name,
+        lines = new
+        {
+            head = f.HeadLine,
+            neck = f.NeckLine,
+            body = f.BodyLine,
+            foot = f.FootLine
+        }
+    };
 
     public ValueTask DisposeAsync()
     {

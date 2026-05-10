@@ -673,3 +673,89 @@
 .mobile-aspect-row:last-child {
     border-bottom: none;
 }
+
+/*
+ * Share-chart pill on the mobile chart toolbar. Mirrors the desktop
+ * .workspace-share-btn treatment: same pill shape as the existing toolbar
+ * buttons, but accent-coloured so it reads as the secondary action and
+ * inverts on tap as the "Copied!" / "Couldn't copy" confirmation flashes.
+ *
+ * Sized identically to .mobile-pill-btn so the toolbar row keeps a clean
+ * baseline; we let the wrapping toolbar flex onto two rows on the smallest
+ * viewports rather than shrinking the buttons below tappable size.
+ */
+.mobile-chart-toolbar {
+    flex-wrap: wrap;
+}
+
+.mobile-share-btn {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transition: background-color 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, transform 0.15s ease,
+                box-shadow 0.2s ease;
+}
+
+.mobile-share-btn:hover,
+.mobile-share-btn:focus-visible {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+}
+
+/*
+ * Export-chart card pinned above the legacy aspect analysis on Lots & Other.
+ * Uses the same .mobile-subsection framing as the rest of that tab so it
+ * lines up with the surrounding cards visually.
+ */
+.mobile-chart-export-section {
+    /* Slightly tighter than the other mobile-subsection cards so the action
+       button sits comfortably with the heading on a single row. */
+    padding: 0.7rem 0.85rem;
+}
+
+.mobile-chart-export-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.mobile-chart-export-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.mobile-chart-export-help {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.mobile-chart-export-section .mobile-pill-btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/*
+ * Two-button row: "Copy JSON" + "Download JSON". Lays out side-by-side
+ * with each button taking equal share so both stay thumb-tappable on
+ * narrow viewports without one dominating.
+ */
+.mobile-chart-export-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    width: 100%;
+}
+
+.mobile-chart-export-actions .mobile-pill-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    justify-content: center;
+}
