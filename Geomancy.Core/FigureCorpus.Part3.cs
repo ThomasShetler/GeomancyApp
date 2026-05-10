@@ -27,29 +27,29 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Active",
             Anatomy = "The hips and thighs",
-            BodyType = "Broad hips, strong thighs, stride eats distance; hands pocket bonuses; laugh loud; weight carried low like a wrestler or dancer.",
-            CharacterType = "Optimistic dealmaker; believes growth solves most sins; blunt honesty; teaches night classes; shares PDFs freely.",
+            BodyType = "Broad hips and strong thighs, with a stride that covers ground efficiently. The hands accept what is offered without ceremony, the laugh carries, and the weight is carried low in the body, after the manner of a wrestler or a working dancer.",
+            CharacterType = "An optimistic dealmaker who tends to believe that growth resolves most difficulties. Such a person speaks plainly, teaches what they know without pretense, and parts with their materials freely.",
             Colors = "Red, yellow, or green",
-            Commentary = @"Acquisitio lifts the purse: Jupiter in Sagittarius, inner air, outer fire, while air and earth act to catch what falls. Medieval authors paired it with prudence because appetite must still sort real from fool's gold. Fire rests at the crown—vision without burnout if discipline holds. The diviner tracks expansion: market share, waistline, knowledge, all can widen. Contrast with Amissio: here the mouth opens to receive.",
-            DivinatoryMeaning = "Raises, grants, scholarships, stock upside, pregnancy news, audience growth, harvest. Favorable when acquisition is ethical and budgeted; poor when the question needs austerity, deletion, or anonymity.",
+            Commentary = @"Acquisitio lifts the purse: Jupiter in Sagittarius, inner air over outer fire, with air and earth at work to catch what falls. The medieval authors paired the figure with prudence, since appetite must still sort the genuine from the false. Fire rests at the crown, granting vision without exhaustion so long as the querent's discipline holds. The practitioner tracks the figure's enlargement in many domains: market share, knowledge, body, audience. The contrast with Amissio is exact: there, the vessel pours out; here, it opens to receive.",
+            DivinatoryMeaning = "Increase obtained from a recognizable source—a raise, a grant, an inheritance, the upward motion of an investment, the news of a child, the growth of an audience, the late harvest. The figure favors questions in which the gain is ethical and budgeted, and disfavors questions that require austerity, removal, or anonymity.",
             Tagline = "Open purse, widening horizon",
             CoreMeaning = new List<string> { "expansion", "profit", "blessing", "travel", "enrollment", "bonus" },
             FavorableFor = new List<string> { "Fundraising round", "Grad school admit", "Farm purchase", "Podcast sponsor", "Grant application" },
             UnfavorableFor = new List<string> { "Minimalist off-grid plan", "Witness protection", "Bankruptcy filing" },
-            ElementalSynthesis = "Active air and earth with passive fire and water: ideas and matter cooperate while raw heat and tears stay banked—Sagittarian arrow nocked, not yet burning.",
+            ElementalSynthesis = "Air and earth are active while fire and water remain passive: ideas and material cooperate, while raw heat and tear stay reserved—a Sagittarian arrow set to the bow but not yet released.",
             TraditionalImagery = new List<string> { "Upright bag", "Jupiter glyph luck", "Sagittarian arrow" },
             Interpretation = new List<string>
             {
-                "Ask what will be done with surplus—Acquisitio without Tristitia can mean weight as well as wealth.",
-                "Tech reading: user growth, ARR, follower count—verify churn elsewhere.",
-                "With Carcer, gain locks into structure; with Via, gain while moving."
+                "The first practitioner question concerns what will be done with the surplus. Without Tristitia somewhere in the chart, Acquisitio can deliver weight as readily as wealth.",
+                "Read in modern terms, the figure speaks of accumulation that can be measured—subscribers, recurring revenue, a growing audience—and the practitioner should look elsewhere in the chart for any sign of attrition.",
+                "Paired with Carcer, the gain locks into structure; paired with Via, the gain accumulates while the querent is in motion."
             },
             InHouses = H(
                 (1, "Querent levels up—confidence from new credential."),
                 (2, "Raise, dividend, crypto green day."),
                 (3, "Publisher accepts pitch; sibling shares lead."),
                 (4, "Bigger apartment; family inheritance rumor true."),
-                (5, "BFP test; creative grant; lottery smaller win."),
+                (5, "News of a child; an awarded grant; a small but welcome stroke of fortune."),
                 (6, "Better benefits package; gym gains."),
                 (7, "Partner brings opportunity; JV equity."),
                 (8, "Angel investor; insurance dividend."),
@@ -66,9 +66,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "RSUs vesting the month rent is due",
-                "Substack paid tier crossing sustainable line",
-                "Adopting foster dog who also guards the shop"
+                "Compensation that arrives in the same month a major obligation comes due",
+                "A small subscription audience growing at last to a sustainable size",
+                "Welcoming an animal into the household who proves both companion and guardian"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -100,22 +100,22 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Active",
             Anatomy = "The knees and lower legs",
-            BodyType = "Knobby knees, careful steps, carries tension in jaw; prefers boots; saves receipts in rubber bands; posture stiffens when budgets discussed.",
-            CharacterType = "Frugal, stubborn, loyal to protocol; fears chaos more than boredom; slow trust; excellent executor once briefed.",
+            BodyType = "Pronounced knees, careful steps, and a tension that gathers in the jaw. Such a person tends toward sturdy footwear, organizes receipts with method, and visibly stiffens when the conversation turns to budgets or commitments.",
+            CharacterType = "Frugal, stubborn, and loyal to whatever protocol they have accepted. The fear of disorder runs deeper than the fear of boredom; trust is slow to grant, and once a clear brief has been given, the same person becomes an excellent executor.",
             Colors = "White, russet, or dun (pale brown)",
-            Commentary = @"Carcer is the lock and the ledger: Saturn in Capricorn, doubled earth, fire and earth active while air and water sleep. Energy and matter touch without mediators—work becomes tunnel. Medieval readers assigned delay, greed, and safekeeping at once. Modern diviners should ask whether walls protect or suffocate: NDA, mortgage, monastic cell, or spreadsheet prison. The figure stabilizes what it touches—verify the querent wants freeze-frame.",
-            DivinatoryMeaning = "Delay, escrow, quarantine, NDA, fence, bunker, savings account, tenure clock, legal hold. Favorable when structure saves; unfavorable when speed, publicity, or emotional flow is needed.",
+            Commentary = @"Carcer is the lock and the ledger: Saturn in Capricorn, with earth doubled at the inner and outer registers, while fire and earth move and air and water lie still. Energy meets matter without mediating elements, and work narrows to a single tunnel. The medieval readers assigned to this figure delay, accumulation, and safekeeping at once. The contemporary practitioner is left to ask whether the walls in question are protecting or suffocating—a contract, a savings instrument, a vow, a procedural hold. The figure stabilizes whatever it touches, and the practitioner should verify that the querent in fact desires the matter to be held in place.",
+            DivinatoryMeaning = "Delay, the held deposit, the quarantine, the binding agreement, the fortified store, the long-term reserve, the institutional clock, the legal hold. The figure favors questions in which structure preserves what would otherwise be lost, and disfavors questions in which speed, public exposure, or emotional movement is required.",
             Tagline = "Walls, ledgers, slow clocks",
             CoreMeaning = new List<string> { "delay", "security", "hoarding", "focus", "isolation", "compliance" },
             FavorableFor = new List<string> { "Cold storage crypto", "Patent filing", "Monastic year", "Construction permit wait", "Pre-surgery fasting" },
             UnfavorableFor = new List<string> { "Viral launch", "Impulse travel", "Open relationship negotiation" },
-            ElementalSynthesis = "Active fire and earth bracket passive air and water: heat and matter meet without breath or tear to soften—vault logic, kiln logic.",
+            ElementalSynthesis = "Fire and earth move while air and water lie still: heat and matter meet without breath or moisture to soften the encounter—the logic of a vault and the logic of a kiln stand together in one figure.",
             TraditionalImagery = new List<string> { "Enclosure square", "Saturn lock", "Capricorn mountain" },
             Interpretation = new List<string>
             {
-                "Carcer plus Fortuna Major can mean delayed but sure promotion; with Via, jailbreak urge fights habit.",
-                "Ask if the lock is external (policy) or internal (shame).",
-                "Finance: liquidity traps—cash exists but rules block spend."
+                "Carcer paired with Fortuna Major can name a promotion delayed but ultimately certain; paired with Via, the impulse to break out contests with habit.",
+                "The practitioner should determine whether the lock under examination is external—a policy or contract—or internal, in the form of shame or reluctance the querent has not yet named.",
+                "In matters of finance, the figure often points to the trap of locked liquidity: capital exists, but a binding rule prevents its use."
             },
             InHouses = H(
                 (1, "Querent self-limits; stiff upper lip."),
@@ -139,9 +139,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Two-week security review before deploy",
-                "Choosing cheaper apartment to slam student loans",
-                "Password manager nobody else knows—estate risk"
+                "A required review period before a significant release",
+                "Choosing a more modest residence in order to retire a debt",
+                "A solitary record of credentials whose secrecy itself becomes a liability to the household"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -173,22 +173,22 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Active",
             Anatomy = "The ankles",
-            BodyType = "Heavy ankles, loves sturdy shoes; grounding walk; collects rocks; knuckles crack when thinking; winter skin.",
-            CharacterType = "Dry humor; loyal after long test; systems thinker; depressive realism; innovates because old ways hurt.",
+            BodyType = "Heavy, well-set ankles and a preference for grounded footwear, with a deliberate, settling walk. Such a person is drawn to weighted objects, gestures with the hands when thinking, and has a complexion that pales somewhat in cold seasons.",
+            CharacterType = "Dry of wit, loyal once trust has been earned through long acquaintance, and inclined to think in systems. There is a strain of realism that can edge into the depressive register, and a habit of innovating precisely because older arrangements have hurt.",
             Colors = "Tawny or sky blue",
-            Commentary = @"Tristitia drives the stake: Saturn in Aquarius, outer air, inner earth, only earth active—three passives above weight. Medieval authors called it sorrow but also foundation for towers if patience holds. Aquarius lifts the paradox: networks that freeze progress until specs improve. Diviners should read downward motion—price drop, mood dip, shovel—but also root-setting for wind turbines.",
-            DivinatoryMeaning = "Depression spell, stock slide, layoff rumor, basement dig, research rabbit hole, funeral, sobriety seriousness. Favorable for construction, mining, keeping secrets buried; poor for parties or launches needing hype.",
+            Commentary = @"Tristitia drives the stake: Saturn in Aquarius, outer air over inner earth, with only earth active beneath three passive lines. The medieval authors named the figure sorrow, yet also recognized in it the foundation upon which towers may eventually stand if patience is allowed to do its work. Aquarius lifts the paradox into view: networks that freeze progress until the specifications improve. The practitioner should read this figure as downward motion—a price falling, a mood dropping, a foundation being dug—but should also recognize the same motion as the setting of roots upon which later structure depends.",
+            DivinatoryMeaning = "A spell of low mood, a slide in valuation, the rumor of contraction, the work of digging, the long research, the funeral, the sober commitment. The figure favors construction, the careful preservation of what must be buried, and any matter served by sustained downward attention; it disfavors occasions and launches that depend on visible enthusiasm.",
             Tagline = "Weight down, root deep, slow truth",
             CoreMeaning = new List<string> { "gravitas", "decline", "foundation", "grief", "engineering", "silence" },
             FavorableFor = new List<string> { "Pouring concrete", "Deleting legacy code", "Grief work", "Bunker research", "Longitudinal study" },
             UnfavorableFor = new List<string> { "Grand opening balloons", "Honeymoon", "Influencer livestream" },
-            ElementalSynthesis = "Only earth acts under passive fire, air, water: everything compresses toward soil—Aquarian sky ideas wait until ground proves them.",
+            ElementalSynthesis = "Earth alone acts beneath passive fire, air, and water: everything in the figure compresses toward soil. The Aquarian sky-ideas must wait until the ground itself confirms them.",
             TraditionalImagery = new List<string> { "Pit and stake", "Tower foundation", "Saturn in fixed air emblems" },
             Interpretation = new List<string>
             {
-                "Pair with Laetitia in court to read manic-depressive cycle of a startup.",
-                "Ask what must be buried to grow—seeds, cables, trauma.",
-                "Justice questions: slow courts, but evidence stacks."
+                "Where Tristitia and Laetitia stand together in the court positions, the practitioner may read the cyclical exhaustion and elation of a long undertaking, in which periods of weight alternate with periods of relief.",
+                "The proper question is what the matter requires the querent to bury in order to grow—seeds, infrastructure, or grief that has waited too long to be acknowledged.",
+                "In matters of justice, the figure points to slow proceedings, but to evidence that accumulates steadily in the querent's favor over time."
             },
             InHouses = H(
                 (1, "Querent feels heavy; imposter syndrome."),
@@ -212,9 +212,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Layoffs announced same day as product launch",
-                "Digging through old logs to prove harassment",
-                "Choosing cheaper therapy sliding scale—still helps"
+                "A wave of contraction announced on the same day as a long-anticipated release",
+                "Working through years of records to substantiate a claim",
+                "Accepting modest counsel within reach of one's means and finding it sufficient"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -246,22 +246,22 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Passive",
             Anatomy = "The feet",
-            BodyType = "Bouncy step; big feet jokes; laughs with whole torso; hair wild; tends barefoot home; cries easy at weddings.",
-            CharacterType = "Innocent enthusiasm; religious awe; gambler's optimism; forgives fast; needs grounding buddy.",
+            BodyType = "A buoyant step and well-formed feet, a laugh that involves the whole torso, and hair worn somewhat freely. Such a person tends to go barefoot at home and to be visibly moved at thresholds—weddings, ordinations, departures, and arrivals.",
+            CharacterType = "Possessed of an innocent enthusiasm and a capacity for genuine awe. The temperament is given to the gambler's optimism and the swift forgiveness, and is at its best in the company of a steadying companion who can supply weight when the figure provides lift.",
             Colors = "Glittering pale green",
-            Commentary = @"Laetitia lifts the head: Jupiter in Pisces, inner fire, outer water, only fire active while siblings sleep—torch on fog. Medieval joy figures warn visibility: towers attract lightning. The diviner balances elation with OPSEC: promotion announced too early, pregnancy before trimester, song dropped before mix master. Watery outer shell means empathy broadcasts—beautiful until boundaries blur.",
-            DivinatoryMeaning = "Promotion, viral hit, sobriety pink cloud, spiritual high, stock rally, pregnancy glow, festival season. Favorable for launches needing joy; poor for secrets, stealth, or holding still.",
+            Commentary = @"Laetitia lifts the head: Jupiter in Pisces, inner fire over outer water, with fire alone active while its siblings rest—a torch raised against fog. The medieval joy figures warned that elevation invites visibility: the tower attracts the lightning. The practitioner therefore balances elation with discretion—the promotion announced too early, the pregnancy revealed before its time, the work released before it has been finished. The watery outer shell broadcasts empathy widely, which is beautiful so long as the querent's boundaries do not begin to blur.",
+            DivinatoryMeaning = "Promotion, public success, the spiritual lift, the rallying of sentiment, the news of a child, the season of celebration. The figure favors undertakings that require visible joy and disfavors questions that require secrecy, stealth, or simple stillness.",
             Tagline = "Tower lights, lifted mood, bright risk",
             CoreMeaning = new List<string> { "ascent", "visibility", "elation", "faith", "virality", "relief" },
             FavorableFor = new List<string> { "Album drop", "Proposal flash mob", "Charity gala", "Recovery milestone party", "TikTok explainer" },
             UnfavorableFor = new List<string> { "Witness protection", "Silent retreat", "Short selling quietly" },
-            ElementalSynthesis = "Only fire acts within Piscean water shell: enthusiasm pierces fog while air and earth stay latent—balloon without sandbags until other figures add weight.",
+            ElementalSynthesis = "Only fire acts within a Piscean shell of water: enthusiasm pierces the fog while air and earth remain latent—a lifted balloon awaiting the ballast that another figure must supply.",
             TraditionalImagery = new List<string> { "Tower height", "Candelabrum joy", "Jupiter exaltation echoes" },
             Interpretation = new List<string>
             {
-                "Laetitia loves a microphone—check if the querent is ready for scrutiny that follows applause.",
-                "With Tristitia, expect hangover; with Fortuna Minor, fast rise faster fall.",
-                "Health: mania watch—sleep debt hides behind glow."
+                "Laetitia welcomes the public stage. The practitioner should determine whether the querent is in fact ready for the scrutiny that arrives with the applause.",
+                "Paired with Tristitia, the elation is followed by a corresponding contraction; paired with Fortuna Minor, the rise is rapid and the descent more rapid still.",
+                "In matters of health, the figure prompts attention to sustainability. A debt of sleep or rest is often concealed behind the glow."
             },
             InHouses = H(
                 (1, "Querent glows; hair color change; viral moment."),
@@ -285,9 +285,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "ProductHunt #1 same day servers melt",
-                "Coming out post heartwarming then exhausting",
-                "Lottery win posted—cousins appear"
+                "A successful release that exposes the limits of the system meant to support it",
+                "A long-held truth shared publicly, met with warmth and followed by exhaustion",
+                "An unexpected windfall whose disclosure brings unfamiliar relations to the door"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {

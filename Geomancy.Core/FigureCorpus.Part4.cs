@@ -27,25 +27,25 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Passive",
             Anatomy = "The left arm",
-            BodyType = "Left arm stories—tattoos, vaccine scars, watch tan; gait turns away from rooms; shoulders uneven from carrying exit bag.",
-            CharacterType = "Burnout generosity; gives last dollar then ghosts; skeptical of returns; learns through loss; comic timing dark.",
+            BodyType = "A left arm that bears the marks of a long history, a posture that subtly turns away from a crowded room, and shoulders held a little unevenly from years of carrying what might be needed at short notice.",
+            CharacterType = "A generosity that runs to depletion, an instinct to give until little remains and then to withdraw, and a guarded skepticism toward what may be received in return. Such a person learns through loss, and their humor tends toward the dry and the dark.",
             Colors = "Green, white, dark crimson, or pale tawny brown",
-            Commentary = @"Cauda Draconis marks the south node threshold: three active lines, earth passive—fire, air, water rush out while ground withholds receipt. Medieval authors mixed good and evil in one breath because endings fertilize fields. Sagittarius adds travel and doctrine: leaving a church, a country, a paradigm. The diviner should read egress, tail risk, final invoice, or the last episode of a podcast season. Not cruelty—completion with teeth.",
-            DivinatoryMeaning = "Closure, tail risk, burnout severance, graduation walk, divorce signed, server sunset, toxic job quit. Favorable when you need out, detox, or final check; unfavorable when you need retention, renewal, or quiet hold.",
+            Commentary = @"Cauda Draconis marks the threshold of the southern lunar node: three active lines stand against a passive earth, so that fire, air, and water rush outward while the ground withholds its receipt. The medieval authors mixed good and evil in a single breath under this figure, because endings, properly understood, fertilize the field they leave behind. Sagittarius adds the dimension of travel and of doctrine: the leaving of a church, a country, a working paradigm. The practitioner should read this figure as egress, as the final invoice, as the last episode of a long undertaking. The motion is not cruelty; it is completion with teeth.",
+            DivinatoryMeaning = "Closure, the residual risk that gathers at an exit, the formal end of a binding tie, the graduation, the decommissioning of a system, the resignation from work that has worn the querent down. The figure favors questions in which release, detoxification, or a final reckoning is required, and disfavors questions that depend on retention, renewal, or quiet preservation.",
             Tagline = "Exit stamp, tail risk, burnt bridge",
             CoreMeaning = new List<string> { "closure", "exhaust", "migration", "karma", "write-off", "last mile" },
             FavorableFor = new List<string> { "Deleting account", "Ending lease", "Hospice acceptance", "Sunsetting app", "Leaving cult" },
             UnfavorableFor = new List<string> { "Renewing vows", "IPO lockup extension", "Tenure clock freeze" },
-            ElementalSynthesis = "Triple active above passive earth: heat, idea, and tear move outward without soil to catch them—rocket stage drop.",
+            ElementalSynthesis = "Three active lines press above a passive earth: heat, idea, and tear all move outward without soil to receive them—the figure releases what it carries, after the manner of a stage discarded once its work is done.",
             TraditionalImagery = new List<string> { "Footprints away", "Dragon tail south node", "Sagittarian departure" },
             Interpretation = new List<string>
             {
-                "Pair with Caput to read entire lifecycle question—head proposes, tail disposes.",
-                "Finance: write-offs, chargebacks, crypto rug aftermath.",
-                "Spirit: the initiation that requires leaving the old name at the door."
+                "Read with Caput Draconis, the figure tells a complete lifecycle question: the head proposes, and the tail disposes.",
+                "In matters of finance, the figure marks write-offs, refunded transactions, and the long aftermath of an investment that did not hold.",
+                "In matters of the spirit, the figure points to the initiation that requires the querent to leave an old name at the door before crossing."
             },
             InHouses = H(
-                (1, "Identity shed; deadname retired."),
+                (1, "An old identity is set aside; a former name is formally retired."),
                 (2, "Bankruptcy discharge; crypto loss realized."),
                 (3, "Unsubscribe tour; sibling cutoff."),
                 (4, "Move-out sale; parents downsizing."),
@@ -66,9 +66,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Deleting Twitter after acquisition meltdown",
-                "Last day at warehouse before automation",
-                "Final therapy session that actually stuck"
+                "Closing a long-standing public account whose climate has decisively turned",
+                "A final shift at a workplace being phased out by a successor system",
+                "A concluding session of long counsel, at which the work at last finds its rest"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -100,22 +100,22 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Active",
             Anatomy = "The right arm",
-            BodyType = "Right arm carries new bags—gym gains, baby seat, work laptop; nails clean; posture improves when opportunity knocks.",
-            CharacterType = "Earnest improver; spreadsheet soul; kindness with checklists; anxiety before big starts; learns by serving.",
+            BodyType = "A right arm conditioned to carry whatever new responsibility has been accepted—the working tool, the bag of provisions, the child. The nails are kept clean, and the carriage of the body visibly improves when the figure encounters opportunity.",
+            CharacterType = "An earnest improver, given to method and to small acts of considered kindness. There is a recognizable anxiety before a major beginning, and a temperament that learns its own shape through service rendered to others.",
             Colors = "White, flecked with citrine",
-            Commentary = @"Caput Draconis greets the north node: earth doubled inside and out, while air and water move and fire waits—fertile furrow. Medieval texts promised new doors with rough thresholds: scholarship, baby, visa, repo fork. Virgo refines appetite into craft. Diviners should ask what seed is actually planted—earth rich but sun still passive until labor chooses heat.",
-            DivinatoryMeaning = "New job offer, BFP, green card interview, repo first commit, initiation, arranged mentorship. Favorable for starts, upgrades, onboarding; unfavorable when the chart needs endings, silence, or debt zeroing.",
+            Commentary = @"Caput Draconis greets the threshold of the northern lunar node: earth doubled within and without, while air and water move and fire keeps watch—a fertile furrow. The medieval texts promise new doors here, but doors with thresholds that are seldom smooth: a scholarship, an arrival, a major commitment, the first stage of a long work. Virgo refines appetite into craft. The practitioner should ask what seed is actually being planted, since the earth in the figure is rich while the sun stays passive—until the labor chosen by the querent supplies the necessary heat.",
+            DivinatoryMeaning = "The new offer of work, the news of a child, the formal invitation, the first stage of a project, the arrival of a mentor. The figure favors beginnings, upgrades, and the careful work of taking up new responsibility, and disfavors questions in which the matter requires endings, silence, or the discharge of an existing obligation.",
             Tagline = "Threshold in, fertile rough start",
             CoreMeaning = new List<string> { "ingress", "upgrade", "apprenticeship", "visa", "seed", "mentor" },
             FavorableFor = new List<string> { "First day oncall", "Adoption placement call", "Scholarship start", "Green card biometrics", "Sabbatical plan" },
             UnfavorableFor = new List<string> { "Final paycheck", "Deleting data", "Closing franchise" },
-            ElementalSynthesis = "Active air, water, earth with passive fire: craft, care, and soil cooperate while raw ignition waits—greenhouse seedling.",
+            ElementalSynthesis = "Air, water, and earth all act while fire waits in passivity: craft, care, and soil cooperate while the raw ignition holds in reserve—the seedling held in greenhouse conditions until the season permits its planting outdoors.",
             TraditionalImagery = new List<string> { "Footprints inward", "North node head", "Virgo harvest start" },
             Interpretation = new List<string>
             {
-                "Caput loves paperwork that unlocks—verify deadlines so the door does not slam.",
-                "With Cauda in other houses, story is breathe-in breathe-out migration.",
-                "Wealth: grant letter arrives with compliance strings."
+                "Caput Draconis tends to favor the paperwork that unlocks. The practitioner should verify deadlines carefully, so that the door is not closed by a lapse the querent could have prevented.",
+                "Where Cauda Draconis appears in other houses of the same chart, the larger story is one of migration—an outbreath in one quarter, an inbreath in another.",
+                "In matters of resource, the grant or award most often arrives accompanied by conditions, and those conditions deserve the same attention as the gift itself."
             },
             InHouses = H(
                 (1, "New wardrobe era; therapy intake."),
@@ -139,9 +139,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "GitHub org invite day one at new startup",
-                "H1B lottery selected—lawyer queue begins",
-                "Foster placement call—car seat installed at midnight"
+                "Receiving access to one's new institutional environment on the first day of work",
+                "A residency status confirmed and the long process of formal arrangement begun",
+                "An unexpected call to receive a child, met with the practical preparation of the household"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -173,22 +173,22 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Passive",
             Anatomy = "The spine",
-            BodyType = "Straight spine, quick pivot; windbreaker always ready; eyes scan horizon; handshake firm but clock-watching.",
-            CharacterType = "Proud helper; rescuer complex; burns bright on praise; humbles after stumble; gifts tips generously then vanishes.",
+            BodyType = "A straight spine and a quick pivot at the hip, with eyes that habitually read the horizon. The handshake is firm, but the attention is rarely settled in the room for long.",
+            CharacterType = "A proud helper, willing to shoulder the rescue when the moment calls for it. Such a person rises sharply on praise, accepts correction with humility after a misstep, and tends to share what they have generously and then to move on before their generosity can be returned.",
             Colors = "Gold or yellow",
-            Commentary = @"Fortuna Minor crowns the ridge: Sun in Leo yet outer air, inner fire—fire and air act while water and earth sleep. Classical contrast with Fortuna Major's valley: luck here rides gusts—spotlight, referral, viral boost, outside patron. Easily won, easily spent. Diviners should track sponsorship, borrowed clout, or GPU credits from a friend. Leo dignity without inner earth means less ballast.",
-            DivinatoryMeaning = "Flash sale win, hype week, borrowed ladder, gig bonus, spotlight hire, influencer bump. Favorable when speed beats depth; unfavorable for pensions, multi-decade marriage, or quiet research patents.",
+            Commentary = @"Fortuna Minor crowns the ridge: Sun in Leo, yet with outer air over inner fire—fire and air move while water and earth lie still. The classical contrast with the valley of Fortuna Major is exact: here, fortune rides on the wind. The gift comes from a referral, a sudden spotlight, a willing patron, or a moment of public attention. It is easily won and easily spent. The practitioner should look carefully at the source: borrowed influence, lent resources, the favor of a third party. The dignity of Leo without the ballast of inner earth carries less weight than it appears to.",
+            DivinatoryMeaning = "The brief win, the surge of attention, the borrowed ladder, the bonus that lands at the right moment, the moment of public favor. The figure favors questions in which speed matters more than depth, and disfavors instruments that require decades to mature, such as long marriages, long bonds, or research conducted away from view.",
             Tagline = "Flash win, borrowed spotlight",
             CoreMeaning = new List<string> { "velocity", "patron", "hype", "surface", "gift", "volatility" },
             FavorableFor = new List<string> { "Launch week spike", "Rescue helicopter", "VIP line skip", "24h hackathon prize" },
             UnfavorableFor = new List<string> { "Century bond", "Monastic stability", "Undercover years" },
-            ElementalSynthesis = "Active fire and air with passive water and earth: heat and wind cooperate while moisture and soil wait—banner on battlements, not roots.",
+            ElementalSynthesis = "Fire and air move while water and earth lie still: heat and wind cooperate, while moisture and soil wait their turn—a banner upon the battlements rather than a root within the slope.",
             TraditionalImagery = new List<string> { "Mountain staff", "Lesser fortune", "Leo air outer emblems" },
             Interpretation = new List<string>
             {
-                "Ask who owns the platform beneath the viral moment.",
-                "With Reconciler heavy, the promotion feels hollow—check six months out.",
-                "Contrast Fortuna Major: same Sun sign, different soil depth."
+                "The first practitioner question is who owns the platform beneath the moment of visibility, since the answer determines how long the visibility itself can be sustained.",
+                "Where the Reconciler in the chart is unfavorable, the promotion conferred by this figure tends to feel hollow over time, and the practitioner does well to revisit the matter at a later date.",
+                "The instructive contrast is with Fortuna Major: the same solar sign, but very different depths of soil beneath the same crown."
             },
             InHouses = H(
                 (1, "15 minutes fame; personal brand stunt."),
@@ -212,9 +212,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "GPU cloud credits from mentor for AI demo",
-                "Bar cover band booked because TikTok clip",
-                "Flash grant 48h application window won"
+                "Borrowed computing resources from a mentor that make a demonstration possible",
+                "A small group booked to perform on the strength of a brief recording that traveled widely",
+                "An award won inside a brief application window that few were prepared to meet"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -246,22 +246,22 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Active",
             Anatomy = "The stomach",
-            BodyType = "Butterfly stomach before flights; motion sickness aware; snacks in every bag; walks while on phone; moon face bloat when stressed.",
-            CharacterType = "Nomad heart; mood tides; loyal but needs new horizons; cooks for road; journals at layovers.",
+            BodyType = "A stomach sensitive to anticipation, a body practiced at handling motion, and the small habits of one who travels often—provisions in the bag, a phone consulted while walking, and a face that softens visibly with stress.",
+            CharacterType = "A nomadic heart and a temperament that moves with its own tides. Such a person is loyal but needs new horizons to remain whole, prepares carefully for the road, and writes most clearly when between one place and the next.",
             Colors = "White, flecked with blue",
-            Commentary = @"Via opens every line: Moon in Cancer, water inside and out, all elements active—tidal highway. Medieval authors called it the road; modern readers add fiber lines, supply chains, gender journey, migration policy. Nothing sits; even sleep is REM cycle. The diviner maps vectors not positions. Populus is crowd inertia; Via is crowd when everyone suddenly heads for the exit or parade.",
-            DivinatoryMeaning = "Relocation, lane change, pivot, bus route, data migration, hormone transition, career hop. Favorable when movement itself solves; unfavorable for mortgages that need roots, or custody needing stability proof.",
+            Commentary = @"Via opens every line: Moon in Cancer, water doubled inside and out, with all four elements active—a tidal highway. The medieval authors named the figure the road; the contemporary reader may add to that the fiber line, the supply chain, the long migration, the journey of identity. Nothing in this figure remains still; even sleep is the rhythm of cycles. The practitioner maps vectors here rather than positions. Where Populus is the inertia of the crowd, Via is the same crowd at the moment in which everyone moves at once—toward the exit, the parade, or the ferry that has just been announced.",
+            DivinatoryMeaning = "Relocation, the change of lane, the pivot, the route, the migration of data or person, the long transition. The figure favors questions in which the movement itself is the solution, and disfavors questions that require the proof of roots—long instruments, custody arguments, or any matter that demands stability under examination.",
             Tagline = "All lines go; river keeps cutting",
             CoreMeaning = new List<string> { "motion", "lane change", "migration", "iteration", "fleet", "tide" },
             FavorableFor = new List<string> { "Digital nomad visa", "Kubernetes rollout", "Solo motorcycle leg", "Gender care pathway", "Agile sprint" },
             UnfavorableFor = new List<string> { "Tenure committee", "Monastic stability", "Sealed deposition hold" },
-            ElementalSynthesis = "All four active: fire, air, water, earth cycle without rest—complete permutation set; Cancerian water doubles intuition steering logistics.",
+            ElementalSynthesis = "All four lines act: fire, air, water, and earth cycle without rest. The figure presents the complete permutation, and the doubled water of Cancer asks intuition itself to do much of the steering as the logistics unfold.",
             TraditionalImagery = new List<string> { "Road fork", "Wayfarer", "Lunar journey glyphs" },
             Interpretation = new List<string>
             {
-                "Via answers how not where—process dominates outcome until Judge freezes frame.",
-                "Stack with Carcer to read commute jail; with Populus to read flash mob.",
-                "Finance: cash flow yes, savings account maybe not."
+                "Via answers the question of how rather than the question of where, and process tends to dominate outcome until the Judge of the chart freezes the frame.",
+                "Read with Carcer, the figure can describe a commute that has become a confinement; read with Populus, it describes the moment in which a great many people set out at once.",
+                "In matters of finance, the figure points more readily to cash flow than to savings: value moves through the querent's hands rather than accumulating within them."
             },
             InHouses = H(
                 (1, "Identity in flux; name change pipeline."),
@@ -285,9 +285,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Four cities in a quarter—relationship app location chaos",
-                "Container ship reroute due to canal backlog",
-                "CI/CD pipeline changing nightly—stability elsewhere needed"
+                "Four cities in a single quarter, with personal life adjusted to the constant motion",
+                "A shipment rerouted across continents because of a distant logistical bottleneck",
+                "A working system that changes nightly, requiring stability to be sourced from elsewhere"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {

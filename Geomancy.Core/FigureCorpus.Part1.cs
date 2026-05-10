@@ -51,22 +51,22 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Active",
             Anatomy = "The head",
-            BodyType = "Compact, athletic frame; quick gestures; flushed or weathered complexion; jaw and brow pronounced; hairline often uneven; hands calloused or nicked from tools, keyboards, or contact sports.",
-            CharacterType = "Acts first and edits later; competitive; blunt speech; loyal in bursts; restless curiosity; dislikes being managed; calms down only after motion or competition has burned off adrenaline.",
+            BodyType = "A compact and athletic frame, with quick gestures and a complexion easily flushed by exertion or weather. The jaw and brow tend to be pronounced, the hairline somewhat uneven, and the hands often bear the small marks of tools, instruments, or contact sport.",
+            CharacterType = "One who acts first and reflects afterward: competitive, blunt of speech, loyal in bursts, and restlessly curious. Such a person resists being managed and tends to find composure only after motion or contest has spent the initial charge.",
             Colors = "White, flecked with red",
-            Commentary = @"Puer names the martial flash that leaps before calculation. In the old books the figure is read with Mars and the Ram: outward ignition, inner air—the mind racing ahead of consequence. Elementally, fire and air strike while earth holds a purchase on outcome, yet water sleeps: there is heat and edge without the tempering of reception. The image is not romance but mechanics—pressure seeking a channel. Where medieval authors spoke of the young soldier or the duelist, the diviner today should think of vectors: who initiates, who escalates, where the first blow lands. Puer rewards questions that need decisive intervention; it punishes those that need patience, secrecy, or fine diplomacy.",
-            DivinatoryMeaning = "Swift motion, initiation, quarrel, lawsuit, surgery, mechanical repair, athletic contest, or any matter where force applied early decides the field. Good when you must cross a threshold before doubt erodes will; poor for reconciliation, long finance, or delicate reputation. Traditionally tied to justice in the sense of contest, not calm judgment.",
+            Commentary = @"Puer names the martial impulse that arrives ahead of reflection. The classical authors place the figure under Mars and Aries: outer fire, inner air, with the intellect overrunning its own consequences. Three lines stand active while water rests, so the figure carries heat and edge without the tempering grace of feeling. Its image is not the lover but the engineer of pressure—force in search of a channel. Where the medieval tradition described the young soldier or the duelist, the contemporary practitioner should attend to vectors: who initiates, who escalates, and where the first blow lands. Puer favors questions that turn on decisive intervention and disfavors those that require patience, secrecy, or careful diplomacy.",
+            DivinatoryMeaning = "Swift motion, the opening of a contest, surgical intervention, mechanical repair, or any matter in which force applied early shapes the field. The figure favors situations that require crossing a threshold before doubt erodes the will, and disfavors reconciliation, long-horizon finance, or delicate questions of reputation. In the older texts it stands beside justice understood as contest rather than as calm judgment.",
             Tagline = "Hot onset, thin patience, sharp edge",
             CoreMeaning = new List<string> { "initiative", "collision", "courage", "rashness", "contest", "breakout" },
             FavorableFor = new List<string> { "Emergency decisions", "Physical training or competition", "Starting a legal defense", "Breaking a deadlock", "Technical fixes under time pressure" },
             UnfavorableFor = new List<string> { "Partnership repair", "Long-term budgeting", "Anonymous whistleblowing", "Subtle office politics", "Slow diplomacy" },
-            ElementalSynthesis = "Three active lines (fire, air, earth) push outward while water rests passive: outward heat and articulation with a dry emotional register. Inner air fans outer fire—ideas and speech accelerate action more than feeling refines it.",
+            ElementalSynthesis = "Three active lines—fire, air, and earth—press outward while water lies passive, producing visible heat and articulation set against a dry emotional register. Inner air fans the outer fire, so that thought and speech accelerate action faster than feeling can refine it.",
             TraditionalImagery = new List<string> { "Sword or blade", "Youthful male signifier in old glyph sets", "Mars / Aries pairing in Renaissance tables" },
             Interpretation = new List<string>
             {
-                "Treat Puer as kinetic honesty: the chart is showing where someone will not wait for consensus. In consultations, name the risk of impulsive email, abrupt resignation, or a public post that cannot be recalled.",
-                "Because water is passive, empathy may arrive late; pair this figure with witnesses that soften (Albus, Populus) before promising harmony.",
-                "In health and surgery questions, Puer can affirm cutting or intervention; in romance it more often marks pursuit or argument than stable union."
+                "Read Puer as kinetic honesty: the chart is naming a place where the querent will not wait for consensus. In consultation, identify the cost of an impulsive message, an abrupt resignation, or a public statement that cannot be retracted.",
+                "Because water sleeps in this figure, empathy tends to arrive late. Where the matter calls for harmony, pair Puer with softer witnesses such as Albus or Populus before extending any promise of accord.",
+                "In questions of health and surgery, Puer can affirm a cut or a decisive treatment. In matters of love it marks pursuit and argument more often than steady union."
             },
             InHouses = H(
                 (1, "The querent is primed to act; self-presentation reads as bold or confrontational."),
@@ -79,7 +79,7 @@ namespace GeomancyApp
                 (8, "Shared resources become a battleground; surgery or crisis management themes."),
                 (9, "Travel or study plans rush forward; debate on principles turns sharp."),
                 (10, "Career visibility spikes—promotion push or public friction with authority."),
-                (11, "Friends rally as a war-band; hopes are pursued aggressively."),
+                (11, "Friends rally as a band of allies; hopes are pursued without hesitation."),
                 (12, "Hidden irritants surface; self-sabotage through anger or late-night decisions.")
             ),
             InCourtRoles = C(
@@ -124,22 +124,22 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Passive",
             Anatomy = "The neck and throat",
-            BodyType = "Solid neck, square or soft jaw, voice carries; shoulders wider than hips; hands good at holding or releasing weight—musicians, movers, cooks; skin tends to flush with emotion or wine.",
-            CharacterType = "Warm, possessive, candid; hates being ignored; oscillates between generosity and blunt demands; attachment runs deep but pride complicates apologies.",
+            BodyType = "A solid neck and a jaw that is either square or softly rounded, with a voice that carries. The shoulders are broader than the hips, and the hands handle weight with practiced ease, whether at an instrument, a kitchen, or any work that requires lifting and setting down. The skin flushes readily with feeling.",
+            CharacterType = "Warm, candid, and given to attachment that runs deeper than pride will easily admit. Such a person dislikes being overlooked and oscillates between open generosity and blunt requests; reconciliation is sincere when it comes, but rarely arrives by the shortest road.",
             Colors = "White, flecked with citrine (greenish yellow)",
-            Commentary = @"Amissio pictures the purse inverted: Venusian appetite meeting earth that cannot keep every coin. Fire and water flare without steady air to negotiate between them, and earth at the rim stays passive—gain slips because the vessel is open. Medieval writers paired loss with love-offerings and with relief from burdens; the modern reader should keep both valences. The figure is not only poverty but release—what leaves makes room. Diviners trained on Agrippa and Cattan will recall outer wealth flowing away while inner fire still wants the object; the tension is desire without a tight lid.",
-            DivinatoryMeaning = "Outflow, ransom, ransom paid, donation, breakup, depreciation, shedding debt, emptying a storage unit, or losing track of an asset. Favorable when you need to lose weight, sell stock, exit a contract, or confess; unfavorable when retention, credit, or exclusive possession is the goal.",
+            Commentary = @"Amissio pictures the purse inverted: a Venusian appetite meeting an earth that cannot keep every coin. Fire and water flare without a steady mediating air, and earth at the rim lies passive, so what is gained slips because the vessel itself is open. Medieval writers placed loss alongside love-offerings and the relief of burdens, and the contemporary reader does well to hold both valences at once. The figure speaks not only of poverty but of release—what leaves makes room. Practitioners formed by Agrippa and Cattan will recognize outer wealth in outflow while the inner fire still desires the object; the tension is appetite without a tight lid.",
+            DivinatoryMeaning = "Outflow, ransom, donation, separation, depreciation, the shedding of debt, or the loss of track of an asset. The figure favors questions that require letting go—divestment, candid confession, the exit from a binding contract—and disfavors questions that depend on retention, credit, or exclusive possession.",
             Tagline = "Letting go, open purse, shifting value",
             CoreMeaning = new List<string> { "release", "expense", "generosity", "scatter", "romantic surrender", "liquidity" },
             FavorableFor = new List<string> { "Paying down debt", "Donating or downsizing", "Ending a clingy relationship", "Medical detox", "Clearing inventory" },
             UnfavorableFor = new List<string> { "Raising capital", "Hoarding secrets", "Long-term lease lock-in", "Winning a retention bonus" },
-            ElementalSynthesis = "Fire and water both active while air and earth sleep: appetite and feeling move, but structure and mediation lag. Things slip between fingers because no airy contract and no earthy vault close the circuit.",
+            ElementalSynthesis = "Fire and water are both active while air and earth lie passive: appetite and feeling move, but neither mediation nor structure follows. Value slips between the fingers because no airy contract and no earthen vault close the circuit.",
             TraditionalImagery = new List<string> { "Bag or purse inverted", "Coins spilling in woodcut traditions", "Venus / Taurus correspondence in elemental wheels" },
             Interpretation = new List<string>
             {
-                "Read Amissio as value in motion toward the exit. Ask what is being poured out on purpose versus what is draining through neglect.",
-                "In relationship charts it can bless catharsis; in finance it warns of thin margins unless paired with Acquisitio elsewhere.",
-                "Charitable tone: the figure teaches that some losses purchase freedom—verify the querent is not confusing waste with sacrifice."
+                "Read Amissio as value in motion toward the exit. The first question is whether what leaves is being poured out by intention or drained by neglect.",
+                "In matters of relationship the figure can bless a needed catharsis; in matters of finance it warns of thin margins unless Acquisitio answers it elsewhere in the chart.",
+                "Held with care, the figure teaches that some losses purchase freedom. The practitioner should verify, however, that the querent is not mistaking waste for sacrifice."
             },
             InHouses = H(
                 (1, "Identity softens—rebranding, haircut, or confession strips an old mask."),
@@ -197,22 +197,22 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Passive",
             Anatomy = "The shoulders and lungs",
-            BodyType = "Upper torso rounded or lifted posture; breath steady; prefers layered clothing; fingers ink-stained or keyboard-light; eyes soften when listening.",
-            CharacterType = "Speaks little but precisely; keeps notebooks; avoids crowds yet networks selectively; calms rooms by lowering volume; can withdraw into study for days.",
+            BodyType = "An upper torso held with quiet lift, breathing that remains steady under stress, and a preference for layered clothing. The fingers rest lightly at the keys or stain with ink, and the eyes visibly soften when the person is listening.",
+            CharacterType = "One who speaks little but precisely, keeps notebooks, and avoids crowds while building a small network with deliberation. Such a person calms a room by lowering the volume rather than raising it, and may withdraw into study for days at a time.",
             Colors = "Brilliant white, flecked with red",
-            Commentary = @"Albus is the bright cup raised without spill: Mercury in Gemini, outer air, inner water—mind mirroring a quiet depth. Only water acts; fire and earth rest. The pattern is reflection before motion, a scholar's lamp rather than a forge. Renaissance texts link the figure to peace treaties and to snowfields that slow armies. Practically, Albus marks clarity obtained by stepping sideways from the fight. Where Rubeus pours passion out, Albus collects dew: insight condenses when heat drops.",
-            DivinatoryMeaning = "Peaceful progress, study, paperwork that clears, truce, diagnosis that clarifies, gentle rain after drought. Weak for brawls, hype launches, or anything needing scandal energy; strong for exams, audits that favor truth, and white-hat negotiations.",
+            Commentary = @"Albus is the bright cup raised without spill: Mercury in Gemini, outer air over inner water, an intellect that mirrors a quiet depth. Only water acts here while fire and earth lie at rest. The pattern is one of reflection preceding motion—a scholar's lamp rather than a forge. Renaissance texts link the figure to peace treaties and to snowfields that quiet the advance of armies. In practice Albus marks clarity won by stepping sideways from the fight: where Rubeus pours passion out, Albus collects dew, and insight condenses as the heat drops.",
+            DivinatoryMeaning = "Peaceful progress, study, paperwork that clears, the truce, the diagnosis that finally clarifies, and the gentle rain that follows drought. The figure disfavors brawls and any matter that requires scandal to gather attention; it favors examinations, audits in which truth is the asset, and negotiations conducted in good faith.",
             Tagline = "Still surface, clear draft, soft power",
             CoreMeaning = new List<string> { "clarity", "study", "treaty", "chastity", "patience", "memo" },
             FavorableFor = new List<string> { "Writing briefs", "Meditation retreats", "Medical second opinions", "White-hat security review", "Apology letters" },
             UnfavorableFor = new List<string> { "Viral marketing stunts", "Hostile takeovers", "Street confrontation", "High-stakes bluffing" },
-            ElementalSynthesis = "Single active water line inside airy shells: feeling and intuition move while fire and earth wait. Thought circulates (Gemini/Mercury) but embodiment and aggression stay cool.",
+            ElementalSynthesis = "A single active water line within airy outer and inner shells: feeling and intuition move while fire and earth keep watch. Thought circulates after the manner of Mercury and Gemini, but embodiment and aggression remain temperate.",
             TraditionalImagery = new List<string> { "White cup upright", "Mercury caduceus echoes in later decks", "Peace embassy motifs in Cattan-era charts" },
             Interpretation = new List<string>
             {
-                "Albus rewards the querent who will document, breathe, and verify. It is a vote for procedure over charisma.",
-                "Because only water is active, momentum is subtle—progress shows as errors caught early, not fireworks.",
-                "Pair with unfavorable martial figures to suggest cooling protocols: legal mediation, cooling-off clauses, or a mentor's edit."
+                "Albus rewards the querent who will document, breathe, and verify. The figure is a vote for procedure over charisma.",
+                "Because only water is active, momentum is subtle: progress here shows itself as errors caught early rather than as visible fireworks.",
+                "Where the chart contains adverse martial figures, Albus suggests cooling protocols—formal mediation, deliberate pause, or the careful edit of a trusted mentor."
             },
             InHouses = H(
                 (1, "Querent chooses restraint; reputation reads as thoughtful, not flashy."),
@@ -236,9 +236,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Switching to plaintext documentation before a compliance audit",
-                "Choosing therapy over subtweeting an ex",
-                "Using a budgeting app after months of avoidance"
+                "Preparing clear documentation before a compliance review",
+                "Choosing patient counsel over a public reaction one would later regret",
+                "Returning to a budgeting practice after a long period of avoidance"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -270,22 +270,22 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Passive",
             Anatomy = "The breasts and midriff",
-            BodyType = "Torso carries tension in diaphragm; gait syncs with whoever walks beside; complexion shifts with tides, sleep, or hormones; breasts or belly emphasized in classical sketches.",
-            CharacterType = "Mirrors company; moods contagious; loyal to tribe; indecisive alone; collects stories; remembers who sat where at the wedding.",
+            BodyType = "A torso that holds tension at the diaphragm and a gait that subtly synchronizes with whoever walks alongside. The complexion shifts with sleep, season, and inner tide, and the classical sketches emphasize a soft, receptive midsection.",
+            CharacterType = "One who mirrors the company present and whose moods are easily caught by others. Loyal to the people they call their own, yet indecisive when alone, such a person collects stories and remembers, with surprising clarity, who sat where on the day that mattered.",
             Colors = "Sea green or dark russet brown",
-            Commentary = @"Populus is the throng: every line passive, doubled water inside and out. The Moon's sign Cancer underscores collective memory, tides, and kitchens where everyone talks at once. Agrippa's lineage calls the figure a mirror for whatever approaches—neither good nor ill until colored by neighbors in the chart. Elementally, nothing initiates; inertia itself becomes stability. The diviner should map networks: who is actually in the room, which algorithmic feed shapes opinion, where quorum rules the outcome.",
-            DivinatoryMeaning = "Assembly, audience, poll results, HOA vote, union card check, social proof, or any outcome decided by mass mood. Favorable when you need allies, samples, or democratic cover; unfavorable when a lone decision or stealth is required.",
+            Commentary = @"Populus is the throng: every line passive, water doubled within and without. The Moon's sign of Cancer underscores collective memory, tide, and the kitchen in which everyone speaks at once. Agrippa's lineage names the figure a mirror for whatever approaches—neither good nor ill until colored by its neighbors in the chart. Elementally, nothing initiates; inertia itself becomes stability. The practitioner should therefore map the network around the question: who is actually in the room, which feed shapes the opinion, and where the quorum, not the individual, rules the outcome.",
+            DivinatoryMeaning = "The assembly, the audience, the poll, the household vote, the public mood, or any outcome decided by collective sentiment rather than by a single hand. The figure favors questions that require allies, sampling, or democratic cover, and disfavors questions that depend on a solitary decision or on stealth.",
             Tagline = "Many voices, shared mood, borrowed motion",
             CoreMeaning = new List<string> { "multitude", "mirror", "inertia", "public", "forum", "meme" },
             FavorableFor = new List<string> { "Crowdfunding", "Community organizing", "A/B testing", "Support groups", "Collective bargaining" },
             UnfavorableFor = new List<string> { "Solo entrepreneurship without team", "Secret elopement", "Whistleblowing without corroboration", "Patent stealth" },
-            ElementalSynthesis = "All four passive: no element leads; water bookends imply emotional or somatic fields dominate while fire, air, and earth stay latent. Change enters only when another figure energizes the row.",
+            ElementalSynthesis = "All four lines lie passive, so no element leads. The doubling of water at inner and outer registers suggests that emotional and somatic fields hold the field while fire, air, and earth remain latent. Change enters only when another figure energizes the row.",
             TraditionalImagery = new List<string> { "Crowd glyph", "Double path in Renaissance keys", "Moon / Cancer pairing" },
             Interpretation = new List<string>
             {
-                "Populus asks whose tide you are swimming. Without a strong Judge, expect drift.",
-                "In tech-age readings, think feeds, group chats, and review bombs—distributed agency, not a single villain.",
-                "When paired with Rubeus or Puer, the crowd turns volatile; with Albus or Fortuna Major, it leans benevolent."
+                "Populus invites the question of whose tide the querent is swimming in. In the absence of a strong Judge elsewhere in the chart, drift should be expected.",
+                "In contemporary readings the figure points to the distributed actor: the feed, the group chat, the collective response. Agency is dispersed, and a single villain is rarely the answer.",
+                "When paired with Rubeus or Puer the crowd grows volatile; when paired with Albus or Fortuna Major it tends toward the benevolent."
             },
             InHouses = H(
                 (1, "Self is shaped by roles—parent, partner, job title—more than solo will."),

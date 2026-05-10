@@ -27,22 +27,22 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Active",
             Anatomy = "The heart and chest",
-            BodyType = "Open chest breathing; warm steady hands; often one leg slightly longer or hip higher—compensated posture; smile reaches eyes when sincere.",
-            CharacterType = "Generous, proud quietly, keeps promises; spends to uplift others; dislikes pettiness; carries responsibility without boasting.",
+            BodyType = "Open, deep chest-breathing and warm, steady hands. The posture often shows a small compensation—one leg carried slightly differently from the other—and the smile, when offered in sincerity, reaches the eyes.",
+            CharacterType = "Generous, quietly proud, and reliable in the keeping of promises. Such a person spends to lift others, dislikes pettiness, and bears responsibility without making a display of it.",
             Colors = "Green, yellow, or gold",
-            Commentary = @"Fortuna Major is the sheltered valley that gathers water: Sun in Leo yet the outer fire rests while inner earth and active water/earth lines shape terrain. Classical authors contrast it with Fortuna Minor's ridge—here fortune is deep, slow, and structural. The querent's help comes from foundations, elders, savings, or an institution that has room to absorb shock. Agrippa's lineage ties the figure to inward protection; the diviner should look for durable luck rather than viral spikes.",
-            DivinatoryMeaning = "Major luck through persistence, inheritance of effort, institutional backing, or inner integrity recognized late. Good for promotions earned by record, property that appreciates on fundamentals, recovery after illness through regimen. Poor for quick flips that rely on hype alone.",
+            Commentary = @"Fortuna Major is the sheltered valley that gathers water: Sun in Leo, yet the outer fire rests while inner earth and the active water and earth lines shape the terrain. The classical authors place this figure in deliberate contrast with the ridge of Fortuna Minor—here fortune is deep, slow, and structural. The help arriving for the querent comes from foundations, elders, savings, or an institution with room enough to absorb shock. Agrippa's lineage ties the figure to inward protection, and the practitioner should therefore look for durable, accumulating luck rather than for a sudden visible spike.",
+            DivinatoryMeaning = "Substantial fortune obtained through persistence, the inheritance of one's own past effort, institutional backing, or an integrity recognized late. The figure favors promotions earned by record, properties that appreciate on fundamentals, and recoveries that succeed through patient regimen. It disfavors short-horizon transactions that rest on attention alone.",
             Tagline = "Deep luck, sheltered gain, earned crown",
             CoreMeaning = new List<string> { "durability", "patronage", "inheritance", "gravitas", "reserve", "sanctuary" },
             FavorableFor = new List<string> { "Mortgage on solid land", "Tenure review", "Rehab after injury", "Family trust restructuring", "Scholarship renewal" },
             UnfavorableFor = new List<string> { "Day-trading on rumor", "Ghosting accountability", "Burning bridges for clout" },
-            ElementalSynthesis = "Passive fire and air with active water and earth: heat and debate cool while moisture and ground co-produce—valley agriculture logic. Inner earth anchors outer fire sign, so Leo pride expresses as stewardship.",
+            ElementalSynthesis = "Fire and air lie passive while water and earth move: heat and debate quiet themselves as moisture and ground cooperate, after the manner of agriculture in a sheltered valley. Inner earth anchors the outer fire of the solar sign, so that the pride of Leo expresses itself as stewardship rather than display.",
             TraditionalImagery = new List<string> { "Valley and river", "Greater fortune mark in old keys", "Solar dignity imagery" },
             Interpretation = new List<string>
             {
-                "Read this as compounding interest on virtue: small right choices stack until the world notices.",
-                "When paired with Tristitia, expect slow grind before the win; with Laetitia, joy after foundations settle.",
-                "Court positions: strong Judge or Reconciler here suggests legacy impact beyond the headline question."
+                "Read this figure as the compounding interest of virtue: small, correct choices accumulate until the world begins to notice.",
+                "Paired with Tristitia, expect a long grind before the win; paired with Laetitia, the joy arrives after the foundations have settled.",
+                "When the figure occupies a court position—particularly Judge or Reconciler—it suggests an effect on legacy that reaches well beyond the immediate question."
             },
             InHouses = H(
                 (1, "Core confidence rooted in lineage or training; body recovers with rest."),
@@ -100,29 +100,29 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Passive",
             Anatomy = "The intestines and belly",
-            BodyType = "Lithe waist, expressive hands that punctuate speech; sensitive digestion tied to stress; neat hair part; prefers cross-body bags—always ready to pivot.",
-            CharacterType = "Connects dots fast; loves introductions; morally flexible about means if data improves; gossip risk; brilliant at logistics.",
+            BodyType = "A lithe waist and expressive hands that punctuate speech, with a digestion sensitive to stress. The hair tends toward a neat part, and the carriage favors a satchel worn across the body—always ready to turn.",
+            CharacterType = "One who joins points quickly, takes pleasure in introductions, and is willing to entertain flexibility of means when better information becomes available. The risk is loose talk; the gift is an unusual fluency with logistics.",
             Colors = "Purple or pale gray, sometimes black speckled with blue",
-            Commentary = @"Conjunctio is the crossroads where streams meet: Mercury in Virgo, inner air, outer earth, while air and water carry motion. Fire sleeps at the head, earth at the feet—middle realm negotiates. Medieval geomancers used it for messengers, brokers, and recovery of stolen goods because links reappear. Today think APIs, supply chains, and introductions that reroute a career. The figure is morally mixed by nature—contacts multiply outcomes, not guarantee virtue.",
-            DivinatoryMeaning = "Networking, APIs, mediation, logistics hubs, reconciling ledgers, finding lost items through a chain of tips, polyamory negotiations, or merger talks. Favorable when connection itself is the missing variable; unfavorable when isolation, NDAs, or air-gap security is required.",
+            Commentary = @"Conjunctio is the crossroads at which streams meet: Mercury in Virgo, inner air over outer earth, with air and water carrying the motion. Fire sleeps at the head and earth at the feet, leaving the middle realm to do the negotiation. The medieval geomancers turned to this figure for messengers, brokers, and the recovery of lost goods, on the principle that links reappear. The contemporary practitioner may translate that intuition into the language of supply chains, networks, and the introductions that re-route a vocation. The figure is, by nature, morally mixed: contacts multiply outcomes; they do not guarantee virtue.",
+            DivinatoryMeaning = "Networks, mediation, logistics, reconciliations of accounts, the recovery of items through a chain of acquaintances, and conversations that bring previously separate parties into agreement. The figure favors questions in which connection itself is the missing variable, and disfavors questions in which isolation, confidentiality, or strict separation is required.",
             Tagline = "Crossroads, brokers, APIs of fate",
             CoreMeaning = new List<string> { "linkage", "exchange", "mediation", "data", "mixing", "routing" },
             FavorableFor = new List<string> { "Recruiting", "Import/export", "Couples therapy", "Blockchain bridges", "Conference networking" },
             UnfavorableFor = new List<string> { "Air-gapped classified work", "Hermit phase", "Monopoly without partners" },
-            ElementalSynthesis = "Active air and water braid through passive fire and earth: information and feeling circulate while ignition and ground wait. Inner air steers outer earth—analysis sorts the soil.",
+            ElementalSynthesis = "Active air and water braid through passive fire and earth: information and feeling circulate while ignition and ground wait their turn. The inner air steers the outer earth, so that analysis sorts the soil before any planting begins.",
             TraditionalImagery = new List<string> { "Crossroads", "Mercury caduceus echoes", "Virgo harvest sorting" },
             Interpretation = new List<string>
             {
-                "Treat Conjunctio as graph theory: nodes matter less than edges; count who actually picks up the phone.",
-                "Recovery questions shine—stolen bike, lost passport—because strangers link clues.",
-                "If Judge is harsh but Conjunctio sits on house ruler, a translator fixes the case."
+                "Read Conjunctio in the manner of a graph: the nodes themselves matter less than the edges between them, and the practical question is who in the network will actually answer when called.",
+                "Recovery questions—lost belongings, missing records—often resolve under this figure, because strangers and second-hand acquaintances supply the linking clues.",
+                "If the Judge is harsh but Conjunctio sits on the ruler of the relevant house, a translator or intermediary may yet open the case."
             },
             InHouses = H(
                 (1, "Querent is hub; many introductions define them."),
                 (2, "Split payments, joint accounts, gig stack income."),
                 (3, "Slack threads, cousin connectors, short trips chaining."),
                 (4, "Roommates, duplex, Airbnb co-host."),
-                (5, "Collaborative art jam; polycule logistics."),
+                (5, "A collaborative creative project; the careful coordination of layered relationships."),
                 (6, "Shift swap board; integrative medicine team."),
                 (7, "Co-counsel, agent, or matchmaker in deal."),
                 (8, "Debt restructuring; escrow handshake."),
@@ -173,22 +173,22 @@ namespace GeomancyApp
             WaterElement = "Active",
             EarthElement = "Active",
             Anatomy = "The kidneys and lower back",
-            BodyType = "Curved lumbar, graceful neck, voice tuned for harmony; lower back aches when harmony breaks; hands arrange flowers, decks, or UI layouts instinctively.",
-            CharacterType = "Seeks balance; aesthetic judgment sharp; conflict-averse until cornered; romantic ideals high; social grace weaponized kindly.",
+            BodyType = "A gracefully curved lumbar line, a long neck, and a voice naturally tuned to harmony. The lower back tends to register imbalance before the mind acknowledges it, and the hands instinctively arrange whatever materials the day presents—flowers, fabrics, or the surfaces of a room.",
+            CharacterType = "One who seeks equilibrium and possesses a sharp aesthetic judgment. Such a person tends to avoid open conflict until cornered, holds romantic ideals at a high pitch, and uses social grace as a deliberate, kind instrument.",
             Colors = "White, flecked with green",
-            Commentary = @"Puella balances Puer: Venus in Libra, outer air, inner water, with fire, water, and earth active—only air rests. The mirror glyph hints at reciprocity: beauty as negotiation. Older texts stress short-lived joys unless earth's purse and water's feeling stay aligned. The figure is favorable yet fickle; it loves the dance more than the contract. Diviners should weigh whether charm is structure or veneer.",
-            DivinatoryMeaning = "Courtship, décor, diplomacy, fair division, skincare regimens, UX polish, legal settlement that looks elegant. Favorable for first dates and gallery openings; weak for ironclad prenups without other stabilizers.",
+            Commentary = @"Puella stands in counterpoise to Puer: Venus in Libra, outer air over inner water, with fire, water, and earth active and only air at rest. The mirror in the figure's image hints at reciprocity—beauty understood as negotiation. The older authors warn that the joys conferred here can be short-lived unless the purse of earth and the feeling of water remain in alignment. The figure is favorable but inclined to fickleness; it loves the dance more readily than it loves the contract. The practitioner should therefore weigh whether the charm in question is structural or merely a finish.",
+            DivinatoryMeaning = "Courtship, the care of surfaces, diplomacy, the fair division of goods, regimens of grooming, the elegance of a settlement. The figure favors first encounters and occasions that depend on grace, and is weak for instruments such as binding agreements unless other figures supply the necessary weight.",
             Tagline = "Charm, balance, mirrored desire",
             CoreMeaning = new List<string> { "beauty", "reciprocity", "flirtation", "design", "fairness", "seasonal joy" },
             FavorableFor = new List<string> { "Interior design pitch", "Peace treaty signing", "Album art direction", "Couples counseling intake", "Cosmetic procedure consult" },
             UnfavorableFor = new List<string> { "Solo polar expedition", "Brutalist truth serum", "Long bear market grit" },
-            ElementalSynthesis = "Fire, water, earth active; air passive: heat, feeling, and matter co-produce while intellectual distance thins—Libra's scales tip by mood more than memo.",
+            ElementalSynthesis = "Fire, water, and earth all act while air alone is passive: heat, feeling, and matter co-produce, while the cool intellectual distance thins. The scales of Libra here tip by mood more than by memorandum.",
             TraditionalImagery = new List<string> { "Mirror", "Venusian symmetry", "Breast glyph in woodcuts" },
             Interpretation = new List<string>
             {
-                "Puella asks what is being polished for show versus what will hold Monday morning.",
-                "Excellent when art direction or bedside manner changes outcomes; risky when ethics need blunt refusal.",
-                "With Amissio, beauty costs; with Acquisitio, charm attracts backers."
+                "Puella invites the practitioner to ask what is being polished for presentation, and what beneath the polish will hold once the audience departs.",
+                "The figure is excellent where art direction or attentive bearing changes outcomes; it grows risky where ethics require a blunt refusal.",
+                "Paired with Amissio, beauty exacts a cost; paired with Acquisitio, charm attracts the patron willing to underwrite it."
             },
             InHouses = H(
                 (1, "Querent polishes image; charisma carries the ask."),
@@ -201,8 +201,8 @@ namespace GeomancyApp
                 (8, "Elegant divorce settlement; cosmetic inheritance."),
                 (9, "Study abroad romance; museum fellowship."),
                 (10, "Brand relaunch; executive headshot season."),
-                (11, "Galentine energy; Kickstarter pretty page."),
-                (12, "Fantasy life rich; check for escapism.")
+                (11, "A circle of friends gathers around shared aesthetics; a campaign succeeds on presentation."),
+                (12, "An interior fantasy life grows rich; the practitioner should distinguish solace from escape.")
             ),
             InCourtRoles = C(
                 rightWitness: "Origin is the querent's appeal—charm, beauty, or social grace shapes how the matter has been received so far.",
@@ -212,9 +212,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Choosing the Airbnb with better photos—and better hosts",
-                "Dating app match that thrives on voice notes, dies on logistics",
-                "Rebrand that doubles clicks but masks tech debt"
+                "Choosing the lodging whose careful presentation reflects the care of its hosts",
+                "An acquaintance that flourishes in conversation and falters at the first practical demand",
+                "A rebrand that gains attention while leaving the underlying instrument unchanged"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -246,36 +246,36 @@ namespace GeomancyApp
             WaterElement = "Passive",
             EarthElement = "Passive",
             Anatomy = "The genitals and reproductive system",
-            BodyType = "Flushed skin, heavy eyelids, voice drops low when aroused or angry; hips decisive; tattoos or scars tell stories; sweat copper-scented under stress.",
-            CharacterType = "All-in intimacy; jealous streak; party catalyst; sober version channels investigative grit; bored version self-sabotages for drama.",
+            BodyType = "Skin that flushes readily, eyelids that hood under strong feeling, and a voice that drops in register when emotion rises. The hips move with deliberate weight, the body often carries the marks of past intensity, and stress finds a metallic note in the perspiration.",
+            CharacterType = "One who gives intimacy entirely or not at all, with a guarded streak of jealousy and an instinct to set the room in motion. Channeled with discipline, the same force becomes investigative grit; left unchanneled, it can manufacture difficulty for the sake of feeling alive.",
             Colors = "Red, flecked or streaked with brown",
-            Commentary = @"Rubeus is the cup overturned: Mars in Scorpio, outer water, inner air—only air acts while fire rests at the head. Passion without upward outlet smears downward; medieval authors warned it is good in evil and evil in good. The diviner must not moralize lazily: sometimes the figure names necessary surgery, sexual healing, or investigative journalism that burns sources. Air inside steers obsession toward narrative; water outside keeps it tidal.",
-            DivinatoryMeaning = "Sex, intoxication, investigation, purge, riot, detox, BDSM negotiation, ransomware crisis—anything where intensity strips varnish. Favorable when controlled descent into underworld is the cure; terrible for squeaky-clean optics.",
+            Commentary = @"Rubeus is the cup overturned: Mars in Scorpio, outer water over inner air, with only air in motion while fire rests at the head. Passion that finds no upward outlet runs downward, and the medieval authors warned that this figure is good in evil things and evil in good ones. The practitioner must not moralize too quickly: at times Rubeus names a necessary surgery, a long-postponed honesty, or the investigation that will inevitably scorch its sources. The inner air steers obsession into narrative, while the outer water keeps the whole composition tidal.",
+            DivinatoryMeaning = "Intensity that strips the surface from a matter—the encounter that cannot remain decorous, the purge, the investigation, the long-postponed reckoning. The figure favors questions in which a controlled descent is itself the medicine, and disfavors questions that depend on a clean public surface.",
             Tagline = "Spilled cup, underground heat",
             CoreMeaning = new List<string> { "intensity", "purge", "taboo", "nightlife", "investigation", "risk" },
             FavorableFor = new List<string> { "Therapy breakthrough", "Penetration test", "Journalistic exposé", "Radical honesty in affair recovery", "Controlled burn forestry" },
             UnfavorableFor = new List<string> { "IPO roadshow polish", "Visa interview decorum", "Silent retreat vows" },
-            ElementalSynthesis = "Only air active atop passive fire, water, earth: breath and story steer while fuel, feeling, and ground lie inert—pressure cooker until vented.",
+            ElementalSynthesis = "Only air is active above passive fire, water, and earth: breath and story do all the steering while fuel, feeling, and ground stay inert—a pressure vessel that holds until something gives it vent.",
             TraditionalImagery = new List<string> { "Inverted cup", "Scorpionic mars red", "Danger house joy in old texts" },
             Interpretation = new List<string>
             {
-                "Never shame the querent for drawing Rubeus—ask where heat must be honored without scorching dependents.",
-                "With Cauda, endings are messy; with Caput, rebirth through crisis.",
-                "First house Rubeus still demands honesty about motives—without naming any modern author."
+                "The querent who draws Rubeus should never be shamed for it. The proper question is where the heat must be honored, and how it can be honored without scorching the people who depend on the querent.",
+                "Paired with Cauda Draconis, endings tend to be uncontrolled; paired with Caput Draconis, the same intensity becomes the engine of a deliberate rebirth.",
+                "When Rubeus occupies the first house, the figure asks the querent for honesty about motive—truthfully, and without flinching."
             },
             InHouses = H(
-                (1, "Querent magnetizes conflict or desire; mask slips."),
-                (2, "Binge spend, crypto wager, sexual expense."),
-                (3, "Sexting leak risk; brother war."),
-                (4, "Basement mold literal or metaphor; family secret sex."),
-                (5, "Club night, affair spark, horror film joy."),
-                (6, "STD screen, night shift toxicity, trainer pushing too hard."),
-                (7, "Obsessive ex; merger due diligence finds fraud."),
-                (8, "STD/HIV storylines; inheritance fight; kink contract."),
-                (9, "Taboo research; occult initiation; deep web."),
-                (10, "Scandal-boss; whistleblower sexism case."),
-                (11, "Underground rave hopes; friend with benefits politics."),
-                (12, "Addiction spiral; psychiatric hold; revenge porn fear.")
+                (1, "The querent draws conflict and desire to themselves; the public mask begins to slip."),
+                (2, "Spending becomes impulsive—a wager, an indulgence, an expensive emotional release."),
+                (3, "A private message risks exposure; a sibling quarrel turns sharp."),
+                (4, "Something hidden in the home or in the family line surfaces and demands attention."),
+                (5, "An evening of intensity, a romantic spark, a creative work that does not flinch."),
+                (6, "A health concern needing honesty; a workplace whose conditions cannot be ignored."),
+                (7, "An obsessive former tie returns; due diligence on a partnership uncovers what was hidden."),
+                (8, "A contested estate, an unresolved intimacy, a binding decision made under pressure."),
+                (9, "Inquiry into difficult subjects—initiation, taboo material, the harder corners of research."),
+                (10, "A reputational crisis or the exposure of misconduct in a position of authority."),
+                (11, "Friendships entangled with desire; alliances formed below the public surface."),
+                (12, "An old habit reasserts itself; a private fear that has waited too long to be named.")
             ),
             InCourtRoles = C(
                 rightWitness: "Origin is something compromised—the querent walked in with mixed motives, hidden grudge, or substances clouding the question itself.",
@@ -285,9 +285,9 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Glassdoor post naming toxic manager—true, explosive",
-                "Relapse during launch week then honest rehab intake",
-                "Ethical hacker selling zero-day to highest bidder—debated"
+                "A truthful public account of a difficult workplace, which is both accurate and consequential",
+                "A relapse during a high-pressure season followed by honest commitment to recovery",
+                "An exposed vulnerability whose disclosure provokes a difficult ethical debate"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
