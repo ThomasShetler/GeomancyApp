@@ -102,6 +102,14 @@
                         </div>
                     </div>
 
+                    @if (string.Equals(elementKey, "Fire", StringComparison.OrdinalIgnoreCase) && way?.HasClassicalWayOfLight == true)
+                    {
+                        <p class="wop-way-of-light-ribbon" role="note">
+                            <span class="wop-way-of-light-glyph" aria-hidden="true">&#9728;</span>
+                            <span><strong>Way of the Light</strong> — classical Via Ignis: one strong path on active (single-dot) fire. Often read as the heart of the matter; open the path below for the full chain.</span>
+                        </p>
+                    }
+
                     @if (pathCount == 0)
                     {
                         <p class="wop-group-empty">No paths formed - the Judge's @elementKey point does not match either Witness on this line.</p>
@@ -115,10 +123,14 @@
                                 var path = way.AllPaths[idx];
                                 var sel = new WayOfPointsSelection(elementKey, way, path, idx);
                                 var isSel = IsSelected(sel);
-                                <li class="wop-row @(isSel ? "is-selected" : "")"
+                                <li class="wop-row @(isSel ? "is-selected" : "") @(path.IsClassicalWayOfLight ? "is-way-of-light" : "")"
                                     @onclick="() => RaiseSelect(sel)">
                                     <span class="wop-row-bullet" data-path-type="@path.PathType">@PathTypeGlyph(path.PathType)</span>
                                     <span class="wop-row-label">@BuildPathLabel(path)</span>
+                                    @if (path.IsClassicalWayOfLight)
+                                    {
+                                        <span class="wop-row-light-badge" title="Classical Way of the Light on active fire">Light</span>
+                                    }
                                     <span class="wop-row-type @PathTypeChipClass(path.PathType)">@PathTypeShort(path.PathType)</span>
                                 </li>
                             }

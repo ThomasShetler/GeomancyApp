@@ -172,18 +172,23 @@
         </div>
     </div>
 
-    <!-- 2) Horizontal tab strip -->
-    <nav class="mobile-tabstrip" role="tablist">
-        @foreach (var tab in Tabs)
-        {
-            <button type="button"
-                    role="tab"
-                    class="mobile-tab-btn @(activeTab == tab.Id ? "active" : "")"
-                    @onclick="() => SwitchTab(tab.Id)">
-                @tab.Label
-            </button>
-        }
-    </nav>
+    <!-- 2) Tab strip + subtle flow hints (scroll cue + microcopy) -->
+    <div class="mobile-tabstrip-band">
+        <nav class="mobile-tabstrip" role="tablist" aria-label="Workspace sections">
+            @foreach (var tab in Tabs)
+            {
+                <button type="button"
+                        role="tab"
+                        class="mobile-tab-btn @(activeTab == tab.Id ? "active" : "")"
+                        @onclick="() => SwitchTab(tab.Id)">
+                    @tab.Label
+                </button>
+            }
+        </nav>
+        <p class="mobile-flow-hint">
+            Swipe the tab row for more sections. Tap a list row where offered to open details, then use Back to return.
+        </p>
+    </div>
 
     <!-- 3) Detail / list panel -->
     <section class="mobile-panel" role="tabpanel">
@@ -196,6 +201,26 @@
         }
 
         <div class="mobile-panel-body">
+            @if (mobileWelcomeHydrated && !welcomeTipDismissed)
+            {
+                <aside class="mobile-welcome-callout" aria-label="Tips for this screen">
+                    <div class="mobile-welcome-callout-inner">
+                        <div class="mobile-welcome-callout-text">
+                            <span class="mobile-welcome-callout-title">Getting the most from mobile</span>
+                            <span class="mobile-welcome-callout-body">
+                                Use the strip at the very top to show or hide the chart — Mothers, chart type, and Share live there.
+                                Each tab holds a different lens on this reading; scroll the tab row sideways if a label is off-screen.
+                            </span>
+                        </div>
+                        <button type="button"
+                                class="mobile-welcome-callout-dismiss"
+                                @onclick="DismissWelcomeTipAsync"
+                                title="Dismiss this tip">
+                            Got it
+                        </button>
+                    </div>
+                </aside>
+            }
             @switch (activeTab)
             {
                 case WorkspaceTab.CourtAndHouses:
@@ -446,6 +471,10 @@
     // to the top so the chart is always one tap away as an overlay.
     private bool chartCollapsed = false;
 
+    private const string MobileWelcomeStorageKey = "geofancy.mobile.workspaceWelcome.v1";
+    private bool mobileWelcomeHydrated;
+    private bool welcomeTipDismissed;
+
     private void ToggleChartCollapsed() => chartCollapsed = !chartCollapsed;
 
     private string ActiveTabLabel
@@ -539,6 +568,42 @@
                 ? $"Way of Points directory unavailable: {ex.Message}"
                 : errorMessage;
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        try
+        {
+            var stored = await JSRuntime.InvokeAsync<string?>("geofancyReadStorage", MobileWelcomeStorageKey);
+            welcomeTipDismissed = stored == "1";
+        }
+        catch
+        {
+            welcomeTipDismissed = false;
+        }
+
+        mobileWelcomeHydrated = true;
+        StateHasChanged();
+    }
+
+    private async Task DismissWelcomeTipAsync()
+    {
+        welcomeTipDismissed = true;
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("geofancyWriteStorage", MobileWelcomeStorageKey, "1");
+        }
+        catch
+        {
+            // Private mode or blocked storage: tip stays dismissed for this session only.
+        }
+
+        StateHasChanged();
     }
 
     private void ToggleChartType()

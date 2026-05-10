@@ -856,6 +856,19 @@ namespace GeomancyAPI.Handlers
             return baseScore;
         }
 
+        private static WayOfPointsPathResponse ToWayOfPointsPathResponse(WayOfPointsPath p)
+        {
+            return new WayOfPointsPathResponse
+            {
+                Houses = p.Houses ?? new List<int>(),
+                RowReached = p.RowReached,
+                PathType = p.PathType.ToString(),
+                EndpointHouse = p.EndpointHouse,
+                Description = p.Description ?? string.Empty,
+                IsClassicalWayOfLight = p.IsClassicalWayOfLight
+            };
+        }
+
         private static WayOfPointsResultResponse ToWayOfPointsResultResponse(WayOfPointsResult result)
         {
             return new WayOfPointsResultResponse
@@ -863,46 +876,12 @@ namespace GeomancyAPI.Handlers
                 WayName = result.WayName ?? string.Empty,
                 LineType = result.LineType ?? string.Empty,
                 CanBeEstablished = result.CanBeEstablished,
-                AllPaths = result.AllPaths.Select(p => new WayOfPointsPathResponse
-                {
-                    Houses = p.Houses ?? new List<int>(),
-                    RowReached = p.RowReached,
-                    PathType = p.PathType.ToString(),
-                    EndpointHouse = p.EndpointHouse,
-                    Description = p.Description ?? string.Empty
-                }).ToList(),
-                StrongPaths = result.StrongPaths.Select(p => new WayOfPointsPathResponse
-                {
-                    Houses = p.Houses ?? new List<int>(),
-                    RowReached = p.RowReached,
-                    PathType = p.PathType.ToString(),
-                    EndpointHouse = p.EndpointHouse,
-                    Description = p.Description ?? string.Empty
-                }).ToList(),
-                PassivePaths = result.PassivePaths.Select(p => new WayOfPointsPathResponse
-                {
-                    Houses = p.Houses ?? new List<int>(),
-                    RowReached = p.RowReached,
-                    PathType = p.PathType.ToString(),
-                    EndpointHouse = p.EndpointHouse,
-                    Description = p.Description ?? string.Empty
-                }).ToList(),
-                StrongPassivePaths = result.StrongPassivePaths.Select(p => new WayOfPointsPathResponse
-                {
-                    Houses = p.Houses ?? new List<int>(),
-                    RowReached = p.RowReached,
-                    PathType = p.PathType.ToString(),
-                    EndpointHouse = p.EndpointHouse,
-                    Description = p.Description ?? string.Empty
-                }).ToList(),
-                WeakerPassivePaths = result.WeakerPassivePaths.Select(p => new WayOfPointsPathResponse
-                {
-                    Houses = p.Houses ?? new List<int>(),
-                    RowReached = p.RowReached,
-                    PathType = p.PathType.ToString(),
-                    EndpointHouse = p.EndpointHouse,
-                    Description = p.Description ?? string.Empty
-                }).ToList(),
+                HasClassicalWayOfLight = result.HasClassicalWayOfLight,
+                AllPaths = result.AllPaths.Select(ToWayOfPointsPathResponse).ToList(),
+                StrongPaths = result.StrongPaths.Select(ToWayOfPointsPathResponse).ToList(),
+                PassivePaths = result.PassivePaths.Select(ToWayOfPointsPathResponse).ToList(),
+                StrongPassivePaths = result.StrongPassivePaths.Select(ToWayOfPointsPathResponse).ToList(),
+                WeakerPassivePaths = result.WeakerPassivePaths.Select(ToWayOfPointsPathResponse).ToList(),
                 Notes = result.Notes ?? new List<string>()
             };
         }

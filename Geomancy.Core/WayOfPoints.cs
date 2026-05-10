@@ -438,7 +438,40 @@ namespace GeomancyApp
             // Classify the paths
             ClassifyPaths(result, paths);
 
+            MarkClassicalWayOfLightIfApplicable(chart, result, lineType);
+
             return result;
+        }
+
+        /// <summary>
+        /// Classical "Way of the Light" (Via Ignis): exactly one strong fire path where the
+        /// Judge's fire line is active (single dot) and the same active value is carried the
+        /// whole way to the endpoint — often taken as the clearest root-of-the-matter pointer.
+        /// </summary>
+        private static void MarkClassicalWayOfLightIfApplicable(HouseChart chart, WayOfPointsResult result, LineType lineType)
+        {
+            if (lineType != LineType.HeadLine || !result.CanBeEstablished || chart.Judge == null)
+            {
+                return;
+            }
+
+            int judgeFire = GetLineValue(chart.Judge, LineType.HeadLine);
+            if (judgeFire != 1)
+            {
+                return;
+            }
+
+            if (result.StrongPaths.Count != 1)
+            {
+                return;
+            }
+
+            var path = result.StrongPaths[0];
+            path.IsClassicalWayOfLight = true;
+            result.HasClassicalWayOfLight = true;
+            result.Notes.Add(
+                "Classical Way of the Light: Via Ignis shows one strong path entirely on active (single-dot) fire — " +
+                $"often read as the heart of the matter, terminating at House {path.EndpointHouse}.");
         }
 
         /// <summary>

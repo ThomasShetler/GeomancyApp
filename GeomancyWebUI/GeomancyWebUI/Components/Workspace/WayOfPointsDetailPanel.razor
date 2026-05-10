@@ -34,7 +34,13 @@
         var quality = entry?.Quality;
         var polarity = entry?.Polarity;
         var hasPath = Selection.Path != null;
-        var titleText = hasPath ? (pathTypeEntry?.Name ?? PathTypeFallback(Selection.Path!.PathType)) : "Way Summary";
+        var wayOfLightPath = hasPath && Selection.Path!.IsClassicalWayOfLight;
+        var fireSummaryLight = !hasPath
+            && string.Equals(Selection.ElementId, "Fire", StringComparison.OrdinalIgnoreCase)
+            && Selection.Way.HasClassicalWayOfLight;
+        var titleText = wayOfLightPath
+            ? "Way of the Light"
+            : hasPath ? (pathTypeEntry?.Name ?? PathTypeFallback(Selection.Path!.PathType)) : "Way Summary";
         var endpointPill = hasPath ? EndpointPill(Selection.Path!) : (Selection.Way.CanBeEstablished ? "Established" : "Not Established");
 
         <header class="wop-detail-header">
@@ -46,7 +52,7 @@
                 </h2>
                 <p class="kind-subtitle">@latin@(string.IsNullOrEmpty(entry?.LineName) ? "" : $" · {entry!.LineName}")</p>
             </div>
-            <div class="header-score-pill @(hasPath ? PathTypeChipClass(Selection.Path!.PathType) : (Selection.Way.CanBeEstablished ? "pill-established" : "pill-not-established"))">
+            <div class="header-score-pill @(wayOfLightPath ? "pill-way-of-light" : (hasPath ? PathTypeChipClass(Selection.Path!.PathType) : (Selection.Way.CanBeEstablished ? "pill-established" : "pill-not-established")))">
                 @endpointPill
             </div>
         </header>
@@ -85,7 +91,36 @@
             {
                 <span class="chip chip-meta">@polarity</span>
             }
+            @if (wayOfLightPath || fireSummaryLight)
+            {
+                <span class="chip chip-way-of-light">&#9728; Way of the Light</span>
+            }
         </div>
+
+        @if (wayOfLightPath || fireSummaryLight)
+        {
+            <section class="detail-card way-of-light-card" aria-label="Classical fire path">
+                <h3 class="card-title">
+                    <span class="card-title-icon">&#9728;</span> Classical Via Ignis
+                </h3>
+                @if (wayOfLightPath)
+                {
+                    <p class="way-of-light-lead">
+                        This is the <strong>Way of the Light</strong> in this chart: Via Puncti Ignis with exactly one strong path,
+                        and every figure along it shows <strong>active</strong> fire (a single dot on the head line). Many readers treat that
+                        as the clearest pointer to the <strong>root or heart of the matter</strong>, landing at
+                        <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>.
+                    </p>
+                }
+                else
+                {
+                    <p class="way-of-light-lead">
+                        The <strong>Way of the Light</strong> is present on Fire: one strong path entirely on active (single-dot) fire.
+                        Select the path row marked <strong>Light</strong> in the list to open the full chain and endpoint reading.
+                    </p>
+                }
+            </section>
+        }
 
         @* Mechanism card: visualizes either the path graph or the gating mechanism. *@
         <section class="detail-card mechanism-card">
@@ -94,7 +129,7 @@
             </h3>
             @if (hasPath)
             {
-                <div class="mechanism-graph">
+                <div class="mechanism-graph @(wayOfLightPath ? "is-way-of-light-graph" : "")">
                     @{
                         var nodes = BuildPathNodes(Selection.Path!);
                     }
@@ -118,6 +153,10 @@
                 <p class="mechanism-tail">
                     Endpoint <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>
                     on Row @Selection.Path.RowReached.
+                    @if (wayOfLightPath)
+                    {
+                        <span class="way-of-light-tail-note"> Active fire (single dot) is maintained from Judge through this chain.</span>
+                    }
                 </p>
             }
             else

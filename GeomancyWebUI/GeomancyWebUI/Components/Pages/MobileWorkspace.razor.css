@@ -56,7 +56,25 @@
 .mobile-chart-drawer {
     position: relative;
     flex: 0 0 2.2rem;
+    /*
+     * z-index only while expanded: a constant z-index here kept the entire
+     * drawer subtree (including the fixed full-screen .mobile-chart-body)
+     * stacked above .mobile-tabstrip / .mobile-panel even when the chart
+     * was collapsed, which blocked taps/scroll on some mobile browsers.
+     */
+}
+
+.mobile-chart-drawer.is-expanded {
     z-index: 20;
+}
+
+/* Collapsed: never steal events from the tab strip or panel below. */
+.mobile-chart-drawer.is-collapsed {
+    pointer-events: none;
+}
+
+.mobile-chart-drawer.is-collapsed .mobile-chart-handle {
+    pointer-events: auto;
 }
 
 /* Always-visible handle pinned to the viewport just below the nav. Using
@@ -155,6 +173,8 @@
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
+    /* Sit below .mobile-tabstrip / .mobile-panel when drawer is not expanded. */
+    z-index: 1;
 }
 
 .mobile-chart-drawer.is-expanded .mobile-chart-body {
@@ -383,10 +403,22 @@
 }
 
 /* ============================================================
- * 2) Horizontal tab strip
+ * 2) Horizontal tab strip + flow hint
  * ============================================================ */
+
+/* Keeps tab row + hint stacked above the chart overlay when collapsed. */
+.mobile-tabstrip-band {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 .mobile-tabstrip {
     flex: 0 0 auto;
+    position: relative;
     display: flex;
     gap: 0.4rem;
     padding: 0.4rem 0.5rem;
@@ -399,6 +431,31 @@
     background: var(--bg-secondary);
     /* Hide the scrollbar (kept scrollable via touch / wheel). */
     scrollbar-width: none;
+    /* Subtle fade on the right edge suggests more tabs off-screen. */
+    mask-image: linear-gradient(
+        to right,
+        #000 0%,
+        #000 min(92%, calc(100% - 2rem)),
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0%,
+        #000 min(92%, calc(100% - 2rem)),
+        transparent 100%
+    );
+}
+
+.mobile-flow-hint {
+    margin: 0;
+    padding: 0.32rem 0.65rem 0.4rem;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    text-align: center;
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary));
+    border-bottom: 1px solid var(--border-color);
+    letter-spacing: 0.015em;
 }
 
 .mobile-tabstrip::-webkit-scrollbar {
@@ -439,6 +496,8 @@
  * ============================================================ */
 .mobile-panel {
     flex: 1 1 auto;
+    position: relative;
+    z-index: 12;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -494,6 +553,66 @@
     padding: 0.5rem;
     box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
+}
+
+/* One-time (dismissible) orientation card; storage key in MobileWorkspace.razor */
+.mobile-welcome-callout {
+    flex-shrink: 0;
+    margin: 0 0 0.65rem 0;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, var(--border-color));
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent-color) 7%, var(--bg-secondary));
+    box-shadow: 0 1px 5px var(--shadow);
+}
+
+.mobile-welcome-callout-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.6rem 0.65rem;
+}
+
+.mobile-welcome-callout-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.mobile-welcome-callout-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-color);
+}
+
+.mobile-welcome-callout-body {
+    font-size: 0.78rem;
+    line-height: 1.42;
+    color: var(--text-primary);
+}
+
+.mobile-welcome-callout-dismiss {
+    flex: 0 0 auto;
+    align-self: center;
+    border: 1px solid var(--accent-color);
+    background: transparent;
+    color: var(--accent-color);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+}
+
+.mobile-welcome-callout-dismiss:hover,
+.mobile-welcome-callout-dismiss:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    outline: none;
 }
 
 /* Make the embedded components fill the panel width on mobile. They were

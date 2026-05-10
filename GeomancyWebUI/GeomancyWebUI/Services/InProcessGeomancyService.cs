@@ -367,6 +367,7 @@ namespace GeomancyWebUI.Services
                 PathType = src.PathType ?? string.Empty,
                 EndpointHouse = src.EndpointHouse,
                 Description = src.Description ?? string.Empty,
+                IsClassicalWayOfLight = src.IsClassicalWayOfLight,
             };
         }
 
@@ -379,6 +380,7 @@ namespace GeomancyWebUI.Services
                 WayName = src.WayName ?? string.Empty,
                 LineType = src.LineType ?? string.Empty,
                 CanBeEstablished = src.CanBeEstablished,
+                HasClassicalWayOfLight = src.HasClassicalWayOfLight,
                 AllPaths = src.AllPaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
                 StrongPaths = src.StrongPaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
                 PassivePaths = src.PassivePaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),

@@ -330,6 +330,7 @@ namespace GeomancyAPI.Models
         public string PathType { get; set; }
         public int EndpointHouse { get; set; }
         public string Description { get; set; }
+        public bool IsClassicalWayOfLight { get; set; }
     }
 
     public class WayOfPointsResultResponse
@@ -337,6 +338,7 @@ namespace GeomancyAPI.Models
         public string WayName { get; set; }
         public string LineType { get; set; }
         public bool CanBeEstablished { get; set; }
+        public bool HasClassicalWayOfLight { get; set; }
         public List<WayOfPointsPathResponse> AllPaths { get; set; } = new List<WayOfPointsPathResponse>();
         public List<WayOfPointsPathResponse> StrongPaths { get; set; } = new List<WayOfPointsPathResponse>();
         public List<WayOfPointsPathResponse> PassivePaths { get; set; } = new List<WayOfPointsPathResponse>();

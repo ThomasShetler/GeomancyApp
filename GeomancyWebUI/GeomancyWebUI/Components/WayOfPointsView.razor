@@ -365,6 +365,14 @@ else
         builder.AddAttribute(5, "class", $"badge bg-{colorClass} mb-2");
         builder.AddContent(6, path.PathType);
         builder.CloseElement();
+
+        if (path.IsClassicalWayOfLight)
+        {
+            builder.OpenElement(200, "span");
+            builder.AddAttribute(201, "class", "badge bg-warning text-dark ms-1 mb-2");
+            builder.AddContent(202, "Way of the Light");
+            builder.CloseElement();
+        }
         
         // Path Chain - Build full path including Judge (no figure names in path)
         if (path.Houses != null && path.Houses.Count > 0)

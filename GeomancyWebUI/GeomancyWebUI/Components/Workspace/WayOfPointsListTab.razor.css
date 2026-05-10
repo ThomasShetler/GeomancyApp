@@ -296,6 +296,27 @@
     line-height: 1.35;
 }
 
+.wop-way-of-light-ribbon {
+    margin: 0.15rem 0.35rem 0.35rem;
+    padding: 0.38rem 0.55rem;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    background: linear-gradient(90deg, rgba(255, 223, 130, 0.28), rgba(255, 193, 7, 0.08));
+    border: 1px solid rgba(255, 193, 7, 0.45);
+    border-radius: 8px;
+    display: flex;
+    gap: 0.45rem;
+    align-items: flex-start;
+}
+
+.wop-way-of-light-glyph {
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    color: #daa520;
+}
+
 .wop-rows {
     list-style: none;
     margin: 0;
@@ -327,6 +348,25 @@
 .wop-row.is-selected .wop-row-label {
     color: var(--wop-element-color, var(--accent-color));
     font-weight: 600;
+}
+
+.wop-row.is-way-of-light {
+    border-color: rgba(255, 193, 7, 0.45);
+    background: linear-gradient(90deg, rgba(255, 223, 130, 0.12), transparent);
+}
+
+.wop-row-light-badge {
+    flex-shrink: 0;
+    font-size: 0.58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 999px;
+    color: #7a5a00;
+    border: 1px solid rgba(255, 193, 7, 0.65);
+    background: rgba(255, 223, 130, 0.35);
+    line-height: 1.2;
 }
 
 .wop-row-bullet {

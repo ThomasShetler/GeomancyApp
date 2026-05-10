@@ -42,6 +42,12 @@ namespace GeomancyApp
         /// Description of the path for notes
         /// </summary>
         public string Description { get; set; } = string.Empty;
+
+        /// <summary>
+        /// True when this path is the classical Via Ignis "Way of the Light":
+        /// a single strong fire path with an active (single-dot) fire line at every step.
+        /// </summary>
+        public bool IsClassicalWayOfLight { get; set; }
     }
 
     /// <summary>
@@ -88,6 +94,12 @@ namespace GeomancyApp
         /// List of weaker passive paths (only reach row 2 when there are 3+ paths and mixed rows)
         /// </summary>
         public List<WayOfPointsPath> WeakerPassivePaths { get; set; } = new List<WayOfPointsPath>();
+
+        /// <summary>
+        /// True when Via Puncti Ignis presents exactly one strong path entirely on active (single-dot) fire.
+        /// Traditionally read as the "Way of the Light" / heart of the matter on the fire line.
+        /// </summary>
+        public bool HasClassicalWayOfLight { get; set; }
 
         /// <summary>
         /// Notes and descriptions about the calculation
