@@ -58,9 +58,11 @@
                 class="mobile-chart-handle"
                 @onclick="ToggleChartCollapsed"
                 aria-expanded="@((!chartCollapsed).ToString().ToLower())"
-                title="@(chartCollapsed ? "Show chart" : "Hide chart")">
+                title="@(chartCollapsed ? "Show chart" : "Hide chart and show details")">
             <span class="handle-grip"></span>
-            <span class="handle-label">@(chartCollapsed ? "Show chart" : "Hide chart")</span>
+            <span class="handle-label">
+                @(chartCollapsed ? "Show chart" : "Hide chart \u00B7 Show details")
+            </span>
             <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
         </button>
 

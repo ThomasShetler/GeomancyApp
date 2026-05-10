@@ -49,20 +49,30 @@
  * 1) Chart drawer (handle + overlay body)
  * ============================================================ */
 
-/* Drawer wrapper. Only the handle takes layout space; the body is an
-   absolute overlay anchored to .mobile-shell so it never pushes the
-   tabstrip + panel down when expanded. */
+/* Drawer wrapper. Reserves a fixed 2.2rem strip in the .mobile-shell flex
+   layout that the (separately fixed-positioned) handle occupies visually,
+   so the tabstrip + panel below start at the right offset whether the
+   chart is expanded or collapsed. */
 .mobile-chart-drawer {
     position: relative;
-    flex: 0 0 auto;
+    flex: 0 0 2.2rem;
     z-index: 20;
 }
 
-/* Always-visible thin handle; the only chart-area element that takes
-   real layout space. Tapping it flips chartCollapsed. */
+/* Always-visible handle pinned to the viewport just below the nav. Using
+   position: fixed (instead of riding the .mobile-shell flow) guarantees the
+   button is reachable in every state - chart expanded or collapsed, URL bar
+   visible or hidden, panel scrolled or not. z-index: 30 places it above the
+   chart body (z-index: 25) so it sits *on top of* the overlay's top edge,
+   visually anchoring the drawer like a sheet handle. */
 .mobile-chart-handle {
-    width: 100%;
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
+    right: 0;
     height: 2.2rem;
+    z-index: 30;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,6 +86,14 @@
     cursor: pointer;
     user-select: none;
     transition: background-color 0.15s ease;
+}
+
+/* In the expanded state lift the handle visually onto the chart sheet so it
+   reads as the sheet's own header rather than an unrelated nav strip. */
+.mobile-chart-drawer.is-expanded .mobile-chart-handle {
+    background: var(--bg-primary);
+    box-shadow: 0 2px 8px var(--shadow);
+    border-bottom-color: var(--accent-color);
 }
 
 .mobile-chart-handle:hover,
