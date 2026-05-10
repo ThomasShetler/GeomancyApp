@@ -139,6 +139,46 @@
     font-weight: 600;
 }
 
+/* Compact trust bullets under “About Geofancy” on the home page */
+.landing-trust-points {
+    margin: 1.25rem 0 0;
+    padding: 0.85rem 1rem 0.85rem 1.35rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 8px var(--shadow);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.landing-trust-points li {
+    margin-bottom: 0.45rem;
+}
+
+.landing-trust-points li:last-child {
+    margin-bottom: 0;
+}
+
+.landing-trust-points strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.landing-about-more {
+    margin: 1.25rem 0 0;
+}
+
+.landing-about-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.landing-about-link:hover {
+    text-decoration: underline;
+}
+
 .landing-features {
     list-style: none;
     margin: 0;
