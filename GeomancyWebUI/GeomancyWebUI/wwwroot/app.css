@@ -51,6 +51,14 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+/* When the /mobile route is active the .mobile-shell needs the full viewport
+   to fit its 100dvh - nav math; the article wrapper's chrome padding (px-4 +
+   the .content padding-top above) eats screen real estate that the
+   chart overlay then has to scroll around. Drop all of it on /mobile. */
+article.content:has(.mobile-shell) {
+    padding: 0 !important;
+}
+
 h1:focus {
     outline: none;
 }

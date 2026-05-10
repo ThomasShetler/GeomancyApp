@@ -100,17 +100,23 @@
     transform: translateY(-1px);
 }
 
-/* The chart body is an OVERLAY: absolutely positioned over the
-   tabstrip + panel below the handle. It stays mounted in the DOM
-   when collapsed (so ChartSurface's circuit isn't torn down), but
-   is faded + scaled out and made non-interactive. */
+/* The chart body is a FULL-VIEWPORT OVERLAY: position: fixed anchors it to
+   the viewport (not just the shell) so it can claim every pixel from the
+   nav strip to the bottom edge regardless of where in the page the user
+   has scrolled. Stays mounted in the DOM when collapsed (so ChartSurface's
+   circuit isn't torn down), but is faded + scaled out and non-interactive.
+   No internal scrolling: .mobile-chart-stage uses transform: scale() to
+   guarantee the chart always fits the available square region, even on
+   narrow phones, without compromising figure proportions. */
 .mobile-chart-body {
-    position: absolute;
-    top: 2.2rem; /* sits directly under the handle */
+    position: fixed;
+    top: calc(3.5rem + 2.2rem);    /* below nav (3.5rem) + handle (2.2rem) */
     left: 0;
     right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.4rem;
     padding: 0.5rem;
     box-sizing: border-box;
@@ -121,14 +127,7 @@
     transition: transform 0.22s ease, opacity 0.22s ease,
                 visibility 0s linear 0.22s;
     z-index: 25;
-    /* Chart has a hard 435x435 minimum (see .mobile-chart-stage). On
-       viewports narrower or shorter than that the overlay scrolls to keep
-       the chart legible rather than letting the SVG render compress and
-       break visually. */
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    max-height: calc(100dvh - 5.7rem); /* leave room for top nav + handle */
+    overflow: hidden;
 }
 
 .mobile-chart-drawer.is-collapsed .mobile-chart-body {
@@ -190,33 +189,48 @@
     letter-spacing: 0.06em;
 }
 
-/* Square stage for the chart. Two hard constraints:
-     - min 435x435: below this size the SVG glyphs / labels collide and the
-       chart renders break visually, so we pin a floor and let the parent
-       overlay scroll on viewports narrower than that.
-     - max 65dvh tall: keeps the chart from running off the bottom of tall
-       phones once the overlay also has to fit a toolbar.
-   ChartSurface paints its own SVG inside this box. */
+/* Square stage that always fits the available viewport region without
+   ever requiring the user to scroll inside the overlay. Strategy:
+     1. --chart-fit picks the smaller of (viewport width minus a tiny
+        gutter), (vertical room left in the overlay after the toolbar),
+        and a 70dvh ceiling so the chart never dominates a tall phone.
+     2. The hosted ChartSurface is rendered at a fixed comfortable
+        480x480 native size (well above the ~435 "things start to break"
+        threshold the user observed), then transform: scale()'d down by
+        the ratio --chart-fit/480 so the rendered output fits exactly
+        the calculated stage size.
+   This preserves figure proportions and glyph sharpness on every phone
+   from a 360px-wide budget device up to a tablet, with zero compression
+   artifacts and zero internal scrolling. */
 .mobile-chart-stage {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    min-width: 435px;
-    min-height: 435px;
-    max-height: 65dvh;
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - 2.2rem - 5rem),
+        70dvh
+    );
+    width: var(--chart-fit);
+    height: var(--chart-fit);
     margin: 0 auto;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
 }
 
-/* The hosted ChartSurface paints inside this stage. Use ::deep so the
-   isolation-scoped selector still reaches into the child component. */
+/* Render the hosted ChartSurface at a fixed roomy native size, then
+   visually scale it to fit the stage. Layout-wise the inner element
+   stays 480x480 (overflowing the stage), which the parent's
+   overflow: hidden clips - but visually the scale() ensures it fits
+   exactly. ::deep is required because ChartSurface is a child component. */
 .mobile-chart-stage ::deep > * {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
+    width: 480px !important;
+    height: 480px !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    transform: scale(calc(var(--chart-fit) / 480px));
 }
 
 /* ============================================================
