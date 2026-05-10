@@ -1,10 +1,14 @@
 # Notice
 
+Copyright (c) 2026 Thomas Shetler
+
+> Required Notice: Copyright (c) 2026 Thomas Shetler (https://github.com/ThomasShetler/GeomancyApp)
+
 Geofancy is a single product distributed under two complementary licenses to reflect the two kinds of work it contains.
 
 ## Source code
 
-All `.cs`, `.razor`, `.razor.cs`, `.razor.css`, `.css`, `.js`, `.csproj`, `.sln`, `Dockerfile`, and other source-code artifacts are licensed under the **PolyForm Noncommercial License 1.0.0**. See [LICENSE](LICENSE) for the full text.
+All `.cs`, `.razor`, `.razor.cs`, `.razor.css`, `.css`, `.js`, `.csproj`, `.sln`, `Dockerfile`, and other source-code artifacts are licensed under the **PolyForm Noncommercial License 1.0.0** (SPDX identifier `PolyForm-Noncommercial-1.0.0`). See [LICENSE](LICENSE) for the full text.
 
 In short: you may read, fork, study, and modify the code for personal and noncommercial purposes. You may not use it as part of any commercial offering, hosted service, or paid product without a separate commercial license from the author.
 

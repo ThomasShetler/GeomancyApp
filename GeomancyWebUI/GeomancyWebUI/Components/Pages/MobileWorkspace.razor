@@ -77,6 +77,63 @@
                 <span class="mobile-chart-type-label">@CurrentChartTypeLabel</span>
             </div>
 
+            <!--
+                Four large Mother input cells, displayed left -> right as
+                4th, 3rd, 2nd, 1st (the same right-to-left reading order
+                that the in-chart Mother row uses). Each cell hosts the same
+                FigureContainer the chart uses, bound to the same houseNFigure
+                instance and the same OnHouseNChanged handler - so taps here
+                and taps on the chart mutate identical state and trigger the
+                same regeneration pipeline. These exist because the in-chart
+                Mother taps are tiny on small phones; the strip gives users
+                full-width, thumb-sized targets while keeping the chart and
+                everything else in lockstep.
+            -->
+            <div class="mobile-mother-inputs"
+                 role="group"
+                 aria-label="Set the four Mothers">
+                <div class="mobile-mother-cell">
+                    <div class="mobile-mother-label">Fourth Mother</div>
+                    <div class="mobile-mother-figure">
+                        <FigureContainer Figure="@house4Figure"
+                                         IsInteractive="true"
+                                         ShowFigureName="true"
+                                         ShowHouseStrength="false"
+                                         OnFigureChanged="OnHouse4Changed" />
+                    </div>
+                </div>
+                <div class="mobile-mother-cell">
+                    <div class="mobile-mother-label">Third Mother</div>
+                    <div class="mobile-mother-figure">
+                        <FigureContainer Figure="@house3Figure"
+                                         IsInteractive="true"
+                                         ShowFigureName="true"
+                                         ShowHouseStrength="false"
+                                         OnFigureChanged="OnHouse3Changed" />
+                    </div>
+                </div>
+                <div class="mobile-mother-cell">
+                    <div class="mobile-mother-label">Second Mother</div>
+                    <div class="mobile-mother-figure">
+                        <FigureContainer Figure="@house2Figure"
+                                         IsInteractive="true"
+                                         ShowFigureName="true"
+                                         ShowHouseStrength="false"
+                                         OnFigureChanged="OnHouse2Changed" />
+                    </div>
+                </div>
+                <div class="mobile-mother-cell">
+                    <div class="mobile-mother-label">First Mother</div>
+                    <div class="mobile-mother-figure">
+                        <FigureContainer Figure="@house1Figure"
+                                         IsInteractive="true"
+                                         ShowFigureName="true"
+                                         ShowHouseStrength="false"
+                                         OnFigureChanged="OnHouse1Changed" />
+                    </div>
+                </div>
+            </div>
+
             <div class="mobile-chart-stage">
                 <ChartSurface Chart="@houseChart"
                               House1Figure="@house1Figure"

@@ -1,0 +1,47 @@
+<Project>
+
+  <!--
+    Repo-wide build properties picked up automatically by every
+    Microsoft.NET.Sdk project below this directory. Drives version
+    metadata baked into every SDK-style assembly so the AssemblyVersion,
+    FileVersion, and InformationalVersion all line up with the
+    user-facing "Geofancy v0.1.0-beta" release.
+
+    Legacy classic-format projects (GeomancyApp, GeomancyAPI,
+    GeomancyUnitTesting) do not consume Directory.Build.props for
+    version attributes - they read them from Properties\AssemblyInfo.cs
+    instead, so those three files have been updated in lockstep.
+
+    The GeofancyVersion static class in Geomancy.Core exposes the same
+    display string at runtime for UI surfaces (the home page version
+    chip, future "About" box, etc).
+
+    *** When bumping the version, edit ALL THREE places: ***
+      1) This file (.<Version>)
+      2) Geomancy.Core\GeofancyVersion.cs (Display, ReleaseDate)
+      3) GeomancyApp\Properties\AssemblyInfo.cs +
+         GeomancyAPI\Properties\AssemblyInfo.cs +
+         GeomancyUnitTesting\Properties\AssemblyInfo.cs
+  -->
+
+  <PropertyGroup>
+    <!-- User-facing semver. Drives AssemblyVersion / FileVersion as
+         numeric-only 0.1.0.0, and is also exposed verbatim via
+         InformationalVersion so consumers see "0.1.0-beta" cleanly. -->
+    <Version>0.1.0-beta</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <InformationalVersion>0.1.0-beta</InformationalVersion>
+
+    <!-- The SDK otherwise appends "+<git-sha>" to InformationalVersion
+         which makes the runtime string ugly. Suppress that and let
+         InformationalVersion above stand on its own. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+
+    <Authors>Thomas Shetler</Authors>
+    <Company>Thomas Shetler</Company>
+    <Product>Geofancy</Product>
+    <Copyright>Copyright (c) 2026 Thomas Shetler</Copyright>
+  </PropertyGroup>
+
+</Project>
