@@ -136,7 +136,9 @@
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.5rem;
+    /* Extra bottom padding gives the Mother input strip breathing room
+       from the drawer's bottom edge instead of sitting flush against it. */
+    padding: 0.5rem 0.5rem 0.95rem;
     box-sizing: border-box;
     background: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
@@ -225,13 +227,15 @@
          - 3.5rem  top nav
          - 2.2rem  chart drawer handle
          - 2.4rem  chart toolbar (Switch Chart Type + label)
-         - 7.5rem  Mother input strip (label + 4 lines + name + cell padding)
-         - 1.2rem  body padding + flex gaps
-       Total ~16.8rem. The 70dvh ceiling still applies on tall phones so the
-       chart never dominates the screen even when there's headroom. */
+         - ~9.5rem Mother input strip (label + 4 compact lines + name + padding)
+         - ~1.6rem body padding + flex gaps + bottom breathing room
+       Total ~19.2rem -> the chart-fit subtracts a single rounded 11rem on top
+       of nav + handle to reserve room for the toolbar + strip + bottom gap.
+       The 70dvh ceiling still applies on tall phones so the chart never
+       dominates the screen even when there is headroom. */
     --chart-fit: min(
         calc(100dvw - 1rem),
-        calc(100dvh - 3.5rem - 2.2rem - 13rem),
+        calc(100dvh - 3.5rem - 2.2rem - 11rem),
         70dvh
     );
     width: var(--chart-fit);
@@ -274,7 +278,7 @@
     flex-direction: column;
     align-items: stretch;
     min-width: 0;
-    padding: 0.3rem 0.25rem;
+    padding: 0.2rem 0.2rem;
     border: 1px solid var(--border-color);
     border-radius: 10px;
     background: var(--bg-secondary);
@@ -282,14 +286,15 @@
     text-align: center;
 }
 
+/* Latin house name (e.g. Vita, Lucrum). Title-case rather than ALL CAPS
+   so a longer name like "Benefacta" or "Itineris" stays legible at the
+   compact font size. */
 .mobile-mother-label {
-    font-size: 0.66rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--accent-color);
-    line-height: 1.1;
-    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+    line-height: 1.05;
+    margin-bottom: 0.15rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -312,7 +317,7 @@
     width: 100%;
     height: 100%;
     min-height: 0;
-    padding: 0.25rem;
+    padding: 0.18rem;
     border: none;
     background: transparent;
     box-shadow: none;
@@ -327,15 +332,17 @@
 }
 
 .mobile-mother-figure ::deep .figure-lines {
-    gap: 3px;
+    gap: 2px;
     flex: 1 1 auto;
     justify-content: center;
 }
 
+/* 26px tap rows comfortably exceed the 24px adjacent-target floor while
+   shaving a few rem of strip height vs. the previous 32px lines. */
 .mobile-mother-figure ::deep .figure-line {
-    font-size: 1rem;
-    min-height: 32px;
-    height: 32px;
+    font-size: 0.9rem;
+    min-height: 26px;
+    height: 26px;
     line-height: 1;
 }
 
@@ -348,11 +355,11 @@
 }
 
 .mobile-mother-figure ::deep .figure-name {
-    font-size: 0.7rem;
-    margin-top: 0.2rem;
-    line-height: 1.15;
+    font-size: 0.62rem;
+    margin-top: 0.1rem;
+    line-height: 1.1;
     word-break: break-word;
-    color: var(--text-primary);
+    color: var(--text-secondary);
     font-style: normal;
     font-weight: 600;
 }

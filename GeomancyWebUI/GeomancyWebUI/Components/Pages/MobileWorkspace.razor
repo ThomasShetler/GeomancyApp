@@ -91,25 +91,27 @@
             </div>
 
             <!--
-                Four large Mother input cells, displayed left -> right as
-                4th, 3rd, 2nd, 1st (the same right-to-left reading order
+                Four compact Mother input cells, displayed left -> right as
+                houses 4, 3, 2, 1 (the same right-to-left reading order
                 that the in-chart Mother row uses). Sits below the chart so
                 the chart stays the visual focus when the drawer opens and
                 the user's thumb naturally lands on the inputs. Each cell
                 hosts the same FigureContainer the chart uses, bound to the
                 same houseNFigure instance and the same OnHouseNChanged
                 handler - so taps here and taps on the chart mutate identical
-                state and trigger the same regeneration pipeline. These
-                exist because the in-chart Mother taps are tiny on small
-                phones; the strip gives users full-width, thumb-sized
-                targets while keeping the chart and everything else in
-                lockstep.
+                state and trigger the same regeneration pipeline.
+
+                Labels are pulled from the houseNames dictionary in code
+                (Vita / Lucrum / Fratres / Genitor) so the strip stays in
+                sync with any future renames in one place.
             -->
             <div class="mobile-mother-inputs"
                  role="group"
                  aria-label="Set the four Mothers">
                 <div class="mobile-mother-cell">
-                    <div class="mobile-mother-label">Fourth Mother</div>
+                    <div class="mobile-mother-label" title="House 4 - @houseNames[4]">
+                        @houseNames[4]
+                    </div>
                     <div class="mobile-mother-figure">
                         <FigureContainer Figure="@house4Figure"
                                          IsInteractive="true"
@@ -119,7 +121,9 @@
                     </div>
                 </div>
                 <div class="mobile-mother-cell">
-                    <div class="mobile-mother-label">Third Mother</div>
+                    <div class="mobile-mother-label" title="House 3 - @houseNames[3]">
+                        @houseNames[3]
+                    </div>
                     <div class="mobile-mother-figure">
                         <FigureContainer Figure="@house3Figure"
                                          IsInteractive="true"
@@ -129,7 +133,9 @@
                     </div>
                 </div>
                 <div class="mobile-mother-cell">
-                    <div class="mobile-mother-label">Second Mother</div>
+                    <div class="mobile-mother-label" title="House 2 - @houseNames[2]">
+                        @houseNames[2]
+                    </div>
                     <div class="mobile-mother-figure">
                         <FigureContainer Figure="@house2Figure"
                                          IsInteractive="true"
@@ -139,7 +145,9 @@
                     </div>
                 </div>
                 <div class="mobile-mother-cell">
-                    <div class="mobile-mother-label">First Mother</div>
+                    <div class="mobile-mother-label" title="House 1 - @houseNames[1]">
+                        @houseNames[1]
+                    </div>
                     <div class="mobile-mother-figure">
                         <FigureContainer Figure="@house1Figure"
                                          IsInteractive="true"
