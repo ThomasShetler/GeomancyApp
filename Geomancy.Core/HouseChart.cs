@@ -78,34 +78,8 @@ namespace GeomancyApp
             var figureData = FigureData.GetFigureByElementalPattern(headLine, neckLine, bodyLine, footLine);
             if (figureData != null)
             {
-                // Copy all properties from the found figure
-                FigureID = figureData.FigureID;
-                Name = figureData.Name;
-                OtherNames = figureData.OtherNames;
-                Quality = figureData.Quality;
-                Keyword = figureData.Keyword;
-                Imagery = figureData.Imagery;
-                StrongHouse = figureData.StrongHouse;
-                StrongHouseID = figureData.StrongHouseID;
-                WeakHouse = figureData.WeakHouse;
-                WeakHouseID = figureData.WeakHouseID;
-                Planet = figureData.Planet;
-                Sign = figureData.Sign;
-                InnerEl = figureData.InnerEl;
-                OuterEl = figureData.OuterEl;
-                FireElement = figureData.FireElement;
-                AirElement = figureData.AirElement;
-                WaterElement = figureData.WaterElement;
-                EarthElement = figureData.EarthElement;
-                Anatomy = figureData.Anatomy;
-                BodyType = figureData.BodyType;
-                CharacterType = figureData.CharacterType;
-                Colors = figureData.Colors;
-                Commentary = figureData.Commentary;
-                DivinatoryMeaning = figureData.DivinatoryMeaning;
+                FigureData.CopyFigureMetadata(this, figureData);
                 FigureName = figureData.Name;
-                
-                // Calculate and set house strength (only for houses 1-12)
                 CalculateHouseStrength();
             }
         }
@@ -119,36 +93,8 @@ namespace GeomancyApp
             var figureData = FigureData.GetFigureByName(figureName);
             if (figureData != null)
             {
-                // Copy all properties from the found figure
-                FigureID = figureData.FigureID;
-                Name = figureData.Name;
-                OtherNames = figureData.OtherNames;
-                Quality = figureData.Quality;
-                Keyword = figureData.Keyword;
-                Imagery = figureData.Imagery;
-                StrongHouse = figureData.StrongHouse;
-                StrongHouseID = figureData.StrongHouseID;
-                WeakHouse = figureData.WeakHouse;
-                WeakHouseID = figureData.WeakHouseID;
-                Planet = figureData.Planet;
-                Sign = figureData.Sign;
-                InnerEl = figureData.InnerEl;
-                OuterEl = figureData.OuterEl;
-                FireElement = figureData.FireElement;
-                AirElement = figureData.AirElement;
-                WaterElement = figureData.WaterElement;
-                EarthElement = figureData.EarthElement;
-                Anatomy = figureData.Anatomy;
-                BodyType = figureData.BodyType;
-                CharacterType = figureData.CharacterType;
-                Colors = figureData.Colors;
-                Commentary = figureData.Commentary;
-                DivinatoryMeaning = figureData.DivinatoryMeaning;
-                
-                // Set the elemental lines based on the figure's pattern
+                FigureData.CopyFigureMetadata(this, figureData);
                 SetElementalLinesFromFigure(figureData);
-                
-                // Calculate and set house strength (only for houses 1-12)
                 CalculateHouseStrength();
             }
         }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using GeomancyWebUI.Client.Models;
 using GeomancyWebUI.Client.Services;
 using ContractModels = GeomancyAPI.Models;
@@ -212,6 +214,22 @@ namespace GeomancyWebUI.Services
                 Commentary = src.Commentary ?? string.Empty,
                 DivinatoryMeaning = src.DivinatoryMeaning ?? string.Empty,
                 ElementalPattern = src.ElementalPattern ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                CoreMeaning = src.CoreMeaning ?? new List<string>(),
+                FavorableFor = src.FavorableFor ?? new List<string>(),
+                UnfavorableFor = src.UnfavorableFor ?? new List<string>(),
+                ElementalSynthesis = src.ElementalSynthesis ?? string.Empty,
+                TraditionalImagery = src.TraditionalImagery ?? new List<string>(),
+                Interpretation = src.Interpretation ?? new List<string>(),
+                InHouses = src.InHouses ?? new Dictionary<string, string>(),
+                ModernExamples = src.ModernExamples ?? new List<string>(),
+                TraditionalSources = src.TraditionalSources?.Select(s => new TraditionalSourceModel
+                {
+                    Author = s.Author ?? string.Empty,
+                    Work = s.Work ?? string.Empty,
+                    Section = s.Section ?? string.Empty,
+                    Year = s.Year
+                }).ToList() ?? new List<TraditionalSourceModel>(),
                 HeadLine = src.HeadLine,
                 NeckLine = src.NeckLine,
                 BodyLine = src.BodyLine,
@@ -379,6 +397,10 @@ namespace GeomancyWebUI.Services
                 Governs = src.Governs ?? new List<string>(),
                 SignificatorOfQuesitedWhen = src.SignificatorOfQuesitedWhen ?? string.Empty,
                 Notes = src.Notes ?? string.Empty,
+                InterpretiveEssence = src.InterpretiveEssence ?? string.Empty,
+                KeySignificators = src.KeySignificators ?? new List<string>(),
+                CommonMisreadings = src.CommonMisreadings ?? new List<string>(),
+                FigureCombinationsToWatch = src.FigureCombinationsToWatch ?? string.Empty,
                 ExampleQuestions = src.ExampleQuestions ?? new List<string>(),
             };
 
@@ -391,6 +413,10 @@ namespace GeomancyWebUI.Services
                 GeneratedBy = src.GeneratedBy ?? string.Empty,
                 Meaning = src.Meaning ?? new List<string>(),
                 UtilityInReading = src.UtilityInReading ?? string.Empty,
+                Essence = src.Essence ?? string.Empty,
+                ReadWhen = src.ReadWhen ?? new List<string>(),
+                Pitfalls = src.Pitfalls ?? new List<string>(),
+                Examples = src.Examples ?? new List<string>(),
             };
 
         private static WayOfPointsElementEntry MapToWayOfPointsElementEntry(ContractModels.WayOfPointsElementEntryResponse src)

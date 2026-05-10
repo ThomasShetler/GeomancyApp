@@ -668,7 +668,25 @@ namespace GeomancyAPI.Handlers
                 HeadLine = figure.HeadLine,
                 NeckLine = figure.NeckLine,
                 BodyLine = figure.BodyLine,
-                FootLine = figure.FootLine
+                FootLine = figure.FootLine,
+                Tagline = figure.Tagline ?? string.Empty,
+                CoreMeaning = figure.CoreMeaning ?? new List<string>(),
+                FavorableFor = figure.FavorableFor ?? new List<string>(),
+                UnfavorableFor = figure.UnfavorableFor ?? new List<string>(),
+                ElementalSynthesis = figure.ElementalSynthesis ?? string.Empty,
+                TraditionalImagery = figure.TraditionalImagery ?? new List<string>(),
+                Interpretation = figure.Interpretation ?? new List<string>(),
+                InHouses = figure.InHouses ?? new Dictionary<string, string>(),
+                ModernExamples = figure.ModernExamples ?? new List<string>(),
+                TraditionalSources = figure.TraditionalSources == null
+                    ? new List<TraditionalSourceResponse>()
+                    : figure.TraditionalSources.Select(s => new TraditionalSourceResponse
+                    {
+                        Author = s.Author,
+                        Work = s.Work,
+                        Section = s.Section,
+                        Year = s.Year
+                    }).ToList()
             };
         }
 

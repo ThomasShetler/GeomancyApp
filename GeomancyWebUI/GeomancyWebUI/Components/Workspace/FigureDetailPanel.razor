@@ -1,3 +1,4 @@
+@using System.Linq
 @using GeomancyWebUI.Client.Models
 
 @*
@@ -124,6 +125,115 @@
             </section>
         }
 
+        @if (!string.IsNullOrWhiteSpace(fig.Tagline))
+        {
+            <p class="figure-tagline">@fig.Tagline</p>
+        }
+        @if (fig.CoreMeaning?.Any() == true)
+        {
+            <section class="detail-card">
+                <h3 class="card-title">Core Meaning</h3>
+                <div class="pill-row">
+                    @foreach (var tag in fig.CoreMeaning)
+                    {
+                        <span class="meaning-pill">@tag</span>
+                    }
+                </div>
+            </section>
+        }
+        @if (fig.FavorableFor?.Any() == true || fig.UnfavorableFor?.Any() == true)
+        {
+            <section class="detail-card two-col-card">
+                <div class="two-col">
+                    @if (fig.FavorableFor?.Any() == true)
+                    {
+                        <div class="two-col-block two-col-fav">
+                            <h3 class="card-title">Favorable For</h3>
+                            <ul class="bullet-list compact">
+                                @foreach (var x in fig.FavorableFor) { <li>@x</li> }
+                            </ul>
+                        </div>
+                    }
+                    @if (fig.UnfavorableFor?.Any() == true)
+                    {
+                        <div class="two-col-block two-col-unfav">
+                            <h3 class="card-title">Unfavorable For</h3>
+                            <ul class="bullet-list compact">
+                                @foreach (var x in fig.UnfavorableFor) { <li>@x</li> }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+        @if (!string.IsNullOrWhiteSpace(fig.ElementalSynthesis))
+        {
+            <section class="detail-card prose-card">
+                <h3 class="card-title">Elemental Synthesis</h3>
+                <p class="prose-text">@fig.ElementalSynthesis</p>
+            </section>
+        }
+        @if (fig.TraditionalImagery?.Any() == true)
+        {
+            <section class="detail-card">
+                <h3 class="card-title">Traditional Imagery</h3>
+                <ul class="bullet-list compact">
+                    @foreach (var im in fig.TraditionalImagery) { <li>@im</li> }
+                </ul>
+            </section>
+        }
+        @if (fig.Interpretation?.Any() == true)
+        {
+            <section class="detail-card prose-card corpus-interpretation">
+                <h3 class="card-title">Structured Interpretation</h3>
+                @foreach (var para in fig.Interpretation)
+                {
+                    <p class="prose-text interpretation-para">@para</p>
+                }
+            </section>
+        }
+        @if (fig.InHouses?.Count > 0)
+        {
+            <section class="detail-card in-houses-card">
+                <h3 class="card-title">Figure in Each House</h3>
+                <div class="in-houses-wrap">
+                    @foreach (var kv in fig.InHouses.OrderBy(k => int.Parse(k.Key, System.Globalization.CultureInfo.InvariantCulture)))
+                    {
+                        <details class="house-note-fold">
+                            <summary>House @kv.Key</summary>
+                            <p class="prose-text">@kv.Value</p>
+                        </details>
+                    }
+                </div>
+            </section>
+        }
+        @if (fig.ModernExamples?.Any() == true)
+        {
+            <section class="detail-card">
+                <h3 class="card-title">Modern Examples</h3>
+                <ul class="bullet-list compact">
+                    @foreach (var ex in fig.ModernExamples) { <li>@ex</li> }
+                </ul>
+            </section>
+        }
+        @if (fig.TraditionalSources?.Any() == true)
+        {
+            <footer class="sources-footer">
+                <h4 class="sources-heading">Traditional Sources (consultation trail)</h4>
+                <ul class="sources-list">
+                    @foreach (var s in fig.TraditionalSources)
+                    {
+                        <li>
+                            <span class="src-author">@s.Author</span>
+                            <span class="src-work"> — @s.Work</span>
+                            @if (!string.IsNullOrWhiteSpace(s.Section)) { <span class="src-sec"> (@s.Section)</span> }
+                            @if (s.Year.HasValue) { <span class="src-year"> @s.Year</span> }
+                        </li>
+                    }
+                </ul>
+            </footer>
+        }
+
         <!-- Imagery & physical correspondences -->
         <section class="detail-card">
             <h3 class="card-title">Figure Data</h3>
@@ -203,6 +313,38 @@
                         <p class="prose-text">@houseEntry.Notes</p>
                     </div>
                 }
+                @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Interpretive Essence</h4>
+                        <p class="prose-text">@houseEntry.InterpretiveEssence</p>
+                    </div>
+                }
+                @if (houseEntry.KeySignificators?.Any() == true)
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Key Significators</h4>
+                        <ul class="bullet-list compact">
+                            @foreach (var ks in houseEntry.KeySignificators) { <li>@ks</li> }
+                        </ul>
+                    </div>
+                }
+                @if (houseEntry.CommonMisreadings?.Any() == true)
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Common Misreadings</h4>
+                        <ul class="bullet-list compact">
+                            @foreach (var m in houseEntry.CommonMisreadings) { <li>@m</li> }
+                        </ul>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch))
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Figure Combinations</h4>
+                        <p class="prose-text">@houseEntry.FigureCombinationsToWatch</p>
+                    </div>
+                }
                 @if (houseEntry.ExampleQuestions?.Any() == true)
                 {
                     <div class="prose-block">
@@ -252,6 +394,40 @@
                     <div class="prose-block">
                         <h4 class="prose-heading">Utility in Reading</h4>
                         <p class="prose-text">@courtEntry.UtilityInReading</p>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(courtEntry.Essence))
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Essence (expanded)</h4>
+                        <p class="prose-text">@courtEntry.Essence</p>
+                    </div>
+                }
+                @if (courtEntry.ReadWhen?.Any() == true)
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Read When</h4>
+                        <ul class="bullet-list compact">
+                            @foreach (var rw in courtEntry.ReadWhen) { <li>@rw</li> }
+                        </ul>
+                    </div>
+                }
+                @if (courtEntry.Pitfalls?.Any() == true)
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Pitfalls</h4>
+                        <ul class="bullet-list compact">
+                            @foreach (var p in courtEntry.Pitfalls) { <li>@p</li> }
+                        </ul>
+                    </div>
+                }
+                @if (courtEntry.Examples?.Any() == true)
+                {
+                    <div class="prose-block">
+                        <h4 class="prose-heading">Examples</h4>
+                        <ul class="bullet-list compact">
+                            @foreach (var e in courtEntry.Examples) { <li>@e</li> }
+                        </ul>
                     </div>
                 }
             </section>

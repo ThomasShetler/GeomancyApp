@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using GeomancyWebUI.Client.Models;
@@ -309,6 +311,10 @@ namespace GeomancyWebUI.Client.Services
                 Governs = src.Governs ?? new List<string>(),
                 SignificatorOfQuesitedWhen = src.SignificatorOfQuesitedWhen ?? string.Empty,
                 Notes = src.Notes ?? string.Empty,
+                InterpretiveEssence = src.InterpretiveEssence ?? string.Empty,
+                KeySignificators = src.KeySignificators ?? new List<string>(),
+                CommonMisreadings = src.CommonMisreadings ?? new List<string>(),
+                FigureCombinationsToWatch = src.FigureCombinationsToWatch ?? string.Empty,
                 ExampleQuestions = src.ExampleQuestions ?? new List<string>()
             };
         }
@@ -322,7 +328,11 @@ namespace GeomancyWebUI.Client.Services
                 TraditionalName = src.TraditionalName ?? string.Empty,
                 GeneratedBy = src.GeneratedBy ?? string.Empty,
                 Meaning = src.Meaning ?? new List<string>(),
-                UtilityInReading = src.UtilityInReading ?? string.Empty
+                UtilityInReading = src.UtilityInReading ?? string.Empty,
+                Essence = src.Essence ?? string.Empty,
+                ReadWhen = src.ReadWhen ?? new List<string>(),
+                Pitfalls = src.Pitfalls ?? new List<string>(),
+                Examples = src.Examples ?? new List<string>()
             };
         }
 
@@ -425,6 +435,22 @@ namespace GeomancyWebUI.Client.Services
                 Commentary = apiFigure.Commentary ?? string.Empty,
                 DivinatoryMeaning = apiFigure.DivinatoryMeaning ?? string.Empty,
                 ElementalPattern = apiFigure.ElementalPattern ?? string.Empty,
+                Tagline = apiFigure.Tagline ?? string.Empty,
+                CoreMeaning = apiFigure.CoreMeaning ?? new List<string>(),
+                FavorableFor = apiFigure.FavorableFor ?? new List<string>(),
+                UnfavorableFor = apiFigure.UnfavorableFor ?? new List<string>(),
+                ElementalSynthesis = apiFigure.ElementalSynthesis ?? string.Empty,
+                TraditionalImagery = apiFigure.TraditionalImagery ?? new List<string>(),
+                Interpretation = apiFigure.Interpretation ?? new List<string>(),
+                InHouses = apiFigure.InHouses ?? new Dictionary<string, string>(),
+                ModernExamples = apiFigure.ModernExamples ?? new List<string>(),
+                TraditionalSources = apiFigure.TraditionalSources?.Select(s => new TraditionalSourceModel
+                {
+                    Author = s.Author ?? string.Empty,
+                    Work = s.Work ?? string.Empty,
+                    Section = s.Section ?? string.Empty,
+                    Year = s.Year
+                }).ToList() ?? new List<TraditionalSourceModel>(),
                 HeadLine = apiFigure.HeadLine,
                 NeckLine = apiFigure.NeckLine,
                 BodyLine = apiFigure.BodyLine,
@@ -493,6 +519,51 @@ namespace GeomancyWebUI.Client.Services
             public int BodyLine { get; set; }
             public int FootLine { get; set; }
             public int HouseStrength { get; set; }
+
+            [JsonPropertyName("tagline")]
+            public string? Tagline { get; set; }
+
+            [JsonPropertyName("core_meaning")]
+            public List<string>? CoreMeaning { get; set; }
+
+            [JsonPropertyName("favorable_for")]
+            public List<string>? FavorableFor { get; set; }
+
+            [JsonPropertyName("unfavorable_for")]
+            public List<string>? UnfavorableFor { get; set; }
+
+            [JsonPropertyName("elemental_synthesis")]
+            public string? ElementalSynthesis { get; set; }
+
+            [JsonPropertyName("traditional_imagery")]
+            public List<string>? TraditionalImagery { get; set; }
+
+            [JsonPropertyName("interpretation")]
+            public List<string>? Interpretation { get; set; }
+
+            [JsonPropertyName("in_houses")]
+            public Dictionary<string, string>? InHouses { get; set; }
+
+            [JsonPropertyName("modern_examples")]
+            public List<string>? ModernExamples { get; set; }
+
+            [JsonPropertyName("traditional_sources")]
+            public List<TraditionalSourceWire>? TraditionalSources { get; set; }
+        }
+
+        private class TraditionalSourceWire
+        {
+            [JsonPropertyName("author")]
+            public string? Author { get; set; }
+
+            [JsonPropertyName("work")]
+            public string? Work { get; set; }
+
+            [JsonPropertyName("section")]
+            public string? Section { get; set; }
+
+            [JsonPropertyName("year")]
+            public int? Year { get; set; }
         }
 
         private class HouseResponse
@@ -689,6 +760,18 @@ namespace GeomancyWebUI.Client.Services
             [JsonPropertyName("notes")]
             public string? Notes { get; set; }
 
+            [JsonPropertyName("interpretive_essence")]
+            public string? InterpretiveEssence { get; set; }
+
+            [JsonPropertyName("key_significators")]
+            public List<string>? KeySignificators { get; set; }
+
+            [JsonPropertyName("common_misreadings")]
+            public List<string>? CommonMisreadings { get; set; }
+
+            [JsonPropertyName("figure_combinations_to_watch")]
+            public string? FigureCombinationsToWatch { get; set; }
+
             [JsonPropertyName("example_questions")]
             public List<string>? ExampleQuestions { get; set; }
         }
@@ -712,6 +795,18 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("utility_in_reading")]
             public string? UtilityInReading { get; set; }
+
+            [JsonPropertyName("essence")]
+            public string? Essence { get; set; }
+
+            [JsonPropertyName("read_when")]
+            public List<string>? ReadWhen { get; set; }
+
+            [JsonPropertyName("pitfalls")]
+            public List<string>? Pitfalls { get; set; }
+
+            [JsonPropertyName("examples")]
+            public List<string>? Examples { get; set; }
         }
 
         private class WayOfPointsElementEntryResponse

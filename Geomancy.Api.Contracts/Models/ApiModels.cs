@@ -47,6 +47,21 @@ namespace GeomancyAPI.Models
         public GenerateFigureRequest House4 { get; set; }
     }
 
+    public class TraditionalSourceResponse
+    {
+        [JsonProperty("author")]
+        public string Author { get; set; }
+
+        [JsonProperty("work")]
+        public string Work { get; set; }
+
+        [JsonProperty("section")]
+        public string Section { get; set; }
+
+        [JsonProperty("year")]
+        public int? Year { get; set; }
+    }
+
     // Response model for a single figure
     public class FigureResponse
     {
@@ -77,6 +92,36 @@ namespace GeomancyAPI.Models
         public int BodyLine { get; set; }
         public int FootLine { get; set; }
         public FigureInHouseStrength HouseStrength { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("core_meaning")]
+        public List<string> CoreMeaning { get; set; } = new List<string>();
+
+        [JsonProperty("favorable_for")]
+        public List<string> FavorableFor { get; set; } = new List<string>();
+
+        [JsonProperty("unfavorable_for")]
+        public List<string> UnfavorableFor { get; set; } = new List<string>();
+
+        [JsonProperty("elemental_synthesis")]
+        public string ElementalSynthesis { get; set; }
+
+        [JsonProperty("traditional_imagery")]
+        public List<string> TraditionalImagery { get; set; } = new List<string>();
+
+        [JsonProperty("interpretation")]
+        public List<string> Interpretation { get; set; } = new List<string>();
+
+        [JsonProperty("in_houses")]
+        public Dictionary<string, string> InHouses { get; set; } = new Dictionary<string, string>();
+
+        [JsonProperty("modern_examples")]
+        public List<string> ModernExamples { get; set; } = new List<string>();
+
+        [JsonProperty("traditional_sources")]
+        public List<TraditionalSourceResponse> TraditionalSources { get; set; } = new List<TraditionalSourceResponse>();
     }
 
     // Response model for a house in the chart
@@ -331,6 +376,18 @@ namespace GeomancyAPI.Models
         [JsonProperty("notes")]
         public string Notes { get; set; }
 
+        [JsonProperty("interpretive_essence")]
+        public string InterpretiveEssence { get; set; }
+
+        [JsonProperty("key_significators")]
+        public List<string> KeySignificators { get; set; } = new List<string>();
+
+        [JsonProperty("common_misreadings")]
+        public List<string> CommonMisreadings { get; set; } = new List<string>();
+
+        [JsonProperty("figure_combinations_to_watch")]
+        public string FigureCombinationsToWatch { get; set; }
+
         [JsonProperty("example_questions")]
         public List<string> ExampleQuestions { get; set; } = new List<string>();
     }
@@ -355,6 +412,18 @@ namespace GeomancyAPI.Models
 
         [JsonProperty("utility_in_reading")]
         public string UtilityInReading { get; set; }
+
+        [JsonProperty("essence")]
+        public string Essence { get; set; }
+
+        [JsonProperty("read_when")]
+        public List<string> ReadWhen { get; set; } = new List<string>();
+
+        [JsonProperty("pitfalls")]
+        public List<string> Pitfalls { get; set; } = new List<string>();
+
+        [JsonProperty("examples")]
+        public List<string> Examples { get; set; } = new List<string>();
     }
 
     // Wrappers matching the JSON file shape on disk

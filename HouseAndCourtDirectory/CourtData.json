@@ -1,54 +1,114 @@
 {
-    "CourtData": {
-      "Placements": [
-        {
-          "id": 13,
-          "placement": "Right Witness",
-          "traditional_name": "Testis Dexter",
-          "generated_by": "Adding the figures of the 9th and 10th Houses (the First and Second Nieces).",
-          "meaning": [
-            "The Querent's perspective and current disposition.",
-            "Past events leading up to the formulation of the question.",
-            "The root cause or foundational energy of the matter."
-          ],
-          "utility_in_reading": "Serves as a diagnostic anchor. It is used to assess the querent's true motivations, past actions, and the historical context of the issue. It reveals where the situation is coming from and the baggage or strengths the querent brings to the table."
-        },
-        {
-          "id": 14,
-          "placement": "Left Witness",
-          "traditional_name": "Testis Sinister",
-          "generated_by": "Adding the figures of the 11th and 12th Houses (the Third and Fourth Nieces).",
-          "meaning": [
-            "The Quesited's perspective or the environment's reaction.",
-            "Immediate future events or developing circumstances.",
-            "External forces, obstacles, or aids currently at play."
-          ],
-          "utility_in_reading": "Acts as the counterweight to the Right Witness. It is used to evaluate the external factors acting upon the querent and the immediate trajectory of the situation. It helps identify what the querent is up against or what external elements will influence the final outcome."
-        },
-        {
-          "id": 15,
-          "placement": "The Judge",
-          "traditional_name": "Iudex",
-          "generated_by": "Adding the figures of the Right Witness (13) and Left Witness (14).",
-          "meaning": [
-            "The core answer to the question.",
-            "The synthesis of past (Right) and future (Left) energies.",
-            "The direct outcome, verdict, or resolution of the matter."
-          ],
-          "utility_in_reading": "The most critical figure for determining the immediate success or failure of the query. It provides the definitive 'Yes', 'No', or 'Maybe'. Because it is formed by adding two figures, the Judge must always contain an even number of active points (dots); if it does not, a mathematical error was made in the shield chart."
-        },
-        {
-          "id": 16,
-          "placement": "The Reconciler",
-          "traditional_name": "Sentence / Fallout / Superjudge / Vindex",
-          "generated_by": "Adding the figure of the Judge (15) to the figure of the First House (1 - The First Mother).",
-          "meaning": [
-            "The long-term consequence or aftermath of the outcome.",
-            "How the querent will ultimately react to or be affected by the Judge's verdict.",
-            "Hidden factors that will manifest after the immediate resolution."
-          ],
-          "utility_in_reading": "Provides depth beyond the immediate 'Yes/No' of the Judge. It is highly useful for revealing pyrrhic victories (e.g., the Judge says you get the job, but the Reconciler shows it makes you miserable) or silver linings in a negative outcome. It acts as the final word on the matter's lasting impact on the querent's life."
-        }
-      ]
-    }
+  "CourtData": {
+    "Placements": [
+      {
+        "id": 13,
+        "placement": "Right Witness",
+        "traditional_name": "Testis Dexter",
+        "generated_by": "Adding the figures of the 9th and 10th Houses (the First and Second Nieces).",
+        "meaning": [
+          "Past vector: how the querent arrived at the question",
+          "Inner stance: courage, denial, fatigue, or hunger for change",
+          "Root fuel: habit, debt, loyalty, or trauma still paying interest"
+        ],
+        "utility_in_reading": "Use the Right Witness to triage motive and history before you trust the Judge. It is the querent-side backstory lane—what they admit, what the chart admits for them.",
+        "essence": "The dexter witness is the querent’s upstream weather: momentum, bias, and unfinished business that color the present tense. It rarely contradicts the First outright; it deepens it.",
+        "read_when": [
+          "Career pivots explained by burnout years",
+          "Relationship charts where old attachment sets temperature",
+          "Money questions where spending habits predate the crisis"
+        ],
+        "pitfalls": [
+          "Assuming it predicts future instead of conditioning it",
+          "Ignoring when it matches First—then double-weight honesty",
+          "Overwriting with wishful narrative"
+        ],
+        "examples": [
+          "Startup founder admits they already decided to sell—chart shows Via",
+          "Student frames exam question but Witness shows Carcer—study debt reality"
+        ]
+      },
+      {
+        "id": 14,
+        "placement": "Left Witness",
+        "traditional_name": "Testis Sinister",
+        "generated_by": "Adding the figures of the 11th and 12th Houses (the Third and Fourth Nieces).",
+        "meaning": [
+          "Incoming vector: what presses against the querent now",
+          "Environmental tone: market, family, boss, or weather systems",
+          "Near-future hinge: offers, deadlines, rivals moving pieces"
+        ],
+        "utility_in_reading": "Weight the Left Witness against the Right: tension between history and horizon defines the drama. It is the world’s move on the querent’s chess square.",
+        "essence": "The sinister witness names external leverage: partners, markets, regulators, lovers—forces that do not sleep in the querent’s skull but still push outcomes.",
+        "read_when": [
+          "Hiring freeze hitting an offer letter",
+          "Partner’s visa timeline colliding with wedding",
+          "Landlord selling building—tenant chart"
+        ],
+        "pitfalls": [
+          "Reading it as secret enemy by default—sometimes it is help",
+          "Forgetting mobile figures change faster than stable ones",
+          "Confusing with Reconciler long tail"
+        ],
+        "examples": [
+          "Left Witness Acquisitio while Right Witness Amissio—cash window opens as pride drains",
+          "Populus left, Puer right—crowd noise egging rash move"
+        ]
+      },
+      {
+        "id": 15,
+        "placement": "The Judge",
+        "traditional_name": "Iudex",
+        "generated_by": "Adding the figures of the Right Witness (13) and Left Witness (14).",
+        "meaning": [
+          "Verdict plane: yes / no / wait with teeth",
+          "Synthesis of both witnesses after elemental addition",
+          "Integrity check: even dots—if odd, recount mothers"
+        ],
+        "utility_in_reading": "The Judge is the compressed answer once past and near-future vectors have spoken. It obeys geomantic arithmetic—trust the math before the story.",
+        "essence": "Judges crystallize the quarrel between witnesses into a single hue: benefic, malefic, mixed, or null. It is the headline, not the fine print.",
+        "read_when": [
+          "Binary business go-no-go",
+          "Medical charts after specialists named",
+          "Legal when counsel already engaged"
+        ],
+        "pitfalls": [
+          "Treating Judge as irrelevant if emotionally disliked",
+          "Skipping even-dot validation",
+          "Ignoring company of court"
+        ],
+        "examples": [
+          "Judge Fortuna Major with sentence Tristitia—win costs sleep",
+          "Judge Populus—outcome mirrors allies; check eleventh"
+        ]
+      },
+      {
+        "id": 16,
+        "placement": "The Reconciler",
+        "traditional_name": "Sentence / Fallout / Superjudge / Vindex",
+        "generated_by": "Adding the figure of the Judge (15) to the figure of the First House (1 - The First Mother).",
+        "meaning": [
+          "Aftermath: how the verdict lands in the querent’s bones",
+          "Coping trajectory: relief, regret, or addiction to next crisis",
+          "Slow variables: lease, visa, therapy, vesting cliffs"
+        ],
+        "utility_in_reading": "The Reconciler (Sentence) narrates the second wave: feelings, finances, and health six months after the confetti. It saves charts from naive optimism.",
+        "essence": "Sentence is the epilogue: whether the promotion feeds the marriage, whether the settlement cures insomnia, whether the grant strings turn golden handcuffs.",
+        "read_when": [
+          "Post-acquisition culture shock",
+          "Breakup chart—life after lease ends",
+          "Recovery after lawsuit tax bill"
+        ],
+        "pitfalls": [
+          "Calling it a second Judge with same authority—tone differs",
+          "Ignoring when it repeats Judge—then outcome is sticky",
+          "Forcing doom when it simply repeats caution"
+        ],
+        "examples": [
+          "Reconciler Carcer after Judge Laetitia—party then cage of responsibility",
+          "Caput after Cauda—new job offer after layoff season"
+        ]
+      }
+    ]
   }
+}

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 namespace GeomancyWebUI.Client.Models
 {
     /// <summary>
@@ -12,5 +15,17 @@ namespace GeomancyWebUI.Client.Models
         public string GeneratedBy { get; set; } = string.Empty;
         public List<string> Meaning { get; set; } = new List<string>();
         public string UtilityInReading { get; set; } = string.Empty;
+
+        [JsonPropertyName("essence")]
+        public string Essence { get; set; } = string.Empty;
+
+        [JsonPropertyName("read_when")]
+        public List<string> ReadWhen { get; set; } = new List<string>();
+
+        [JsonPropertyName("pitfalls")]
+        public List<string> Pitfalls { get; set; } = new List<string>();
+
+        [JsonPropertyName("examples")]
+        public List<string> Examples { get; set; } = new List<string>();
     }
 }
