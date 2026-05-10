@@ -28,10 +28,10 @@
     <!-- User-facing semver. Drives AssemblyVersion / FileVersion as
          numeric-only 0.1.0.0, and is also exposed verbatim via
          InformationalVersion so consumers see "0.1.0-beta" cleanly. -->
-    <Version>0.1.0-beta</Version>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
-    <InformationalVersion>0.1.0-beta</InformationalVersion>
+    <Version>0.1.1-beta</Version>
+    <AssemblyVersion>0.1.1.0</AssemblyVersion>
+    <FileVersion>0.1.1.0</FileVersion>
+    <InformationalVersion>0.1.1-beta</InformationalVersion>
 
     <!-- The SDK otherwise appends "+<git-sha>" to InformationalVersion
          which makes the runtime string ugly. Suppress that and let

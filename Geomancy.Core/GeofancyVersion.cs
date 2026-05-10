@@ -22,7 +22,7 @@ namespace GeomancyApp
         /// User-facing semver string (e.g. "0.1.0-beta", "1.0.0", "1.2.0-rc.1").
         /// Use this for any UI label that should read like marketing copy.
         /// </summary>
-        public const string Display = "0.1.0-beta";
+        public const string Display = "0.1.1-beta";
 
         /// <summary>
         /// Human-readable release date for the current Display version.

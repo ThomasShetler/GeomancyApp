@@ -1,5 +1,30 @@
 # Releases
 
+## v0.1.1-beta — Mobile Mother Strip Polish
+
+**Released:** May 2026
+**Live app:** <https://geofancy.up.railway.app>
+
+A small polish release that finalizes the mobile Mother input experience and rounds out the v0.1.0-beta launch with proper version metadata baked into every assembly.
+
+### Highlights
+
+- **Mobile Mother input strip is below the chart now.** When the chart drawer opens the chart stays the visual focus and the four input cells fall naturally under the user's thumb.
+- **Compact, house-named cells.** The four cells were tightened (smaller tap rows, lighter padding) and now display the Latin **house names** — *Genitor · Fratres · Lucrum · Vita* — left to right, matching the chart's Mother reading order. Each cell still drives the same state as the in-chart Mother inputs and triggers the same regeneration pipeline.
+- **Bottom breathing room.** The chart drawer now reserves a small gap below the input strip so it isn't flush against the screen edge.
+- **Reclaimed chart room.** With the strip slimmer, the chart's responsive `--chart-fit` budget got back ~2 rem of vertical headroom, giving the diagram more room on shorter phones.
+- **Assemblies aligned to v0.1.1-beta.** Every DLL — SDK and legacy alike — now reports `FileVersion=0.1.1.0`, `ProductVersion=0.1.1-beta`, `ProductName=Geofancy`. The home-page version chip and release card update automatically via `GeofancyVersion`.
+
+### Fixes
+
+- Hover-scale transforms on the Mother strip's tap rows are suppressed (they fought touch interaction on phones).
+
+### Known limitations
+
+Same as v0.1.0-beta — see below.
+
+---
+
 ## v0.1.0-beta — Public Beta
 
 **Released:** May 2026
