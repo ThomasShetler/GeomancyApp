@@ -21,15 +21,20 @@
     not touched.
 
     Layout (top -> bottom):
-      1. mobile-chart-section   -> chart + chart-type toggle, chart fills viewport width as a square
-      2. mobile-tabstrip        -> horizontally scrollable tab buttons
+      1. mobile-chart-drawer    -> thin always-visible "Show/Hide chart" handle. The
+                                   chart body is mounted as an absolute overlay
+                                   underneath the handle so it slides over the
+                                   tabstrip + panel without reflowing them.
+      2. mobile-tabstrip        -> horizontally scrollable tab buttons. Tapping any
+                                   tab also collapses the chart drawer so the panel
+                                   gets full real estate.
       3. mobile-panel           -> grows to fill remaining height, scrolls internally;
                                    shows the active tab's list view by default and flips
                                    to a detail view when the user picks an item, with a
                                    sticky "Back to list" header to return.
 *@
 
-<PageTitle>Geomancy - Mobile</PageTitle>
+<PageTitle>Geofancy - Mobile</PageTitle>
 
 <div class="mobile-shell">
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -37,31 +42,53 @@
         <div class="alert alert-danger mobile-alert">@errorMessage</div>
     }
 
-    <!-- 1) Chart section -->
-    <section class="mobile-chart-section">
-        <div class="mobile-chart-toolbar">
-            <button type="button"
-                    class="mobile-pill-btn"
-                    @onclick="ToggleChartType"
-                    title="Switch between the shield chart and the traditional 12-house chart">
-                Switch Chart Type
-            </button>
-            <span class="mobile-chart-type-label">@CurrentChartTypeLabel</span>
-        </div>
+    <!--
+        1) Chart drawer.
 
-        <div class="mobile-chart-stage">
-            <ChartSurface Chart="@houseChart"
-                          House1Figure="@house1Figure"
-                          House2Figure="@house2Figure"
-                          House3Figure="@house3Figure"
-                          House4Figure="@house4Figure"
-                          OnHouse1Changed="OnHouse1Changed"
-                          OnHouse2Changed="OnHouse2Changed"
-                          OnHouse3Changed="OnHouse3Changed"
-                          OnHouse4Changed="OnHouse4Changed"
-                          View="@chartView" />
+        The handle is always rendered and pinned at the top of the shell.
+        The body is kept in the DOM whether expanded or collapsed (so the
+        ChartSurface circuit doesn't tear down on toggle) and is shown /
+        hidden via the .is-expanded / .is-collapsed class on the wrapper.
+        When expanded the body sits absolutely-positioned over the tabstrip
+        and panel as an overlay - tapping the handle dismisses it without
+        reflowing the analysis area.
+    -->
+    <div class="mobile-chart-drawer @(chartCollapsed ? "is-collapsed" : "is-expanded")">
+        <button type="button"
+                class="mobile-chart-handle"
+                @onclick="ToggleChartCollapsed"
+                aria-expanded="@((!chartCollapsed).ToString().ToLower())"
+                title="@(chartCollapsed ? "Show chart" : "Hide chart")">
+            <span class="handle-grip"></span>
+            <span class="handle-label">@(chartCollapsed ? "Show chart" : "Hide chart")</span>
+            <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
+        </button>
+
+        <div class="mobile-chart-body" aria-hidden="@chartCollapsed.ToString().ToLower()">
+            <div class="mobile-chart-toolbar">
+                <button type="button"
+                        class="mobile-pill-btn"
+                        @onclick="ToggleChartType"
+                        title="Switch between the shield chart and the traditional 12-house chart">
+                    Switch Chart Type
+                </button>
+                <span class="mobile-chart-type-label">@CurrentChartTypeLabel</span>
+            </div>
+
+            <div class="mobile-chart-stage">
+                <ChartSurface Chart="@houseChart"
+                              House1Figure="@house1Figure"
+                              House2Figure="@house2Figure"
+                              House3Figure="@house3Figure"
+                              House4Figure="@house4Figure"
+                              OnHouse1Changed="OnHouse1Changed"
+                              OnHouse2Changed="OnHouse2Changed"
+                              OnHouse3Changed="OnHouse3Changed"
+                              OnHouse4Changed="OnHouse4Changed"
+                              View="@chartView" />
+            </div>
         </div>
-    </section>
+    </div>
 
     <!-- 2) Horizontal tab strip -->
     <nav class="mobile-tabstrip" role="tablist">
@@ -299,6 +326,15 @@
     private enum MobilePanelMode { List, Detail }
     private MobilePanelMode panelMode = MobilePanelMode.List;
 
+    // ----- Chart drawer state -----
+    // Chart starts visible (the user just generated a reading, so seeing it
+    // matters), but auto-collapses the moment they tap into a tab so the
+    // analysis area gets full real estate. The drawer handle remains pinned
+    // to the top so the chart is always one tap away as an overlay.
+    private bool chartCollapsed = false;
+
+    private void ToggleChartCollapsed() => chartCollapsed = !chartCollapsed;
+
     private string ActiveTabLabel
         => Tabs.FirstOrDefault(t => t.Id == activeTab)?.Label ?? string.Empty;
 
@@ -313,6 +349,10 @@
         // Always return to the list view when switching tabs so the user
         // doesn't land on an unrelated tab's detail snapshot.
         panelMode = MobilePanelMode.List;
+        // Tapping a tab is the user's signal that they want to focus on the
+        // analysis. Collapse the chart drawer so the panel gets full height;
+        // they can pull it back as an overlay any time via the handle.
+        chartCollapsed = true;
     }
 
     private void ShowList() => panelMode = MobilePanelMode.List;

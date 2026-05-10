@@ -1,6 +1,4 @@
-﻿@inherits LayoutComponentBase
-
-<ThemeInitializer />
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -15,7 +13,7 @@
 </div>
 
 @code {
-    // Theme toggle is now handled by ThemeToggleButton component in NavMenu
+    // Theme toggle lives in NavMenu; theme bootstrapping is in wwwroot/theme.js.
 }
 
 <div id="blazor-error-ui">

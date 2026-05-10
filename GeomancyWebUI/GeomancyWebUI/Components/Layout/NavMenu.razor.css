@@ -98,12 +98,28 @@
     display: block;
 }
 
-/* Mobile: Vertical sidebar navigation */
+/*
+ * Narrow widths: when the user taps the hamburger toggler the nav-scrollable
+ * drops down inline below the top-row strip (the sidebar stays pinned to the
+ * top of the viewport via .sidebar's sticky positioning in MainLayout).
+ *
+ * We cap the dropdown height so a tall menu doesn't take over the screen.
+ */
 @media (max-width: 640.98px) {
     .nav-scrollable {
-        /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
+        max-height: 60vh;
         overflow-y: auto;
+        background: rgba(0, 0, 0, 0.35);
+    }
+
+    /* Theme toggle as last row inside the mobile dropdown */
+    .nav-theme-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 0.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        margin-top: 0.25rem;
     }
 }
 
@@ -138,6 +154,14 @@
 
     .nav-scrollable .nav-item:last-of-type {
         padding-bottom: 0;
+    }
+
+    /* Theme toggle sits at the end of the horizontal strip */
+    .nav-scrollable .nav-item.nav-theme-item {
+        margin-left: auto;
+        padding-right: 0;
+        display: flex;
+        align-items: center;
     }
 
     .nav-scrollable .nav-item ::deep .nav-link {

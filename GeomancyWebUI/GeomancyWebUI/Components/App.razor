@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="chart-surface.css" />
     <link rel="stylesheet" href="GeomancyWebUI.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <script src="theme.js"></script>
+    <script>
+        window.geofancyTheme.applyInitial();
+    </script>
     <HeadOutlet />
 </head>
 
@@ -17,15 +21,6 @@
     <Routes />
     <script src="_framework/blazor.web.js"></script>
     <script src="clipboard.js"></script>
-    <script>
-        // Initialize theme on page load from localStorage or system preference
-        (function() {
-            const stored = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = stored || (prefersDark ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', theme);
-        })();
-    </script>
 </body>
 
 </html>

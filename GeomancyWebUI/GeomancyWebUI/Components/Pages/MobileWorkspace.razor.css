@@ -1,13 +1,16 @@
 /*
  * MobileWorkspace - vertical phone/tablet layout for /mobile.
  *
- * Three stacked sections inside .mobile-shell:
- *   1. .mobile-chart-section  - chart toggle + chart, chart fills width (1:1)
- *   2. .mobile-tabstrip       - horizontally scrollable tab buttons, snaps
- *   3. .mobile-panel          - grows to fill remaining height, scrolls
- *                                internally; hosts either the list view or
- *                                the detail view for the active tab, with a
- *                                sticky "Back to list" header in detail mode.
+ * Stacked elements inside .mobile-shell:
+ *   1. .mobile-chart-drawer  - thin always-visible handle ("Show/Hide chart")
+ *                              with the chart body absolutely-positioned
+ *                              underneath the handle as an overlay over the
+ *                              tabstrip + panel. Toggles via a single bool.
+ *   2. .mobile-tabstrip      - horizontally scrollable tab buttons, snaps
+ *   3. .mobile-panel         - grows to fill remaining height, scrolls
+ *                               internally; hosts either the list view or
+ *                               the detail view for the active tab, with a
+ *                               sticky "Back to list" header in detail mode.
  *
  * All selectors are namespaced to .mobile-* so the desktop /workspace styles
  * (which enforce min-width: 1380px and side-by-side layouts) are completely
@@ -15,10 +18,17 @@
  */
 
 .mobile-shell {
+    /* Establishes the positioning context for the chart drawer's
+       absolutely-positioned body, so it overlays the tabstrip + panel
+       without reflowing them. */
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: calc(100dvh - 4.5rem);
+    /* Top nav strip is 3.5rem tall (.top-row in NavMenu.razor.css). The shell
+       claims the remaining viewport so the panel can scroll internally
+       without the page itself scrolling. */
+    height: calc(100dvh - 3.5rem);
     min-height: 0;
     min-width: 0;
     box-sizing: border-box;
@@ -36,15 +46,106 @@
 }
 
 /* ============================================================
- * 1) Chart section
+ * 1) Chart drawer (handle + overlay body)
  * ============================================================ */
-.mobile-chart-section {
+
+/* Drawer wrapper. Only the handle takes layout space; the body is an
+   absolute overlay anchored to .mobile-shell so it never pushes the
+   tabstrip + panel down when expanded. */
+.mobile-chart-drawer {
+    position: relative;
     flex: 0 0 auto;
+    z-index: 20;
+}
+
+/* Always-visible thin handle; the only chart-area element that takes
+   real layout space. Tapping it flips chartCollapsed. */
+.mobile-chart-handle {
+    width: 100%;
+    height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+.mobile-chart-handle:hover,
+.mobile-chart-handle:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+    outline: none;
+}
+
+.mobile-chart-handle .handle-grip {
+    width: 2.5rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+    margin-right: 0.4rem;
+}
+
+.mobile-chart-handle .handle-chevron {
+    font-family: monospace;
+    font-size: 1rem;
+    line-height: 1;
+    margin-left: 0.4rem;
+    transform: translateY(-1px);
+}
+
+/* The chart body is an OVERLAY: absolutely positioned over the
+   tabstrip + panel below the handle. It stays mounted in the DOM
+   when collapsed (so ChartSurface's circuit isn't torn down), but
+   is faded + scaled out and made non-interactive. */
+.mobile-chart-body {
+    position: absolute;
+    top: 2.2rem; /* sits directly under the handle */
+    left: 0;
+    right: 0;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-    padding: 0.5rem 0.5rem 0.25rem;
+    padding: 0.5rem;
     box-sizing: border-box;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 6px 14px var(--shadow);
+    transform-origin: top center;
+    transition: transform 0.22s ease, opacity 0.22s ease,
+                visibility 0s linear 0.22s;
+    z-index: 25;
+    /* Chart has a hard 435x435 minimum (see .mobile-chart-stage). On
+       viewports narrower or shorter than that the overlay scrolls to keep
+       the chart legible rather than letting the SVG render compress and
+       break visually. */
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    max-height: calc(100dvh - 5.7rem); /* leave room for top nav + handle */
+}
+
+.mobile-chart-drawer.is-collapsed .mobile-chart-body {
+    transform: translateY(-12px) scaleY(0.96);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.mobile-chart-drawer.is-expanded .mobile-chart-body {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    /* When expanding, drop the visibility delay so it appears immediately. */
+    transition: transform 0.22s ease, opacity 0.22s ease,
+                visibility 0s linear 0s;
 }
 
 .mobile-chart-toolbar {
@@ -89,15 +190,24 @@
     letter-spacing: 0.06em;
 }
 
-/* Square stage so the chart never overflows the viewport width.
+/* Square stage for the chart. Two hard constraints:
+     - min 435x435: below this size the SVG glyphs / labels collide and the
+       chart renders break visually, so we pin a floor and let the parent
+       overlay scroll on viewports narrower than that.
+     - max 65dvh tall: keeps the chart from running off the bottom of tall
+       phones once the overlay also has to fit a toolbar.
    ChartSurface paints its own SVG inside this box. */
 .mobile-chart-stage {
     width: 100%;
     aspect-ratio: 1 / 1;
+    min-width: 435px;
+    min-height: 435px;
+    max-height: 65dvh;
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 0;
+    margin: 0 auto;
 }
 
 /* The hosted ChartSurface paints inside this stage. Use ::deep so the
@@ -233,16 +343,16 @@
     box-sizing: border-box;
 }
 
-/* The PerfectionDetailPanel / WayOfPointsDetailPanel have their own
-   overflow: auto + height: 100% rules which assume they sit inside a
-   fixed-height column. Inside the mobile panel we want them to grow with
-   their content and let .mobile-panel-body do the scrolling. */
+/* The PerfectionDetailPanel / WayOfPointsDetailPanel / FigureDetailPanel have
+   their own overflow: auto + height: 100% rules which assume they sit inside
+   a fixed-height desktop column. Inside the mobile panel we want them to
+   grow with their content and let .mobile-panel-body do the scrolling. */
 .mobile-panel-body ::deep .perf-detail-panel,
 .mobile-panel-body ::deep .wop-detail-panel,
 .mobile-panel-body ::deep .figure-detail-panel,
 .mobile-panel-body ::deep .perfections-list,
 .mobile-panel-body ::deep .wop-list,
-.mobile-panel-body ::deep .court-houses-tab {
+.mobile-panel-body ::deep .court-houses-tables {
     height: auto;
     max-height: none;
     overflow: visible;

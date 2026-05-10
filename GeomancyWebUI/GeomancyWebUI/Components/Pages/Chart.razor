@@ -11,7 +11,7 @@
 @implements IAsyncDisposable
 @rendermode InteractiveServer
 
-<PageTitle>House Chart</PageTitle>
+<PageTitle>Geofancy - House Chart</PageTitle>
 
 <div class="container-fluid mt-4">
     <h1>House Chart</h1>
@@ -627,7 +627,7 @@
     {
         if (firstRender)
         {
-            // Theme is already initialized by App.razor script and ThemeInitializer
+            // Theme is applied by wwwroot/theme.js on load and synced by ThemeToggleButton
             // Just ensure CSS variables are applied
             await InvokeAsync(StateHasChanged);
         }
