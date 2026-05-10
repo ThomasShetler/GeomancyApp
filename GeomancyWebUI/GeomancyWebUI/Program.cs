@@ -1,11 +1,30 @@
 using GeomancyWebUI.Components;
 using GeomancyWebUI.Client.Services;
 using GeomancyWebUI.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+// Railway (and most PaaS) terminates TLS at the edge and forwards plain HTTP to
+// the container. Without this, ASP.NET Core sees Request.Scheme="http" and
+// Blazor's /_blazor/negotiate response advertises ws:// URLs that the browser
+// blocks as mixed content, breaking the SignalR circuit and showing the
+// "An unhandled error has occurred" toast.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto |
+        ForwardedHeaders.XForwardedHost;
+    // Railway's edge IPs aren't known in advance; trust whatever proxy hops
+    // the request came through. Safe because the container is only reachable
+    // via Railway's edge in the first place.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
@@ -40,6 +59,11 @@ else
 builder.Services.AddSingleton<ThemeService>();
 
 var app = builder.Build();
+
+// MUST run before any middleware that reads Request.Scheme/Host (HTTPS redirect,
+// auth, antiforgery, Blazor circuit URL building, etc.). See the
+// ForwardedHeadersOptions configuration above for why this matters on Railway.
+app.UseForwardedHeaders();
 
 app.MapDefaultEndpoints();
 
