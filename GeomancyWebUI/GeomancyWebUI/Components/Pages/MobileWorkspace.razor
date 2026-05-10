@@ -25,8 +25,10 @@
     not touched.
 
     Layout (top -> bottom):
-      1. mobile-chart-drawer    -> fixed "Show/Hide chart" handle plus a one-line hint
-                                   under it; chart body is a fixed overlay beneath both.
+      1. mobile-chart-drawer    -> thin always-visible "Show/Hide chart" handle. The
+                                   chart body is mounted as an absolute overlay
+                                   underneath the handle so it slides over the
+                                   tabstrip + panel without reflowing them.
       2. mobile-tabstrip        -> horizontally scrollable tab buttons. Tapping any
                                    tab also collapses the chart drawer so the panel
                                    gets full real estate.
@@ -61,23 +63,18 @@
                 @onclick="ToggleChartCollapsed"
                 aria-expanded="@((!chartCollapsed).ToString().ToLower())"
                 title="@(chartCollapsed ? "Show chart" : "Hide chart and show details")">
-            <span class="handle-grip"></span>
-            <span class="handle-label">
-                @(chartCollapsed ? "Show chart" : "Hide chart \u00B7 Show details")
+            <span class="mobile-chart-handle-row">
+                <span class="handle-grip"></span>
+                <span class="handle-label">
+                    @(chartCollapsed ? "Show chart" : "Hide chart \u00B7 Show details")
+                </span>
+                <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
             </span>
-            <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
+            @if (!chartCollapsed)
+            {
+                <span class="mobile-chart-handle-hint">Collapse the chart to open tabs, readings, and data below.</span>
+            }
         </button>
-
-        <p class="mobile-chart-hint">
-            @if (chartCollapsed)
-            {
-                <span>Tap the strip above to open the chart, Mothers, and sharing.</span>
-            }
-            else
-            {
-                <span>Collapse the chart to see analysis and data in the tabs below.</span>
-            }
-        </p>
 
         <div class="mobile-chart-body" aria-hidden="@chartCollapsed.ToString().ToLower()">
             <div class="mobile-chart-toolbar">
@@ -195,7 +192,7 @@
             }
         </nav>
         <p class="mobile-flow-hint">
-            Swipe the tab row for more sections. Tap a list row where offered to open details, then use Back to return.
+            Swipe the tab row sideways for more topics. Tap a row to read full notes, then use Back to return to the list.
         </p>
     </div>
 
@@ -215,10 +212,9 @@
                 <aside class="mobile-welcome-callout" aria-label="Tips for this screen">
                     <div class="mobile-welcome-callout-inner">
                         <div class="mobile-welcome-callout-text">
-                            <span class="mobile-welcome-callout-title">Getting the most from mobile</span>
+                            <span class="mobile-welcome-callout-title">How this screen works</span>
                             <span class="mobile-welcome-callout-body">
-                                Use the strip at the very top to show or hide the chart — Mothers, chart type, and Share live there.
-                                Each tab holds a different lens on this reading; scroll the tab row sideways if a label is off-screen.
+                                The top bar opens or closes your chart (Mothers, chart style, and Share). Choose a tab for courts, perfections, way of points, and more — swipe the tab pills sideways if you do not see every label.
                             </span>
                         </div>
                         <button type="button"
