@@ -1,6 +1,13 @@
-# Geofancy
+<p align="center">
+  <img src="assets/logo.png" alt="Geofancy logo" width="220" />
+</p>
 
-> The most advanced geomancy software available, built with users in mind by a devoted practitioner — powered by the Geofancy engine.
+<h1 align="center">Geofancy</h1>
+
+<p align="center">
+  <em>The most advanced geomancy software available, built with users in mind by a devoted practitioner — powered by the Geofancy engine.</em>
+</p>
+
 
 **Live app:** <https://geofancy.up.railway.app>
 

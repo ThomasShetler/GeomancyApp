@@ -1,4 +1,4 @@
-@page "/"
+﻿@page "/"
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
@@ -8,7 +8,15 @@
 <div class="landing">
     <section class="landing-hero" aria-labelledby="landing-title">
         <p class="landing-eyebrow">Beta</p>
-        <h1 id="landing-title" class="landing-title">Geofancy</h1>
+        <img src="img/logo.png"
+             alt=""
+             aria-hidden="true"
+             class="landing-logo"
+             width="512"
+             height="512"
+             decoding="async"
+             fetchpriority="high" />
+        <h1 id="landing-title" class="landing-title sr-only">Geofancy</h1>
         <p class="landing-tagline">
             The most advanced geomancy software available—built with practitioners in mind,
             developed by a devoted reader, and powered by the <strong>Geofancy API</strong>.

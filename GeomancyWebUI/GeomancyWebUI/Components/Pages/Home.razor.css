@@ -34,6 +34,29 @@
     color: var(--text-primary);
 }
 
+/* The hero logo bakes in the "GeoFancy" wordmark, so the H1 next to it is
+   visually hidden but still announced to screen readers and indexed by crawlers. */
+.landing-title.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.landing-logo {
+    display: block;
+    margin: 0 auto 1.25rem;
+    width: clamp(10rem, 48vw, 16rem);
+    height: auto;
+    border-radius: 18%;
+    box-shadow: 0 10px 30px var(--shadow), 0 2px 8px var(--shadow);
+}
+
 .landing-tagline {
     margin: 0 auto 1.5rem;
     max-width: 36rem;
