@@ -1,0 +1,476 @@
+/*
+ * WayOfPointsDetailPanel - rich, scrollable inspector that appears on the
+ * right side of the Way Of Points tab.
+ *
+ * Visual vocabulary intentionally mirrors PerfectionDetailPanel so the two
+ * tabs feel like siblings: the same card layout, glossary tagline, chip
+ * row, mechanism card, and `interpretation-tips` stack. Element-color
+ * tokens come in via the inline `--wop-element-color` style on the panel
+ * root so the CSS file stays element-agnostic.
+ */
+.wop-detail-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem 1.5rem;
+    box-shadow: 0 4px 16px var(--shadow);
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.wop-detail-panel.is-empty {
+    align-items: center;
+    justify-content: center;
+}
+
+.wop-detail-empty {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+/* ============================================================
+ * Header
+ * ============================================================ */
+.wop-detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-titles {
+    min-width: 0;
+}
+
+.kind-eyebrow {
+    margin: 0 0 0.15rem 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--wop-element-color, var(--accent-color));
+}
+
+.kind-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.title-glyph {
+    color: var(--wop-element-color, var(--accent-color));
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.kind-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.header-score-pill {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    line-height: 1.1;
+    white-space: nowrap;
+    align-self: center;
+}
+
+.header-score-pill.pill-strong            { color: #fff; background: #28a745; border-color: #28a745; }
+.header-score-pill.pill-strong-passive    { color: #fff; background: #4a8af0; border-color: #4a8af0; }
+.header-score-pill.pill-weaker-passive    { color: #fff; background: #6c757d; border-color: #6c757d; }
+.header-score-pill.pill-passive           { color: #0b1d23; background: #3ec9e0; border-color: #3ec9e0; }
+.header-score-pill.pill-established       { color: #4caf50; background: rgba(76, 175, 80, 0.12); border-color: rgba(76, 175, 80, 0.4); }
+.header-score-pill.pill-not-established   { color: var(--text-secondary); background: rgba(108, 117, 125, 0.12); border-color: rgba(108, 117, 125, 0.4); }
+
+/* ============================================================
+ * Glossary tagline + chip row
+ * ============================================================ */
+.glossary-tagline {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.45;
+    padding: 0.45rem 0.7rem;
+    border-left: 3px solid var(--wop-element-color, var(--accent-color));
+    background: var(--bg-secondary);
+    border-radius: 0 6px 6px 0;
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.4;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.chip-arrow {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+.chip.chip-element {
+    background: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 14%, transparent);
+    border-color: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 50%, transparent);
+    color: var(--wop-element-color, var(--accent-color));
+}
+
+.chip.chip-established { color: #4caf50; border-color: rgba(76, 175, 80, 0.4); background: rgba(76, 175, 80, 0.1); }
+.chip.chip-not-established { color: var(--text-secondary); border-color: rgba(108, 117, 125, 0.4); background: rgba(108, 117, 125, 0.1); }
+
+.chip.pill-strong            { color: #fff; background: #28a745; border-color: #28a745; }
+.chip.pill-strong-passive    { color: #fff; background: #4a8af0; border-color: #4a8af0; }
+.chip.pill-weaker-passive    { color: #fff; background: #6c757d; border-color: #6c757d; }
+.chip.pill-passive           { color: #0b1d23; background: #3ec9e0; border-color: #3ec9e0; }
+
+.chip.chip-row-num {
+    background: rgba(120, 80, 200, 0.12);
+    color: var(--accent-color);
+    border-color: rgba(120, 80, 200, 0.4);
+}
+
+.chip.chip-meta { color: var(--text-secondary); }
+
+/* ============================================================
+ * Detail cards
+ * ============================================================ */
+.detail-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.card-title-icon {
+    color: var(--wop-element-color, var(--accent-color));
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+/* ============================================================
+ * Mechanism graph (Judge -> Witness -> Niece -> Endpoint)
+ * ============================================================ */
+.mechanism-graph {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.4rem;
+}
+
+.mech-node {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    min-width: 6rem;
+    flex: 0 0 auto;
+}
+
+.mech-node.is-start {
+    border-color: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 50%, transparent);
+    background: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 10%, var(--bg-primary));
+}
+
+.mech-node.is-end {
+    border-color: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 70%, transparent);
+    background: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 16%, var(--bg-primary));
+}
+
+.mech-node-eyebrow {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    line-height: 1.1;
+}
+
+.mech-node-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.mech-node-figure {
+    font-size: 0.72rem;
+    color: var(--wop-element-color, var(--accent-color));
+    font-style: italic;
+    line-height: 1.2;
+}
+
+.mech-arrow {
+    align-self: center;
+    color: var(--wop-element-color, var(--accent-color));
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 0.1rem;
+    opacity: 0.85;
+}
+
+.mechanism-tail {
+    margin: 0.1rem 0 0;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.mechanism-tail strong {
+    color: var(--wop-element-color, var(--accent-color));
+}
+
+/* ============================================================
+ * Mechanism list (raw notes)
+ * ============================================================ */
+.mechanism-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.mechanism-item {
+    display: flex;
+    gap: 0.45rem;
+    align-items: flex-start;
+    line-height: 1.4;
+}
+
+.mechanism-bullet {
+    color: var(--wop-element-color, var(--accent-color));
+    font-size: 0.95rem;
+    line-height: 1.2;
+    flex-shrink: 0;
+    width: 0.85rem;
+    text-align: center;
+}
+
+.mechanism-text {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+}
+
+/* Highlighted tokens injected via MarkupString */
+.mechanism-text ::deep .token-house {
+    font-weight: 700;
+    color: var(--accent-color);
+    background: rgba(120, 80, 200, 0.1);
+    border: 1px solid rgba(120, 80, 200, 0.35);
+    padding: 0 0.3rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+}
+
+.mechanism-text ::deep .token-figure {
+    font-weight: 700;
+    color: var(--wop-element-color, #f1c40f);
+    font-style: italic;
+}
+
+/* ============================================================
+ * Interpretation tip stack
+ * ============================================================ */
+.interpretation-card .interpretation-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.25rem;
+}
+
+.interpretation-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.6rem 0.8rem 0.6rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.interpretation-tip:hover {
+    border-color: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 35%, var(--border-color));
+}
+
+.interpretation-tip.tip-lead {
+    border-color: color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 45%, transparent);
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 12%, transparent),
+        color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 4%, transparent));
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--wop-element-color, var(--accent-color)) 18%, transparent);
+}
+
+.tip-bullet {
+    color: var(--wop-element-color, var(--accent-color));
+    font-size: 0.95rem;
+    line-height: 1.2;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+}
+
+.tip-text {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.tip-text ::deep .token-house {
+    font-weight: 700;
+    color: var(--accent-color);
+    background: rgba(120, 80, 200, 0.1);
+    border: 1px solid rgba(120, 80, 200, 0.35);
+    padding: 0 0.3rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+}
+
+.tip-text ::deep .token-figure {
+    font-weight: 700;
+    color: var(--wop-element-color, #f1c40f);
+    font-style: italic;
+}
+
+.interpretation-footer {
+    margin: 0.4rem 0 0;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    padding: 0.4rem 0.55rem;
+    border-radius: 6px;
+    border: 1px dashed var(--border-color);
+    background: var(--bg-primary);
+}
+
+.interpretation-footer strong {
+    color: var(--text-primary);
+}
+
+/* Path-type interpretation card variant */
+.path-card .path-type-tagline {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.path-card .path-type-mechanism {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.45;
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+}
+
+.path-card .path-type-mechanism strong {
+    color: var(--wop-element-color, var(--accent-color));
+}
+
+/* ============================================================
+ * KV grid (Establishment card)
+ * ============================================================ */
+.kv-grid {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.4rem 0.85rem;
+}
+
+.kv-grid dt {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    padding-top: 0.1rem;
+}
+
+.kv-grid dd {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* ============================================================
+ * Notes card (collapsible)
+ * ============================================================ */
+.notes-title {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease;
+}
+
+.notes-title:hover {
+    color: var(--wop-element-color, var(--accent-color));
+}
+
+.notes-count {
+    margin-left: 0.3rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}

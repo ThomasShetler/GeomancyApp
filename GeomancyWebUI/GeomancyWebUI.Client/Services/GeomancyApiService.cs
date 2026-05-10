@@ -11,6 +11,8 @@ namespace GeomancyWebUI.Client.Services
         // Cached reference directories - immutable lookup data, fetched once per session.
         private List<HouseDirectoryEntry>? _housesDirectoryCache;
         private List<CourtDirectoryEntry>? _courtsDirectoryCache;
+        private List<WayOfPointsElementEntry>? _wayOfPointsElementsCache;
+        private List<WayOfPointsPathTypeEntry>? _wayOfPointsPathTypesCache;
 
         public GeomancyApiService(HttpClient httpClient)
         {
@@ -266,6 +268,36 @@ namespace GeomancyWebUI.Client.Services
             return _courtsDirectoryCache;
         }
 
+        public async Task<List<WayOfPointsElementEntry>> GetWayOfPointsElementsDirectoryAsync()
+        {
+            if (_wayOfPointsElementsCache != null) return _wayOfPointsElementsCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/way-of-points/elements";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<List<WayOfPointsElementEntryResponse>>();
+            _wayOfPointsElementsCache = apiResponse?.Select(MapToWayOfPointsElementEntry).ToList() ?? new List<WayOfPointsElementEntry>();
+            return _wayOfPointsElementsCache;
+        }
+
+        public async Task<List<WayOfPointsPathTypeEntry>> GetWayOfPointsPathTypesDirectoryAsync()
+        {
+            if (_wayOfPointsPathTypesCache != null) return _wayOfPointsPathTypesCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/way-of-points/path-types";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<List<WayOfPointsPathTypeEntryResponse>>();
+            _wayOfPointsPathTypesCache = apiResponse?.Select(MapToWayOfPointsPathTypeEntry).ToList() ?? new List<WayOfPointsPathTypeEntry>();
+            return _wayOfPointsPathTypesCache;
+        }
+
         private static HouseDirectoryEntry MapToHouseDirectoryEntry(HouseDirectoryEntryResponse src)
         {
             return new HouseDirectoryEntry
@@ -291,6 +323,44 @@ namespace GeomancyWebUI.Client.Services
                 GeneratedBy = src.GeneratedBy ?? string.Empty,
                 Meaning = src.Meaning ?? new List<string>(),
                 UtilityInReading = src.UtilityInReading ?? string.Empty
+            };
+        }
+
+        private static WayOfPointsElementEntry MapToWayOfPointsElementEntry(WayOfPointsElementEntryResponse src)
+        {
+            return new WayOfPointsElementEntry
+            {
+                Id = src.Id,
+                Element = src.Element ?? string.Empty,
+                LatinName = src.LatinName ?? string.Empty,
+                LineName = src.LineName ?? string.Empty,
+                LineIndex = src.LineIndex,
+                Glyph = src.Glyph ?? string.Empty,
+                ColorHint = src.ColorHint ?? string.Empty,
+                Quality = src.Quality ?? string.Empty,
+                Polarity = src.Polarity ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                Domain = src.Domain ?? string.Empty,
+                WhenEstablished = src.WhenEstablished ?? string.Empty,
+                WhenNotEstablished = src.WhenNotEstablished ?? string.Empty,
+                EndpointHouseEmphasis = src.EndpointHouseEmphasis ?? string.Empty,
+                InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>()
+            };
+        }
+
+        private static WayOfPointsPathTypeEntry MapToWayOfPointsPathTypeEntry(WayOfPointsPathTypeEntryResponse src)
+        {
+            return new WayOfPointsPathTypeEntry
+            {
+                Id = src.Id ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                Glyph = src.Glyph ?? string.Empty,
+                ColorHint = src.ColorHint ?? string.Empty,
+                BadgeClass = src.BadgeClass ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                MechanismSummary = src.MechanismSummary ?? string.Empty,
+                CoReads = src.CoReads ?? string.Empty,
+                InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>()
             };
         }
 
@@ -642,6 +712,84 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("utility_in_reading")]
             public string? UtilityInReading { get; set; }
+        }
+
+        private class WayOfPointsElementEntryResponse
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("element")]
+            public string? Element { get; set; }
+
+            [JsonPropertyName("latin_name")]
+            public string? LatinName { get; set; }
+
+            [JsonPropertyName("line_name")]
+            public string? LineName { get; set; }
+
+            [JsonPropertyName("line_index")]
+            public int LineIndex { get; set; }
+
+            [JsonPropertyName("glyph")]
+            public string? Glyph { get; set; }
+
+            [JsonPropertyName("color_hint")]
+            public string? ColorHint { get; set; }
+
+            [JsonPropertyName("quality")]
+            public string? Quality { get; set; }
+
+            [JsonPropertyName("polarity")]
+            public string? Polarity { get; set; }
+
+            [JsonPropertyName("tagline")]
+            public string? Tagline { get; set; }
+
+            [JsonPropertyName("domain")]
+            public string? Domain { get; set; }
+
+            [JsonPropertyName("when_established")]
+            public string? WhenEstablished { get; set; }
+
+            [JsonPropertyName("when_not_established")]
+            public string? WhenNotEstablished { get; set; }
+
+            [JsonPropertyName("endpoint_house_emphasis")]
+            public string? EndpointHouseEmphasis { get; set; }
+
+            [JsonPropertyName("interpretation_paragraphs")]
+            public List<string>? InterpretationParagraphs { get; set; }
+        }
+
+        private class WayOfPointsPathTypeEntryResponse
+        {
+            [JsonPropertyName("id")]
+            public string? Id { get; set; }
+
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("glyph")]
+            public string? Glyph { get; set; }
+
+            [JsonPropertyName("color_hint")]
+            public string? ColorHint { get; set; }
+
+            [JsonPropertyName("badge_class")]
+            public string? BadgeClass { get; set; }
+
+            [JsonPropertyName("tagline")]
+            public string? Tagline { get; set; }
+
+            [JsonPropertyName("mechanism_summary")]
+            public string? MechanismSummary { get; set; }
+
+            [JsonPropertyName("co_reads")]
+            public string? CoReads { get; set; }
+
+            [JsonPropertyName("interpretation_paragraphs")]
+            public List<string>? InterpretationParagraphs { get; set; }
         }
 
         private PerfectionModel MapToPerfectionModel(PerfectionResponse? apiResponse)

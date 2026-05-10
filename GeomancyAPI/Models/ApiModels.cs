@@ -382,4 +382,111 @@ namespace GeomancyAPI.Models
         [JsonProperty("Placements")]
         public List<CourtDirectoryEntryResponse> Placements { get; set; } = new List<CourtDirectoryEntryResponse>();
     }
-} 
+
+    // Reference directory entry for a single Way Of Points element (Fire/Air/Water/Earth),
+    // sourced from WayOfPointsDirectory/ElementData.json
+    public class WayOfPointsElementEntryResponse
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("element")]
+        public string Element { get; set; }
+
+        [JsonProperty("latin_name")]
+        public string LatinName { get; set; }
+
+        [JsonProperty("line_name")]
+        public string LineName { get; set; }
+
+        [JsonProperty("line_index")]
+        public int LineIndex { get; set; }
+
+        [JsonProperty("glyph")]
+        public string Glyph { get; set; }
+
+        [JsonProperty("color_hint")]
+        public string ColorHint { get; set; }
+
+        [JsonProperty("quality")]
+        public string Quality { get; set; }
+
+        [JsonProperty("polarity")]
+        public string Polarity { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("domain")]
+        public string Domain { get; set; }
+
+        [JsonProperty("when_established")]
+        public string WhenEstablished { get; set; }
+
+        [JsonProperty("when_not_established")]
+        public string WhenNotEstablished { get; set; }
+
+        [JsonProperty("endpoint_house_emphasis")]
+        public string EndpointHouseEmphasis { get; set; }
+
+        [JsonProperty("interpretation_paragraphs")]
+        public List<string> InterpretationParagraphs { get; set; } = new List<string>();
+    }
+
+    // Reference directory entry for a single Way Of Points path type (Strong / StrongPassive
+    // / WeakerPassive / Passive), sourced from WayOfPointsDirectory/PathTypeData.json
+    public class WayOfPointsPathTypeEntryResponse
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("glyph")]
+        public string Glyph { get; set; }
+
+        [JsonProperty("color_hint")]
+        public string ColorHint { get; set; }
+
+        [JsonProperty("badge_class")]
+        public string BadgeClass { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("mechanism_summary")]
+        public string MechanismSummary { get; set; }
+
+        [JsonProperty("co_reads")]
+        public string CoReads { get; set; }
+
+        [JsonProperty("interpretation_paragraphs")]
+        public List<string> InterpretationParagraphs { get; set; } = new List<string>();
+    }
+
+    // Wrappers matching the on-disk JSON shape for the WayOfPoints directory files
+    public class WayOfPointsElementFile
+    {
+        [JsonProperty("ElementData")]
+        public WayOfPointsElementFilePayload ElementData { get; set; }
+    }
+
+    public class WayOfPointsElementFilePayload
+    {
+        [JsonProperty("Elements")]
+        public List<WayOfPointsElementEntryResponse> Elements { get; set; } = new List<WayOfPointsElementEntryResponse>();
+    }
+
+    public class WayOfPointsPathTypeFile
+    {
+        [JsonProperty("PathTypeData")]
+        public WayOfPointsPathTypeFilePayload PathTypeData { get; set; }
+    }
+
+    public class WayOfPointsPathTypeFilePayload
+    {
+        [JsonProperty("PathTypes")]
+        public List<WayOfPointsPathTypeEntryResponse> PathTypes { get; set; } = new List<WayOfPointsPathTypeEntryResponse>();
+    }
+}

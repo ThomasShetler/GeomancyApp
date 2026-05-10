@@ -1708,5 +1708,129 @@ namespace GeomancyAPI.Controllers
         }
 
         #endregion
+
+        #region Way Of Points Reference Directory (WayOfPointsDirectory JSON files)
+
+        /// <summary>
+        /// Get the full reference directory for the four Way Of Points elements
+        /// (Fire, Air, Water, Earth) - tagline, domain, when-established/not-established
+        /// notes, and per-element interpretation paragraphs used to render tip cards.
+        /// </summary>
+        [HttpGet]
+        [Route("way-of-points/elements")]
+        [ResponseType(typeof(List<WayOfPointsElementEntryResponse>))]
+        public HttpResponseMessage GetWayOfPointsElementsDirectory()
+        {
+            try
+            {
+                var entries = WayOfPointsDirectoryLoader.GetElements();
+                return Request.CreateResponse(HttpStatusCode.OK, entries);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Way Of Points elements directory: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get a single Way Of Points element entry by id (1=Fire, 2=Air, 3=Water, 4=Earth)
+        /// or by element name (case-insensitive: "fire", "air", "water", "earth").
+        /// </summary>
+        [HttpGet]
+        [Route("way-of-points/elements/{key}")]
+        [ResponseType(typeof(WayOfPointsElementEntryResponse))]
+        public HttpResponseMessage GetWayOfPointsElementEntry(string key)
+        {
+            try
+            {
+                var entry = WayOfPointsDirectoryLoader.GetElement(key);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No Way Of Points element entry for '{key}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Way Of Points element entry: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get the full reference directory for the four Way Of Points path types
+        /// (Strong, StrongPassive, WeakerPassive, Passive) - tagline, mechanism summary,
+        /// co-reads, and per-type interpretation paragraphs used to render tip cards.
+        /// </summary>
+        [HttpGet]
+        [Route("way-of-points/path-types")]
+        [ResponseType(typeof(List<WayOfPointsPathTypeEntryResponse>))]
+        public HttpResponseMessage GetWayOfPointsPathTypesDirectory()
+        {
+            try
+            {
+                var entries = WayOfPointsDirectoryLoader.GetPathTypes();
+                return Request.CreateResponse(HttpStatusCode.OK, entries);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Way Of Points path types directory: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get a single Way Of Points path type entry by enum id
+        /// ("Strong", "StrongPassive", "WeakerPassive", "Passive"). Case-insensitive.
+        /// </summary>
+        [HttpGet]
+        [Route("way-of-points/path-types/{id}")]
+        [ResponseType(typeof(WayOfPointsPathTypeEntryResponse))]
+        public HttpResponseMessage GetWayOfPointsPathTypeEntry(string id)
+        {
+            try
+            {
+                var entry = WayOfPointsDirectoryLoader.GetPathType(id);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No Way Of Points path type entry for '{id}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Way Of Points path type entry: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        #endregion
     }
-} 
+}

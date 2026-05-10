@@ -1,0 +1,455 @@
+@using System.Text.RegularExpressions
+@using GeomancyWebUI.Client.Models
+
+@*
+    Right-column detail panel for the revamped Way Of Points tab.
+
+    Renders structured detail for whichever entry was clicked on the left.
+      - When `Selection.Path` is null we render the whole-Way summary
+        (element header, glossary tagline, established/not chip,
+        element-interpretation tip stack, raw notes).
+      - When `Selection.Path` is non-null we additionally render the
+        path-type label, mechanism graph (Judge -> Witness -> Niece ->
+        endpoint with figure names), and the path-type interpretation
+        tip stack.
+
+    The panel itself is the only scroll container in the right column.
+*@
+
+<div class="wop-detail-panel @(Selection == null ? "is-empty" : "")"
+     style="@PanelStyle()">
+    @if (Selection == null)
+    {
+        <div class="wop-detail-empty">
+            <p>Select an element or path on the left to see its details.</p>
+        </div>
+    }
+    else
+    {
+        var elementKey = Selection.ElementId;
+        var entry = LookupElement(elementKey);
+        var pathTypeEntry = Selection.Path != null ? LookupPathType(Selection.Path.PathType) : null;
+        var glyph = entry?.Glyph ?? FallbackGlyph(elementKey);
+        var latin = entry?.LatinName ?? FallbackLatin(elementKey);
+        var quality = entry?.Quality;
+        var polarity = entry?.Polarity;
+        var hasPath = Selection.Path != null;
+        var titleText = hasPath ? (pathTypeEntry?.Name ?? PathTypeFallback(Selection.Path!.PathType)) : "Way Summary";
+        var endpointPill = hasPath ? EndpointPill(Selection.Path!) : (Selection.Way.CanBeEstablished ? "Established" : "Not Established");
+
+        <header class="wop-detail-header">
+            <div class="header-titles">
+                <p class="kind-eyebrow">Way of Points · @elementKey</p>
+                <h2 class="kind-title">
+                    <span class="title-glyph">@glyph</span>
+                    @titleText
+                </h2>
+                <p class="kind-subtitle">@latin@(string.IsNullOrEmpty(entry?.LineName) ? "" : $" · {entry!.LineName}")</p>
+            </div>
+            <div class="header-score-pill @(hasPath ? PathTypeChipClass(Selection.Path!.PathType) : (Selection.Way.CanBeEstablished ? "pill-established" : "pill-not-established"))">
+                @endpointPill
+            </div>
+        </header>
+
+        @if (entry != null && !string.IsNullOrEmpty(entry.Tagline))
+        {
+            <p class="glossary-tagline">@entry.Tagline</p>
+        }
+
+        <!-- Chip row -->
+        <div class="chip-row">
+            <span class="chip chip-element">
+                <span class="chip-arrow">@glyph</span>@elementKey
+            </span>
+            @if (Selection.Way.CanBeEstablished)
+            {
+                <span class="chip chip-established">Established</span>
+            }
+            else
+            {
+                <span class="chip chip-not-established">Not Established</span>
+            }
+            @if (hasPath)
+            {
+                <span class="chip @PathTypeChipClass(Selection.Path!.PathType)">
+                    <span class="chip-arrow">@PathTypeGlyph(Selection.Path.PathType)</span>
+                    @PathTypeShort(Selection.Path.PathType)
+                </span>
+                <span class="chip chip-row-num">Row @Selection.Path.RowReached — @RowLabel(Selection.Path.RowReached)</span>
+            }
+            @if (!string.IsNullOrEmpty(quality))
+            {
+                <span class="chip chip-meta">@quality</span>
+            }
+            @if (!string.IsNullOrEmpty(polarity))
+            {
+                <span class="chip chip-meta">@polarity</span>
+            }
+        </div>
+
+        @* Mechanism card: visualizes either the path graph or the gating mechanism. *@
+        <section class="detail-card mechanism-card">
+            <h3 class="card-title">
+                <span class="card-title-icon">⚙</span> Mechanism
+            </h3>
+            @if (hasPath)
+            {
+                <div class="mechanism-graph">
+                    @{
+                        var nodes = BuildPathNodes(Selection.Path!);
+                    }
+                    @for (var i = 0; i < nodes.Count; i++)
+                    {
+                        var node = nodes[i];
+                        <div class="mech-node @node.Css">
+                            <span class="mech-node-eyebrow">@node.Role</span>
+                            <span class="mech-node-title">@node.Position</span>
+                            @if (!string.IsNullOrEmpty(node.Figure))
+                            {
+                                <span class="mech-node-figure">@node.Figure</span>
+                            }
+                        </div>
+                        @if (i < nodes.Count - 1)
+                        {
+                            <span class="mech-arrow">›</span>
+                        }
+                    }
+                </div>
+                <p class="mechanism-tail">
+                    Endpoint <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>
+                    on Row @Selection.Path.RowReached.
+                </p>
+            }
+            else
+            {
+                <p class="mechanism-tail">
+                    @GatingExplanation(elementKey)
+                </p>
+            }
+        </section>
+
+        @* Element interpretation tip stack — same visual vocabulary as
+           PerfectionDetailPanel's interpretation tips. *@
+        @if (entry != null && entry.InterpretationParagraphs.Count > 0)
+        {
+            <section class="detail-card interpretation-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">✦</span> Element Interpretation
+                </h3>
+                <div class="interpretation-tips">
+                    @for (var i = 0; i < entry.InterpretationParagraphs.Count; i++)
+                    {
+                        var tip = entry.InterpretationParagraphs[i];
+                        <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
+                            <span class="tip-bullet">✦</span>
+                            <p class="tip-text">@HighlightTokens(tip)</p>
+                        </div>
+                    }
+                </div>
+                @if (!string.IsNullOrEmpty(entry.EndpointHouseEmphasis))
+                {
+                    <p class="interpretation-footer">
+                        <strong>Endpoint reading:</strong> @entry.EndpointHouseEmphasis
+                    </p>
+                }
+            </section>
+        }
+
+        @* Element-establishment notes (when_established / when_not_established). *@
+        @if (entry != null && (!string.IsNullOrEmpty(entry.WhenEstablished) || !string.IsNullOrEmpty(entry.WhenNotEstablished)))
+        {
+            <section class="detail-card kv-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">◎</span> Establishment
+                </h3>
+                <dl class="kv-grid">
+                    @if (!string.IsNullOrEmpty(entry.Domain))
+                    {
+                        <dt>Domain</dt>
+                        <dd>@entry.Domain</dd>
+                    }
+                    @if (!string.IsNullOrEmpty(entry.WhenEstablished))
+                    {
+                        <dt>When Established</dt>
+                        <dd>@entry.WhenEstablished</dd>
+                    }
+                    @if (!string.IsNullOrEmpty(entry.WhenNotEstablished))
+                    {
+                        <dt>When Not Established</dt>
+                        <dd>@entry.WhenNotEstablished</dd>
+                    }
+                </dl>
+            </section>
+        }
+
+        @* Path-type interpretation tip stack — only when a specific path is selected. *@
+        @if (hasPath && pathTypeEntry != null && pathTypeEntry.InterpretationParagraphs.Count > 0)
+        {
+            <section class="detail-card interpretation-card path-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">@PathTypeGlyph(Selection.Path!.PathType)</span>
+                    @pathTypeEntry.Name Reading
+                </h3>
+                @if (!string.IsNullOrEmpty(pathTypeEntry.Tagline))
+                {
+                    <p class="path-type-tagline">@pathTypeEntry.Tagline</p>
+                }
+                @if (!string.IsNullOrEmpty(pathTypeEntry.MechanismSummary))
+                {
+                    <p class="path-type-mechanism">
+                        <strong>How it forms.</strong> @pathTypeEntry.MechanismSummary
+                    </p>
+                }
+                <div class="interpretation-tips">
+                    @for (var i = 0; i < pathTypeEntry.InterpretationParagraphs.Count; i++)
+                    {
+                        var tip = pathTypeEntry.InterpretationParagraphs[i];
+                        <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
+                            <span class="tip-bullet">@PathTypeGlyph(Selection.Path!.PathType)</span>
+                            <p class="tip-text">@HighlightTokens(tip)</p>
+                        </div>
+                    }
+                </div>
+                @if (!string.IsNullOrEmpty(pathTypeEntry.CoReads))
+                {
+                    <p class="interpretation-footer">
+                        <strong>Co-reads:</strong> @pathTypeEntry.CoReads
+                    </p>
+                }
+            </section>
+        }
+
+        @* Raw calculator notes — collapsible audit trail for power users. *@
+        @if (Selection.Way.Notes is { Count: > 0 })
+        {
+            <section class="detail-card notes-card">
+                <h3 class="card-title notes-title" @onclick="ToggleNotes" role="button">
+                    <span class="card-title-icon">@(_notesExpanded ? "▾" : "▸")</span>
+                    Calculator Notes
+                    <span class="notes-count">(@Selection.Way.Notes.Count)</span>
+                </h3>
+                @if (_notesExpanded)
+                {
+                    <ul class="mechanism-list">
+                        @foreach (var note in Selection.Way.Notes)
+                        {
+                            <li class="mechanism-item">
+                                <span class="mechanism-bullet">›</span>
+                                <span class="mechanism-text">@HighlightTokens(note)</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public WayOfPointsSelection? Selection { get; set; }
+    [Parameter] public HouseChartModel? Chart { get; set; }
+    [Parameter] public List<WayOfPointsElementEntry>? Elements { get; set; }
+    [Parameter] public List<WayOfPointsPathTypeEntry>? PathTypes { get; set; }
+
+    private bool _notesExpanded;
+
+    private void ToggleNotes() => _notesExpanded = !_notesExpanded;
+
+    // Reset the expand-notes state any time the parent passes a new selection.
+    protected override void OnParametersSet()
+    {
+        // Default to collapsed on every selection change so power-user notes
+        // don't dominate the panel for a casual user clicking through.
+        _notesExpanded = false;
+    }
+
+    // ----- Theming + lookup -----
+    private string PanelStyle()
+    {
+        if (Selection == null) return string.Empty;
+        var entry = LookupElement(Selection.ElementId);
+        var color = entry?.ColorHint ?? FallbackColor(Selection.ElementId);
+        return $"--wop-element-color: {color};";
+    }
+
+    private WayOfPointsElementEntry? LookupElement(string key)
+        => Elements?.FirstOrDefault(e => string.Equals(e.Element, key, StringComparison.OrdinalIgnoreCase));
+
+    private WayOfPointsPathTypeEntry? LookupPathType(string id)
+        => PathTypes?.FirstOrDefault(p => string.Equals(p.Id, id, StringComparison.OrdinalIgnoreCase));
+
+    // ----- Path graph -----
+    private record PathNode(string Role, string Position, string Figure, string Css);
+
+    private List<PathNode> BuildPathNodes(WayOfPointsPathModel path)
+    {
+        var nodes = new List<PathNode>();
+        if (path.Houses == null || path.Houses.Count == 0) return nodes;
+
+        for (var i = 0; i < path.Houses.Count; i++)
+        {
+            var h = path.Houses[i];
+            var role = ResolveRole(h, i, path.Houses.Count);
+            var position = h >= 1 && h <= 12 ? $"H{h} {GetLatinHouseName(h)}" : GetPositionLabel(h);
+            var figure = GetFigureName(h);
+            var css = i == 0 ? "is-start" : (i == path.Houses.Count - 1 ? "is-end" : "is-middle");
+            nodes.Add(new PathNode(role, position, figure, css));
+        }
+        return nodes;
+    }
+
+    private static string ResolveRole(int houseNumber, int index, int total)
+    {
+        if (houseNumber == 0) return "Judge";
+        if (houseNumber == 13) return "Right Witness";
+        if (houseNumber == 14) return "Left Witness";
+        if (houseNumber >= 1 && houseNumber <= 4) return "Mother";
+        if (houseNumber >= 5 && houseNumber <= 8) return "Daughter";
+        if (houseNumber >= 9 && houseNumber <= 12) return "Niece";
+        return $"House {houseNumber}";
+    }
+
+    private string GetPositionLabel(int houseNumber) => houseNumber switch
+    {
+        0 => "Judge",
+        13 => "Right Witness",
+        14 => "Left Witness",
+        _ => $"House {houseNumber}"
+    };
+
+    private string GetFigureName(int houseNumber)
+    {
+        if (Chart == null) return string.Empty;
+        if (houseNumber == 0)  return Chart.Judge?.Name ?? string.Empty;
+        if (houseNumber == 13) return Chart.RightWitness?.Name ?? string.Empty;
+        if (houseNumber == 14) return Chart.LeftWitness?.Name ?? string.Empty;
+        if (houseNumber >= 1 && houseNumber <= 12)
+        {
+            var house = Chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber);
+            return house?.Figure?.Name ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private string EndpointPill(WayOfPointsPathModel path)
+        => $"H{path.EndpointHouse} {GetLatinHouseName(path.EndpointHouse)}";
+
+    private static string RowLabel(int row) => row switch
+    {
+        1 => "Mothers/Daughters",
+        2 => "Nieces",
+        _ => "—"
+    };
+
+    // ----- Path-type styling helpers -----
+    private static string PathTypeShort(string pathType) => pathType switch
+    {
+        "Strong" => "Strong",
+        "StrongPassive" => "Strong Passive",
+        "WeakerPassive" => "Weaker Passive",
+        "Passive" => "Passive",
+        _ => pathType
+    };
+
+    private static string PathTypeFallback(string pathType) => PathTypeShort(pathType) + " Path";
+
+    private static string PathTypeGlyph(string pathType) => pathType switch
+    {
+        "Strong" => "★",
+        "StrongPassive" => "◆",
+        "WeakerPassive" => "▫",
+        "Passive" => "◯",
+        _ => "•"
+    };
+
+    private static string PathTypeChipClass(string pathType) => pathType switch
+    {
+        "Strong" => "pill-strong",
+        "StrongPassive" => "pill-strong-passive",
+        "WeakerPassive" => "pill-weaker-passive",
+        "Passive" => "pill-passive",
+        _ => "pill-unknown"
+    };
+
+    // ----- Element-key fallbacks (for charts that load before the directory does) -----
+    private static string FallbackGlyph(string key) => key switch
+    {
+        "Fire" => "\uD83D\uDD25",
+        "Air" => "\uD83D\uDCA8",
+        "Water" => "\uD83D\uDCA7",
+        "Earth" => "\uD83C\uDF31",
+        _ => "•"
+    };
+
+    private static string FallbackLatin(string key) => key switch
+    {
+        "Fire" => "Via Puncti Ignis",
+        "Air" => "Via Puncti Aeris",
+        "Water" => "Via Puncti Aquae",
+        "Earth" => "Via Puncti Terrae",
+        _ => key
+    };
+
+    private static string FallbackColor(string key) => key switch
+    {
+        "Fire" => "#e74c3c",
+        "Air" => "#f1c40f",
+        "Water" => "#3498db",
+        "Earth" => "#2ecc71",
+        _ => "#7e57c2"
+    };
+
+    // Plain-language gating explanation when no path was found.
+    private string GatingExplanation(string elementKey)
+    {
+        if (Chart == null)
+            return $"The {elementKey} Way could not be established on this chart — no path was found from the Judge to a leaf in the lower rows.";
+
+        var judgeFig = Chart.Judge?.Name ?? "—";
+        var rwFig = Chart.RightWitness?.Name ?? "—";
+        var lwFig = Chart.LeftWitness?.Name ?? "—";
+        return $"The Judge's {elementKey} point does not match either Witness's {elementKey} point on this chart " +
+               $"(Judge {judgeFig} → Witnesses {rwFig} & {lwFig}), so the chart offers no traversal for this element. " +
+               "The Way is technically present but cannot be established.";
+    }
+
+    // ----- Token highlighting (lifted from PerfectionDetailPanel) -----
+    private static readonly Regex HouseRegex = new Regex(@"\b(?:H|house\s+)(\d{1,2})\b", RegexOptions.IgnoreCase);
+    private static readonly HashSet<string> KnownFigures = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Populus", "Via", "Albus", "Coniunctio", "Puella", "Amissio", "Fortuna Major", "Fortuna Minor",
+        "Puer", "Rubeus", "Acquisitio", "Laetitia", "Tristitia", "Carcer", "Caput Draconis", "Cauda Draconis"
+    };
+
+    private MarkupString HighlightTokens(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return new MarkupString(string.Empty);
+        var escaped = System.Net.WebUtility.HtmlEncode(text);
+
+        // Highlight house references like "H4" or "house 4".
+        escaped = HouseRegex.Replace(escaped, m =>
+        {
+            var num = m.Groups[1].Value;
+            return $"<span class=\"token-house\">H{num}</span>";
+        });
+
+        // Highlight known figure names.
+        foreach (var fig in KnownFigures)
+        {
+            var pattern = $@"\b{Regex.Escape(fig)}\b";
+            escaped = Regex.Replace(escaped, pattern, $"<span class=\"token-figure\">{fig}</span>", RegexOptions.IgnoreCase);
+        }
+        return new MarkupString(escaped);
+    }
+
+    // ----- Latin house names (matches the dictionary used elsewhere in the workspace) -----
+    private static readonly Dictionary<int, string> LatinHouseNames = new()
+    {
+        { 1, "Vita" }, { 2, "Lucrum" }, { 3, "Fratres" }, { 4, "Genitor" },
+        { 5, "Nati" }, { 6, "Valetudo" }, { 7, "Uxor" }, { 8, "Mors" },
+        { 9, "Itineris" }, { 10, "Regnum" }, { 11, "Benefacta" }, { 12, "Carcer" }
+    };
+
+    private static string GetLatinHouseName(int houseNumber)
+        => LatinHouseNames.TryGetValue(houseNumber, out var name) ? name : $"House {houseNumber}";
+}

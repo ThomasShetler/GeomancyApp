@@ -1,0 +1,608 @@
+/*
+ * PerfectionDetailPanel - the rich, scrollable inspector that appears on
+ * the right side of the Perfections tab. Mirrors FigureDetailPanel: card
+ * sections, chip rows, kv grids, theme variables. The panel itself is the
+ * only scroll container in the right column so the scrollbar sits next to
+ * the data, not next to the list pane.
+ */
+.perf-detail-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem 1.5rem;
+    box-shadow: 0 4px 16px var(--shadow);
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.perf-detail-panel.is-empty {
+    align-items: center;
+    justify-content: center;
+}
+
+.perf-detail-empty {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+/* ============================================================
+ * Header
+ * ============================================================ */
+.perf-detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-titles {
+    min-width: 0;
+}
+
+.kind-eyebrow {
+    margin: 0 0 0.15rem 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-color);
+}
+
+.kind-eyebrow.is-perfection { color: #4caf50; }
+.kind-eyebrow.is-denial     { color: #ff9800; }
+.kind-eyebrow.is-positive   { color: #4caf50; }
+.kind-eyebrow.is-negative   { color: #f44336; }
+
+.kind-title {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.header-score-pill {
+    flex-shrink: 0;
+    align-self: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+/* ============================================================
+ * Chip row
+ * ============================================================ */
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.chip-mode {
+    background: rgba(120, 80, 200, 0.10);
+    border-color: rgba(120, 80, 200, 0.4);
+    color: var(--accent-color);
+}
+
+.chip-company {
+    background: rgba(255, 193, 7, 0.10);
+    border-color: rgba(255, 193, 7, 0.4);
+    color: #ffc107;
+}
+
+.chip-base {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.chip-aspect {
+    background: rgba(33, 150, 243, 0.10);
+    border-color: rgba(33, 150, 243, 0.4);
+    color: #2196f3;
+}
+
+.chip-translation {
+    background: rgba(255, 152, 0, 0.12);
+    border-color: rgba(255, 152, 0, 0.4);
+    color: #ff9800;
+}
+
+.chip-mtc {
+    background: rgba(76, 175, 80, 0.10);
+    border-color: rgba(76, 175, 80, 0.4);
+    color: #4caf50;
+}
+
+.chip-aux {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.72rem;
+}
+
+/* ============================================================
+ * Card scaffolding (shared with FigureDetailPanel feel)
+ * ============================================================ */
+.detail-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.kv-grid {
+    display: grid;
+    grid-template-columns: minmax(8rem, 35%) 1fr;
+    gap: 0.4rem 0.75rem;
+    margin: 0;
+}
+
+.kv-grid dt {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    align-self: center;
+}
+
+.kv-grid dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    word-break: break-word;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+ * Significators (Querent → Quesited)
+ * ============================================================ */
+.significators-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.6rem;
+    align-items: stretch;
+}
+
+.sig-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.2rem;
+    padding: 0.6rem 0.4rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.sig-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+.sig-house {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.sig-figure {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.sig-arrow {
+    align-self: center;
+    font-size: 1.4rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+ * Indentation grid
+ * ============================================================ */
+.indent-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.45rem;
+}
+
+.indent-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.5rem 0.25rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    text-align: center;
+}
+
+.indent-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    line-height: 1.1;
+}
+
+.indent-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.indent-cell.indent-total {
+    background: linear-gradient(180deg, rgba(120, 80, 200, 0.12), rgba(120, 80, 200, 0.04));
+    border-color: rgba(120, 80, 200, 0.4);
+}
+
+.indent-cell.indent-total .indent-value {
+    color: var(--accent-color);
+}
+
+@media (max-width: 1500px) {
+    .indent-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ============================================================
+ * Score breakdown
+ * ============================================================ */
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.score-breakdown:has(.score-cell-net) {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.score-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.55rem 0.4rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.score-cell-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+}
+
+.score-cell-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.score-cell-net {
+    background: linear-gradient(180deg, rgba(120, 80, 200, 0.12), rgba(120, 80, 200, 0.04));
+    border-color: rgba(120, 80, 200, 0.4);
+}
+
+/* ============================================================
+ * Notes / prose
+ * ============================================================ */
+.notes-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.notes-list li {
+    margin-bottom: 0.25rem;
+}
+
+.prose-text {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+/* ============================================================
+ * Score classes (re-used across pills + text)
+ * ============================================================ */
+.score-positive {
+    color: #4caf50;
+    background: rgba(76, 175, 80, 0.15);
+    border-color: rgba(76, 175, 80, 0.45);
+}
+
+.score-negative {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.15);
+    border-color: rgba(244, 67, 54, 0.45);
+}
+
+.score-neutral {
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.score-positive-text { color: #4caf50; }
+.score-negative-text { color: #f44336; }
+.score-neutral-text  { color: var(--text-secondary); }
+
+/* ============================================================
+ * Glossary tagline (one-liner under the header)
+ * ============================================================ */
+.glossary-tagline {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    background: rgba(120, 80, 200, 0.06);
+    border-left: 3px solid var(--accent-color);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* ============================================================
+ * Card title icons (small glyph in front of section heading)
+ * ============================================================ */
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.card-title-icon {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    line-height: 1;
+}
+
+/* ============================================================
+ * Mechanism card - bullet rows with subtle markers
+ * ============================================================ */
+.mechanism-card {
+    border-left: 3px solid rgba(120, 80, 200, 0.45);
+}
+
+.mechanism-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.mechanism-item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.35rem 0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    line-height: 1.4;
+}
+
+.mechanism-bullet {
+    flex-shrink: 0;
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.mechanism-text {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    word-break: break-word;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+/*
+ * Tokens are emitted via MarkupString so they aren't auto-scoped by Blazor
+ * isolation - reach them with ::deep so they pick up styling here.
+ */
+.mechanism-text ::deep .token-house {
+    display: inline-block;
+    padding: 0.05rem 0.4rem;
+    margin: 0 0.05rem;
+    background: rgba(33, 150, 243, 0.14);
+    border: 1px solid rgba(33, 150, 243, 0.4);
+    border-radius: 4px;
+    color: #2196f3;
+    font-weight: 600;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.mechanism-text ::deep .token-figure {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.mechanism-text ::deep .token-aux {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+/* ============================================================
+ * Interpretation card - one tip box per sentence
+ * ============================================================ */
+.interpretation-card {
+    border-left: 3px solid #ffc107;
+    background: linear-gradient(180deg, rgba(255, 193, 7, 0.06), transparent 70%);
+}
+
+.interpretation-card .card-title-icon {
+    color: #ffc107;
+}
+
+.interpretation-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.25rem;
+}
+
+.interpretation-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.6rem 0.8rem 0.6rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 193, 7, 0.25);
+    background: rgba(255, 193, 7, 0.05);
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.interpretation-tip:hover {
+    background: rgba(255, 193, 7, 0.09);
+    border-color: rgba(255, 193, 7, 0.4);
+}
+
+.interpretation-tip.tip-lead {
+    border-color: rgba(255, 193, 7, 0.45);
+    background: linear-gradient(180deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.04));
+    box-shadow: 0 1px 0 rgba(255, 193, 7, 0.18);
+}
+
+.interpretation-tip .tip-bullet {
+    color: #ffc107;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+    user-select: none;
+}
+
+.interpretation-tip .tip-text {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+/* Lead-sentence prefix like "Mutation —" or "Dexter Trine —" inside the
+   first tip gets a small uppercase label so the eye lands on the mode name. */
+.interpretation-tip .tip-text ::deep .tip-lead-label {
+    font-weight: 700;
+    color: #ffc107;
+    letter-spacing: 0.02em;
+}
+
+.interpretation-tip .tip-text ::deep .tip-lead-sep {
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin: 0 0.1rem;
+}
+
+.interpretation-tip .tip-text ::deep .token-house {
+    background: rgba(120, 80, 200, 0.14);
+    color: var(--accent-color);
+    border-radius: 4px;
+    padding: 0 0.35rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.interpretation-tip .tip-text ::deep .token-figure {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* ============================================================
+ * Direction arrows in chips and the significators arrow
+ * ============================================================ */
+.chip .chip-arrow {
+    font-size: 0.95rem;
+    line-height: 1;
+    font-weight: 700;
+}
+
+.chip-major {
+    background: rgba(120, 80, 200, 0.14);
+    border-color: rgba(120, 80, 200, 0.45);
+    color: var(--accent-color);
+}
+
+.chip-minor {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.sig-arrow {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}

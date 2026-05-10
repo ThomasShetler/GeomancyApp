@@ -1,0 +1,650 @@
+@using System.Text.RegularExpressions
+@using GeomancyWebUI.Client.Models
+
+@*
+    Right-column detail panel for the revamped Perfections tab.
+
+    Renders structured detail for whichever entry was clicked on the left:
+      - Perfection / Denial: header w/ score pill, mode glossary tagline,
+        chip row (mode, company, base mode, aspect + direction, translation,
+        MTC), Significators card (Querent → Quesited), Translator card,
+        Company card, Indentation card, Score breakdown, Mechanism card
+        (factual notes parsed out of the Notes list), Interpretation card
+        (the "Interpretation: ..." prose from Notes).
+      - Positive / Negative Aspect: header w/ score pill, aspect glossary
+        tagline, chip row (Major/Minor, Direction, MTC), From → To houses,
+        Score breakdown, Mechanism card + Interpretation card parsed out
+        of the aspect's Description.
+
+    The panel itself is the only scroll container in the right column.
+*@
+
+<div class="perf-detail-panel @(Selection == null ? "is-empty" : "")">
+    @if (Selection == null)
+    {
+        <div class="perf-detail-empty">
+            <p>Select a perfection, denial, or aspect on the left to see its details.</p>
+        </div>
+    }
+    else if (Selection.Kind == PerfectionEntryKind.Perfection || Selection.Kind == PerfectionEntryKind.Denial)
+    {
+        var p = Selection.Perfection;
+        if (p == null)
+        {
+            <div class="perf-detail-empty">
+                <p>Selected entry has no data.</p>
+            </div>
+        }
+        else
+        {
+            var isDenial = Selection.Kind == PerfectionEntryKind.Denial;
+            var totalScore = p.FavorableScore + p.UnfavorableScore;
+            var headerEyebrow = isDenial ? "Denial" : "Perfection";
+            var modeTitle = ResolveModeTitle(p);
+            var companyDisplay = GetCompanyTypeDisplay(p);
+            var glossary = GetModeGlossary(p);
+            var noteParts = ParseNotes(p.Notes);
+            var directionVis = GetDirectionVis(p.AspectDirection, p.AspectBetweenSignificators);
+
+            <header class="perf-detail-header">
+                <div class="header-titles">
+                    <p class="kind-eyebrow @(isDenial ? "is-denial" : "is-perfection")">@headerEyebrow</p>
+                    <h2 class="kind-title">@modeTitle</h2>
+                </div>
+                <div class="header-score-pill @ScoreClass(totalScore)">
+                    @FormatScore(totalScore)
+                </div>
+            </header>
+
+            @if (!string.IsNullOrEmpty(glossary))
+            {
+                <p class="glossary-tagline">@glossary</p>
+            }
+
+            <!-- Mode chips -->
+            <div class="chip-row">
+                <span class="chip chip-mode">@(string.IsNullOrEmpty(p.Mode) ? "Unknown" : p.Mode)</span>
+                @if (!string.IsNullOrEmpty(companyDisplay))
+                {
+                    <span class="chip chip-company">@companyDisplay</span>
+                }
+                @if (!string.IsNullOrEmpty(p.BaseMode) && p.BaseMode != p.Mode)
+                {
+                    <span class="chip chip-base">Base: @p.BaseMode</span>
+                }
+                @if (!string.IsNullOrEmpty(p.AspectBetweenSignificators) && p.AspectBetweenSignificators != "None")
+                {
+                    <span class="chip chip-aspect">
+                        @if (!string.IsNullOrEmpty(directionVis.Glyph))
+                        {
+                            <span class="chip-arrow">@directionVis.Glyph</span>
+                        }
+                        @p.AspectBetweenSignificators
+                        @if (!string.IsNullOrEmpty(p.AspectDirection))
+                        {
+                            <span class="chip-aux"> (@p.AspectDirection)</span>
+                        }
+                    </span>
+                }
+                @if (p.Mode == "Aspect" && p.TranslatorHouse > 0)
+                {
+                    <span class="chip chip-translation">Translation</span>
+                }
+                @if (p.MadeThroughCompany)
+                {
+                    <span class="chip chip-mtc">Made through Company</span>
+                }
+            </div>
+
+            <!-- Significators card -->
+            <section class="detail-card">
+                <h3 class="card-title">Significators</h3>
+                <div class="significators-grid">
+                    <div class="sig-cell">
+                        <span class="sig-eyebrow">Querent</span>
+                        <span class="sig-house">House @p.QuerentHouse</span>
+                        <span class="sig-figure">@(string.IsNullOrEmpty(p.QuerentFigure) ? "—" : p.QuerentFigure)</span>
+                    </div>
+                    <div class="sig-arrow">
+                        @(string.IsNullOrEmpty(directionVis.Glyph) ? "→" : directionVis.Glyph)
+                    </div>
+                    <div class="sig-cell">
+                        <span class="sig-eyebrow">Quesited</span>
+                        <span class="sig-house">House @p.QuesitedHouse</span>
+                        <span class="sig-figure">@(string.IsNullOrEmpty(p.QuesitedFigure) ? "—" : p.QuesitedFigure)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Translator card -->
+            @if (p.TranslatorHouse > 0)
+            {
+                <section class="detail-card">
+                    <h3 class="card-title">Translator</h3>
+                    <dl class="kv-grid">
+                        <dt>House</dt>     <dd>House @p.TranslatorHouse</dd>
+                        @if (!string.IsNullOrEmpty(p.TranslatorFigure))
+                        {
+                            <dt>Figure</dt>    <dd>@p.TranslatorFigure</dd>
+                        }
+                        @if (p.TranslatorIndentation != null)
+                        {
+                            <dt>Indent Index</dt>  <dd>@p.TranslatorIndentation.Index</dd>
+                            <dt>Indent Bonus</dt>  <dd>@p.TranslatorIndentation.Bonus</dd>
+                            <dt>Indent Total</dt>  <dd>@p.TranslatorIndentation.Total</dd>
+                        }
+                    </dl>
+                </section>
+            }
+
+            <!-- Company card -->
+            @if (!string.IsNullOrEmpty(p.CompanyType) && p.CompanyType != "None")
+            {
+                <section class="detail-card">
+                    <h3 class="card-title">Company</h3>
+                    <dl class="kv-grid">
+                        <dt>Type</dt> <dd>@(!string.IsNullOrEmpty(companyDisplay) ? companyDisplay : p.CompanyType)</dd>
+                        @if (!string.IsNullOrEmpty(p.CompanyTypeDescription))
+                        {
+                            <dt>Description</dt> <dd>@p.CompanyTypeDescription</dd>
+                        }
+                    </dl>
+                </section>
+            }
+
+            <!-- Indentation card -->
+            @if (p.Indentation != null)
+            {
+                <section class="detail-card">
+                    <h3 class="card-title">Indentation</h3>
+                    <div class="indent-grid">
+                        <div class="indent-cell">
+                            <span class="indent-label">Querent House</span>
+                            <span class="indent-value">@p.Indentation.QuerentHouse</span>
+                        </div>
+                        <div class="indent-cell">
+                            <span class="indent-label">Quesited House</span>
+                            <span class="indent-value">@p.Indentation.QuesitedHouse</span>
+                        </div>
+                        <div class="indent-cell">
+                            <span class="indent-label">Index</span>
+                            <span class="indent-value">@p.Indentation.Index</span>
+                        </div>
+                        <div class="indent-cell">
+                            <span class="indent-label">Bonus</span>
+                            <span class="indent-value">@p.Indentation.Bonus</span>
+                        </div>
+                        <div class="indent-cell indent-total">
+                            <span class="indent-label">Total</span>
+                            <span class="indent-value">@p.Indentation.Total</span>
+                        </div>
+                    </div>
+                </section>
+            }
+
+            <!-- Score breakdown -->
+            <section class="detail-card">
+                <h3 class="card-title">Score</h3>
+                <div class="score-breakdown">
+                    <div class="score-cell">
+                        <span class="score-cell-label">Favorable</span>
+                        <span class="score-cell-value score-positive-text">+@p.FavorableScore</span>
+                    </div>
+                    <div class="score-cell">
+                        <span class="score-cell-label">Unfavorable</span>
+                        <span class="score-cell-value score-negative-text">@p.UnfavorableScore</span>
+                    </div>
+                    <div class="score-cell score-cell-net">
+                        <span class="score-cell-label">Net</span>
+                        <span class="score-cell-value @ScoreTextClass(totalScore)">@FormatScore(totalScore)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mechanism (factual notes pulled out of p.Notes) -->
+            @if (noteParts.Mechanisms.Count > 0)
+            {
+                <section class="detail-card mechanism-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⚙</span> Mechanism
+                    </h3>
+                    <ul class="mechanism-list">
+                        @foreach (var mech in noteParts.Mechanisms)
+                        {
+                            <li class="mechanism-item">
+                                <span class="mechanism-bullet">›</span>
+                                <span class="mechanism-text">@HighlightTokens(mech)</span>
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+
+            <!-- Interpretation (the "Interpretation: ..." prose pulled from notes,
+                 split into one tip-box per sentence so each idea is scannable) -->
+            @if (noteParts.InterpretationTips.Count > 0)
+            {
+                <section class="detail-card interpretation-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">✦</span> Interpretation
+                    </h3>
+                    <div class="interpretation-tips">
+                        @for (int i = 0; i < noteParts.InterpretationTips.Count; i++)
+                        {
+                            var tip = noteParts.InterpretationTips[i];
+                            <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
+                                <span class="tip-bullet">✦</span>
+                                <p class="tip-text">@RenderTipText(tip)</p>
+                            </div>
+                        }
+                    </div>
+                </section>
+            }
+
+            <!-- Raw message (only if it adds new info beyond mechanism/interpretation) -->
+            @if (ShouldShowMessage(p, noteParts))
+            {
+                <section class="detail-card prose-card">
+                    <h3 class="card-title">Status</h3>
+                    <p class="prose-text">@p.Message</p>
+                </section>
+            }
+        }
+    }
+    else
+    {
+        // PositiveAspect / NegativeAspect
+        var a = Selection.Aspect;
+        if (a == null)
+        {
+            <div class="perf-detail-empty">
+                <p>Selected entry has no data.</p>
+            </div>
+        }
+        else
+        {
+            var isPositive = Selection.Kind == PerfectionEntryKind.PositiveAspect;
+            var headerEyebrow = isPositive ? "Positive Aspect" : "Negative Aspect";
+            var totalScore = isPositive ? a.FavorableScore : a.UnfavorableScore;
+            var aspectGlossary = GetAspectGlossary(a.AspectType, a.Direction);
+            var aDirectionVis = GetDirectionVisFromString(a.Direction, a.AspectType);
+            // Description on AspectRecord is just joined Notes from the source perfection,
+            // so the same parser that extracts mechanism vs interpretation works here.
+            var aNoteParts = ParseDescription(a.Description);
+
+            <header class="perf-detail-header">
+                <div class="header-titles">
+                    <p class="kind-eyebrow @(isPositive ? "is-positive" : "is-negative")">@headerEyebrow</p>
+                    <h2 class="kind-title">@a.AspectType</h2>
+                </div>
+                <div class="header-score-pill @(isPositive ? "score-positive" : "score-negative")">
+                    @FormatScore(totalScore)
+                </div>
+            </header>
+
+            @if (!string.IsNullOrEmpty(aspectGlossary))
+            {
+                <p class="glossary-tagline">@aspectGlossary</p>
+            }
+
+            <!-- Chips -->
+            <div class="chip-row">
+                <span class="chip @(a.IsMajorAspect ? "chip-major" : "chip-minor")">
+                    <span class="chip-arrow">@(a.IsMajorAspect ? "★" : "·")</span>
+                    @(a.IsMajorAspect ? "Major" : "Minor")
+                </span>
+                @if (!string.IsNullOrEmpty(a.Direction))
+                {
+                    <span class="chip chip-aspect">
+                        @if (!string.IsNullOrEmpty(aDirectionVis.Glyph))
+                        {
+                            <span class="chip-arrow">@aDirectionVis.Glyph</span>
+                        }
+                        @a.Direction
+                    </span>
+                }
+                @if (a.MadeThroughCompany)
+                {
+                    <span class="chip chip-mtc">Made through Company</span>
+                }
+            </div>
+
+            <!-- Houses card -->
+            <section class="detail-card">
+                <h3 class="card-title">Aspect</h3>
+                <div class="significators-grid">
+                    <div class="sig-cell">
+                        <span class="sig-eyebrow">From</span>
+                        <span class="sig-house">House @a.FromHouse</span>
+                    </div>
+                    <div class="sig-arrow">
+                        @(string.IsNullOrEmpty(aDirectionVis.Glyph) ? "→" : aDirectionVis.Glyph)
+                    </div>
+                    <div class="sig-cell">
+                        <span class="sig-eyebrow">To</span>
+                        <span class="sig-house">House @a.ToHouse</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score breakdown -->
+            <section class="detail-card">
+                <h3 class="card-title">Score</h3>
+                <div class="score-breakdown">
+                    <div class="score-cell">
+                        <span class="score-cell-label">Favorable</span>
+                        <span class="score-cell-value score-positive-text">+@a.FavorableScore</span>
+                    </div>
+                    <div class="score-cell">
+                        <span class="score-cell-label">Unfavorable</span>
+                        <span class="score-cell-value score-negative-text">@a.UnfavorableScore</span>
+                    </div>
+                </div>
+            </section>
+
+            @if (aNoteParts.Mechanisms.Count > 0)
+            {
+                <section class="detail-card mechanism-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⚙</span> Mechanism
+                    </h3>
+                    <ul class="mechanism-list">
+                        @foreach (var mech in aNoteParts.Mechanisms)
+                        {
+                            <li class="mechanism-item">
+                                <span class="mechanism-bullet">›</span>
+                                <span class="mechanism-text">@HighlightTokens(mech)</span>
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+
+            @if (aNoteParts.InterpretationTips.Count > 0)
+            {
+                <section class="detail-card interpretation-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">✦</span> Interpretation
+                    </h3>
+                    <div class="interpretation-tips">
+                        @for (int i = 0; i < aNoteParts.InterpretationTips.Count; i++)
+                        {
+                            var tip = aNoteParts.InterpretationTips[i];
+                            <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
+                                <span class="tip-bullet">✦</span>
+                                <p class="tip-text">@RenderTipText(tip)</p>
+                            </div>
+                        }
+                    </div>
+                </section>
+            }
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public PerfectionSelection? Selection { get; set; }
+    [Parameter] public PerfectionAnalysisModel? Analysis { get; set; }
+
+    // ----- Score helpers -----
+    private static string FormatScore(int n) => n > 0 ? $"+{n}" : n.ToString();
+
+    private static string ScoreClass(int n) => n > 0
+        ? "score-positive"
+        : n < 0 ? "score-negative" : "score-neutral";
+
+    private static string ScoreTextClass(int n) => n > 0
+        ? "score-positive-text"
+        : n < 0 ? "score-negative-text" : "score-neutral-text";
+
+    // ----- Mode / company resolution -----
+    private static string ResolveModeTitle(PerfectionModel p)
+    {
+        if (p.Mode == "None") return "No Perfection";
+        if (p.Mode == "Impedition") return "Impedition";
+        if (p.Mode == "Company")
+        {
+            var display = GetCompanyTypeDisplay(p);
+            if (!string.IsNullOrEmpty(p.BaseMode))
+            {
+                return string.IsNullOrEmpty(display)
+                    ? $"Company · {p.BaseMode}"
+                    : $"{display} · {p.BaseMode}";
+            }
+            return string.IsNullOrEmpty(display) ? "Company" : display;
+        }
+        return string.IsNullOrEmpty(p.Mode) ? "Perfection" : p.Mode;
+    }
+
+    private static string GetCompanyTypeDisplay(PerfectionModel p) => p.CompanyType switch
+    {
+        "Simple" => "Company Simple",
+        "DemiSimple" => "Company Demi-Simple",
+        "Compound" => "Company Compound",
+        "Capitular" => "Company Capitular",
+        _ => string.Empty
+    };
+
+    // ----- Glossary -----
+    private static string GetModeGlossary(PerfectionModel p)
+    {
+        // If made through company, prefer the more specific company tagline; otherwise
+        // fall back to the underlying base mode tagline.
+        if (p.Mode == "Company")
+        {
+            return "Company of Houses — a companion figure in the paired house helps perfect the matter.";
+        }
+        var key = string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == p.Mode
+            ? p.Mode
+            : p.BaseMode;
+        return key switch
+        {
+            "Occupation"  => "Occupation — one figure sits in both significator houses, the strongest classical link.",
+            "Conjunction" => "Conjunction — one significator passes next door to the other for direct contact.",
+            "Aspect"      => "Aspect — a significator moves so Sextile, Trine, Square, or Opposition forms.",
+            "Translation" => "Translation — a third figure touches both houses beside the significators.",
+            "Mutation"    => "Mutation — both significators leap to new houses that sit side by side.",
+            "Impedition"  => "Impedition — no classical perfection path joins the querent and quesited.",
+            "None"        => "No classical perfection — the wheel offers no recognized link between them.",
+            _             => string.Empty
+        };
+    }
+
+    private static string GetAspectGlossary(string aspectType, string direction)
+    {
+        var baseLine = aspectType?.Trim().ToLowerInvariant() switch
+        {
+            "sextile"    => "Sextile — a mild favorable aspect created across the house wheel.",
+            "trine"      => "Trine — a strong favorable aspect of easy agreement and flow.",
+            "square"     => "Square — a challenging ninety-degree aspect of friction or tests.",
+            "opposition" => "Opposition — a six-house separation read as confrontation or denial.",
+            "conjunction" => "Conjunction — side-by-side houses showing immediate proximity.",
+            _            => string.Empty
+        };
+        if (string.IsNullOrEmpty(baseLine)) return string.Empty;
+        if (!string.IsNullOrEmpty(direction))
+        {
+            if (direction.Contains("Dexter", StringComparison.OrdinalIgnoreCase))
+                return baseLine + " Dexter casts backward on the wheel and tends to act more forcefully.";
+            if (direction.Contains("Sinister", StringComparison.OrdinalIgnoreCase))
+                return baseLine + " Sinister casts forward on the wheel and tends to unfold more gradually.";
+        }
+        return baseLine;
+    }
+
+    // ----- Direction visualization -----
+    private record DirectionVis(string Glyph, string Cls);
+
+    private static DirectionVis GetDirectionVis(string direction, string aspectType)
+    {
+        if (!string.IsNullOrEmpty(aspectType) && aspectType.Equals("Opposition", StringComparison.OrdinalIgnoreCase))
+            return new DirectionVis("↔", "dir-opposition");
+        if (!string.IsNullOrEmpty(direction))
+        {
+            if (direction.Contains("Dexter", StringComparison.OrdinalIgnoreCase))
+                return new DirectionVis("←", "dir-dexter");
+            if (direction.Contains("Sinister", StringComparison.OrdinalIgnoreCase))
+                return new DirectionVis("→", "dir-sinister");
+        }
+        return new DirectionVis(string.Empty, string.Empty);
+    }
+
+    private static DirectionVis GetDirectionVisFromString(string directionField, string aspectType)
+    {
+        // The aspect record's Direction field already carries "Dexter (Backward)",
+        // "Sinister (Forward)", "Opposition", or the bare aspect type.
+        return GetDirectionVis(directionField, aspectType);
+    }
+
+    // ----- Notes parsing -----
+    // InterpretationTips: each entry is one rendered "tip box" in the UI. We split
+    // the long Interpretation prose on sentence boundaries so each idea (definition,
+    // tradition, timing/practice) gets its own scannable card.
+    private record NoteParts(List<string> Mechanisms, List<string> InterpretationTips);
+
+    private static NoteParts ParseNotes(List<string>? notes)
+    {
+        var mechanisms = new List<string>();
+        var interpretationTips = new List<string>();
+        if (notes == null) return new NoteParts(mechanisms, interpretationTips);
+
+        foreach (var note in notes)
+        {
+            if (string.IsNullOrWhiteSpace(note)) continue;
+            var trimmed = note.Trim();
+            // The PerfectionCalculator always tags the prose tip with "Interpretation:".
+            if (trimmed.StartsWith("Interpretation:", StringComparison.OrdinalIgnoreCase))
+            {
+                var prose = trimmed.Substring("Interpretation:".Length).Trim();
+                interpretationTips.AddRange(SplitInterpretationTips(prose));
+            }
+            else
+            {
+                mechanisms.Add(trimmed);
+            }
+        }
+        return new NoteParts(mechanisms, interpretationTips);
+    }
+
+    private static NoteParts ParseDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+            return new NoteParts(new List<string>(), new List<string>());
+
+        // The aspect's Description is just `string.Join(" ", notes)` from the source
+        // perfection, so we split on the "Interpretation:" marker. Mechanism sentences
+        // are recovered by splitting on the standard sentence terminator.
+        var idx = description.IndexOf("Interpretation:", StringComparison.OrdinalIgnoreCase);
+        string mechanismChunk;
+        string interpretation;
+        if (idx >= 0)
+        {
+            mechanismChunk = description.Substring(0, idx).Trim();
+            interpretation = description.Substring(idx + "Interpretation:".Length).Trim();
+        }
+        else
+        {
+            mechanismChunk = description.Trim();
+            interpretation = string.Empty;
+        }
+
+        var mechanisms = new List<string>();
+        if (!string.IsNullOrEmpty(mechanismChunk))
+        {
+            var parts = Regex.Split(mechanismChunk, @"(?<=\.)\s+");
+            foreach (var part in parts)
+            {
+                var p = part.Trim();
+                if (!string.IsNullOrEmpty(p)) mechanisms.Add(p);
+            }
+        }
+        var tips = string.IsNullOrEmpty(interpretation)
+            ? new List<string>()
+            : SplitInterpretationTips(interpretation);
+        return new NoteParts(mechanisms, tips);
+    }
+
+    // Splits a long Interpretation paragraph into one tip per sentence so each
+    // idea gets its own card. Sentence boundary = period/!/? + whitespace + capital.
+    // Em-dashes inside sentences ("relocates—literally or symbolically—into a new
+    // arena") are preserved because we only split on actual sentence terminators.
+    private static readonly Regex SentenceSplit = new Regex(@"(?<=[\.!?])\s+(?=[A-Z""\u201C])", RegexOptions.Compiled);
+
+    private static List<string> SplitInterpretationTips(string raw)
+    {
+        var result = new List<string>();
+        if (string.IsNullOrWhiteSpace(raw)) return result;
+        var trimmed = raw.Trim();
+        var parts = SentenceSplit.Split(trimmed);
+        foreach (var part in parts)
+        {
+            var s = part.Trim();
+            if (!string.IsNullOrEmpty(s)) result.Add(s);
+        }
+        return result;
+    }
+
+    private static bool ShouldShowMessage(PerfectionModel p, NoteParts parts)
+    {
+        if (string.IsNullOrWhiteSpace(p.Message)) return false;
+        if (parts.Mechanisms.Any(m => string.Equals(m, p.Message, StringComparison.OrdinalIgnoreCase))) return false;
+        if (parts.InterpretationTips.Any(t => string.Equals(t, p.Message, StringComparison.OrdinalIgnoreCase))) return false;
+        return true;
+    }
+
+    // Renders a single tip body with light inline styling: the leading "Mode — "
+    // (or "Dexter Trine — ") prefix on the first sentence becomes a bold lead.
+    // We re-use HighlightTokens for house numbers and figure names too.
+    private static readonly Regex LeadPrefix = new Regex(@"^(?<lead>[A-Z][A-Za-z'/ ]{0,40})\s+\u2014\s+", RegexOptions.Compiled);
+
+    private MarkupString RenderTipText(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return new MarkupString(string.Empty);
+        var encoded = System.Net.WebUtility.HtmlEncode(text);
+        encoded = LeadPrefix.Replace(encoded, m =>
+            $"<span class=\"tip-lead-label\">{m.Groups["lead"].Value}</span><span class=\"tip-lead-sep\"> \u2014 </span>", 1);
+        encoded = HousePattern.Replace(encoded, m =>
+            $"<span class=\"token-house\">House {m.Groups[1].Value}</span>");
+        encoded = FigurePattern.Replace(encoded, m =>
+            $"<span class=\"token-figure\">{m.Value}</span>");
+        return new MarkupString(encoded);
+    }
+
+    // ----- Token highlighting (House N, figure names) -----
+    private static readonly string[] FigureNames = new[]
+    {
+        // 16 standard figures + Conjunctio spelling variant
+        "Populus", "Via", "Albus", "Coniunctio", "Conjunctio",
+        "Puella", "Amissio", "Fortuna Major", "Fortuna Minor",
+        "Puer", "Rubeus", "Acquisitio", "Laetitia", "Tristitia",
+        "Carcer", "Caput Draconis", "Cauda Draconis"
+    };
+
+    // Pre-compute regex once. Match: "house 7" or "House 12" (any case), and the
+    // figure names listed above. We insert <mark> spans that render as styled tags.
+    private static readonly Regex HousePattern = new Regex(@"\b[Hh]ouse\s+(\d+)\b", RegexOptions.Compiled);
+    private static readonly Regex FigurePattern = new Regex(
+        @"\b(" + string.Join("|", FigureNames.Select(Regex.Escape).OrderByDescending(s => s.Length)) + @")\b",
+        RegexOptions.Compiled);
+
+    private MarkupString HighlightTokens(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return new MarkupString(string.Empty);
+
+        // HTML-encode then re-apply regex, so user data can't inject markup.
+        var encoded = System.Net.WebUtility.HtmlEncode(text);
+
+        encoded = HousePattern.Replace(encoded, m =>
+            $"<span class=\"token-house\">House {m.Groups[1].Value}</span>");
+
+        encoded = FigurePattern.Replace(encoded, m =>
+            $"<span class=\"token-figure\">{m.Value}</span>");
+
+        // Highlight italicized tokens like "(translation)", "(direct)", "(adjacent to ...)"
+        encoded = Regex.Replace(encoded,
+            @"\(([^)]+)\)",
+            m => $"<span class=\"token-aux\">({m.Groups[1].Value})</span>");
+
+        return new MarkupString(encoded);
+    }
+}

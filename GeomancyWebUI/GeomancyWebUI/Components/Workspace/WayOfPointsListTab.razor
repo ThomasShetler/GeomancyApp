@@ -1,0 +1,248 @@
+@using GeomancyWebUI.Client.Models
+
+@*
+    Left column of the revamped Way Of Points tab.
+
+    Layout:
+      1. Verdict header (count of established Ways out of four).
+      2. Count-chip row (Strong / Strong Passive / Weaker Passive / Passive
+         totals across all four elements).
+      3. Four scrollable element groups (Fire / Air / Water / Earth). Each
+         group shows the element badge, Latin name, established/not pill,
+         and a clickable list of paths inside that Way. The element header
+         row itself is also clickable -> selects the whole-Way summary.
+*@
+
+<div class="wop-list">
+
+    @if (Analysis == null)
+    {
+        <div class="wop-empty">
+            <p>Way Of Points analysis is loading...</p>
+        </div>
+    }
+    else if (!Analysis.Success)
+    {
+        <div class="wop-empty wop-error">
+            <p>@(string.IsNullOrEmpty(Analysis.Message) ? "Could not analyze Way Of Points." : Analysis.Message)</p>
+        </div>
+    }
+    else
+    {
+        var ways = GetWaysInOrder();
+        var establishedCount = ways.Count(w => w.Way?.CanBeEstablished == true);
+        var totalStrong = ways.Sum(w => w.Way?.StrongPaths?.Count ?? 0);
+        var totalStrongPassive = ways.Sum(w => w.Way?.StrongPassivePaths?.Count ?? 0);
+        var totalWeakerPassive = ways.Sum(w => w.Way?.WeakerPassivePaths?.Count ?? 0);
+        var totalPassive = ways.Sum(w => w.Way?.PassivePaths?.Count ?? 0);
+
+        <!-- Verdict header -->
+        <div class="wop-verdict @VerdictClass(establishedCount)">
+            <div class="wop-verdict-score">
+                <span class="established-num">@establishedCount</span><span class="of-four">/4</span>
+            </div>
+            <div class="wop-verdict-meta">
+                <div class="wop-verdict-label">@VerdictLabel(establishedCount)</div>
+                <div class="wop-verdict-sub">Ways established</div>
+            </div>
+        </div>
+
+        <!-- Count chips -->
+        <div class="wop-counts">
+            <span class="wop-count-chip count-strong" title="Strong paths across all elements">
+                <span class="count-num">@totalStrong</span>
+                <span class="count-label">Strong</span>
+            </span>
+            <span class="wop-count-chip count-strong-passive" title="Strong-passive paths across all elements">
+                <span class="count-num">@totalStrongPassive</span>
+                <span class="count-label">S. Passive</span>
+            </span>
+            <span class="wop-count-chip count-weaker-passive" title="Weaker-passive paths across all elements">
+                <span class="count-num">@totalWeakerPassive</span>
+                <span class="count-label">W. Passive</span>
+            </span>
+            <span class="wop-count-chip count-passive" title="Passive paths across all elements">
+                <span class="count-num">@totalPassive</span>
+                <span class="count-label">Passive</span>
+            </span>
+        </div>
+
+        <!-- Element groups (Fire / Air / Water / Earth) -->
+        <div class="wop-groups">
+            @foreach (var slot in ways)
+            {
+                var elementKey = slot.ElementKey;
+                var way = slot.Way;
+                var entry = LookupElement(elementKey);
+                var glyph = entry?.Glyph ?? slot.FallbackGlyph;
+                var latin = entry?.LatinName ?? slot.FallbackLatin;
+                var colorHint = entry?.ColorHint ?? slot.FallbackColor;
+                var pathCount = way?.AllPaths?.Count ?? 0;
+                var headerSel = new WayOfPointsSelection(elementKey, way ?? new WayOfPointsResultModel(), null, -1);
+                var headerSelected = IsSelected(headerSel);
+
+                <section class="wop-group" style="--wop-element-color: @colorHint;">
+                    <div class="wop-group-header @(headerSelected ? "is-selected" : "")"
+                         @onclick="() => RaiseSelect(headerSel)">
+                        <div class="wop-group-title-row">
+                            <span class="wop-element-glyph">@glyph</span>
+                            <div class="wop-element-titles">
+                                <span class="wop-element-name">@elementKey</span>
+                                <span class="wop-element-latin">@latin</span>
+                            </div>
+                            <span class="wop-established-pill @(way?.CanBeEstablished == true ? "is-established" : "is-not-established")">
+                                @(way?.CanBeEstablished == true ? "Established" : "Not Established")
+                            </span>
+                        </div>
+                        <div class="wop-group-counts">
+                            <span class="wop-mini-count" title="Strong">@(way?.StrongPaths?.Count ?? 0) S</span>
+                            <span class="wop-mini-count" title="Strong Passive">@(way?.StrongPassivePaths?.Count ?? 0) SP</span>
+                            <span class="wop-mini-count" title="Weaker Passive">@(way?.WeakerPassivePaths?.Count ?? 0) WP</span>
+                            <span class="wop-mini-count" title="Passive">@(way?.PassivePaths?.Count ?? 0) P</span>
+                        </div>
+                    </div>
+
+                    @if (pathCount == 0)
+                    {
+                        <p class="wop-group-empty">No paths formed - the Judge's @elementKey point does not match either Witness on this line.</p>
+                    }
+                    else
+                    {
+                        <ul class="wop-rows">
+                            @for (var i = 0; i < way!.AllPaths.Count; i++)
+                            {
+                                var idx = i;
+                                var path = way.AllPaths[idx];
+                                var sel = new WayOfPointsSelection(elementKey, way, path, idx);
+                                var isSel = IsSelected(sel);
+                                <li class="wop-row @(isSel ? "is-selected" : "")"
+                                    @onclick="() => RaiseSelect(sel)">
+                                    <span class="wop-row-bullet" data-path-type="@path.PathType">@PathTypeGlyph(path.PathType)</span>
+                                    <span class="wop-row-label">@BuildPathLabel(path)</span>
+                                    <span class="wop-row-type @PathTypeChipClass(path.PathType)">@PathTypeShort(path.PathType)</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </section>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public WayOfPointsAnalysisModel? Analysis { get; set; }
+    [Parameter] public HouseChartModel? Chart { get; set; }
+    [Parameter] public List<WayOfPointsElementEntry>? Elements { get; set; }
+    [Parameter] public List<WayOfPointsPathTypeEntry>? PathTypes { get; set; }
+    [Parameter] public WayOfPointsSelection? Selected { get; set; }
+    [Parameter] public EventCallback<WayOfPointsSelection> OnSelect { get; set; }
+
+    // Slots define the iteration order and pin each element to its analysis bucket.
+    private record WaySlot(string ElementKey, WayOfPointsResultModel? Way, string FallbackGlyph, string FallbackLatin, string FallbackColor);
+
+    private List<WaySlot> GetWaysInOrder() => new()
+    {
+        new WaySlot("Fire",  Analysis?.FireWay,  "\uD83D\uDD25", "Via Puncti Ignis",  "#e74c3c"),
+        new WaySlot("Air",   Analysis?.AirWay,   "\uD83D\uDCA8", "Via Puncti Aeris",  "#f1c40f"),
+        new WaySlot("Water", Analysis?.WaterWay, "\uD83D\uDCA7", "Via Puncti Aquae",  "#3498db"),
+        new WaySlot("Earth", Analysis?.EarthWay, "\uD83C\uDF31", "Via Puncti Terrae", "#2ecc71"),
+    };
+
+    private WayOfPointsElementEntry? LookupElement(string key)
+        => Elements?.FirstOrDefault(e => string.Equals(e.Element, key, StringComparison.OrdinalIgnoreCase));
+
+    private bool IsSelected(WayOfPointsSelection sel)
+    {
+        if (Selected == null) return false;
+        if (Selected.ElementId != sel.ElementId) return false;
+        return Selected.PathIndex == sel.PathIndex;
+    }
+
+    private async Task RaiseSelect(WayOfPointsSelection sel)
+    {
+        if (OnSelect.HasDelegate)
+            await OnSelect.InvokeAsync(sel);
+    }
+
+    // ----- Verdict + path-type label helpers -----
+    private static string VerdictClass(int established) => established switch
+    {
+        4 => "verdict-favorable",
+        0 => "verdict-unfavorable",
+        _ => "verdict-mixed"
+    };
+
+    private static string VerdictLabel(int established) => established switch
+    {
+        4 => "Fully Open",
+        3 => "Mostly Open",
+        2 => "Half Open",
+        1 => "Mostly Blocked",
+        0 => "Fully Blocked",
+        _ => string.Empty
+    };
+
+    private static string PathTypeShort(string pathType) => pathType switch
+    {
+        "Strong" => "S",
+        "StrongPassive" => "SP",
+        "WeakerPassive" => "WP",
+        "Passive" => "P",
+        _ => "-"
+    };
+
+    private static string PathTypeGlyph(string pathType) => pathType switch
+    {
+        "Strong" => "\u2605",          // ★
+        "StrongPassive" => "\u25C6",   // ◆
+        "WeakerPassive" => "\u25AB",   // ▫
+        "Passive" => "\u25EF",         // ◯
+        _ => "\u2022"                   // •
+    };
+
+    private static string PathTypeChipClass(string pathType) => pathType switch
+    {
+        "Strong" => "type-strong",
+        "StrongPassive" => "type-strong-passive",
+        "WeakerPassive" => "type-weaker-passive",
+        "Passive" => "type-passive",
+        _ => "type-unknown"
+    };
+
+    // Row label like "H4 Vita - Populus" using the existing Latin house dictionary.
+    private string BuildPathLabel(WayOfPointsPathModel path)
+    {
+        var latin = GetLatinHouseName(path.EndpointHouse);
+        var fig = GetFigureName(path.EndpointHouse);
+        if (!string.IsNullOrEmpty(fig))
+            return $"H{path.EndpointHouse} {latin} \u2014 {fig}";
+        return $"H{path.EndpointHouse} {latin}";
+    }
+
+    private string GetFigureName(int houseNumber)
+    {
+        if (Chart == null) return string.Empty;
+        if (houseNumber == 0)  return Chart.Judge?.Name ?? string.Empty;
+        if (houseNumber == 13) return Chart.RightWitness?.Name ?? string.Empty;
+        if (houseNumber == 14) return Chart.LeftWitness?.Name ?? string.Empty;
+        if (houseNumber >= 1 && houseNumber <= 12)
+        {
+            var house = Chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber);
+            return house?.Figure?.Name ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    // Latin house names (matches the dictionary used in CourtAndHousesTab so the
+    // workspace has one consistent vocabulary across tabs).
+    private static readonly Dictionary<int, string> LatinHouseNames = new()
+    {
+        { 1, "Vita" }, { 2, "Lucrum" }, { 3, "Fratres" }, { 4, "Genitor" },
+        { 5, "Nati" }, { 6, "Valetudo" }, { 7, "Uxor" }, { 8, "Mors" },
+        { 9, "Itineris" }, { 10, "Regnum" }, { 11, "Benefacta" }, { 12, "Carcer" }
+    };
+
+    private static string GetLatinHouseName(int houseNumber)
+        => LatinHouseNames.TryGetValue(houseNumber, out var name) ? name : $"House {houseNumber}";
+}

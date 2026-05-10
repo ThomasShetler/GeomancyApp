@@ -77,6 +77,7 @@ namespace GeomancyApp
             {
                 res.Mode = PerfectionType.Occupation;
                 res.Notes.Add($"Both significators are {querentFigureName} (occupation).");
+                AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                 return res;
             }
 
@@ -93,6 +94,7 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Conjunction;
                         res.Notes.Add($"Querent figure {querentFigureName} in house {h} is adjacent to quesited's house {quesitedHouse}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
                     }
                 }
@@ -109,6 +111,7 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Conjunction;
                         res.Notes.Add($"Quesited figure {quesitedFigureName} in house {h} is adjacent to querent's house {querentHouse}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
                     }
                 }
@@ -132,7 +135,11 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Aspect;
                         res.AspectBetweenSignificators = aspect;
+                        if (direction.Contains("Dexter")) res.AspectDirection = "Dexter";
+                        else if (direction.Contains("Sinister")) res.AspectDirection = "Sinister";
+                        else if (direction.Contains("Opposition")) res.AspectDirection = "Opposition";
                         res.Notes.Add($"Querent figure {querentFigureName} in house {h} (translation) aspects quesited's house {quesitedHouse} by {direction}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
                     }
                 }
@@ -151,7 +158,11 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Aspect;
                         res.AspectBetweenSignificators = aspect;
+                        if (direction.Contains("Dexter")) res.AspectDirection = "Dexter";
+                        else if (direction.Contains("Sinister")) res.AspectDirection = "Sinister";
+                        else if (direction.Contains("Opposition")) res.AspectDirection = "Opposition";
                         res.Notes.Add($"Quesited figure {quesitedFigureName} in house {h} (translation) aspects querent's house {querentHouse} by {direction}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
                     }
                 }
@@ -247,6 +258,7 @@ namespace GeomancyApp
             {
                 res.Mode = PerfectionType.Mutation;
                         res.Notes.Add($"Both significators pass to neighboring houses: {querentFigureName} in house {qHouse} and {quesitedFigureName} in house {xHouse}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                 return res;
                     }
                 }
@@ -296,11 +308,11 @@ namespace GeomancyApp
             switch (result.Mode)
             {
                 case PerfectionType.Occupation:
-                    tip = "Interpretation: The strongest mode of perfection. The matter is already complete or will be completed directly and immediately. Both parties are in perfect alignment.";
+                    tip = "Interpretation: Occupation — The same geomantic figure stands in both the querent's house and the quesited's house, which medieval and Renaissance handbooks treat as the clearest classical link between the parties. The matter tends to perfect in a direct, concentrated way rather than through long detours. Always temper the story with the figure's own dignity: a fortunate occupant usually reads as welcome fulfillment, while a difficult one can still grant the outcome in a form that later feels costly or tight.";
                     break;
                     
                 case PerfectionType.Conjunction:
-                    tip = "Interpretation: The significators are in adjacent houses, indicating direct contact or immediate proximity. Success comes through direct action or personal involvement.";
+                    tip = "Interpretation: Conjunction — One significator has passed into a house immediately beside the other's home house, so the chart pictures literal proximity: meetings, messages, or someone stepping one door closer on the wheel. Traditional authors describe conjunction as nearly as affirmative as occupation, though it normally costs motion, initiative, or a short journey. Timing is relatively prompt compared with slower modes, yet the virtues of the two figures still tell you whether that contact is gentle or prickly.";
                     break;
                     
                 case PerfectionType.Aspect:
@@ -309,63 +321,63 @@ namespace GeomancyApp
                         if (result.AspectDirection == "Dexter")
                         {
                             tip = result.AspectBetweenSignificators == AspectType.Trine 
-                                ? "Interpretation: Dexter Trine - The strongest favorable aspect. Success comes quickly, powerfully, and obviously. High energy, active help arrives immediately."
-                                : "Interpretation: Dexter Sextile - Strong opportunity with active help. Someone intervenes on your behalf without you having to ask. High energy assistance.";
+                                ? "Interpretation: Dexter Trine — Because a significator has sprung to another house, a trine forms on the dexter (backward) side of the chart, which geomancers following Greer's house-aspects table usually read as vigorous, outgoing grace. Help arrives with visible momentum: resources, introductions, or circumstances visibly swing toward agreement. It remains a harmonious link, so weigh the elemental friendship of the figures, but the geometry favors a generous, relatively quick resolution."
+                                : "Interpretation: Dexter Sextile — The benefic sixty-degree link runs dexter—against the forward march of houses—so classical direction lore treats it as the more assertive sextile flavor. Openings tend to appear as active nudges, timely offers, or allies who move before you have to beg. It is still the milder benefic compared with a trine, yet you can expect quicker catalysts rather than a slow background drift toward the outcome.";
                         }
                         else if (result.AspectDirection == "Sinister")
                         {
                             tip = result.AspectBetweenSignificators == AspectType.Trine
-                                ? "Interpretation: Sinister Trine - Very strong favorable aspect, but more gradual. Success is assured but may take standard time. Easy, peaceful flow."
-                                : "Interpretation: Sinister Sextile - Weaker opportunity. Help is available but you must ask for it or do the legwork yourself. Passive benefit.";
+                                ? "Interpretation: Sinister Trine — The same harmonious trine, cast sinister (forward along the house ring), is read as steady, even-tempered flow rather than a sudden flash. Benefits accrue on a natural timetable and often feel easy to ride once the pattern is noticed. Authors still rank it among the strong yes-style connections; think of dexter trines as brighter accelerants and sinister trines as deep currents that carry the matter quietly to shore."
+                                : "Interpretation: Sinister Sextile — Here the favorable sextile follows the sinister direction, so help is present but gathers gradually or waits on your cooperation. You may need to request assistance, return calls, or repeat modest efforts before the door fully opens. The aspect remains kindly, yet classical nuance calls this the more passive sextile: patience and follow-through matter as much as raw opportunity.";
                         }
                         else
                         {
-                            tip = "Interpretation: Favorable aspect formed through translation. Success comes through indirect means, but the connection is positive.";
+                            tip = "Interpretation: Benefic Aspect via Translation — A sextile or trine appears only because one significator has passed into another house, which geomantic doctrine treats as movement carrying the goodwill instead of a static promise between the original seats. That usually signals travel, rescheduling, a second venue, or someone operating out of sight who tilts the odds toward yes. Read the translated figure and the houses it touches to see who must relocate, speak, or mediate next.";
                         }
                     }
                     else if (result.AspectBetweenSignificators == AspectType.Square)
                     {
                         tip = result.AspectDirection == "Dexter"
-                            ? "Interpretation: Dexter Square - Greater denial. Harsh, high-energy block. Represents a fight, sudden breakage, or active enemy. Very difficult to overcome."
+                            ? "Interpretation: Dexter Square — The square is already the geomantic image of strain, and casting it dexter—backward around the wheel—traditionally sharpens the edge. Obstructions arrive with force: disputes spike quickly, rivals dig in, or a single stubborn factor refuses to be charmed away. Classical readers still acknowledge contact, but they warn that you must spend energy, money, or reputation to clear the path before the matter can settle cleanly."
                             : result.AspectDirection == "Sinister"
-                            ? "Interpretation: Sinister Square - Lesser denial. Passive or annoying block. Represents delays, red tape, confusion, or friction. Slows you down until you give up."
-                            : "Interpretation: Square aspect - Unfavorable connection. Represents obstacles, delays, or conflicts that must be overcome.";
+                            ? "Interpretation: Sinister Square — A forward-running square tends to manifest as grinding friction rather than a single dramatic clash: paperwork, mixed signals, stretched budgets, or morale that erodes while everyone stays polite. The denial is real yet often workable if you chip away at details, reset timelines, and refuse to ignore small warnings. Think of dexter squares as sudden snags and sinister squares as slow leaks that still demand attention."
+                            : "Interpretation: Square — The significators meet by square, the ninety-degree stress aspect carried into geomancy from classical astrology but judged here only after movement creates the tie. It names tension, tests, or competing agendas that must be negotiated before anything can perfect. Severity still depends on the figures and supporting witnesses, yet you should plan for obstacles that must be managed, not hand-waved away.";
                     }
                     else if (result.AspectBetweenSignificators == AspectType.Opposition)
                     {
-                        tip = "Interpretation: Opposition - Total denial. The two parties are moving in opposite directions. Represents separation and finality. No fight to be had; simply incompatible realities.";
+                        tip = "Interpretation: Opposition — Opposition spans six whole houses on the geomantic wheel, mirroring two parties staring across a table with contrary aims. Traditional doctrine treats it as the strongest malefic aspect: the querent and quesited remain aware of each other yet refuse to merge, so you often see stalemates, cancellations, or endings that will not convert into cooperation without a new figure or house story. It is rarely softened into a simple yes unless the rest of the chart loudly disagrees.";
                     }
                     break;
                     
                 case PerfectionType.Translation:
                     var translatorName = result.TranslatorHouse > 0 ? chart.GetHouseFigure(result.TranslatorHouse)?.Name : "Unknown";
-                    tip = $"Interpretation: Translation of Light - A third figure ({translatorName}) acts as a messenger, connecting the querent and quesited indirectly. Success comes through intermediaries, communication, or third-party assistance.";
+                    tip = $"Interpretation: Translation of Light — A third figure, {translatorName}, appears in houses adjacent to both significators, carrying light between them the way a courier ferries letters when principals cannot meet directly. Medieval instructions stress reading the translator's own character: favorable translators describe generous brokers, while difficult ones can perfect the matter through sharp lessons or unwelcome news. Weak translators sometimes mean odd luck or unlikely introductions, yet the geometry still insists that intermediaries—not solitary willpower—close the gap.";
                     break;
                     
                 case PerfectionType.Mutation:
-                    tip = "Interpretation: Mutation - Both significators pass to neighboring houses elsewhere in the chart. Success comes through change, movement, or transformation. The situation will evolve positively.";
+                    tip = "Interpretation: Mutation — Both significators have sprung into neighboring houses elsewhere on the chart, so the matter perfects only after each party relocates—literally or symbolically—into a new arena. Classical authors use mutation for unexpected channels: pay close attention to the new houses, because they name the friends, workplaces, or environments that will host the breakthrough. Timing is moderate and situational; you are steering toward the outcome by pivoting routes rather than hammering the old position.";
                     break;
                     
                 case PerfectionType.Company:
                     if (result.MadeThroughCompany)
                     {
-                        string companyNote = "Interpretation: Company of Houses - An extra significator (figure in company) creates the connection. ";
+                        string companyNote = "Interpretation: Company of Houses — Traditional company pairs odd-even houses so that a companion figure beside your significator can speak for friends, kin, or business partners woven into the question. ";
                         if (result.BaseMode == PerfectionType.Aspect)
                         {
                             companyNote += result.AspectBetweenSignificators == AspectType.Sextile || result.AspectBetweenSignificators == AspectType.Trine
-                                ? "Friends or associates help create a favorable connection, but the relationship is slightly weaker than direct perfection."
-                                : "Friends or associates create an unfavorable connection, indicating they may be obstacles or sources of trouble.";
+                                ? "Here that paired figure completes a helpful aspect, so allies or associates actively broker the benefic link, though the chain is slightly more indirect than raw occupation. Honor the companion figure's dignity: it shows whether helpers are steady patrons or enthusiastic amateurs who still sway the timetable."
+                                : "Here the companion feeds a square or opposition, so the people beside you may import rivalry, mixed motives, or logistical drag even while they stay central to events. Classical company lore warns that associates can be the very channel the chart blames; read their figure carefully before trusting the outcome to teamwork alone.";
                         }
                         else
                         {
-                            companyNote += "The connection is made through others involved in the situation. Success is possible but may require cooperation from associates.";
+                            companyNote += "The companion now completes another classical mode—occupation, conjunction, translation, or mutation—so the answer cannot be told without that auxiliary voice in the room. Expect side conversations, family ties, or partners whose choices co-author the result; their figure's nature and elemental story deserve as much weight as the primary significators themselves.";
                         }
                         tip = companyNote;
                     }
                     break;
                     
                 case PerfectionType.None:
-                    tip = "Interpretation: Impedition - No connection exists between the significators. The question cannot be answered in its current form. Indirect factors are too strong for the querent to overcome. Barring favorable Witnesses and Judge, this gives a negative answer.";
+                    tip = "Interpretation: Impedition — None of the major perfecting modes fire: no occupation, conjunction, benefic aspect, translation, mutation, or helpful company path ties the querent to the quesited on the wheel, which geomancers traditionally label impetition and read toward denial unless Judge and Witnesses strongly disagree. The chart is warning that indirect forces, wrong timing, or missing allies block the story you asked about. Reformulate the question, shift real-world conditions, or cast again later rather than forcing the same static pattern.";
                     break;
             }
             
@@ -592,6 +604,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         res.Notes.Add($"Querent figure {querentFigureName} in house {h} is adjacent to quesited's house {quesitedHouse}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                         return; // Only need one conjunction
                     }
@@ -695,6 +708,7 @@ namespace GeomancyApp
                         else if (direction.Contains("Opposition"))
                             res.AspectDirection = "Opposition";
                         res.Notes.Add($"Querent figure {querentFullName} in house {h} (via translation) aspects quesited's house {quesitedHouse} ({quesitedFullName}) by {direction}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                     }
                 }
@@ -788,6 +802,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         res.Notes.Add($"{translatorName} in house {adjQuerentHouse} (adjacent to querent) and house {adjQuesitedHouse} (adjacent to quesited) translates the light.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                         return; // Only need one translation
                     }
@@ -837,6 +852,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         res.Notes.Add($"Both significators pass to neighboring houses: {querentFigureName} in house {qHouse} and {quesitedFigureName} in house {xHouse}.");
+                        AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                         return; // Only need one mutation
                     }
@@ -919,16 +935,41 @@ namespace GeomancyApp
             switch (companyType)
             {
                 case CompanyType.Simple:
-                    return "Company Simple (same figure)";
+                    // Strongest of the four. Greer treats matching figures in paired houses as
+                    // a single voice spread across two seats: doubled force, perfectly aligned
+                    // motives, and a sense that the helper and significator are essentially the
+                    // same agency operating from two angles.
+                    return "Company Simple (same figure) — the companion is identical to its partner, doubling the figure's voice and presenting one unified intent in the room. Read it as kindred spirits, mirrored agendas, or a single party operating from two seats.";
                 case CompanyType.DemiSimple:
                     return GetDemiSimpleCompanyInfo(figure1, figure2);
                 case CompanyType.Compound:
-                    return "Company Compound (opposite figures)";
+                    // The structural inverse pair (each line flipped). Classical authors describe
+                    // it as opposites yoked together: complementary but tense, like spouses or
+                    // business partners who balance each other while still pulling in distinct
+                    // directions.
+                    return "Company Compound (opposite figures) — the companion is the figure's structural inverse, every line flipped. Read it as complementary partners forced into the same arena: each completes the other yet imports its own contrary aim, so cooperation comes with friction.";
                 case CompanyType.Capitular:
-                    return "Company Capitular (same Fire line/HeadLine)";
+                    // Weakest of the four. The pair shares only the topmost Fire line (the
+                    // "head"), which Greer ties to leadership/initiative. The connection is
+                    // surface-level: people brought together by occasion or office rather than
+                    // deep affinity.
+                    return "Company Capitular (same Fire line / head line) — the companions share only their topmost Fire row, the line of initiative and outward face. Read it as a shallow but real bond: acquaintances joined by occasion, role, or shared cause rather than by deep temperament.";
                 default:
                     return "";
             }
+        }
+
+        // Returns the short structural label from a CompanyTypeDescription, which
+        // is the prose preceding the " — " separator (e.g., "Company Compound
+        // (opposite figures)"). Used for the inline Notes mechanism line so the
+        // bullet stays terse, while the full interpretive sentence remains
+        // available on the PerfectionResult.CompanyTypeDescription field for the
+        // detail panel to render.
+        private static string GetCompanyTypeShortLabel(string description)
+        {
+            if (string.IsNullOrEmpty(description)) return string.Empty;
+            var idx = description.IndexOf(" \u2014 ", StringComparison.Ordinal); // " — "
+            return idx > 0 ? description.Substring(0, idx) : description;
         }
 
         // Helper method to get demi-simple company information with planet details
@@ -942,44 +983,49 @@ namespace GeomancyApp
             var planet1 = figure1.Planet;
             var planet2 = figure2.Planet;
 
-            // Direct planet match
+            // Direct planet match: companions share the same planetary patron.
+            // Read as kindred allies who cooperate by temperament, not by identity.
             if (planet1.Equals(planet2, StringComparison.OrdinalIgnoreCase))
             {
-                return $"Company Demi-Simple (same planet: {planet1})";
+                return $"Company Demi-Simple (same planet: {planet1}) — the companions answer to the same planetary patron, so they pull in the same direction without being the same figure. Read it as friends, allies, or co-workers united by shared temperament rather than identical interests.";
             }
 
-            // Special handling for Cauda Draconis (South node of the Moon)
-            // It's in company with Saturn and Mars figures
+            // Special handling for Cauda Draconis (South node of the Moon).
+            // Cauda carries malefic, releasing energy and is grouped in company
+            // with Saturn (Carcer, Tristitia) and Mars (Puer, Rubeus): all three
+            // share the temperament of restriction, ending, or sharp action.
             if (name1.Equals("Cauda", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet2.Equals("Saturn", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Cauda Draconis with Saturn)";
+                    return "Company Demi-Simple (Cauda Draconis with Saturn) — the South Node keeps company with Saturn's figures because both rule release, contraction, and endings. Read the helper as a sober, slow-moving force that closes doors as much as it opens them.";
                 if (planet2.Equals("Mars", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Cauda Draconis with Mars)";
+                    return "Company Demi-Simple (Cauda Draconis with Mars) — the South Node and Mars share the same scorching, cutting temperament. Read the helper as a sharp, decisive ally whose aid arrives quickly but can wound as easily as it heals.";
             }
             if (name2.Equals("Cauda", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet1.Equals("Saturn", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Cauda Draconis with Saturn)";
+                    return "Company Demi-Simple (Cauda Draconis with Saturn) — the South Node keeps company with Saturn's figures because both rule release, contraction, and endings. Read the helper as a sober, slow-moving force that closes doors as much as it opens them.";
                 if (planet1.Equals("Mars", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Cauda Draconis with Mars)";
+                    return "Company Demi-Simple (Cauda Draconis with Mars) — the South Node and Mars share the same scorching, cutting temperament. Read the helper as a sharp, decisive ally whose aid arrives quickly but can wound as easily as it heals.";
             }
 
-            // Special handling for Caput Draconis (North node of the Moon)
-            // It's in company with Jupiter and Venus figures
+            // Special handling for Caput Draconis (North node of the Moon).
+            // Caput carries benefic, opening energy and is grouped in company
+            // with Jupiter (Acquisitio, Laetitia) and Venus (Amissio, Puella):
+            // all three share the temperament of growth, gain, and welcome.
             if (name1.Equals("Caput", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet2.Equals("Jupiter", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Caput Draconis with Jupiter)";
+                    return "Company Demi-Simple (Caput Draconis with Jupiter) — the North Node sides with Jupiter's figures because both signify increase, openings, and good fortune. Read the helper as a generous, expansive ally bringing growth, opportunity, or a welcome new chapter.";
                 if (planet2.Equals("Venus", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Caput Draconis with Venus)";
+                    return "Company Demi-Simple (Caput Draconis with Venus) — the North Node sides with Venus's figures because both speak of attraction, harmony, and fresh starts. Read the helper as a kindly, magnetic ally whose presence smooths relationships and softens edges.";
             }
             if (name2.Equals("Caput", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet1.Equals("Jupiter", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Caput Draconis with Jupiter)";
+                    return "Company Demi-Simple (Caput Draconis with Jupiter) — the North Node sides with Jupiter's figures because both signify increase, openings, and good fortune. Read the helper as a generous, expansive ally bringing growth, opportunity, or a welcome new chapter.";
                 if (planet1.Equals("Venus", StringComparison.OrdinalIgnoreCase))
-                    return "Company Demi-Simple (Caput Draconis with Venus)";
+                    return "Company Demi-Simple (Caput Draconis with Venus) — the North Node sides with Venus's figures because both speak of attraction, harmony, and fresh starts. Read the helper as a kindly, magnetic ally whose presence smooths relationships and softens edges.";
             }
 
             return "";
@@ -1095,9 +1141,10 @@ namespace GeomancyApp
                     companyPerfection.CompanyTypeDescription = companyTypeDescription;
                     
                     var companyNote = $"Company of houses: {Root(querentFigure.Name)} in house {querentHouse} is in company with {Root(querentPairedFigure.Name)} in house {querentPairedHouse}.";
-                    if (!string.IsNullOrEmpty(companyTypeDescription))
+                    var shortLabel = GetCompanyTypeShortLabel(companyTypeDescription);
+                    if (!string.IsNullOrEmpty(shortLabel))
                     {
-                        companyNote += $" Type: {companyTypeDescription}.";
+                        companyNote += $" Type: {shortLabel}.";
                     }
                     companyPerfection.Notes.Insert(0, companyNote);
                     AddInterpretationTip(companyPerfection, chart, querentHouse, quesitedHouse);
@@ -1132,9 +1179,10 @@ namespace GeomancyApp
                     companyPerfection.CompanyTypeDescription = companyTypeDescription;
                     
                     var companyNote = $"Company of houses: {Root(quesitedFigure.Name)} in house {quesitedHouse} is in company with {Root(quesitedPairedFigure.Name)} in house {quesitedPairedHouse}.";
-                    if (!string.IsNullOrEmpty(companyTypeDescription))
+                    var shortLabel = GetCompanyTypeShortLabel(companyTypeDescription);
+                    if (!string.IsNullOrEmpty(shortLabel))
                     {
-                        companyNote += $" Type: {companyTypeDescription}.";
+                        companyNote += $" Type: {shortLabel}.";
                     }
                     companyPerfection.Notes.Insert(0, companyNote);
                     AddInterpretationTip(companyPerfection, chart, querentHouse, quesitedHouse);

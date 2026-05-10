@@ -237,15 +237,113 @@
     overflow: hidden;
 }
 
-/* Perfections & Aspects tab - scrolls internally inside the tab body */
-.workspace-perfections {
+/*
+ * Perfections tab matches the Court & Houses layout: a list column on the
+ * left (~330w), 37px gap, then a detail panel column on the right (~390w).
+ * Both columns share the available height and own their own scroll.
+ */
+.perfections-layout {
+    display: grid;
+    grid-template-columns: minmax(330px, 330fr) minmax(390px, 390fr);
+    column-gap: 37px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 0;
+    height: 100%;
+}
+
+.perfections-list-col {
+    min-width: 330px;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    overflow: hidden;
+}
+
+.perfections-detail-col {
+    min-width: 390px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/*
+ * Way Of Points tab mirrors the Perfections layout one-for-one: a list
+ * column on the left (~330w) with the four element groups, 37px gap, and a
+ * rich detail panel on the right (~390w). Element-color tokens are used
+ * inside the child components via inline `--wop-element-color` styles, so
+ * this layer only needs the same grid + sizing as Perfections.
+ */
+.way-of-points-layout {
+    display: grid;
+    grid-template-columns: minmax(330px, 330fr) minmax(390px, 390fr);
+    column-gap: 37px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 0;
+    height: 100%;
+}
+
+.way-of-points-list-col {
+    min-width: 330px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.way-of-points-detail-col {
+    min-width: 390px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/*
+ * Lots & Other (currently houses the legacy Aspect Analysis behind an
+ * Experimental banner). Scrolls internally so it doesn't push the tab strip.
+ */
+.experimental-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
     padding-right: 0.25rem;
+}
+
+.experimental-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border: 1px dashed rgba(255, 152, 0, 0.55);
+    border-radius: 8px;
+    background: rgba(255, 152, 0, 0.06);
+}
+
+.experimental-badge {
+    flex-shrink: 0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255, 152, 0, 0.18);
+    color: #ff9800;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid rgba(255, 152, 0, 0.45);
+}
+
+.experimental-note {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
 }
 
 /* Other simple tab bodies that need their own scroll */
@@ -270,20 +368,6 @@
     border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.4rem;
     color: var(--text-primary);
-}
-
-.workspace-subsection .perfection-dropdowns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.workspace-subsection .perfection-dropdowns label {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
 }
 
 .aspect-analysis-header {

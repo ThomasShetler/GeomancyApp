@@ -81,40 +81,79 @@
                         break;
 
                     case WorkspaceTab.PerfectionsAndAspects:
-                        <div class="workspace-perfections">
-                            <section class="workspace-subsection">
-                                <h3>Perfection</h3>
-                                <div class="perfection-dropdowns">
-                                    <div>
-                                        <label>Querent:</label>
-                                        <select class="form-select" @bind="selectedQuerentHouse" @bind:after="OnQuerentChanged">
-                                            <option value="0">Select House</option>
-                                            @foreach (var (n, text) in GetHouseOptions())
-                                            {
-                                                <option value="@n">@text</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label>Quesited:</label>
-                                        <select class="form-select" @bind="selectedQuesitedHouse" @bind:after="OnQuesitedChanged">
-                                            <option value="0">Select House</option>
-                                            @foreach (var (n, text) in GetHouseOptions())
-                                            {
-                                                <option value="@n">@text</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                                @if (perfectionAnalysis != null)
+                        <div class="perfections-layout">
+                            <div class="perfections-list-col">
+                                <PerfectionsListTab Chart="@houseChart"
+                                                    Analysis="@perfectionAnalysis"
+                                                    QuerentHouse="@selectedQuerentHouse"
+                                                    QuesitedHouse="@selectedQuesitedHouse"
+                                                    HouseOptions="@GetHouseOptions()"
+                                                    Selected="@selectedPerfection"
+                                                    OnQuerentChanged="OnQuerentSelectChanged"
+                                                    OnQuesitedChanged="OnQuesitedSelectChanged"
+                                                    OnSelect="OnPerfectionSelected" />
+                            </div>
+                            <div class="perfections-detail-col">
+                                <PerfectionDetailPanel Selection="@selectedPerfection"
+                                                       Analysis="@perfectionAnalysis" />
+                            </div>
+                        </div>
+                        break;
+
+                    case WorkspaceTab.WayOfPoints:
+                        <div class="way-of-points-layout">
+                            <div class="way-of-points-list-col">
+                                <WayOfPointsListTab Analysis="@wayOfPointsAnalysis"
+                                                    Chart="@houseChart"
+                                                    Elements="@wayOfPointsElements"
+                                                    PathTypes="@wayOfPointsPathTypes"
+                                                    Selected="@selectedWayOfPoints"
+                                                    OnSelect="OnWayOfPointsSelected" />
+                            </div>
+                            <div class="way-of-points-detail-col">
+                                <WayOfPointsDetailPanel Selection="@selectedWayOfPoints"
+                                                        Chart="@houseChart"
+                                                        Elements="@wayOfPointsElements"
+                                                        PathTypes="@wayOfPointsPathTypes" />
+                            </div>
+                        </div>
+                        break;
+
+                    case WorkspaceTab.Triplicates:
+                        @if (houseChart?.Triplicities != null && houseChart.Triplicities.Any())
+                        {
+                            <ul class="triplicities-list">
+                                @foreach (var t in houseChart.Triplicities.OrderBy(x => x.Number))
                                 {
-                                    <PerfectionAnalysisView Analysis="@perfectionAnalysis" />
+                                    <li class="triplicity-item">
+                                        <div class="triplicity-header">
+                                            <span class="triplicity-number">@GetTriplicityOrdinal(t.Number):</span>
+                                            @if (!string.IsNullOrEmpty(t.Description))
+                                            {
+                                                <span class="triplicity-description">@t.Description</span>
+                                            }
+                                        </div>
+                                        <span class="triplicity-figures">
+                                            @(t.FirstFigure?.Name ?? "N/A") &gt; @(t.SecondFigure?.Name ?? "N/A") &gt; @(t.ThirdFigure?.Name ?? "N/A")
+                                        </span>
+                                    </li>
                                 }
-                                else
-                                {
-                                    <p class="text-muted">Pick a Querent and Quesited house to compute perfection.</p>
-                                }
-                            </section>
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No triplicities available.</p>
+                        }
+                        break;
+
+                    case WorkspaceTab.LotsAndOther:
+                        <div class="experimental-section">
+                            <div class="experimental-banner">
+                                <span class="experimental-badge">Experimental</span>
+                                <span class="experimental-note">
+                                    Replaced by the Perfection Analysis on the Perfections tab. Kept here for reference.
+                                </span>
+                            </div>
 
                             @if (aspectAnalysis != null && aspectAnalysis.Success)
                             {
@@ -174,49 +213,11 @@
                                     }
                                 </section>
                             }
+                            else
+                            {
+                                <p class="text-muted">Aspect analysis is loading…</p>
+                            }
                         </div>
-                        break;
-
-                    case WorkspaceTab.WayOfPoints:
-                        @if (wayOfPointsAnalysis != null)
-                        {
-                            <WayOfPointsView Analysis="@wayOfPointsAnalysis" Chart="@houseChart" />
-                        }
-                        else
-                        {
-                            <div class="workspace-placeholder">Way of Points analysis is loading…</div>
-                        }
-                        break;
-
-                    case WorkspaceTab.Triplicates:
-                        @if (houseChart?.Triplicities != null && houseChart.Triplicities.Any())
-                        {
-                            <ul class="triplicities-list">
-                                @foreach (var t in houseChart.Triplicities.OrderBy(x => x.Number))
-                                {
-                                    <li class="triplicity-item">
-                                        <div class="triplicity-header">
-                                            <span class="triplicity-number">@GetTriplicityOrdinal(t.Number):</span>
-                                            @if (!string.IsNullOrEmpty(t.Description))
-                                            {
-                                                <span class="triplicity-description">@t.Description</span>
-                                            }
-                                        </div>
-                                        <span class="triplicity-figures">
-                                            @(t.FirstFigure?.Name ?? "N/A") &gt; @(t.SecondFigure?.Name ?? "N/A") &gt; @(t.ThirdFigure?.Name ?? "N/A")
-                                        </span>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <p class="text-muted">No triplicities available.</p>
-                        }
-                        break;
-
-                    case WorkspaceTab.LotsAndOther:
-                        <div class="workspace-placeholder">Lots &amp; Other view coming soon.</div>
                         break;
                 }
             </div>
@@ -269,10 +270,14 @@
 
     // ----- Selection state shared between tab and detail panel -----
     private SlotSelection? selectedSlot;
+    private PerfectionSelection? selectedPerfection;
+    private WayOfPointsSelection? selectedWayOfPoints;
 
     // ----- Reference directories -----
     private List<HouseDirectoryEntry> housesDirectory = new();
     private List<CourtDirectoryEntry> courtsDirectory = new();
+    private List<WayOfPointsElementEntry>? wayOfPointsElements;
+    private List<WayOfPointsPathTypeEntry>? wayOfPointsPathTypes;
 
     // ----- Analysis state (Perfections / Aspects / Way of Points) -----
     private int selectedQuerentHouse = 0;
@@ -314,6 +319,21 @@
                 ? $"Reference directory unavailable: {ex.Message}"
                 : errorMessage;
         }
+
+        try
+        {
+            wayOfPointsElements = await GeomancyService.GetWayOfPointsElementsDirectoryAsync();
+            wayOfPointsPathTypes = await GeomancyService.GetWayOfPointsPathTypesDirectoryAsync();
+        }
+        catch (Exception ex)
+        {
+            // Non-fatal: WayOfPoints directory data is supplemental — the
+            // tab will fall back to inline glyphs/labels if the API call
+            // fails (e.g. legacy API server without the new endpoints).
+            errorMessage = string.IsNullOrEmpty(errorMessage)
+                ? $"Way of Points directory unavailable: {ex.Message}"
+                : errorMessage;
+        }
     }
 
     private void ToggleChartType()
@@ -326,6 +346,30 @@
     private void OnSlotSelected(SlotSelection selection)
     {
         selectedSlot = selection;
+    }
+
+    private void OnPerfectionSelected(PerfectionSelection selection)
+    {
+        selectedPerfection = selection;
+    }
+
+    private void OnWayOfPointsSelected(WayOfPointsSelection selection)
+    {
+        selectedWayOfPoints = selection;
+    }
+
+    private async Task OnQuerentSelectChanged(int n)
+    {
+        selectedQuerentHouse = n;
+        selectedPerfection = null;
+        await OnQuerentChanged();
+    }
+
+    private async Task OnQuesitedSelectChanged(int n)
+    {
+        selectedQuesitedHouse = n;
+        selectedPerfection = null;
+        await OnQuesitedChanged();
     }
 
     private List<(int Number, string DisplayText)> GetHouseOptions()
@@ -370,6 +414,7 @@
         if (houseChart == null || selectedQuerentHouse == 0 || selectedQuesitedHouse == 0)
         {
             perfectionAnalysis = null;
+            selectedPerfection = null;
             return;
         }
 
@@ -382,6 +427,8 @@
                 QuesitedHouse = selectedQuesitedHouse
             };
             perfectionAnalysis = await GeomancyService.AnalyzePerfectionsAsync(request);
+            // Drop any stale selection that was pointing at a previous result set.
+            selectedPerfection = null;
         }
         catch (Exception ex)
         {
@@ -390,6 +437,7 @@
                 Success = false,
                 Message = $"Error analyzing perfections: {ex.Message}"
             };
+            selectedPerfection = null;
         }
     }
 
@@ -417,6 +465,8 @@
         {
             wayOfPointsAnalysis = null;
         }
+        // Drop any stale selection that was pointing at the previous chart's analysis.
+        selectedWayOfPoints = null;
     }
 
     // ----- Chart generation (copied from Chart.razor and trimmed to what /workspace needs) -----
