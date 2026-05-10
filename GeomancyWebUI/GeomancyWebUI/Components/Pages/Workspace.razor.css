@@ -442,3 +442,91 @@
     color: var(--text-primary);
     font-size: 0.95rem;
 }
+
+/*
+ * Share-chart button - lives in the chart toolbar next to "Switch Chart Type".
+ * Uses the same pill shape as the existing toolbar buttons but adopts the
+ * accent colour while flashing the "Link copied!" confirmation so the user
+ * gets unmistakable feedback even with the click well behind their cursor.
+ */
+.workspace-share-btn {
+    /* Subtle accent so it's discoverable as the secondary action without
+       fighting "Switch Chart Type" for visual weight on first read. */
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+                transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.workspace-share-btn:hover {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+}
+
+/*
+ * Chart export card on the Lots & Other tab. Pinned above the legacy
+ * Aspect Analysis so users find it immediately when looking for a way to
+ * save / archive a reading.
+ */
+.chart-export-section {
+    /* Reuse .workspace-subsection's framing, but lay out the description
+       column + button column in a row so the action sits to the right at
+       eye-level with the heading. */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.chart-export-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+}
+
+.chart-export-header > div {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.chart-export-header h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.chart-export-help {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+.chart-export-header .workspace-pill-btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/*
+ * Two-button cluster: "Copy JSON" + "Download JSON". Stacks vertically on
+ * narrower viewports so neither button truncates while the description
+ * keeps room to breathe alongside.
+ */
+.chart-export-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+    flex-shrink: 0;
+}
+
+.chart-export-actions .workspace-pill-btn {
+    /* Prevent the buttons from collapsing to text-width and looking
+       inconsistent when one says "Copied!" and the other "Download JSON". */
+    min-width: 11rem;
+    text-align: center;
+    justify-content: center;
+}

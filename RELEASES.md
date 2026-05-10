@@ -1,5 +1,34 @@
 # Releases
 
+## v0.1.2-beta — Share Links & JSON Export
+
+**Released:** May 2026
+**Live app:** <https://geofancy.up.railway.app>
+
+A workflow release focused on getting readings *out* of the app: share a chart with one click, archive a reading as a JSON file, or paste it straight into another tool. No more re-entering the four Mothers by hand to compare notes with a teacher or a study group.
+
+### Highlights
+
+- **Shareable chart links.** A new **Share Chart** button on every workspace (`/workspace`, `/mobile`, and the legacy `/chart`) copies a self-contained URL like `https://geofancy.up.railway.app/workspace?seed=2122.1212.2222.1122` to the clipboard. Anyone who opens that URL lands on the same chart on first paint — no flash of the default reading, no extra clicks. The seed format is fully readable (four 4-digit clusters, one per Mother) and round-trips through any chat / email / browser without escaping.
+- **Mobile-aware.** Phones that open a `/workspace?seed=…` link are auto-redirected to `/mobile?seed=…` while preserving the seed, so a single canonical link works for everyone.
+- **Download JSON on Lots & Other.** A new export card pinned to the top of the **Lots & Other** tab streams the full reading — the four Mothers, the resolved chart, the perfection analysis (if a querent and quesited are picked on the Perfections tab), the Way of Points result, and the legacy aspect analysis — into a single timestamped file like `geofancy-chart-20260510-103213.json`. The payload includes the share URL and seed alongside the data so the file can also reproduce the chart by URL.
+- **Copy JSON for paste-into-anything use.** A second button next to *Download JSON* copies the same payload to the clipboard — for users who want to drop the reading straight into an editor, a notebook, a chat, or another tool without the file roundtrip. Both buttons emit byte-identical output.
+- **Versioned export schema.** Files are stamped with `schema: "geofancy.chart-export"` and `schemaVersion: 1` so future format evolution is clean.
+- **Forgiving share parser.** Malformed `?seed=…` values silently fall back to the default chart instead of erroring out, so a tampered or truncated URL never throws in front of a user.
+- **Assemblies aligned to v0.1.2-beta.** Every DLL — SDK and legacy alike — now reports `FileVersion=0.1.2.0`, `ProductVersion=0.1.2-beta`, `ProductName=Geofancy`. The home-page version chip and release card update automatically via `GeofancyVersion`.
+
+### Implementation notes
+
+- New `ChartSeedCodec` in `GeomancyWebUI.Client.Services` is the single source of truth for encode / decode / build-share-path. Both workspace pages and the legacy `/chart` page route through it, so the seed format is identical everywhere.
+- Browser-side helper `downloadTextFile(name, contents, mime)` was added to `clipboard.js` and works in every modern browser; `copyToClipboard` now also has a `document.execCommand('copy')` fallback for older Safari and insecure contexts.
+- Both share and export paths are no-network operations once the workspace is loaded — they round-trip locally.
+
+### Known limitations
+
+Same as v0.1.1-beta — see below.
+
+---
+
 ## v0.1.1-beta — Mobile Mother Strip Polish
 
 **Released:** May 2026
