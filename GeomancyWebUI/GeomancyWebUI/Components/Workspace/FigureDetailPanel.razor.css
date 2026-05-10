@@ -1,0 +1,435 @@
+/*
+ * FigureDetailPanel - the rich, scrollable inspector that appears in the
+ * Court & Houses tab. The panel itself is the ONLY scroll container in that
+ * tab body so the scrollbar sits next to the figure data, not next to the
+ * tab strip.
+ *
+ * Design tokens used:
+ *   --bg-primary, --bg-secondary, --border-color, --text-primary,
+ *   --text-secondary, --accent-color, --shadow
+ *
+ * Element accents are scoped here so they look right on both light and dark
+ * themes without leaking into other components.
+ */
+.figure-detail-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem 1.5rem;
+    box-shadow: 0 4px 16px var(--shadow);
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.figure-detail-panel.is-empty {
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-empty-state {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+/* ============================================================
+ * Header: slot eyebrow + huge figure name + strength badge
+ * ============================================================ */
+.detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-header-titles {
+    min-width: 0;
+}
+
+.slot-eyebrow {
+    margin: 0 0 0.15rem 0;
+    color: var(--accent-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.figure-name-display {
+    margin: 0;
+    font-size: 1.65rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.other-names {
+    margin: 0.25rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+.detail-header-strength {
+    flex-shrink: 0;
+    align-self: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.strength-strong {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.strength-weak {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+    border-color: rgba(244, 67, 54, 0.4);
+}
+
+.strength-neutral {
+    background: rgba(158, 158, 158, 0.15);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+/* ============================================================
+ * Chip row: planet, sign, quality, keyword
+ * ============================================================ */
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.chip-glyph {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.chip-text {
+    line-height: 1;
+}
+
+.chip-planet {
+    background: rgba(255, 193, 7, 0.10);
+    border-color: rgba(255, 193, 7, 0.35);
+}
+
+.chip-planet .chip-glyph {
+    color: #ffc107;
+}
+
+.chip-sign {
+    background: rgba(120, 80, 200, 0.10);
+    border-color: rgba(120, 80, 200, 0.35);
+}
+
+.chip-sign .chip-glyph {
+    color: #9575cd;
+}
+
+.chip-quality {
+    background: var(--bg-secondary);
+}
+
+.chip-keyword {
+    font-style: italic;
+    color: var(--text-secondary);
+    background: transparent;
+    border-style: dashed;
+}
+
+/* ============================================================
+ * Card: re-usable container for each section in the panel
+ * ============================================================ */
+.detail-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* ============================================================
+ * Elements card: 4 alchemical badges + inner / outer pills
+ * ============================================================ */
+.elements-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.55rem;
+}
+
+.element-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    padding: 0.55rem 0.35rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-primary);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    min-height: 4.5rem;
+}
+
+.element-glyph {
+    font-size: 1.55rem;
+    line-height: 1;
+}
+
+.element-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+}
+
+.element-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.element-badge.is-dormant {
+    opacity: 0.4;
+}
+
+.element-badge.is-active {
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.element-badge.fire.is-active {
+    background: linear-gradient(180deg, rgba(244, 67, 54, 0.18), rgba(244, 67, 54, 0.05));
+    border-color: rgba(244, 67, 54, 0.55);
+}
+.element-badge.fire .element-glyph { color: #f44336; }
+
+.element-badge.air.is-active {
+    background: linear-gradient(180deg, rgba(255, 235, 59, 0.20), rgba(255, 235, 59, 0.05));
+    border-color: rgba(255, 235, 59, 0.55);
+}
+.element-badge.air .element-glyph { color: #fbc02d; }
+
+.element-badge.water.is-active {
+    background: linear-gradient(180deg, rgba(33, 150, 243, 0.20), rgba(33, 150, 243, 0.05));
+    border-color: rgba(33, 150, 243, 0.55);
+}
+.element-badge.water .element-glyph { color: #2196f3; }
+
+.element-badge.earth.is-active {
+    background: linear-gradient(180deg, rgba(76, 175, 80, 0.18), rgba(76, 175, 80, 0.05));
+    border-color: rgba(76, 175, 80, 0.55);
+}
+.element-badge.earth .element-glyph { color: #66bb6a; }
+
+.inner-outer-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding-top: 0.2rem;
+}
+
+.io-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.55rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    color: var(--text-primary);
+}
+
+.io-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.7rem;
+}
+
+.io-glyph {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.io-glyph.fire  { color: #f44336; }
+.io-glyph.air   { color: #fbc02d; }
+.io-glyph.water { color: #2196f3; }
+.io-glyph.earth { color: #66bb6a; }
+
+.io-pill-pattern .io-value {
+    font-style: italic;
+}
+
+/* ============================================================
+ * Prose cards (Divinatory Meaning, Commentary, Notes, etc.)
+ * ============================================================ */
+.prose-card .prose-text {
+    margin: 0;
+}
+
+.prose-text {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.prose-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.prose-heading {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+ * Generic key/value grid used by Figure Data + reference cards
+ * ============================================================ */
+.kv-grid {
+    display: grid;
+    grid-template-columns: minmax(8rem, 35%) 1fr;
+    gap: 0.4rem 0.75rem;
+    margin: 0;
+}
+
+.kv-grid dt {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    align-self: center;
+}
+
+.kv-grid dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.kv-grid-reference dd {
+    font-size: 0.88rem;
+}
+
+.house-pill {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.house-pill-strong {
+    background: rgba(76, 175, 80, 0.15);
+    color: #66bb6a;
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.house-pill-weak {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+    border-color: rgba(244, 67, 54, 0.4);
+}
+
+/* ============================================================
+ * Reference cards: house / court directory data
+ * ============================================================ */
+.reference-card {
+    border-left: 3px solid var(--accent-color);
+}
+
+.reference-card .card-title {
+    flex-wrap: wrap;
+}
+
+.reference-eyebrow {
+    color: var(--accent-color);
+}
+
+.reference-title {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* ============================================================
+ * Bullet lists shared by reference cards
+ * ============================================================ */
+.bullet-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.bullet-list li {
+    margin-bottom: 0.2rem;
+}

@@ -1,0 +1,328 @@
+{
+    "HouseData": {
+      "Houses": [
+        {
+          "id": 1,
+          "house": "First",
+          "traditional_name": "House of the Querent (Helm / House of Self)",
+          "astrological_correspondence": "Identity, Appearance, and First Impressions",
+          "governs": [
+            "The querent (the person asking the question)",
+            "The querent's personality, consciousness, and physical body",
+            "The querent's name and self-image",
+            "Any vehicle in which the querent is traveling",
+            "The location and weather where the querent is situated",
+            "Newborn children (in specific life-reading divinations)"
+          ],
+          "significator_of_quesited_when": "Never the House of the Quesited in standard house chart readings. It acts as the anchor representing the querent.",
+          "notes": "Traditionally, if the figure Rubeus appears here, it suggests the querent is not being honest. If Cauda Draconis appears here, it suggests the querent has already decided what to do and won't listen. If Populus is in the First and Rubeus in the Eleventh, the querent has fabricated a fake question. Mercury traditionally rejoices in this house.",
+          "example_questions": []
+        },
+        {
+          "id": 2,
+          "house": "Second",
+          "traditional_name": "House of Value (Gate of Hades)",
+          "astrological_correspondence": "Money, Values, and Material Possessions",
+          "governs": [
+            "Money, income, and personal finances",
+            "Movable property and personal belongings",
+            "Profit and loss",
+            "Investments (excluding speculative ones or real estate)",
+            "Thefts and lost objects",
+            "Self-esteem and survival resources",
+            "Specific body parts (mouth, jaw, throat, and food consumed)"
+          ],
+          "significator_of_quesited_when": "The question involves day-to-day finances, financial profits or losses, thefts, and personal belongings.",
+          "notes": "Real estate and land belong strictly to the Fourth House; speculative investments belong to the Fifth House. Conjunctions to the Second House often indicate something approaching rapidly or right before the querent's eyes.",
+          "example_questions": [
+            "Will my business make or lose money?",
+            "Will the investment be profitable?",
+            "Will I get paid for the work I did?",
+            "Is this a good time to borrow money?",
+            "Is the antique table worth what the seller is asking?",
+            "Will the package I shipped arrive safely?",
+            "Has my missing watch been stolen?",
+            "Will my stolen car be recovered?"
+          ]
+        },
+        {
+          "id": 3,
+          "house": "Third",
+          "traditional_name": "House of Relationships (Goddess)",
+          "astrological_correspondence": "Communication, Mind, and Immediate Environment",
+          "governs": [
+            "Brothers, sisters, and cousins",
+            "Neighbors and the immediate community",
+            "Journeys of less than 200 miles (daily commutes)",
+            "Education (preschool through high school) and common skills",
+            "Advice, communication, and learning",
+            "News, rumors, gossip, and letters"
+          ],
+          "significator_of_quesited_when": "The question involves family dynamics (excluding parents), neighbors, local surroundings, media, rumors, or early education.",
+          "notes": "The Moon traditionally rejoices in this house. It is the house of what you receive and everyday interactions.",
+          "example_questions": [
+            "Will my relationship with my sister improve?",
+            "Will the neighbors agree to an easement?",
+            "Is this a good weekend to drive to the beach?",
+            "Should I enroll my child in North Central Elementary?",
+            "Is my neighbor George's advice worth following?",
+            "Is the news story accurate?",
+            "Should I believe the rumors?"
+          ]
+        },
+        {
+          "id": 4,
+          "house": "Fourth",
+          "traditional_name": "House of Land (Subterranean)",
+          "astrological_correspondence": "Home, Roots, and Family Lineage",
+          "governs": [
+            "Land, real estate, and physical infrastructure",
+            "Agriculture, flora, and soil fertility",
+            "Building, cities, and towns",
+            "Relocation, moving, and settling",
+            "Anything underground (mines, wells, basements)",
+            "Unknown objects, ancient places, and antiquities",
+            "Old age",
+            "The querent's father, parents in general, and ancestry",
+            "The final outcome of any matter"
+          ],
+          "significator_of_quesited_when": "The question involves physical location, real estate, farming, ancestry, or endings. It also always holds the 'Significator of Completion'.",
+          "notes": "Considered an Angular House (highly impactful). The figure here serves as the Significator of Completion, revealing how the situation posed by the question will ultimately resolve.",
+          "example_questions": [
+            "Is the property worth buying?",
+            "Is the soil fertile?",
+            "Will roses flourish here?",
+            "Should I move to another apartment?",
+            "Is Springfield a good place to relocate?",
+            "Is the table antique or a modern reproduction?",
+            "Is the pension fund in reliable hands?",
+            "How is my father doing?",
+            "How will the present situation turn out in the end?"
+          ]
+        },
+        {
+          "id": 5,
+          "house": "Fifth",
+          "traditional_name": "House of Pleasure (Good Fortune)",
+          "astrological_correspondence": "Creativity, Romance, and Joy",
+          "governs": [
+            "Crops from perennial or biennial plants",
+            "Fertility, pregnancy, and children",
+            "Sexuality, romance, and pleasure (but not marriage)",
+            "Parties, sports, and entertainment of all kinds",
+            "Food, drink, and luxury clothing",
+            "Bodies of water, fishing, and rain",
+            "Letters, messages, writing, and books",
+            "Speculative investments and gambling"
+          ],
+          "significator_of_quesited_when": "The question involves fertility, growth, enjoyment, creative pursuits, casual romance, or speculative risks.",
+          "notes": "Venus traditionally rejoices in this house. A woman who is pregnant does not shift to this house as her significator; she remains in the First (or whatever house she naturally occupies).",
+          "example_questions": [
+            "Will the grape crop be good this year?",
+            "Is Janis interested in me sexually?",
+            "Is my unborn child a boy or a girl?",
+            "How well will my four-year-old cope with a baby brother?",
+            "Will the concert be worth the ticket price?",
+            "Is next Friday a good night for the party?",
+            "Is the new Asian restaurant in town worth a visit?",
+            "Will the dress be ready in time for the wedding?",
+            "How will fishing be on the lake this weekend?",
+            "Will it rain tomorrow?",
+            "Will I receive a letter from my grandmother?",
+            "Are the claims in the book I'm reading accurate?"
+          ]
+        },
+        {
+          "id": 6,
+          "house": "Sixth",
+          "traditional_name": "House of Health (Bad Fortune)",
+          "astrological_correspondence": "Work, Health, Routine, and Service",
+          "governs": [
+            "Employees, servants, and domestic workers",
+            "Service professions (physicians, plumbers, entertainers, etc.)",
+            "Practitioners of magic and occultism (other than the querent)",
+            "Pets and domestic animals (excluding large livestock)",
+            "Illnesses, physical injuries, and health-related routines",
+            "Daily obligations and tasks"
+          ],
+          "significator_of_quesited_when": "The question involves service-people, employees, pets, disease, or routine maintenance.",
+          "notes": "Mars traditionally rejoices in this house. It is a Cadent house often associated with problem-solving material troubles and maintaining daily function.",
+          "example_questions": [
+            "Should I hire Phyllis?",
+            "Are my employees stealing from the till?",
+            "Are the plumbers reliable?",
+            "Should I hire a band for the party?",
+            "Will I find my lost dog?",
+            "Will hogs fetch a good price this fall?",
+            "How serious is this illness?",
+            "Would it be worthwhile to get a Tarot reading from Marie?",
+            "Is this a good time to have dental work done?",
+            "Will I catch the flu this winter?"
+          ]
+        },
+        {
+          "id": 7,
+          "house": "Seventh",
+          "traditional_name": "House of Partnerships (Descendant)",
+          "astrological_correspondence": "Relationships, Contracts, and Projections",
+          "governs": [
+            "Intense human relationships (spouse, lover, marriage)",
+            "Business partnerships, agreements, and treaties",
+            "Conflict, competition, lawsuits, and predator/prey dynamics",
+            "Thieves and robbers",
+            "Enemies known to the querent",
+            "Hunting and locating any specific person (known or unknown)",
+            "The physician (specifically in medical divinations)"
+          ],
+          "significator_of_quesited_when": "The question involves deep human relationships between two individuals, formal agreements, direct conflicts, or identifying thieves.",
+          "notes": "An Angular House directly opposing the First House. It represents the \"other\" and reflects the relationships and conflicts the querent engages in intentionally.",
+          "example_questions": [
+            "Does Stanley love me?",
+            "Will this relationship last?",
+            "Is this a good time to propose marriage?",
+            "Should Carol and I form a business partnership?",
+            "Should I sign the contract?",
+            "Will the Packers win the Super Bowl?",
+            "Will India and Pakistan sign a peace treaty?",
+            "Will my company's bid on the project be accepted?",
+            "Would it be to my advantage to file a lawsuit?",
+            "Will the police catch the thief?",
+            "Is next weekend a good time for deer hunting?",
+            "Will I be able to get in contact with Julie again?"
+          ]
+        },
+        {
+          "id": 8,
+          "house": "Eighth",
+          "traditional_name": "House of Death",
+          "astrological_correspondence": "Intimacy, Transformation, and Shared Resources",
+          "governs": [
+            "Death and everything related to it",
+            "Absences in any form",
+            "Ghosts, spiritual entities, and the occult",
+            "Identifying murderers (in historical usage)",
+            "Practical magic performed by or on behalf of the querent",
+            "Circumstances affecting absent or missing persons",
+            "Money, property, or items loaned to another person",
+            "Inheritances, legacies, and shared resources"
+          ],
+          "significator_of_quesited_when": "The question involves missing people, profound internal shifts, the effects of death, absences, or loaned assets.",
+          "notes": "Ethical geomancers typically refuse to answer questions predicting the length of life or the nature of a person's death. Note that divination and esoteric philosophy belong to the Ninth House, while practical magic casting belongs to the Eighth.",
+          "example_questions": [
+            "Should I get life insurance?",
+            "How seriously should I take Bill's threats?",
+            "Is this a good time to make a will?",
+            "Is the house actually haunted?",
+            "Is the magical working I am planning appropriate?",
+            "Is my neighbor's missing daughter all right?",
+            "Will I ever get back the book I loaned to Greg?"
+          ]
+        },
+        {
+          "id": 9,
+          "house": "Ninth",
+          "traditional_name": "House of Journeys (God)",
+          "astrological_correspondence": "Expansion, Philosophy, and Higher Learning",
+          "governs": [
+            "Long journeys (over 200 miles by land)",
+            "Voyages by water, air, and space",
+            "Religion, spirituality, and belief systems",
+            "Colleges, universities, and adult education",
+            "Arts, publishing, and broadening horizons",
+            "Dream interpretation",
+            "Occult philosophy, astrology, and divination"
+          ],
+          "significator_of_quesited_when": "The question involves long-distance travel, spiritual searching, higher education, or divinatory accuracy.",
+          "notes": "The Sun traditionally rejoices in this house. It is the realm of the masculine and active intellect, representing how one strives for deeper understanding.",
+          "example_questions": [
+            "Will I be able to go to Germany this summer?",
+            "How congested will the airport be?",
+            "Should I pursue my interest in Pagan religion?",
+            "Will I be able to get into Harvard?",
+            "Is this a good time to go back to school and finish my degree?",
+            "Should I sign up for music lessons, or would I be wasting my time?",
+            "Does the dream I had last night mean anything?",
+            "Should I study geomancy?"
+          ]
+        },
+        {
+          "id": 10,
+          "house": "Tenth",
+          "traditional_name": "House of Career (Midheaven)",
+          "astrological_correspondence": "Public Image, Reputation, and Ambition",
+          "governs": [
+            "Career, vocation, and professional recognition",
+            "Reputation, fame, and position in society",
+            "Authority figures, bosses, and leadership",
+            "The querent's mother",
+            "Politics (from local boards to global entities)",
+            "The state of the weather",
+            "The prescribed treatment (in medical divinations)"
+          ],
+          "significator_of_quesited_when": "The question involves social status, political ambitions, job changes, leadership, or the weather.",
+          "notes": "An Angular House representing the highest point of the chart. It dictates what the querent is known for on a large scale.",
+          "example_questions": [
+            "Should I look for a different job?",
+            "Will I get the promotion?",
+            "Will I get along with my new boss?",
+            "Will the county office approve my building permit?",
+            "How is Mom doing these days?",
+            "Will Senator Smith win reelection?",
+            "Should I run for a seat on the school board?",
+            "Will the weather tomorrow be clear and dry?",
+            "Should I get a second opinion on the proposed treatment for my heart condition?"
+          ]
+        },
+        {
+          "id": 11,
+          "house": "Eleventh",
+          "traditional_name": "House of Friends (Good Spirit)",
+          "astrological_correspondence": "Social Life, Community, and Future Vision",
+          "governs": [
+            "Friends, acquaintances, and alliances",
+            "Associations, collectives, and professional networks",
+            "Promises and sources of help/benefactors",
+            "The querent's hopes, wishes, and future goals",
+            "Crops from annual plants",
+            "Any question the querent is unwilling to tell the diviner"
+          ],
+          "significator_of_quesited_when": "The question involves friends, community networks, achieving long-term hopes, helpers, or when the true question is deliberately hidden.",
+          "notes": "Jupiter traditionally rejoices in this house. If Rubeus is in the Eleventh house and Populus in the First, it traditionally indicates the querent has made up a fake question to test or trick the diviner.",
+          "example_questions": [
+            "How is my old college buddy Bill doing?",
+            "Will my friend Sally make good on her promise?",
+            "Can I count on the neighborhood association to support me?",
+            "Will I achieve my fondest dream?",
+            "Will I get a good crop of peas this year?",
+            "I don't want to tell you what my question is—can you answer it anyway?"
+          ]
+        },
+        {
+          "id": 12,
+          "house": "Twelfth",
+          "traditional_name": "House of Secrets (Bad Spirit)",
+          "astrological_correspondence": "Inner World, Intuition, and Self-Undoing",
+          "governs": [
+            "Restrictions, limitations, and self-sabotage",
+            "Debts owed by the querent",
+            "Imprisonment, institutionalization, and isolation",
+            "Secrets, hidden mental health struggles, and the subconscious",
+            "Enemies the querent doesn't know about",
+            "Harmful magic cast against the querent by another person",
+            "Large livestock and wild animals (cattle, horses, donkeys, mules, camels)"
+          ],
+          "significator_of_quesited_when": "The question involves harm, strict limits, debts, hidden enemies, wild animals, or imprisonment.",
+          "notes": "Saturn traditionally rejoices in this house. It is the realm of the unseen, addressing the trials and spiritual reckonings that occur away from the public eye.",
+          "example_questions": [
+            "Will I be able to pay my bills next month?",
+            "Will I be sent to prison?",
+            "Is Ruth hiding something from me?",
+            "Is someone at work trying to get me fired?",
+            "Was the poppet in the front yard a joke, or is someone trying to cast a spell on me?",
+            "Is this horse worth buying?",
+            "Will cattle fetch a good price this year?"
+          ]
+        }
+      ]
+    }
+  }

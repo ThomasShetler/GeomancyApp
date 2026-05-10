@@ -1,0 +1,152 @@
+/*
+ * Two stacked tables (Court 4 rows + Houses 12 rows) that together fit the
+ * available vertical space without scrolling. Row padding scales down using
+ * clamp() so everything stays aligned with the chart on the left.
+ */
+.court-houses-tables {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.court-houses-section-title {
+    font-size: clamp(0.85rem, 1.4vh, 1.05rem);
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.2;
+    flex-shrink: 0;
+}
+
+.court-houses-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: clamp(0.7rem, 1.1vh, 0.85rem);
+    table-layout: fixed;
+}
+
+/*
+ * We turn each table into a CSS grid so rows can flex/shrink to fit the
+ * available height. Both tables use the same 40/60 column split; only the
+ * tbody's grid-template-rows differs.
+ */
+.court-houses-table.court-table {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-rows: auto auto;
+}
+
+.court-houses-table.houses-table {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.court-houses-table thead,
+.court-houses-table tbody {
+    display: grid;
+    width: 100%;
+    min-height: 0;
+}
+
+.court-houses-table.court-table tbody {
+    grid-template-rows: repeat(4, auto);
+}
+
+.court-houses-table.houses-table tbody {
+    grid-template-rows: repeat(12, minmax(0, 1fr));
+}
+
+/* Court table is 2 columns; Houses table is 3 columns (#, House Name, Occupant). */
+.court-houses-table.court-table thead tr,
+.court-houses-table.court-table tbody tr {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    width: 100%;
+    min-height: 0;
+}
+
+.court-houses-table.houses-table thead tr,
+.court-houses-table.houses-table tbody tr {
+    display: grid;
+    grid-template-columns: 14% 38% 48%;
+    width: 100%;
+    min-height: 0;
+}
+
+.court-houses-table thead {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.court-houses-table th,
+.court-houses-table td {
+    padding: clamp(0.1rem, 0.4vh, 0.45rem) 0.5rem;
+    text-align: center;
+    /* Use right + bottom borders only to avoid doubling between cells */
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.15;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.court-houses-table th:last-child,
+.court-houses-table td:last-child {
+    border-right: none;
+}
+
+.court-houses-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.court-houses-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.court-houses-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.court-houses-table tbody tr.is-selected {
+    background-color: rgba(120, 80, 200, 0.18);
+    color: var(--accent-color);
+}
+
+.court-houses-table tbody tr.is-selected td {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.court-houses-table .number-cell {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.court-houses-table .position-cell {
+    font-weight: 500;
+}
+
+.court-houses-table .occupant-cell {
+    /* No fixed width here - let the grid columns drive sizing */
+}

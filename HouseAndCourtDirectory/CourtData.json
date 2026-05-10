@@ -1,0 +1,54 @@
+{
+    "CourtData": {
+      "Placements": [
+        {
+          "id": 13,
+          "placement": "Right Witness",
+          "traditional_name": "Testis Dexter",
+          "generated_by": "Adding the figures of the 9th and 10th Houses (the First and Second Nieces).",
+          "meaning": [
+            "The Querent's perspective and current disposition.",
+            "Past events leading up to the formulation of the question.",
+            "The root cause or foundational energy of the matter."
+          ],
+          "utility_in_reading": "Serves as a diagnostic anchor. It is used to assess the querent's true motivations, past actions, and the historical context of the issue. It reveals where the situation is coming from and the baggage or strengths the querent brings to the table."
+        },
+        {
+          "id": 14,
+          "placement": "Left Witness",
+          "traditional_name": "Testis Sinister",
+          "generated_by": "Adding the figures of the 11th and 12th Houses (the Third and Fourth Nieces).",
+          "meaning": [
+            "The Quesited's perspective or the environment's reaction.",
+            "Immediate future events or developing circumstances.",
+            "External forces, obstacles, or aids currently at play."
+          ],
+          "utility_in_reading": "Acts as the counterweight to the Right Witness. It is used to evaluate the external factors acting upon the querent and the immediate trajectory of the situation. It helps identify what the querent is up against or what external elements will influence the final outcome."
+        },
+        {
+          "id": 15,
+          "placement": "The Judge",
+          "traditional_name": "Iudex",
+          "generated_by": "Adding the figures of the Right Witness (13) and Left Witness (14).",
+          "meaning": [
+            "The core answer to the question.",
+            "The synthesis of past (Right) and future (Left) energies.",
+            "The direct outcome, verdict, or resolution of the matter."
+          ],
+          "utility_in_reading": "The most critical figure for determining the immediate success or failure of the query. It provides the definitive 'Yes', 'No', or 'Maybe'. Because it is formed by adding two figures, the Judge must always contain an even number of active points (dots); if it does not, a mathematical error was made in the shield chart."
+        },
+        {
+          "id": 16,
+          "placement": "The Reconciler",
+          "traditional_name": "Sentence / Fallout / Superjudge / Vindex",
+          "generated_by": "Adding the figure of the Judge (15) to the figure of the First House (1 - The First Mother).",
+          "meaning": [
+            "The long-term consequence or aftermath of the outcome.",
+            "How the querent will ultimately react to or be affected by the Judge's verdict.",
+            "Hidden factors that will manifest after the immediate resolution."
+          ],
+          "utility_in_reading": "Provides depth beyond the immediate 'Yes/No' of the Judge. It is highly useful for revealing pyrrhic victories (e.g., the Judge says you get the job, but the Reconciler shows it makes you miserable) or silver linings in a negative outcome. It acts as the final word on the matter's lasting impact on the querent's life."
+        }
+      ]
+    }
+  }

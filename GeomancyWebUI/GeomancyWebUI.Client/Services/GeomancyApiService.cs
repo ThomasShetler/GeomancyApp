@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 using GeomancyWebUI.Client.Models;
 
 namespace GeomancyWebUI.Client.Services
@@ -6,6 +7,10 @@ namespace GeomancyWebUI.Client.Services
     public class GeomancyApiService : IGeomancyService
     {
         private readonly HttpClient _httpClient;
+
+        // Cached reference directories - immutable lookup data, fetched once per session.
+        private List<HouseDirectoryEntry>? _housesDirectoryCache;
+        private List<CourtDirectoryEntry>? _courtsDirectoryCache;
 
         public GeomancyApiService(HttpClient httpClient)
         {
@@ -228,6 +233,64 @@ namespace GeomancyWebUI.Client.Services
                 AirWay = MapToWayOfPointsResultModel(apiResponse.AirWay),
                 WaterWay = MapToWayOfPointsResultModel(apiResponse.WaterWay),
                 EarthWay = MapToWayOfPointsResultModel(apiResponse.EarthWay)
+            };
+        }
+
+        public async Task<List<HouseDirectoryEntry>> GetHousesDirectoryAsync()
+        {
+            if (_housesDirectoryCache != null) return _housesDirectoryCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/directory/houses";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<List<HouseDirectoryEntryResponse>>();
+            _housesDirectoryCache = apiResponse?.Select(MapToHouseDirectoryEntry).ToList() ?? new List<HouseDirectoryEntry>();
+            return _housesDirectoryCache;
+        }
+
+        public async Task<List<CourtDirectoryEntry>> GetCourtsDirectoryAsync()
+        {
+            if (_courtsDirectoryCache != null) return _courtsDirectoryCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/directory/courts";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<List<CourtDirectoryEntryResponse>>();
+            _courtsDirectoryCache = apiResponse?.Select(MapToCourtDirectoryEntry).ToList() ?? new List<CourtDirectoryEntry>();
+            return _courtsDirectoryCache;
+        }
+
+        private static HouseDirectoryEntry MapToHouseDirectoryEntry(HouseDirectoryEntryResponse src)
+        {
+            return new HouseDirectoryEntry
+            {
+                Id = src.Id,
+                House = src.House ?? string.Empty,
+                TraditionalName = src.TraditionalName ?? string.Empty,
+                AstrologicalCorrespondence = src.AstrologicalCorrespondence ?? string.Empty,
+                Governs = src.Governs ?? new List<string>(),
+                SignificatorOfQuesitedWhen = src.SignificatorOfQuesitedWhen ?? string.Empty,
+                Notes = src.Notes ?? string.Empty,
+                ExampleQuestions = src.ExampleQuestions ?? new List<string>()
+            };
+        }
+
+        private static CourtDirectoryEntry MapToCourtDirectoryEntry(CourtDirectoryEntryResponse src)
+        {
+            return new CourtDirectoryEntry
+            {
+                Id = src.Id,
+                Placement = src.Placement ?? string.Empty,
+                TraditionalName = src.TraditionalName ?? string.Empty,
+                GeneratedBy = src.GeneratedBy ?? string.Empty,
+                Meaning = src.Meaning ?? new List<string>(),
+                UtilityInReading = src.UtilityInReading ?? string.Empty
             };
         }
 
@@ -527,6 +590,58 @@ namespace GeomancyWebUI.Client.Services
             public WayOfPointsResultResponse? AirWay { get; set; }
             public WayOfPointsResultResponse? WaterWay { get; set; }
             public WayOfPointsResultResponse? EarthWay { get; set; }
+        }
+
+        // The API serializes these via Newtonsoft.Json with [JsonProperty("snake_case")]
+        // attributes, so the wire format uses snake_case keys. System.Text.Json (used by
+        // ReadFromJsonAsync) doesn't honor Newtonsoft attributes, so we declare the
+        // matching keys explicitly with [JsonPropertyName] here.
+        private class HouseDirectoryEntryResponse
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("house")]
+            public string? House { get; set; }
+
+            [JsonPropertyName("traditional_name")]
+            public string? TraditionalName { get; set; }
+
+            [JsonPropertyName("astrological_correspondence")]
+            public string? AstrologicalCorrespondence { get; set; }
+
+            [JsonPropertyName("governs")]
+            public List<string>? Governs { get; set; }
+
+            [JsonPropertyName("significator_of_quesited_when")]
+            public string? SignificatorOfQuesitedWhen { get; set; }
+
+            [JsonPropertyName("notes")]
+            public string? Notes { get; set; }
+
+            [JsonPropertyName("example_questions")]
+            public List<string>? ExampleQuestions { get; set; }
+        }
+
+        private class CourtDirectoryEntryResponse
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("placement")]
+            public string? Placement { get; set; }
+
+            [JsonPropertyName("traditional_name")]
+            public string? TraditionalName { get; set; }
+
+            [JsonPropertyName("generated_by")]
+            public string? GeneratedBy { get; set; }
+
+            [JsonPropertyName("meaning")]
+            public List<string>? Meaning { get; set; }
+
+            [JsonPropertyName("utility_in_reading")]
+            public string? UtilityInReading { get; set; }
         }
 
         private PerfectionModel MapToPerfectionModel(PerfectionResponse? apiResponse)

@@ -1,0 +1,122 @@
+@using GeomancyWebUI.Client.Models
+
+@*
+    Court & Houses tab body: renders the Court table (Right Witness, Left Witness,
+    Judge, Sentence) and the Houses table (1-12). Each row is clickable; clicking
+    a row raises OnSelect with a SlotSelection that carries the current occupant
+    figure so a detail panel can render full information without re-querying.
+*@
+
+<div class="court-houses-tables">
+    <h2 class="court-houses-section-title">Court</h2>
+    <table class="court-houses-table court-table">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Occupant</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in CourtRows)
+            {
+                var isSelected = Selected?.Kind == row.Kind;
+                <tr class="@(isSelected ? "is-selected" : "")"
+                    @onclick="() => SelectCourt(row)">
+                    <td class="position-cell">@row.Label</td>
+                    <td class="occupant-cell">@(row.Figure?.Name ?? "N/A")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2 class="court-houses-section-title">Houses</h2>
+    <table class="court-houses-table houses-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>House</th>
+                <th>Occupant</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 1; i <= 12; i++)
+            {
+                var houseNumber = i;
+                var figure = GetHouseFigure(houseNumber);
+                var latin = GetLatinHouseName(houseNumber);
+                var ordinal = GetDirectoryHouseName(houseNumber);
+                var tooltip = string.IsNullOrEmpty(ordinal) ? latin : $"{ordinal} House — {latin}";
+                var isSelected = Selected?.Kind == SlotKind.House && Selected?.HouseNumber == houseNumber;
+
+                <tr class="@(isSelected ? "is-selected" : "")"
+                    @onclick="() => SelectHouse(houseNumber, figure, latin)"
+                    title="@tooltip">
+                    <td class="number-cell">@houseNumber</td>
+                    <td class="position-cell">@latin</td>
+                    <td class="occupant-cell">@(figure?.Name ?? "N/A")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter] public HouseChartModel? Chart { get; set; }
+    [Parameter] public SlotSelection? Selected { get; set; }
+    [Parameter] public IReadOnlyList<HouseDirectoryEntry> HousesDirectory { get; set; } = Array.Empty<HouseDirectoryEntry>();
+    [Parameter] public IReadOnlyList<CourtDirectoryEntry> CourtsDirectory { get; set; } = Array.Empty<CourtDirectoryEntry>();
+    [Parameter] public EventCallback<SlotSelection> OnSelect { get; set; }
+
+    private record CourtRow(SlotKind Kind, string Label, FigureModel? Figure);
+
+    private IEnumerable<CourtRow> CourtRows => new[]
+    {
+        new CourtRow(SlotKind.RightWitness, "Right Witness", Chart?.RightWitness),
+        new CourtRow(SlotKind.LeftWitness, "Left Witness", Chart?.LeftWitness),
+        new CourtRow(SlotKind.Judge, "Judge", Chart?.Judge),
+        new CourtRow(SlotKind.Sentence, "Sentence", Chart?.Sentence)
+    };
+
+    // Traditional Latin names for the 12 houses (matches the original /chart page).
+    private static readonly Dictionary<int, string> LatinHouseNames = new()
+    {
+        { 1, "Vita" },
+        { 2, "Lucrum" },
+        { 3, "Fratres" },
+        { 4, "Genitor" },
+        { 5, "Nati" },
+        { 6, "Valetudo" },
+        { 7, "Uxor" },
+        { 8, "Mors" },
+        { 9, "Itineris" },
+        { 10, "Regnum" },
+        { 11, "Benefacta" },
+        { 12, "Carcer" }
+    };
+
+    private static string GetLatinHouseName(int houseNumber)
+        => LatinHouseNames.TryGetValue(houseNumber, out var name) ? name : $"House {houseNumber}";
+
+    private FigureModel? GetHouseFigure(int houseNumber)
+    {
+        return Chart?.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+    }
+
+    private string? GetDirectoryHouseName(int houseNumber)
+    {
+        return HousesDirectory.FirstOrDefault(h => h.Id == houseNumber)?.House;
+    }
+
+    private async Task SelectHouse(int houseNumber, FigureModel? figure, string latinName)
+    {
+        var label = $"House {houseNumber} ({latinName})";
+        var selection = new SlotSelection(SlotKind.House, houseNumber, label, figure);
+        await OnSelect.InvokeAsync(selection);
+    }
+
+    private async Task SelectCourt(CourtRow row)
+    {
+        var selection = new SlotSelection(row.Kind, null, row.Label, row.Figure);
+        await OnSelect.InvokeAsync(selection);
+    }
+}

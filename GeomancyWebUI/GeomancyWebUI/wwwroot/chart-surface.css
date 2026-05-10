@@ -1,0 +1,312 @@
+/*
+ * Shared chart visual styles for both /chart (Chart.razor) and /workspace
+ * (Workspace.razor via ChartSurface.razor).
+ *
+ * These are intentionally GLOBAL (not Blazor scoped) so the same selectors
+ * work whether the chart is rendered from a page-scoped component or a
+ * shared one. Page-scoped Chart.razor.css selectors keep higher specificity
+ * via the [b-xxxx] attribute, so /chart still wins where both define a rule.
+ */
+
+.charts-side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.charts-side-by-side > .shield-chart-container:only-child,
+.charts-side-by-side > .traditional-house-chart-container:only-child {
+    grid-column: 1 / -1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .charts-side-by-side {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Shield chart container */
+.shield-chart-container {
+    position: relative;
+    padding: clamp(0.5rem, 1.5%, 0.75rem);
+    background: var(--bg-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
+                0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, transform 0.2s ease;
+    aspect-ratio: 1;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    container-type: size;
+}
+
+.shield-chart-container .row {
+    margin: 0 !important;
+    padding: 0;
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.shield-chart-container .row.mb-3 {
+    margin-bottom: 0 !important;
+}
+
+.shield-chart-container .col,
+.shield-chart-container .col-3,
+.shield-chart-container .col-4,
+.shield-chart-container .col-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(0.25rem, 1%, 0.5rem);
+    position: relative;
+    contain: layout style;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    border-right: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-dark);
+    box-sizing: border-box;
+}
+
+.shield-chart-container .row:first-child .col,
+.shield-chart-container .row:first-child .col-3,
+.shield-chart-container .row:first-child .col-4,
+.shield-chart-container .row:first-child .col-6 {
+    border-top: 1px solid var(--border-dark);
+}
+
+.shield-chart-container .row .col:first-child,
+.shield-chart-container .row .col-3:first-child,
+.shield-chart-container .row .col-4:first-child,
+.shield-chart-container .row .col-6:first-child {
+    border-left: 1px solid var(--border-dark);
+}
+
+.shield-chart-container .figure-container {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    padding: clamp(1px, 0.5%, 3px) !important;
+    box-sizing: border-box;
+    border: none !important;
+    background: transparent !important;
+}
+
+.shield-chart-container .figure-line {
+    min-height: 0 !important;
+    height: auto !important;
+    font-size: clamp(14px, 2.5cqw, 24px) !important;
+}
+
+.shield-chart-container .figure-lines {
+    flex: 1 1 auto !important;
+    gap: clamp(1px, 0.3cqw, 3px) !important;
+}
+
+.shield-chart-container .figure-label {
+    font-size: clamp(8px, 1.2cqw, 12px) !important;
+    margin-bottom: clamp(1px, 0.3cqw, 2px) !important;
+    margin-top: 0 !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+}
+
+.shield-chart-container .figure-name {
+    font-size: clamp(9px, 1.1cqw, 11px) !important;
+    margin-top: clamp(2px, 0.4cqw, 3px) !important;
+    margin-bottom: 0 !important;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.3;
+    text-align: center;
+    word-break: break-word;
+}
+
+/* Section color coding - transparent backgrounds for clean grid */
+.section-mothers,
+.section-daughters,
+.section-nieces,
+.section-court {
+    background-color: transparent;
+}
+
+/* Section label overlays */
+.section-label-overlay {
+    position: absolute;
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 10;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.shield-chart-container .row-1 .section-label-mothers {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    z-index: 10;
+}
+
+.shield-chart-container .row-1 .section-label-daughters {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    z-index: 10;
+}
+
+.shield-chart-container .row-2 .section-label-nieces {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.shield-chart-container .row:nth-child(5) .section-label-court,
+.shield-chart-container .row:nth-child(6) .section-label-court {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+/* Triplicate cell highlights via data-house attributes */
+.shield-chart-container.show-triplicates .row-1 .col[data-house="1"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="2"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="9"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="3"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="4"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="10"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="5"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="6"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="11"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="7"],
+.shield-chart-container.show-triplicates .row-1 .col[data-house="8"],
+.shield-chart-container.show-triplicates .row-2 .col-3[data-house="12"] {
+    border: 3px solid rgba(255, 0, 0, 0.6) !important;
+    background: rgba(255, 0, 0, 0.08) !important;
+    border-radius: 8px;
+    position: relative;
+}
+
+.triplicate-overlay {
+    display: none !important;
+}
+
+/* Traditional 12-house chart container */
+.traditional-house-chart-container {
+    position: relative;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
+                0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, transform 0.2s ease;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.house-chart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.house-chart-svg rect,
+.house-chart-svg polygon,
+.house-chart-svg line {
+    stroke: var(--border-dark) !important;
+    transition: stroke 0.3s ease;
+}
+
+.house-chart-svg foreignObject {
+    pointer-events: auto;
+    overflow: visible;
+}
+
+/* House anchors and cards inside the SVG */
+.house-anchor {
+    position: relative;
+    width: 0;
+    height: 0;
+    overflow: visible;
+    z-index: 10;
+}
+
+.house-card-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+    width: 200px;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.house-card-container .figure-container {
+    width: 100%;
+    height: 100%;
+    max-width: 180px;
+    max-height: 180px;
+    min-width: 110px;
+    min-height: 110px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.traditional-house-chart-container .house-card-container .figure-container {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    gap: 0 !important;
+}
+
+.traditional-house-chart-container .house-card-container .figure-label,
+.traditional-house-chart-container .house-card-container .figure-name {
+    display: none !important;
+}
+
+.traditional-house-chart-container .house-card-container .figure-lines {
+    gap: 0px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.house-card-container .figure-container:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}

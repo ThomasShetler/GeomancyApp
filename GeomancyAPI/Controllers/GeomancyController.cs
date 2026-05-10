@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using GeomancyAPI.Models;
+using GeomancyAPI.Services;
 using GeomancyApp;
 
 namespace GeomancyAPI.Controllers
@@ -1584,6 +1585,126 @@ namespace GeomancyAPI.Controllers
                 }).ToList(),
                 Notes = result.Notes ?? new List<string>()
             };
+        }
+
+        #endregion
+
+        #region Reference Directory (HouseAndCourtDirectory JSON files)
+
+        /// <summary>
+        /// Get the full reference directory for the 12 houses (id, traditional name, governs, notes, etc.)
+        /// </summary>
+        [HttpGet]
+        [Route("directory/houses")]
+        [ResponseType(typeof(List<HouseDirectoryEntryResponse>))]
+        public HttpResponseMessage GetHousesDirectory()
+        {
+            try
+            {
+                var entries = HouseDirectoryLoader.GetHouses();
+                return Request.CreateResponse(HttpStatusCode.OK, entries);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading house directory: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get a single house directory entry by id (1-12).
+        /// </summary>
+        [HttpGet]
+        [Route("directory/houses/{id:int}")]
+        [ResponseType(typeof(HouseDirectoryEntryResponse))]
+        public HttpResponseMessage GetHouseDirectoryEntry(int id)
+        {
+            try
+            {
+                var entry = HouseDirectoryLoader.GetHouse(id);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No house directory entry with id {id}",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading house directory entry: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get the full reference directory for the four court placements (Right Witness, Left Witness, Judge, Reconciler).
+        /// </summary>
+        [HttpGet]
+        [Route("directory/courts")]
+        [ResponseType(typeof(List<CourtDirectoryEntryResponse>))]
+        public HttpResponseMessage GetCourtsDirectory()
+        {
+            try
+            {
+                var entries = HouseDirectoryLoader.GetCourts();
+                return Request.CreateResponse(HttpStatusCode.OK, entries);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading court directory: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get a single court placement by normalized key:
+        /// <c>right-witness</c>, <c>left-witness</c>, <c>judge</c>, <c>reconciler</c>
+        /// (with aliases <c>sentence</c> / <c>fallout</c> mapping to Reconciler).
+        /// </summary>
+        [HttpGet]
+        [Route("directory/courts/{placement}")]
+        [ResponseType(typeof(CourtDirectoryEntryResponse))]
+        public HttpResponseMessage GetCourtDirectoryEntry(string placement)
+        {
+            try
+            {
+                var entry = HouseDirectoryLoader.GetCourt(placement);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No court directory entry for '{placement}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading court directory entry: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
         }
 
         #endregion

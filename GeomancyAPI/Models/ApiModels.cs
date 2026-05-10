@@ -307,4 +307,79 @@ namespace GeomancyAPI.Models
         public WayOfPointsResultResponse WaterWay { get; set; } = new WayOfPointsResultResponse();
         public WayOfPointsResultResponse EarthWay { get; set; } = new WayOfPointsResultResponse();
     }
+
+    // Reference directory entry for a single house (1-12), sourced from HouseAndCourtDirectory/HouseData.json
+    public class HouseDirectoryEntryResponse
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("house")]
+        public string House { get; set; }
+
+        [JsonProperty("traditional_name")]
+        public string TraditionalName { get; set; }
+
+        [JsonProperty("astrological_correspondence")]
+        public string AstrologicalCorrespondence { get; set; }
+
+        [JsonProperty("governs")]
+        public List<string> Governs { get; set; } = new List<string>();
+
+        [JsonProperty("significator_of_quesited_when")]
+        public string SignificatorOfQuesitedWhen { get; set; }
+
+        [JsonProperty("notes")]
+        public string Notes { get; set; }
+
+        [JsonProperty("example_questions")]
+        public List<string> ExampleQuestions { get; set; } = new List<string>();
+    }
+
+    // Reference directory entry for a single court placement (Right/Left Witness, Judge, Reconciler)
+    public class CourtDirectoryEntryResponse
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("placement")]
+        public string Placement { get; set; }
+
+        [JsonProperty("traditional_name")]
+        public string TraditionalName { get; set; }
+
+        [JsonProperty("generated_by")]
+        public string GeneratedBy { get; set; }
+
+        [JsonProperty("meaning")]
+        public List<string> Meaning { get; set; } = new List<string>();
+
+        [JsonProperty("utility_in_reading")]
+        public string UtilityInReading { get; set; }
+    }
+
+    // Wrappers matching the JSON file shape on disk
+    public class HouseDirectoryFile
+    {
+        [JsonProperty("HouseData")]
+        public HouseDirectoryFilePayload HouseData { get; set; }
+    }
+
+    public class HouseDirectoryFilePayload
+    {
+        [JsonProperty("Houses")]
+        public List<HouseDirectoryEntryResponse> Houses { get; set; } = new List<HouseDirectoryEntryResponse>();
+    }
+
+    public class CourtDirectoryFile
+    {
+        [JsonProperty("CourtData")]
+        public CourtDirectoryFilePayload CourtData { get; set; }
+    }
+
+    public class CourtDirectoryFilePayload
+    {
+        [JsonProperty("Placements")]
+        public List<CourtDirectoryEntryResponse> Placements { get; set; } = new List<CourtDirectoryEntryResponse>();
+    }
 } 

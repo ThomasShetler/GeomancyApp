@@ -1,0 +1,209 @@
+@using GeomancyWebUI.Client.Models
+
+@*
+    Reusable chart surface that renders the shield chart, the traditional 12-house
+    chart, or both. Owns no chart state - the parent passes the HouseChartModel
+    plus the four interactive Mother figures and gets EventCallbacks back when
+    a Mother is mutated. Visual styles live in wwwroot/chart-surface.css so this
+    component does not need a scoped .razor.css.
+*@
+
+<div class="charts-side-by-side">
+    @if (View == ChartSurfaceView.Both || View == ChartSurfaceView.Shield)
+    {
+        <div class="shield-chart-container @(ShowTriplicates ? "show-triplicates" : "")">
+            @if (ShowTriplicates)
+            {
+                <div class="triplicate-overlay triplicate-1">
+                    <div class="triplicate-top"><div class="triplicate-cell"></div><div class="triplicate-cell"></div></div>
+                    <div class="triplicate-bottom"><div class="triplicate-cell"></div></div>
+                </div>
+                <div class="triplicate-overlay triplicate-2">
+                    <div class="triplicate-top"><div class="triplicate-cell"></div><div class="triplicate-cell"></div></div>
+                    <div class="triplicate-bottom"><div class="triplicate-cell"></div></div>
+                </div>
+                <div class="triplicate-overlay triplicate-3">
+                    <div class="triplicate-top"><div class="triplicate-cell"></div><div class="triplicate-cell"></div></div>
+                    <div class="triplicate-bottom"><div class="triplicate-cell"></div></div>
+                </div>
+                <div class="triplicate-overlay triplicate-4">
+                    <div class="triplicate-top"><div class="triplicate-cell"></div><div class="triplicate-cell"></div></div>
+                    <div class="triplicate-bottom"><div class="triplicate-cell"></div></div>
+                </div>
+            }
+
+            <div class="row mb-3 row-1">
+                @if (ShowSectionLabels)
+                {
+                    <div class="section-label-overlay section-label-mothers">Mothers</div>
+                    <div class="section-label-overlay section-label-daughters">Daughters</div>
+                }
+                <div class="col text-center section-daughters" data-house="8">
+                    <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-daughters" data-house="7">
+                    <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-daughters" data-house="6">
+                    <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-daughters" data-house="5">
+                    <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col text-center section-mothers" data-house="4">
+                    <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
+                </div>
+                <div class="col text-center section-mothers" data-house="3">
+                    <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
+                </div>
+                <div class="col text-center section-mothers" data-house="2">
+                    <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
+                </div>
+                <div class="col text-center section-mothers" data-house="1">
+                    <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
+                </div>
+            </div>
+
+            <div class="row mb-3 row-2">
+                @if (ShowSectionLabels)
+                {
+                    <div class="section-label-overlay section-label-nieces">Nieces</div>
+                }
+                <div class="col-3 text-center section-nieces" data-house="12">
+                    <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col-3 text-center section-nieces" data-house="11">
+                    <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col-3 text-center section-nieces" data-house="10">
+                    <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
+                </div>
+                <div class="col-3 text-center section-nieces" data-house="9">
+                    <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
+                </div>
+            </div>
+
+            <div class="row mb-3 section-court">
+                @if (ShowSectionLabels)
+                {
+                    <div class="section-label-overlay section-label-court">Court</div>
+                }
+                <div class="col-6 text-center">
+                    <FigureContainer Figure="@Chart?.LeftWitness" Label="Left Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+                <div class="col-6 text-center">
+                    <FigureContainer Figure="@Chart?.RightWitness" Label="Right Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+            </div>
+
+            <div class="row section-court">
+                <div class="col-4"></div>
+                <div class="col-4 text-center">
+                    <FigureContainer Figure="@Chart?.Judge" Label="Judge" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+                <div class="col-4 text-center">
+                    <FigureContainer Figure="@Chart?.Sentence" Label="Fallout" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (View == ChartSurfaceView.Both || View == ChartSurfaceView.House)
+    {
+        <div class="traditional-house-chart-container">
+            <svg class="house-chart-svg" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="1000" height="1000" fill="none" stroke="#333" stroke-width="2" />
+                <polygon points="500,0 1000,500 500,1000 0,500" fill="none" stroke="#333" stroke-width="1" />
+                <rect x="250" y="250" width="500" height="500" fill="none" stroke="#333" stroke-width="1" />
+                <line x1="0" y1="0" x2="250" y2="250" stroke="#333" stroke-width="1" />
+                <line x1="1000" y1="0" x2="750" y2="250" stroke="#333" stroke-width="1" />
+                <line x1="1000" y1="1000" x2="750" y2="750" stroke="#333" stroke-width="1" />
+                <line x1="0" y1="1000" x2="250" y2="750" stroke="#333" stroke-width="1" />
+
+                <foreignObject x="500" y="200" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="150" y="550" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="850" y="550" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="500" y="900" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="250" y="150" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="100" y="300" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="750" y="150" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="920" y="286" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="920" y="814" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="750" y="935" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="80" y="814" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
+                    </div></div>
+                </foreignObject>
+                <foreignObject x="250" y="935" width="1" height="1">
+                    <div class="house-anchor"><div class="house-card-container">
+                        <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
+                    </div></div>
+                </foreignObject>
+            </svg>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public HouseChartModel? Chart { get; set; }
+    [Parameter] public FigureModel? House1Figure { get; set; }
+    [Parameter] public FigureModel? House2Figure { get; set; }
+    [Parameter] public FigureModel? House3Figure { get; set; }
+    [Parameter] public FigureModel? House4Figure { get; set; }
+
+    [Parameter] public EventCallback<FigureModel> OnHouse1Changed { get; set; }
+    [Parameter] public EventCallback<FigureModel> OnHouse2Changed { get; set; }
+    [Parameter] public EventCallback<FigureModel> OnHouse3Changed { get; set; }
+    [Parameter] public EventCallback<FigureModel> OnHouse4Changed { get; set; }
+
+    [Parameter] public ChartSurfaceView View { get; set; } = ChartSurfaceView.Both;
+    [Parameter] public bool ShowSectionLabels { get; set; } = false;
+    [Parameter] public bool ShowTriplicates { get; set; } = false;
+
+    private FigureModel? GetHouseFigure(int houseNumber)
+    {
+        if (Chart == null) return null;
+        return Chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+    }
+}

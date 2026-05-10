@@ -11,6 +11,10 @@ namespace GeomancyWebUI.Client.Services
         Task<PerfectionAnalysisModel> AnalyzePerfectionsAsync(PerfectionRequestModel request);
         Task<AspectAnalysisModel> GetAspectAnalysisAsync(GenerateFourFiguresRequest request);
         Task<WayOfPointsAnalysisModel> CalculateWayOfPointsAsync(GenerateFourFiguresRequest request);
+
+        // Static reference directory (HouseAndCourtDirectory/*.json on the API)
+        Task<List<HouseDirectoryEntry>> GetHousesDirectoryAsync();
+        Task<List<CourtDirectoryEntry>> GetCourtsDirectoryAsync();
     }
 }
 
