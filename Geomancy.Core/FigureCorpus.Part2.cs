@@ -107,7 +107,7 @@ namespace GeomancyApp
             DivinatoryMeaning = "Networks, mediation, logistics, reconciliations of accounts, the recovery of items through a chain of acquaintances, and conversations that bring previously separate parties into agreement. The figure favors questions in which connection itself is the missing variable, and disfavors questions in which isolation, confidentiality, or strict separation is required.",
             Tagline = "Crossroads, mediation, converging threads",
             CoreMeaning = new List<string> { "linkage", "exchange", "mediation", "intelligence", "mixing", "routing" },
-            FavorableFor = new List<string> { "Talent acquisition and placement", "Import and export", "Couples or contract mediation", "Bridging separate accounts or networks", "Conference and alliance building" },
+            FavorableFor = new List<string> { "Hiring or placement through trusted networks", "Import and export", "Couples or contract mediation", "Bridging separate accounts or networks", "Gatherings that form durable alliances" },
             UnfavorableFor = new List<string> { "Isolated classified systems", "Deliberate solitary retreat", "Exclusive control without partners" },
             ElementalSynthesis = "Active air and water braid through passive fire and earth: information and feeling circulate while ignition and ground wait their turn. The inner air steers the outer earth, so that analysis sorts the soil before any planting begins.",
             TraditionalImagery = new List<string> { "Crossroads", "Caduceus and messenger emblems", "Virgo's sorting of the harvest" },
@@ -127,7 +127,7 @@ namespace GeomancyApp
                 (7, "Co-counsel, agent, or matchmaker at the heart of the agreement."),
                 (8, "Debt restructuring; funds released through escrow and timed conditions."),
                 (9, "Travel companionship; teacher or publisher opens the next gate."),
-                (10, "Matrix reporting lines; mentor sponsors access to authority."),
+                (10, "Overlapping lines of duty; mentor sponsors access to authority."),
                 (11, "Collective allocation; mutual aid or governance that depends on many small links."),
                 (12, "Anonymous channels; mentor chains in recovery; confidential lines that still connect.")
             ),
@@ -180,7 +180,7 @@ namespace GeomancyApp
             DivinatoryMeaning = "Courtship, the care of surfaces, diplomacy, the fair division of goods, regimens of grooming, the elegance of a settlement. The figure favors first encounters and occasions that depend on grace, and is weak for instruments such as binding agreements unless other figures supply the necessary weight.",
             Tagline = "Charm, balance, mirrored desire",
             CoreMeaning = new List<string> { "beauty", "reciprocity", "grace", "design", "fairness", "seasonal joy" },
-            FavorableFor = new List<string> { "Interior design presentation", "Formal reconciliation or treaty", "Visual direction for a lasting work", "Couples counseling intake", "Elective aesthetic consultation" },
+            FavorableFor = new List<string> { "Interior design presentation", "Formal reconciliation or treaty", "Visual direction for a lasting work", "Couples counseling intake", "Consultation on beauty, balance, or presentation" },
             UnfavorableFor = new List<string> { "Solo expedition without alliance", "Coerced blunt disclosure without tact", "Long austerity demanding blunt endurance alone" },
             ElementalSynthesis = "Fire, water, and earth all act while air alone is passive: heat, feeling, and matter co-produce, while the cool intellectual distance thins. The scales of Libra here tip by mood more than by memorandum.",
             TraditionalImagery = new List<string> { "Mirror", "Venusian symmetry", "Traditional breast motif in woodcuts" },
@@ -200,7 +200,7 @@ namespace GeomancyApp
                 (7, "Partnership planning or mediation; opposing counsel yields civility."),
                 (8, "Graceful settlement of joint affairs; inheritance with a cosmetic dimension."),
                 (9, "Romance or study abroad; fellowship in arts or letters."),
-                (10, "Brand renewal; deliberate refresh of public reputation."),
+                (10, "Renewal of public name; deliberate refresh of reputation."),
                 (11, "Friends drawn by shared taste; support won through coherent presentation."),
                 (12, "Interior life grows vivid; distinguish genuine consolation from avoidance.")
             ),
@@ -214,7 +214,7 @@ namespace GeomancyApp
             {
                 "Choosing lodging whose order signals the hosts' genuine care",
                 "An acquaintance eloquent in conversation yet tentative when duty calls",
-                "A rebranding that wins notice while the underlying offering stays familiar"
+                "A refreshed public face that draws notice while the substance of the work stays familiar"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -254,7 +254,7 @@ namespace GeomancyApp
             Tagline = "Cup overturned, heat beneath the surface",
             CoreMeaning = new List<string> { "intensity", "purge", "taboo", "nocturnal strain", "investigation", "risk" },
             FavorableFor = new List<string> { "Therapeutic breakthrough after resistance", "Security audit with invasive scope", "Journalistic exposé grounded in evidence", "Frank disclosure within relationship repair", "Prescribed burn or controlled clearance" },
-            UnfavorableFor = new List<string> { "Polished public capital raise", "Formal immigration interview requiring restraint", "Structured silent retreat governed by vows" },
+            UnfavorableFor = new List<string> { "Fundraising or offering before a scrutinizing public", "Formal immigration interview requiring restraint", "Structured silent retreat governed by vows" },
             ElementalSynthesis = "Only air is active above passive fire, water, and earth: breath and story do all the steering while fuel, feeling, and ground stay inert—a pressure vessel that holds until something gives it vent.",
             TraditionalImagery = new List<string> { "Inverted cup", "Scorpionic Mars and emblematic red", "Malefic joy in classical house lore" },
             Interpretation = new List<string>

@@ -30,18 +30,18 @@ namespace GeomancyApp
             BodyType = "Broad hips and strong thighs, with a stride that covers ground efficiently. The hands accept what is offered without ceremony, the laugh carries, and the weight is carried low in the body, after the manner of a wrestler or a working dancer.",
             CharacterType = "An optimistic dealmaker who tends to believe that growth resolves most difficulties. Such a person speaks plainly, teaches what they know without pretense, and parts with their materials freely.",
             Colors = "Red, yellow, or green",
-            Commentary = @"Acquisitio lifts the purse: Jupiter in Sagittarius, inner air over outer fire, with air and earth at work to catch what falls. The medieval authors paired the figure with prudence, since appetite must still sort the genuine from the false. Fire rests at the crown, granting vision without exhaustion so long as the querent's discipline holds. The practitioner tracks the figure's enlargement in many domains: market share, knowledge, body, audience. The contrast with Amissio is exact: there, the vessel pours out; here, it opens to receive.",
+            Commentary = @"Acquisitio lifts the purse: Jupiter in Sagittarius, inner air over outer fire, with air and earth at work to catch what falls. The medieval authors paired the figure with prudence, since appetite must still sort the genuine from the false. Fire rests at the crown, granting vision without exhaustion so long as the querent's discipline holds. The practitioner tracks the figure's enlargement in land held, lore gathered, health regained, and patronage reckoned plainly. The contrast with Amissio is exact: there, the vessel pours out; here, it opens to receive.",
             DivinatoryMeaning = "Increase obtained from a recognizable source—a raise, a grant, an inheritance, the upward motion of an investment, the news of a child, the growth of an audience, the late harvest. The figure favors questions in which the gain is ethical and budgeted, and disfavors questions that require austerity, removal, or anonymity.",
             Tagline = "Receiving vessel, widening fortune, prudent appetite",
             CoreMeaning = new List<string> { "increase", "patronage", "inheritance", "pilgrimage", "matriculation", "increment" },
             FavorableFor = new List<string> { "Capital campaign or endowment drive", "Admission to advanced study", "Purchase of arable land or workshop", "Sponsored broadcast or serial publication", "Grant, fellowship, or benefaction" },
             UnfavorableFor = new List<string> { "Radical voluntary poverty", "Relocation requiring anonymity", "Court-supervised insolvency" },
-            ElementalSynthesis = "Air and earth are active while fire and water remain passive: ideas and material cooperate, while raw heat and tear stay reserved—a Sagittarian arrow set to the bow but not yet released.",
+            ElementalSynthesis = "Air and earth are active while fire and water remain passive: ideas and material cooperate, while passion and deep feeling stay tempered—a Sagittarian arrow set to the bow but not yet released.",
             TraditionalImagery = new List<string> { "Upright purse or bag", "Jupiter's temperate abundance", "Archer's horizon line" },
             Interpretation = new List<string>
             {
                 "The first practitioner question concerns what will be done with the surplus. Without Tristitia somewhere in the chart, Acquisitio can deliver weight as readily as wealth.",
-                "Read in modern terms, the figure speaks of accumulation that can be measured—subscribers, recurring revenue, a growing audience—and the practitioner should look elsewhere in the chart for any sign of attrition.",
+                "Read in modern terms, the figure speaks of increase that admits an honest tally—steady yield from entrusted work, a circle of clients or hearers whose trust holds, inventories that swell—and the practitioner should look elsewhere in the chart for any sign of attrition.",
                 "Paired with Carcer, the gain locks into structure; paired with Via, the gain accumulates while the querent is in motion."
             },
             InHouses = H(
@@ -141,7 +141,7 @@ namespace GeomancyApp
             {
                 "A mandated review interval before publication or release may proceed",
                 "Choosing humbler quarters so that debt retires on an honest schedule",
-                "Credentials kept secretly whose concealment eventually burdens the household"
+                "Licenses withheld in shame burdening the household more than truthful disclosure eventually would"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {
@@ -254,7 +254,7 @@ namespace GeomancyApp
             Tagline = "Tower lights, uplifted spirit, bright hazard",
             CoreMeaning = new List<string> { "ascent", "visibility", "elation", "devotion", "public celebration", "relief" },
             FavorableFor = new List<string> { "Public première of creative work", "Betrothal openly declared", "Benefit supper or charitable levee", "Observance of recovery or remission", "Popular lecture or broad explanatory piece" },
-            UnfavorableFor = new List<string> { "Life under witness protection", "Enclosed silent retreat", "Quiet stake against prevailing opinion" },
+            UnfavorableFor = new List<string> { "Life under witness protection", "Enclosed silent retreat", "Unadvertised dissent or quiet resistance alone" },
             ElementalSynthesis = "Only fire acts within a Piscean shell of water: enthusiasm pierces the fog while air and earth remain latent—a lifted balloon awaiting the ballast that another figure must supply.",
             TraditionalImagery = new List<string> { "Elevated tower", "Candelabrum of gladness", "Jovian light through mist" },
             Interpretation = new List<string>
@@ -285,7 +285,7 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "A successful première that reveals how thin the scaffold beneath acclaim actually is",
+                "A successful première that lays bare how slight the footing beneath applause proves to be",
                 "Truth hoarded for years spoken aloud, welcomed, then paid for in weariness",
                 "Unexpected gain whose announcement draws strangers and distant kin to the threshold"
             },

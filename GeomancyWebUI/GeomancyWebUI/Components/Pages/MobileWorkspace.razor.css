@@ -49,13 +49,13 @@
  * 1) Chart drawer (handle + overlay body)
  * ============================================================ */
 
-/* Drawer wrapper. Reserves a fixed 2.2rem strip in the .mobile-shell flex
-   layout that the (separately fixed-positioned) handle occupies visually,
-   so the tabstrip + panel below start at the right offset whether the
-   chart is expanded or collapsed. */
+/* Drawer wrapper. Reserves the fixed handle (2.2rem) plus a hint row so
+   fixed-positioned chrome does not cover the tabstrip. */
 .mobile-chart-drawer {
+    /* Height of .mobile-chart-hint (fixed below handle); keep in sync with that rule. */
+    --mobile-chart-hint-height: 1.35rem;
     position: relative;
-    flex: 0 0 2.2rem;
+    flex: 0 0 calc(2.2rem + var(--mobile-chart-hint-height));
     /*
      * z-index only while expanded: a constant z-index here kept the entire
      * drawer subtree (including the fixed full-screen .mobile-chart-body)
@@ -75,6 +75,35 @@
 
 .mobile-chart-drawer.is-collapsed .mobile-chart-handle {
     pointer-events: auto;
+}
+
+/* One-line guidance under the handle; fixed like the handle so it stays
+   visible; pointer-events none so taps reach the tabstrip beneath. */
+.mobile-chart-hint {
+    position: fixed;
+    top: calc(3.5rem + 2.2rem);
+    left: 0;
+    right: 0;
+    z-index: 29;
+    min-height: var(--mobile-chart-hint-height);
+    margin: 0;
+    padding: 0.18rem 0.65rem 0.22rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.64rem;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    pointer-events: none;
+    letter-spacing: 0.01em;
+}
+
+.mobile-chart-drawer.is-expanded .mobile-chart-hint {
+    background: var(--bg-primary);
 }
 
 /* Always-visible handle pinned to the viewport just below the nav. Using
@@ -146,7 +175,8 @@
    narrow phones, without compromising figure proportions. */
 .mobile-chart-body {
     position: fixed;
-    top: calc(3.5rem + 2.2rem);    /* below nav (3.5rem) + handle (2.2rem) */
+    /* below nav + handle + hint strip */
+    top: calc(3.5rem + 2.2rem + var(--mobile-chart-hint-height));
     left: 0;
     right: 0;
     bottom: 0;
@@ -256,7 +286,7 @@
        dominates the screen even when there is headroom. */
     --chart-fit: min(
         calc(100dvw - 1rem),
-        calc(100dvh - 3.5rem - 2.2rem - 11rem),
+        calc(100dvh - 3.5rem - 2.2rem - var(--mobile-chart-hint-height) - 11rem),
         70dvh
     );
     width: var(--chart-fit);

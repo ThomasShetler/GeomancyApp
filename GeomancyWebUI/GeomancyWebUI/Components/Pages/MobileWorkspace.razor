@@ -25,10 +25,8 @@
     not touched.
 
     Layout (top -> bottom):
-      1. mobile-chart-drawer    -> thin always-visible "Show/Hide chart" handle. The
-                                   chart body is mounted as an absolute overlay
-                                   underneath the handle so it slides over the
-                                   tabstrip + panel without reflowing them.
+      1. mobile-chart-drawer    -> fixed "Show/Hide chart" handle plus a one-line hint
+                                   under it; chart body is a fixed overlay beneath both.
       2. mobile-tabstrip        -> horizontally scrollable tab buttons. Tapping any
                                    tab also collapses the chart drawer so the panel
                                    gets full real estate.
@@ -69,6 +67,17 @@
             </span>
             <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
         </button>
+
+        <p class="mobile-chart-hint">
+            @if (chartCollapsed)
+            {
+                <span>Tap the strip above to open the chart, Mothers, and sharing.</span>
+            }
+            else
+            {
+                <span>Collapse the chart to see analysis and data in the tabs below.</span>
+            }
+        </p>
 
         <div class="mobile-chart-body" aria-hidden="@chartCollapsed.ToString().ToLower()">
             <div class="mobile-chart-toolbar">
