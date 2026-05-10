@@ -1,0 +1,118 @@
+/* About page — readable prose, matches landing rhythm (Home.razor.css tokens). */
+
+.about-page {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 1rem 0 3rem;
+    box-sizing: border-box;
+}
+
+.about-hero {
+    margin-bottom: 1.5rem;
+}
+
+.about-h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.65rem, 5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.about-lead {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.about-link-line {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.about-link-line a {
+    font-weight: 600;
+}
+
+.about-section {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.about-h2 {
+    margin: 0 0 0.85rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.about-aside {
+    margin: -0.25rem 0 1rem;
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+}
+
+.about-prose {
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+}
+
+.about-prose p {
+    margin: 0 0 1rem;
+}
+
+.about-prose p:last-child {
+    margin-bottom: 0;
+}
+
+.about-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.about-list li {
+    margin-bottom: 0.75rem;
+}
+
+.about-list li:last-child {
+    margin-bottom: 0;
+}
+
+.about-list strong {
+    color: var(--text-primary);
+}
+
+.about-page code {
+    font-size: 0.88em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.about-footer-links {
+    margin: 1.25rem 0 0;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.about-footer-sep {
+    margin: 0 0.35rem;
+    color: var(--border-color);
+}
+
+.about-signature {
+    margin: 1.5rem 0 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}

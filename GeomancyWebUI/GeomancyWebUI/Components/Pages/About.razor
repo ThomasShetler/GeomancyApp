@@ -1,0 +1,213 @@
+@page "/about"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy - About</PageTitle>
+
+<div class="about-page">
+    <header class="about-hero">
+        <h1 class="about-h1">About Geofancy</h1>
+        <p class="about-lead">
+            <strong>Geofancy</strong> is a free geomancy workspace I've been building since 2022. It generates
+            the shield and the twelve houses from the four Mothers, runs perfections and the Way of Points,
+            and presents structured reference material alongside the chart. It's meant to reduce bookkeeping
+            friction and support study — <strong>not</strong> to replace careful human interpretation.
+        </p>
+        <p class="about-link-line">
+            <a href="https://geofancy.up.railway.app" target="_blank" rel="noopener noreferrer">Geofancy Beta</a>
+        </p>
+    </header>
+
+    <section class="about-section" aria-labelledby="about-bg-heading">
+        <h2 id="about-bg-heading" class="about-h2">A bit of background</h2>
+        <div class="about-prose">
+            <p>
+                I first heard of geomancy in 2022 and was immediately taken with it. Polyphanes / Sam Block's
+                writing was what helped me find good sources and serious material to work through, and
+                <strong>John Michael Greer's</strong> <em><strong>The Art and Practice of Geomancy</strong></em>
+                was the book I learned the modern revival of the system from — it shaped how I came to the art
+                and how I first structured the engine. I owe both of them a real debt.
+            </p>
+            <p>
+                Around the same time I'd just started my first job as a software engineer — full-stack,
+                Microsoft stack — and I wanted to build the geomancy tool I wished existed, and through
+                building a tool I could start to understand geomancy from first principles. I started with a
+                WinForms desktop app in C#: shield generation, house projection, perfections, no AI involved
+                (it didn't really meaningfully exist for coding yet). Years of slow evolution later, that
+                engine grew up into the web app you see now.
+            </p>
+        </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="about-does-heading">
+        <h2 id="about-does-heading" class="about-h2">What it does</h2>
+        <p class="about-aside"><em>(Seeks to go well above and beyond Georatio!)</em></p>
+        <ul class="about-list">
+            <li>
+                <strong>Full chart generation</strong> from the four Mothers to get the Daughters, Nieces,
+                Witnesses, Judge, Reconciler, twelve-house projection, both shield and traditional house
+                chart views.
+            </li>
+            <li>
+                <strong>Perfections analysis</strong> that's the deepest I've personally found in any geomancy
+                tool: occupation, conjunction, translation, mutation, aspect (treated as a perfecting mode in
+                its own right when significators move into the configuration, as per Greer's rule of
+                significators and forming aspects), and <strong>Company of Houses</strong> with all four
+                subtypes (Simple, DemiSimple, Compound, Capitular). Aspects are tracked with
+                <strong>Dexter / Sinister direction</strong>, and the connections are weighted into a
+                calculated favorable / unfavorable / net score with the full paper trail visible (calculated by
+                translating Greer's tables).
+            </li>
+            <li>
+                <strong>Way of Points / Via Puncti</strong> surfaced seriously rather than skipped or
+                half-implemented, as it is in many digital tools. Get a deep understanding of how each of the
+                <em><strong>Via Puncti / Way of Points</strong></em> are formed and how they can inform your
+                frame of interpretation; learn how to distinguish the way of fire, air, water, and earth
+                systematically.
+            </li>
+            <li><strong>Court positions</strong> with per-position interpretive notes.</li>
+            <li>
+                <strong>Structured reference panels</strong> for figures, houses, and court positions —
+                written for use <em>while</em> you're at the chart, not just for study at rest.
+            </li>
+            <li>
+                <strong>Dedicated mobile and desktop UIs</strong> so the workspace actually fits the device;
+                phones get a chart-first layout with thumb-sized Mother input cells (4. Genitor, 3. Fratres,
+                2. Lucrum, 1. Vita).
+            </li>
+            <li>
+                <strong>Shareable chart links</strong> (<code>?seed=…</code>) and <strong>JSON export</strong>
+                for archiving readings, sending them to a study group, or comparing notes with a teacher.
+            </li>
+            <li><strong>Light and dark themes</strong>.</li>
+            <li>
+                <strong>No account, no login, no chart database.</strong> The randomization stays with your
+                hands; the app does not cast for you.
+            </li>
+        </ul>
+    </section>
+
+    <section class="about-section" aria-labelledby="about-corpus-heading">
+        <h2 id="about-corpus-heading" class="about-h2">About the corpus and lineage</h2>
+        <div class="about-prose">
+            <p>I want to be straightforward about this because it matters in our community.</p>
+            <p>
+                The <strong>engine and the original interpretive scaffolding were structured around Greer's
+                approach</strong>, which is the modern English-language framework I learned the art through.
+                The mechanical doctrine — the four classical perfecting modes, the use of aspects, Company of
+                Houses, the broad shape of the Way of Points — is from the shared traditional record that
+                Greer himself works from.
+            </p>
+            <p>
+                The <strong>on-screen reference text in the app today, however, is my own writing.</strong> I
+                have rewritten every figure, house, and court description (beyond short one-word descriptors)
+                from my own practice, my own reading notes, and <strong>publicly available sources</strong>
+                (Agrippa's <em>Three Books of Occult Philosophy</em>, Cattan, Heydon, Fludd, Hartmann, and
+                material in the public domain), expanding well past where I started. None of Greer's prose,
+                definitions, or wording is reproduced in the app; the corpus is my own, and is licensed for
+                non-commercial reuse so other practitioners can quote from it freely. I deliberately didn't
+                want to ride on copyrighted text I don't own; rewriting it forced me to deepen the material,
+                my understanding of geomancy, and to own what I was presenting.
+            </p>
+            <p>
+                So: <strong>doctrinal lineage acknowledged</strong>, <strong>copyrighted prose not
+                reproduced</strong>, and the educational reference text in the app is something you can read
+                and quote without worrying about the IP underneath.
+            </p>
+        </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="about-ai-heading">
+        <h2 id="about-ai-heading" class="about-h2">How AI was used (and where it categorically wasn't)</h2>
+        <ul class="about-list">
+            <li>
+                <strong>At runtime, when you cast:</strong> there is <strong>no AI involved at all.</strong>
+                Chart construction, perfection detection, scoring, Way of Points, court placement — every one of
+                these runs as <strong>deterministic code paths</strong> I wrote and own. No LLM is reading your
+                chart, summarizing your figures, or generating a verdict per session. The same four Mothers
+                will always produce exactly the same chart and analysis.
+            </li>
+            <li>
+                <strong>The interpretive reference text</strong> described above is <strong>written from my own
+                practice and from public sources.</strong> It is not generated per-reading by an AI; it's a
+                complex directory and API working together with my own engine.
+            </li>
+            <li>
+                <strong>In development,</strong> I have used AI-assisted coding tools (like Cursor) to speed
+                up UI work and engineering plumbing for the modern web client. The geomancy engine itself
+                predates that era and was written by hand; later refactors and the web rewrite were assisted
+                but human-reviewed.
+            </li>
+        </ul>
+        <div class="about-prose">
+            <p>
+                All the technical design and UI/UX design decisions, process flows, data object model schemas,
+                calculation formulas, and API structures were curated and intentionally developed by hand and
+                logically constructed by myself and my own knowledge of engineering solutions in C# .NET and
+                web architecture.
+            </p>
+            <p>
+                If the distinction matters to anyone reading: no part of your reading or user experience sees
+                a server database, let alone touches an AI.
+            </p>
+        </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="about-free-heading">
+        <h2 id="about-free-heading" class="about-h2">Free, and intended to stay that way</h2>
+        <div class="about-prose">
+            <p>
+                Geofancy is free to use. There's no paywall, no premium tier, no upsell, no ads, and no
+                subscription. I intend to keep the core experience free indefinitely. If anything monetized
+                ever appears in the future, it will be optional and will not gate the chart engine,
+                perfections, Way of Points, or the existing reference material.
+            </p>
+        </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="about-canned-heading">
+        <h2 id="about-canned-heading" class="about-h2">On software, &quot;canned&quot; interpretation, and what this tool actually is</h2>
+        <div class="about-prose">
+            <p>I want to say this plainly because it matters more than any feature list:</p>
+            <p>
+                <strong>Geofancy's on-screen text is reference material — vocabulary, structure, and prompts
+                to think with alongside your own interpretation.</strong> Software cannot read a chart for you.
+                It cannot weigh your situation, your timing, your relationship to the question, the figures'
+                resonances in your life, or anything else that requires a human mind in contact with a real
+                moment. Whatever any digital tool prints — mine included, however thorough — is
+                <strong>not</strong> a substitute for your own discernment, study, mentorship, or reading
+                from a qualified practitioner.
+            </p>
+            <p>
+                Use Geofancy like a sharp knife and a careful checklist, if anything; developing this app was
+                for myself to learn about geomancy on a deep systematic level — that I could break it down in
+                a user-friendly way to help improve and build my own interpretation of the charts and help
+                develop a deeper correspondent relationship with the figures and the placement mentally. I
+                sincerely hope that Geofancy's additional features for analysis provide a deeper, more
+                interconnected understanding of geomancy <strong>for the benefit of every practitioner and the
+                preservation of the art</strong>.
+            </p>
+        </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="about-feedback-heading">
+        <h2 id="about-feedback-heading" class="about-h2">What I'd value feedback on</h2>
+        <ul class="about-list">
+            <li>
+                <strong>Tone and accuracy of the reference corpus</strong> — if a figure description, house
+                affinity, court placement, or perfection commentary lands wrong, please tell me.
+            </li>
+            <li>
+                <strong>Any bugs or issues.</strong> Report issues with app performance or chart output; it
+                has been tested pretty rigorously, but there might be a couple of edge cases.
+            </li>
+        </ul>
+        <p class="about-footer-links">
+            <strong>App:</strong>
+            <a href="https://geofancy.up.railway.app" target="_blank" rel="noopener noreferrer">Geofancy Beta</a>
+            <span class="about-footer-sep" aria-hidden="true">·</span>
+            <strong>Source / issues:</strong>
+            <a href="https://github.com/ThomasShetler/GeomancyApp" target="_blank" rel="noopener noreferrer">Geofancy on GitHub</a>
+        </p>
+        <p class="about-signature">Thank you for reading.<br />— Thomas</p>
+    </section>
+</div>
