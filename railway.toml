@@ -1,0 +1,14 @@
+# Railway service config. Forces Dockerfile builder so Railpack
+# won't try to auto-detect (the repo root contains the F4.8 .sln,
+# which confuses Railpack but is irrelevant to the Linux container).
+# Branch + auto-deploy is configured in the Railway dashboard, not here.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Railway sets $PORT; the Dockerfile already binds ASPNETCORE_URLS to it.
+# No restartPolicy override - the platform default (ON_FAILURE) is fine.
+healthcheckPath = "/"
+healthcheckTimeout = 30

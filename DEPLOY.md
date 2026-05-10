@@ -21,11 +21,16 @@ in-process API is wired up).
 
 1. Create a Railway account and a new project.
 2. **New Project -> Deploy from GitHub repo** -> pick this repository.
-3. Railway auto-detects the `Dockerfile` at the repo root. No build command
-   needed.
-4. **Settings -> Networking -> Generate Domain**. You get a free
+3. **Settings -> Source -> Branch** -> set to `web-app` (or whichever branch
+   contains the `Dockerfile` + `GeomancyWebUI/`). The `master` branch is the
+   pre-refactor WinForms snapshot and will fail the Railpack auto-detect with
+   "could not determine how to build the app" because it has no `Dockerfile`.
+4. **Settings -> Build -> Builder** -> `Dockerfile` (the committed
+   `railway.toml` already pins this, but confirm it stuck). Dockerfile path is
+   `Dockerfile` at the repo root.
+5. **Settings -> Networking -> Generate Domain**. You get a free
    `*.up.railway.app` URL with HTTPS handled at the edge.
-5. No environment variables are required for v1. Railway injects `$PORT` and
+6. No environment variables are required for v1. Railway injects `$PORT` and
    the `Dockerfile` honors it.
 
 ## Architecture notes
