@@ -494,14 +494,18 @@
 
 .mobile-flow-hint {
     margin: 0;
-    padding: 0.32rem 0.65rem 0.4rem;
-    font-size: 0.68rem;
-    line-height: 1.35;
+    padding: 0.4rem 0.65rem 0.45rem;
+    font-size: 0.7rem;
+    line-height: 1.42;
     text-align: center;
     color: var(--text-secondary);
     background: color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary));
     border-bottom: 1px solid var(--border-color);
     letter-spacing: 0.015em;
+    max-width: 100%;
+    box-sizing: border-box;
+    hyphens: auto;
+    overflow-wrap: anywhere;
 }
 
 .mobile-tabstrip::-webkit-scrollbar {
