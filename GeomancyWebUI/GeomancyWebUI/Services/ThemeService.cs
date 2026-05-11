@@ -49,4 +49,3 @@ public class ThemeService
         ThemeChanged?.Invoke(isDarkMode);
     }
 }
-

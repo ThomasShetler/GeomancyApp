@@ -25,8 +25,8 @@
         // pasting a deep link, or testing - stays put.
         (function () {
             var path = (window.location.pathname || '').toLowerCase();
-            var isPhone = window.matchMedia &&
-                window.matchMedia('(max-width: 900px)').matches;
+            var isPhone = window.geofancyDevice && typeof window.geofancyDevice.isMobile === 'function' &&
+                window.geofancyDevice.isMobile();
             if (path === '/workspace' && isPhone) {
                 window.location.replace('/mobile' + window.location.search + window.location.hash);
             }

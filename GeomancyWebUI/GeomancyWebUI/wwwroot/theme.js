@@ -27,10 +27,13 @@
         }
     };
 
+    // Viewport cap for "phone-style" routing only. 900px was too wide: tiled
+    // desktop windows and many laptops read as mobile and hit /mobile + Cast flow.
+    var MOBILE_MAX_WIDTH_PX = 768;
     window.geofancyDevice = {
         isMobile: function () {
             return window.matchMedia &&
-                window.matchMedia('(max-width: 900px)').matches;
+                window.matchMedia('(max-width: ' + MOBILE_MAX_WIDTH_PX + 'px)').matches;
         }
     };
 

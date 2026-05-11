@@ -1,5 +1,23 @@
 # Releases
 
+## v0.2.1 — Theme persistence & mobile routing
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Patch release addressing **server-side theme state** and **over-eager mobile routing**.
+
+### Fixes
+
+- **Light/dark theme.** `ThemeService` is now **Scoped** to each Blazor Server **circuit** instead of **Singleton**. A singleton shared every user’s in-memory theme; another tab or visitor could overwrite your toggle and make the UI “revert.” Scoped matches one theme state per browser connection.
+- **Desktop sent to `/mobile`.** “Mobile viewport” used **`max-width: 900px`**, which matched many **desktop** setups (tiled windows, modest laptop widths). Detection now uses **`768px`**, and the **`/workspace` → `/mobile`** redirect in `App.razor` calls the same **`geofancyDevice.isMobile()`** helper as **Cast a chart** so one rule drives both paths.
+
+### Implementation notes
+
+- **Assemblies aligned to v0.2.1.** Same three-way bump as prior releases (`Directory.Build.props`, `GeofancyVersion.Display`, legacy `AssemblyInfo.cs`).
+
+---
+
 ## v0.2.0 — Web milestone (stable line)
 
 **Released:** May 2026  

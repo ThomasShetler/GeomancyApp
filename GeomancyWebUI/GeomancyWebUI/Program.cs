@@ -56,7 +56,8 @@ else
     });
 }
 
-builder.Services.AddSingleton<ThemeService>();
+// Per Blazor Server circuit — theme must not be Singleton (shared across all users/tabs).
+builder.Services.AddScoped<ThemeService>();
 
 var app = builder.Build();
 
