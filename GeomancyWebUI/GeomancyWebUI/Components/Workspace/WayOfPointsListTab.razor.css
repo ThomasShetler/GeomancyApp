@@ -434,6 +434,26 @@
     line-height: 1.2;
 }
 
+[data-theme="dark"] .wop-way-of-light-ribbon {
+    border-color: rgba(255, 214, 102, 0.48);
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.22), rgba(255, 193, 7, 0.06));
+}
+
+[data-theme="dark"] .wop-way-of-light-glyph {
+    color: #ffd54f;
+}
+
+[data-theme="dark"] .wop-row.is-way-of-light {
+    border-color: rgba(255, 214, 102, 0.42);
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.14), transparent);
+}
+
+[data-theme="dark"] .wop-row-light-badge {
+    color: #fff8e6;
+    border-color: rgba(255, 214, 102, 0.55);
+    background: rgba(255, 193, 7, 0.38);
+}
+
 .wop-row-bullet {
     flex-shrink: 0;
     width: 1rem;

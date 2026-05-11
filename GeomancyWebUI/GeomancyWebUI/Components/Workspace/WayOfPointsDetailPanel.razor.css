@@ -247,6 +247,28 @@
     color: #daa520;
 }
 
+/* Dark theme: brown-on-gold WoL chips read as muddy; use light gold text + richer amber wash */
+[data-theme="dark"] .chip.chip-way-of-light {
+    color: #ffeab6;
+    border-color: rgba(255, 214, 102, 0.55);
+    background: linear-gradient(180deg, rgba(255, 193, 7, 0.32), rgba(160, 100, 0, 0.22));
+}
+
+[data-theme="dark"] .header-score-pill.pill-way-of-light {
+    color: #fff8e6;
+    border-color: rgba(255, 214, 102, 0.55);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.42), rgba(120, 75, 0, 0.4));
+}
+
+[data-theme="dark"] .way-of-light-card {
+    border-color: rgba(255, 214, 102, 0.42);
+    background: linear-gradient(180deg, rgba(255, 193, 7, 0.12), var(--bg-secondary));
+}
+
+[data-theme="dark"] .mechanism-graph.is-way-of-light-graph .mech-arrow {
+    color: #ffd54f;
+}
+
 /* ============================================================
  * Detail cards
  * ============================================================ */
