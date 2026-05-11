@@ -4,9 +4,8 @@
     Left column of the revamped Way Of Points tab.
 
     Layout:
-      1. Verdict header (count of established Ways out of four).
-      2. Count-chip row (Strong / Strong Passive / Weaker Passive / Passive
-         totals across all four elements).
+      1. Verdict header (score + composition-aware primary label + openings line).
+      2. Count-chip row (Strong / Passive totals across all four elements).
       3. Four scrollable element groups (Fire / Air / Water / Earth). Each
          group shows the element badge, Latin name, established/not pill,
          and a clickable list of paths inside that Way. The element header
@@ -32,34 +31,25 @@
         var ways = GetWaysInOrder();
         var establishedCount = ways.Count(w => w.Way?.CanBeEstablished == true);
         var totalStrong = ways.Sum(w => w.Way?.StrongPaths?.Count ?? 0);
-        var totalStrongPassive = ways.Sum(w => w.Way?.StrongPassivePaths?.Count ?? 0);
-        var totalWeakerPassive = ways.Sum(w => w.Way?.WeakerPassivePaths?.Count ?? 0);
         var totalPassive = ways.Sum(w => w.Way?.PassivePaths?.Count ?? 0);
+        var verdict = ComputeWayOfPointsVerdict(ways);
 
         <!-- Verdict header -->
-        <div class="wop-verdict @VerdictClass(establishedCount)">
+        <div class="wop-verdict @verdict.VerdictCss">
             <div class="wop-verdict-score">
                 <span class="established-num">@establishedCount</span><span class="of-four">/4</span>
             </div>
             <div class="wop-verdict-meta">
-                <div class="wop-verdict-label">@VerdictLabel(establishedCount)</div>
-                <div class="wop-verdict-sub">Ways established</div>
+                <div class="wop-verdict-label">@verdict.Primary</div>
+                <div class="wop-verdict-sub @verdict.OpeningsCss">@verdict.Openings</div>
             </div>
         </div>
 
-        <!-- Count chips -->
-        <div class="wop-counts">
+        <!-- Count chips (Strong + Passive only; other path buckets are not surfaced here) -->
+        <div class="wop-counts wop-counts-two">
             <span class="wop-count-chip count-strong" title="Strong paths across all elements">
                 <span class="count-num">@totalStrong</span>
                 <span class="count-label">Strong</span>
-            </span>
-            <span class="wop-count-chip count-strong-passive" title="Strong-passive paths across all elements">
-                <span class="count-num">@totalStrongPassive</span>
-                <span class="count-label">S. Passive</span>
-            </span>
-            <span class="wop-count-chip count-weaker-passive" title="Weaker-passive paths across all elements">
-                <span class="count-num">@totalWeakerPassive</span>
-                <span class="count-label">W. Passive</span>
             </span>
             <span class="wop-count-chip count-passive" title="Passive paths across all elements">
                 <span class="count-num">@totalPassive</span>
@@ -96,8 +86,6 @@
                         </div>
                         <div class="wop-group-counts">
                             <span class="wop-mini-count" title="Strong">@(way?.StrongPaths?.Count ?? 0) S</span>
-                            <span class="wop-mini-count" title="Strong Passive">@(way?.StrongPassivePaths?.Count ?? 0) SP</span>
-                            <span class="wop-mini-count" title="Weaker Passive">@(way?.WeakerPassivePaths?.Count ?? 0) WP</span>
                             <span class="wop-mini-count" title="Passive">@(way?.PassivePaths?.Count ?? 0) P</span>
                         </div>
                     </div>
@@ -177,23 +165,83 @@
             await OnSelect.InvokeAsync(sel);
     }
 
-    // ----- Verdict + path-type label helpers -----
-    private static string VerdictClass(int established) => established switch
-    {
-        4 => "verdict-favorable",
-        0 => "verdict-unfavorable",
-        _ => "verdict-mixed"
-    };
+    private sealed record WayOfPointsVerdict(string Primary, string Openings, string VerdictCss, string OpeningsCss);
 
-    private static string VerdictLabel(int established) => established switch
+    /// <summary>
+    /// Primary line reflects how many of the four Via Puncti are open and whether
+    /// openings lean on strong vs passive paths; subtitle is the openings quality line.
+    /// </summary>
+    private static WayOfPointsVerdict ComputeWayOfPointsVerdict(IReadOnlyList<WaySlot> ways)
     {
-        4 => "Fully Open",
-        3 => "Mostly Open",
-        2 => "Half Open",
-        1 => "Mostly Blocked",
-        0 => "Fully Blocked",
-        _ => string.Empty
-    };
+        var established = ways.Where(s => s.Way?.CanBeEstablished == true).ToList();
+        var n = established.Count;
+
+        var totalStrong = ways.Sum(s => s.Way?.StrongPaths?.Count ?? 0);
+        var totalPassive = ways.Sum(s => s.Way?.PassivePaths?.Count ?? 0);
+
+        if (n == 0)
+        {
+            return new WayOfPointsVerdict(
+                "No ways established",
+                "No openings",
+                "verdict-none",
+                "openings-none");
+        }
+
+        string openingsLabel;
+        string openingsCss;
+        if (totalStrong == 0)
+        {
+            openingsLabel = "Passively open";
+            openingsCss = "openings-passive";
+        }
+        else if (totalPassive == 0)
+        {
+            openingsLabel = "Strongly open";
+            openingsCss = "openings-strong";
+        }
+        else
+        {
+            openingsLabel = "Strong and passive openings";
+            openingsCss = "openings-mixed";
+        }
+
+        var waysWithStrong = established.Count(s => (s.Way!.StrongPaths?.Count ?? 0) > 0);
+        var waysPassiveOnly = established.Count(s => (s.Way!.StrongPaths?.Count ?? 0) == 0);
+
+        if (waysPassiveOnly > 0 && waysWithStrong > 0)
+        {
+            return new WayOfPointsVerdict(
+                $"{waysPassiveOnly} passive and {waysWithStrong} strong ways established",
+                openingsLabel,
+                "verdict-mixed-composition",
+                openingsCss);
+        }
+
+        if (waysWithStrong == 0)
+        {
+            if (n == 4)
+                return new WayOfPointsVerdict("Fully passive", openingsLabel, "verdict-passive-full", openingsCss);
+            if (n is >= 2 and <= 3)
+                return new WayOfPointsVerdict($"{n} Via Puncti established passively", openingsLabel, "verdict-passive-partial", openingsCss);
+            var w0 = established[0];
+            var name0 = !string.IsNullOrEmpty(w0.Way!.WayName) ? w0.Way.WayName : w0.ElementKey;
+            return new WayOfPointsVerdict($"{name0} established passively", openingsLabel, "verdict-passive-single", openingsCss);
+        }
+
+        if (waysPassiveOnly == 0 && waysWithStrong == n)
+        {
+            if (n == 4)
+                return new WayOfPointsVerdict("Strongly established", openingsLabel, "verdict-strong-full", openingsCss);
+            if (n is >= 2 and <= 3)
+                return new WayOfPointsVerdict($"{n} Via Puncti established strongly", openingsLabel, "verdict-strong-partial", openingsCss);
+            var w1 = established[0];
+            var name1 = !string.IsNullOrEmpty(w1.Way!.WayName) ? w1.Way.WayName : w1.ElementKey;
+            return new WayOfPointsVerdict($"{name1} established", openingsLabel, "verdict-strong-single", openingsCss);
+        }
+
+        return new WayOfPointsVerdict("Mixed openings", openingsLabel, "verdict-mixed-composition", openingsCss);
+    }
 
     private static string PathTypeShort(string pathType) => pathType switch
     {

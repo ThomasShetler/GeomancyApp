@@ -183,12 +183,19 @@
     font-weight: 700;
 }
 
+.way-of-light-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
 .way-of-light-card {
     border-color: rgba(255, 193, 7, 0.55);
     background: linear-gradient(180deg, rgba(255, 223, 130, 0.14), var(--bg-secondary));
 }
 
-.way-of-light-lead {
+.way-of-light-lead,
+.wol-card-body {
     margin: 0;
     font-size: 0.84rem;
     line-height: 1.5;

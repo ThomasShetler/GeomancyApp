@@ -213,9 +213,7 @@
                     <div class="mobile-welcome-callout-inner">
                         <div class="mobile-welcome-callout-text">
                             <span class="mobile-welcome-callout-title">How this screen works</span>
-                            <span class="mobile-welcome-callout-body">
-                                The top bar opens or closes your chart (Mothers, chart style, and Share). Choose a tab for courts, perfections, way of points, and more — swipe the tab pills sideways if you do not see every label.
-                            </span>
+                            <span class="mobile-welcome-callout-body">@GetWelcomeCalloutBody(activeTab)</span>
                         </div>
                         <button type="button"
                                 class="mobile-welcome-callout-dismiss"
@@ -484,6 +482,20 @@
 
     private string ActiveTabLabel
         => Tabs.FirstOrDefault(t => t.Id == activeTab)?.Label ?? string.Empty;
+
+    private static string GetWelcomeCalloutBody(WorkspaceTab tab) => tab switch
+    {
+        WorkspaceTab.CourtAndHouses =>
+            "Swipe through the tables at the top to pull more options from the right side; tap a house or court placement in the rows for more information.",
+        WorkspaceTab.PerfectionsAndAspects =>
+            "Select your Querent and Quesited to calculate perfection, then tap any mode or aspect for deeper insight.",
+        WorkspaceTab.WayOfPoints =>
+            "Select an elemental path header for a summary of that path, or select one of the way points on that element for deeper insights.",
+        WorkspaceTab.Triplicates or WorkspaceTab.LotsAndOther =>
+            "Use the top bar to show or hide your chart (Mothers, chart style, and Share). Choose other tabs from the strip — swipe the pills sideways if a label is cut off.",
+        _ =>
+            "Use the top bar to show or hide your chart (Mothers, chart style, and Share). Choose other tabs from the strip — swipe the pills sideways if a label is cut off."
+    };
 
     private bool CurrentTabSupportsDetail()
         => activeTab is WorkspaceTab.CourtAndHouses
