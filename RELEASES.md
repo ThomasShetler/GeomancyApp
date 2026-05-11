@@ -1,5 +1,35 @@
 # Releases
 
+## v0.1.3-beta — Way of Light, Mobile Polish & WoP UX
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Focus release on **Way of Points**: classical **Way of the Light** on Via Ignis is surfaced end-to-end with clearer naming (**Classic Way of Points / Way of the Light**), a condensed spotlight in the detail panel, and better readability of amber tags in **dark mode**. Mobile workspace gets tab-aware hints, tighter chart-drawer layout, and small copy and corpus-tone polish.
+
+### Highlights
+
+- **Way of the Light (Classic Way of Points).** When Fire forms exactly one strong path on singly active head-line fire, the app marks that path and shows structured detail: naming vs the four elemental ways, rule checklist aligned with core logic, and reading cues scoped to this classical highlight — without duplicating generic Via Ignis glossary when the spotlight is active.
+- **Way of Points verdict line.** The summary header reflects chart composition using strong vs passive path totals across elements.
+- **Mechanism card only on paths.** Selecting a whole-element Way summary no longer shows the path mechanism strip (avoids reading as “not established” when the way is open).
+- **Mobile workspace.** Welcome flow hints vary by active tab; layout height is locked so tabs do not scroll under the chart handle; expanded chart sheet and collapse hints are tightened; optional chart-area hint for orientation.
+- **Dark mode.** Way-of-Light chips, header pill, list ribbon, row highlight, and **Light** badge use higher-contrast light-on-amber styling.
+
+### Fixes
+
+- **WoP element summary** no longer shows the mechanism graph until a specific path row is selected.
+
+### Implementation notes
+
+- WoP UI lives under `GeomancyWebUI/Components/Workspace/` (`WayOfPointsListTab`, `WayOfPointsDetailPanel`, scoped CSS). Classical marking remains in `Geomancy.Core/WayOfPoints.cs` (`MarkClassicalWayOfLightIfApplicable`).
+- **Assemblies aligned to v0.1.3-beta.** SDK-style builds take version from `Directory.Build.props`; legacy WinForms projects use matching `AssemblyInfo.cs`; the home-page chip reads `GeofancyVersion.Display`.
+
+### Known limitations
+
+Same as v0.1.2-beta — see below.
+
+---
+
 ## v0.1.2-beta — Share Links & JSON Export
 
 **Released:** May 2026
