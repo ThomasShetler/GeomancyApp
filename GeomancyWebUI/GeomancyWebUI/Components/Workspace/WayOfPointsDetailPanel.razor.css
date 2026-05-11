@@ -62,6 +62,13 @@
     color: var(--wop-element-color, var(--accent-color));
 }
 
+.kind-eyebrow.kind-eyebrow-wol {
+    text-transform: none;
+    letter-spacing: 0.03em;
+    font-size: 0.76rem;
+    line-height: 1.35;
+}
+
 .kind-title {
     margin: 0;
     font-size: 1.35rem;
@@ -84,6 +91,12 @@
     font-size: 0.78rem;
     color: var(--text-secondary);
     font-style: italic;
+}
+
+.kind-subtitle.kind-subtitle-wol {
+    font-style: normal;
+    color: var(--text-primary);
+    line-height: 1.45;
 }
 
 .header-score-pill {
@@ -200,6 +213,18 @@
     font-size: 0.84rem;
     line-height: 1.5;
     color: var(--text-primary);
+}
+
+.wol-rule-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--text-primary);
+}
+
+.wol-rule-list-tight li + li {
+    margin-top: 0.35rem;
 }
 
 .way-of-light-tail-note {

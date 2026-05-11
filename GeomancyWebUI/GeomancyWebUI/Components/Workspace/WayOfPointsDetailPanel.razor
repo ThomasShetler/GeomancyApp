@@ -43,22 +43,47 @@
             ? "Way of the Light"
             : hasPath ? (pathTypeEntry?.Name ?? PathTypeFallback(Selection.Path!.PathType)) : "Way Summary";
         var endpointPill = hasPath ? EndpointPill(Selection.Path!) : (Selection.Way.CanBeEstablished ? "Established" : "Not Established");
+        var wolContext = wayOfLightPath || fireSummaryLight;
 
         <header class="wop-detail-header">
             <div class="header-titles">
-                <p class="kind-eyebrow">Way of Points · @elementKey</p>
+                <p class="kind-eyebrow @(wolContext ? "kind-eyebrow-wol" : null)">
+                    @if (wolContext)
+                    {
+                        <span>Classic Way of Points / Way of the Light</span>
+                    }
+                    else
+                    {
+                        <span>Way of Points · @elementKey</span>
+                    }
+                </p>
                 <h2 class="kind-title">
                     <span class="title-glyph">@glyph</span>
                     @titleText
                 </h2>
-                <p class="kind-subtitle">@latin@(string.IsNullOrEmpty(entry?.LineName) ? "" : $" · {entry!.LineName}")</p>
+                <p class="kind-subtitle @(wolContext ? "kind-subtitle-wol" : null)">
+                    @if (wolContext)
+                    {
+                        <span><strong>Classic Way of Points</strong> names a classical pattern on <strong>Via Puncti Ignis</strong> (the fire line).</span>
+                        <span> <strong>Way of the Light</strong> is Geofancy’s label for that pattern so it has a clear place next to the four elemental ways — not a fifth element, still ordinary Fire geometry.</span>
+                        @if (!string.IsNullOrEmpty(entry?.LineName))
+                        {
+                            <span> · @entry!.LineName</span>
+                        }
+                    }
+                    else
+                    {
+                        <span>@latin@(string.IsNullOrEmpty(entry?.LineName) ? "" : $" · {entry!.LineName}")</span>
+                    }
+                </p>
             </div>
             <div class="header-score-pill @(wayOfLightPath ? "pill-way-of-light" : (hasPath ? PathTypeChipClass(Selection.Path!.PathType) : (Selection.Way.CanBeEstablished ? "pill-established" : "pill-not-established")))">
                 @endpointPill
             </div>
         </header>
 
-        @if (entry != null && !string.IsNullOrEmpty(entry.Tagline))
+        @* Fire element glossary applies to Via Ignis broadly; skip duplicating it inside the Way-of-Light spotlight below. *@
+        @if (entry != null && !string.IsNullOrEmpty(entry.Tagline) && !wolContext)
         {
             <p class="glossary-tagline">@entry.Tagline</p>
         }
@@ -94,96 +119,51 @@
             }
             @if (wayOfLightPath || fireSummaryLight)
             {
-                <span class="chip chip-way-of-light">&#9728; Way of the Light</span>
+                <span class="chip chip-way-of-light">&#9728; Classic WoP / Way of Light</span>
             }
         </div>
 
         @if (wayOfLightPath || fireSummaryLight)
         {
-            <div class="way-of-light-stack" aria-label="Way of the Light reference">
+            <div class="way-of-light-stack" aria-label="Classic Way of Points / Way of the Light">
                 <section class="detail-card way-of-light-card">
                     <h3 class="card-title">
-                        <span class="card-title-icon">&#9728;</span> How it is calculated
+                        <span class="card-title-icon">&#9728;</span> Classical name &amp; this app’s label
                     </h3>
                     <p class="wol-card-body">
-                        The app flags <strong>Way of the Light</strong> only on <strong>Via Puncti Ignis</strong> (the fire / head line):
-                        the Judge’s fire point must agree with both Witnesses so the way can form; there must be <strong>exactly one strong</strong> path;
-                        and <strong>every figure on that path</strong> must show <strong>active fire</strong> (a single dot on the head line), not passive (double).
-                        That matches a narrow classical reading of the fire way of points as a single lucid chain of “open” fire.
+                        <strong>Classic Way of Points / Way of the Light</strong> refers to one classical reading of the fire line: a single strong Via Ignis chain where every figure keeps <strong>singly active</strong> fire (one dot on the head line).
+                        Manuals vary in wording; Geofancy uses <strong>Way of the Light</strong> only as a short name so this classical slice has its own explanation beside the shared <strong>elemental Way of Points</strong> entries (Fire / Air / Water / Earth).
+                        It does not replace Via Ignis — it flags one eligible path inside it.
                     </p>
                 </section>
                 <section class="detail-card way-of-light-card">
                     <h3 class="card-title">
-                        <span class="card-title-icon">&#9728;</span> What it signifies in a reading
+                        <span class="card-title-icon">&#9728;</span> When this pattern is marked
+                    </h3>
+                    <ul class="wol-rule-list wol-rule-list-tight">
+                        <li>Via Ignis is <strong>established</strong> — Judge’s head line matches <strong>at least one</strong> Witness (same rule as any elemental way).</li>
+                        <li>Judge’s head line is <strong>singly active</strong> (value 1), not passive or double-active.</li>
+                        <li>Exactly <strong>one strong</strong> path on fire; a second strong branch cancels the highlight.</li>
+                        <li>Every figure on that path keeps head line <strong>1</strong>; any break ends the Way-of-Light flag.</li>
+                    </ul>
+                </section>
+                <section class="detail-card way-of-light-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">&#9728;</span> Reading cues (Way of Light only)
                     </h3>
                     @if (wayOfLightPath)
                     {
                         <p class="wol-card-body">
-                            Many geomancers treat this configuration as a bright thread through the chart: a line of agreement on fire that stays
-                            <em>active</em> all the way down, often read as the <strong>heart or root of the matter</strong> showing where the
-                            narrative wants to land — here at <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>.
-                            It is interpretive tradition, not a mechanical guarantee of outcome.
+                            Readers often treat this chain as a bright thread for <strong>where naked will lands</strong> — endpoint <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>, weighed beside weaker Fire paths and the other three elemental ways (not instead of them).
+                            Use it as tradition-rich framing around the figures, not as an automatic outcome signal.
                         </p>
                     }
                     else
                     {
                         <p class="wol-card-body">
-                            When present, the Light path is read as a concentrated clue to the <strong>heart of the matter</strong> on the fire line.
-                            Select the row marked <strong>Light</strong> in the list to see the full chain and the house where this thread lands.
+                            Open the row marked <strong>Light</strong> under Fire for the mechanism strip and endpoint house; those notes stay about this classical highlight only — general Fire meanings stay in <strong>Element interpretation</strong> below.
                         </p>
                     }
-                </section>
-                <section class="detail-card way-of-light-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">&#9728;</span> Present vs absent
-                    </h3>
-                    <p class="wol-card-body">
-                        <strong>Present:</strong> Fire is established in the usual way-of-points sense <em>and</em> the single strong path is entirely on active fire —
-                        the app then marks that path (and the Fire summary) with Way of the Light.
-                        <strong>Absent:</strong> Fire may still be “open” with passive paths, multiple strong branches, or broken active-fire continuity; those can be
-                        important technically but are not labeled Light here. Absence does not erase a strong chart — it only means this particular classical spotlight does not apply.
-                    </p>
-                </section>
-                <section class="detail-card way-of-light-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">&#9728;</span> House as core of the matter
-                    </h3>
-                    @if (wayOfLightPath)
-                    {
-                        <p class="wol-card-body">
-                            The endpoint house names where the active-fire chain <strong>grounds in the wheel</strong> — the topical house at the end of the path.
-                            Readers often weigh that house’s figure and dignities when asking “where does the matter root?” alongside the Judge and the querent’s houses.
-                            Row depth (how far the path reaches) still matters for how loudly that house speaks in the story.
-                        </p>
-                    }
-                    else
-                    {
-                        <p class="wol-card-body">
-                            Open the <strong>Light</strong> path row to see which house receives the endpoint; that house is the usual anchor for “root of the matter”
-                            language in this classical fire reading.
-                        </p>
-                    }
-                </section>
-                <section class="detail-card way-of-light-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">&#9728;</span> Blockages, hidden links, paths forward
-                    </h3>
-                    <p class="wol-card-body">
-                        In practice, readers use the Light chain to ask where momentum stays <em>unbroken</em> on fire — sometimes read as clarity, candor, or a visible through-line
-                        in an otherwise tangled chart. It can highlight where resistance is <strong>not</strong> damping the fire line, or where a hidden linkage runs alongside
-                        a noisier perfection. Treat these as narrative prompts to interrogate the figures involved, not as automatic “yes” or “no” verdicts.
-                    </p>
-                </section>
-                <section class="detail-card way-of-light-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">&#9728;</span> How this differs from the four elemental ways
-                    </h3>
-                    <p class="wol-card-body">
-                        The ordinary <strong>Way of Points</strong> inspects all four elemental lines (fire, air, water, earth): each can open or close on its own pattern of
-                        strong and passive paths. <strong>Way of the Light</strong> is a <em>special case on fire only</em> — one strong path, continuous active head-line fire —
-                        borrowed from classical emphasis on the via punctorum ignis. The app name <strong>Way of the Light</strong> reflects that restriction: in traditional
-                        dot language, “active” fire reads as a single bright point on the line, so the image is literally a thread of lights through the tree.
-                    </p>
                 </section>
             </div>
         }
@@ -221,7 +201,7 @@
                     on Row @Selection.Path.RowReached.
                     @if (wayOfLightPath)
                     {
-                        <span class="way-of-light-tail-note"> Active fire (single dot) is maintained from Judge through this chain.</span>
+                        <span class="way-of-light-tail-note"> Classic Way of Points / Way of the Light: singly active fire on the head line from Judge through this chain.</span>
                     }
                 </p>
             </section>
