@@ -1,5 +1,23 @@
 # Releases
 
+## v0.2.2 — Blazor render boundary & theme circuit
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Patch release fixing a **production crash** after v0.2.1 and completing the **theme + interactive** story.
+
+### Fixes
+
+- **Startup / every request crash.** An `InteractiveShell` wrapper used `@rendermode InteractiveServer` with **`ChildContent`** from `MainLayout`. Blazor cannot serialize **`RenderFragment`** across that boundary, which threw `System.InvalidOperationException` on each load. The shell was removed; **`@rendermode InteractiveServer`** now lives on **`Routes.razor`** around the **`Router`**, so layout + pages share **one** interactive subtree without illegal parameters.
+- **Theme state across nav + sidebar.** With a single circuit scope from `Routes`, **`ThemeService` (Scoped)** is the **same instance** for the nav toggle and workspace pages—matching v0.2.1’s intent without the broken wrapper pattern.
+
+### Implementation notes
+
+- **Assemblies aligned to v0.2.2.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+
+---
+
 ## v0.2.1 — Theme persistence & mobile routing
 
 **Released:** May 2026  
