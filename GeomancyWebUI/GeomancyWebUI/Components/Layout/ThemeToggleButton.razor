@@ -3,7 +3,6 @@
 @inject ThemeService ThemeService
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
-@rendermode InteractiveServer
 
 <button class="theme-toggle-button @(ThemeService.IsDarkMode ? "active" : "")" @onclick="ToggleThemeAsync" type="button" title="@(ThemeService.IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode")">
     <span>@(ThemeService.IsDarkMode ? "☀️" : "🌙")</span>

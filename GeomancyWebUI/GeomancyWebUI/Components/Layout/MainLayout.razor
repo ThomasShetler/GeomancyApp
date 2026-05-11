@@ -1,19 +1,22 @@
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<InteractiveShell>
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <main>
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
     </div>
-
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+</InteractiveShell>
 
 @code {
-    // Theme toggle lives in NavMenu; theme bootstrapping is in wwwroot/theme.js.
+    // Theme: wwwroot/theme.js applies data-theme; NavMenu toggle + pages share
+    // one Scoped ThemeService inside InteractiveShell (see InteractiveShell.razor).
 }
 
 <div id="blazor-error-ui">
