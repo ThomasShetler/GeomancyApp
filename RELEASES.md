@@ -1,5 +1,29 @@
 # Releases
 
+## v0.2.0 — Web milestone (stable line)
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+**Geofancy 0.2.0** is the current **stable** web line: assemblies and the home-page version chip drop the `-beta` prerelease suffix while shipping everything accumulated across the 0.1.x beta series — Way of Points depth (including classical **Way of the Light** / Classic Way of Points), mobile workspace polish, shareable chart URLs + JSON export, dark-mode refinements, About/trust copy, and corpus tone updates.
+
+### Highlights
+
+- **Way of Points.** Element summaries, path mechanism detail, composition-aware verdict copy, and Via Ignis **Way of the Light** spotlight with naming and rules aligned to core logic.
+- **Mobile workspace.** Tab-aware hints, chart-drawer layout discipline, and clearer onboarding around the expanded chart.
+- **Share & archive.** Seed-based **Share Chart** links (desktop + `/mobile` redirect) and timestamped **JSON export** / copy from **Lots & Other** (`schemaVersion: 1`).
+- **Presentation.** Improved Way-of-Light amber accents in dark mode; landing **Stable** channel badge matches non-prerelease semver.
+
+### Implementation notes
+
+- **Assemblies aligned to v0.2.0.** `Directory.Build.props` drives SDK-style `0.2.0` / `0.2.0.0`; legacy WinForms projects match via `AssemblyInfo.cs`; UI reads `GeofancyVersion.Display` and `GeofancyVersion.Channel` (**Stable**).
+
+### Known limitations
+
+Same as v0.1.0-beta — charts still reset on full refresh; legacy WinForms trail the web corpus layout; aspect analysis remains partly experimental. See **v0.1.0-beta — Public Beta** below.
+
+---
+
 ## v0.1.3-beta — Way of Light, Mobile Polish & WoP UX
 
 **Released:** May 2026  
