@@ -62,6 +62,13 @@
     color: var(--wop-element-color, var(--accent-color));
 }
 
+.kind-eyebrow.kind-eyebrow-wol {
+    text-transform: none;
+    letter-spacing: 0.03em;
+    font-size: 0.76rem;
+    line-height: 1.35;
+}
+
 .kind-title {
     margin: 0;
     font-size: 1.35rem;
@@ -84,6 +91,12 @@
     font-size: 0.78rem;
     color: var(--text-secondary);
     font-style: italic;
+}
+
+.kind-subtitle.kind-subtitle-wol {
+    font-style: normal;
+    color: var(--text-primary);
+    line-height: 1.45;
 }
 
 .header-score-pill {
@@ -168,6 +181,93 @@
 }
 
 .chip.chip-meta { color: var(--text-secondary); }
+
+.chip.chip-way-of-light {
+    color: #b8860b;
+    border-color: rgba(255, 193, 7, 0.65);
+    background: linear-gradient(180deg, rgba(255, 223, 130, 0.35), rgba(255, 193, 7, 0.12));
+    font-weight: 700;
+}
+
+.header-score-pill.pill-way-of-light {
+    background: linear-gradient(135deg, rgba(255, 223, 130, 0.45), rgba(255, 193, 7, 0.2));
+    border: 1px solid rgba(255, 193, 7, 0.75);
+    color: #7a5a00;
+    font-weight: 700;
+}
+
+.way-of-light-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.way-of-light-card {
+    border-color: rgba(255, 193, 7, 0.55);
+    background: linear-gradient(180deg, rgba(255, 223, 130, 0.14), var(--bg-secondary));
+}
+
+.way-of-light-lead,
+.wol-card-body {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.wol-rule-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--text-primary);
+}
+
+.wol-rule-list-tight li + li {
+    margin-top: 0.35rem;
+}
+
+.way-of-light-tail-note {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+.mechanism-graph.is-way-of-light-graph .mech-node {
+    border-color: rgba(255, 193, 7, 0.55);
+    box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.12);
+}
+
+.mechanism-graph.is-way-of-light-graph .mech-node.is-end {
+    border-color: rgba(218, 165, 32, 0.95);
+    background: color-mix(in srgb, rgba(255, 193, 7, 0.22) 40%, var(--bg-primary));
+}
+
+.mechanism-graph.is-way-of-light-graph .mech-arrow {
+    color: #daa520;
+}
+
+/* Dark theme: brown-on-gold WoL chips read as muddy; use light gold text + richer amber wash */
+[data-theme="dark"] .chip.chip-way-of-light {
+    color: #ffeab6;
+    border-color: rgba(255, 214, 102, 0.55);
+    background: linear-gradient(180deg, rgba(255, 193, 7, 0.32), rgba(160, 100, 0, 0.22));
+}
+
+[data-theme="dark"] .header-score-pill.pill-way-of-light {
+    color: #fff8e6;
+    border-color: rgba(255, 214, 102, 0.55);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.42), rgba(120, 75, 0, 0.4));
+}
+
+[data-theme="dark"] .way-of-light-card {
+    border-color: rgba(255, 214, 102, 0.42);
+    background: linear-gradient(180deg, rgba(255, 193, 7, 0.12), var(--bg-secondary));
+}
+
+[data-theme="dark"] .mechanism-graph.is-way-of-light-graph .mech-arrow {
+    color: #ffd54f;
+}
 
 /* ============================================================
  * Detail cards

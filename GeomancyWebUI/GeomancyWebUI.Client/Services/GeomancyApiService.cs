@@ -712,6 +712,8 @@ namespace GeomancyWebUI.Client.Services
             public string? PathType { get; set; }
             public int EndpointHouse { get; set; }
             public string? Description { get; set; }
+            [JsonPropertyName("isClassicalWayOfLight")]
+            public bool? IsClassicalWayOfLight { get; set; }
         }
 
         private class WayOfPointsResultResponse
@@ -719,6 +721,8 @@ namespace GeomancyWebUI.Client.Services
             public string? WayName { get; set; }
             public string? LineType { get; set; }
             public bool CanBeEstablished { get; set; }
+            [JsonPropertyName("hasClassicalWayOfLight")]
+            public bool? HasClassicalWayOfLight { get; set; }
             public List<WayOfPointsPathResponse>? AllPaths { get; set; }
             public List<WayOfPointsPathResponse>? StrongPaths { get; set; }
             public List<WayOfPointsPathResponse>? PassivePaths { get; set; }
@@ -946,7 +950,8 @@ namespace GeomancyWebUI.Client.Services
                 RowReached = apiPath.RowReached,
                 PathType = apiPath.PathType ?? string.Empty,
                 EndpointHouse = apiPath.EndpointHouse,
-                Description = apiPath.Description ?? string.Empty
+                Description = apiPath.Description ?? string.Empty,
+                IsClassicalWayOfLight = apiPath.IsClassicalWayOfLight == true
             };
         }
 
@@ -960,6 +965,7 @@ namespace GeomancyWebUI.Client.Services
                 WayName = apiResult.WayName ?? string.Empty,
                 LineType = apiResult.LineType ?? string.Empty,
                 CanBeEstablished = apiResult.CanBeEstablished,
+                HasClassicalWayOfLight = apiResult.HasClassicalWayOfLight == true,
                 AllPaths = apiResult.AllPaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
                 StrongPaths = apiResult.StrongPaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),
                 PassivePaths = apiResult.PassivePaths?.Select(MapToWayOfPointsPathModel).ToList() ?? new List<WayOfPointsPathModel>(),

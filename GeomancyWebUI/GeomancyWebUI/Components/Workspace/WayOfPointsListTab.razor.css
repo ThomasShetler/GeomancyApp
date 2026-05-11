@@ -107,6 +107,67 @@
 }
 .wop-verdict.verdict-mixed .wop-verdict-score { color: #ffc107; }
 
+/* Composition-aware verdict (strong vs passive establishments) */
+.wop-verdict.verdict-passive-full,
+.wop-verdict.verdict-passive-partial,
+.wop-verdict.verdict-passive-single {
+    border-color: rgba(30, 136, 229, 0.45);
+    background: linear-gradient(180deg, rgba(30, 136, 229, 0.12), rgba(30, 136, 229, 0.04));
+}
+.wop-verdict.verdict-passive-full .wop-verdict-score,
+.wop-verdict.verdict-passive-partial .wop-verdict-score,
+.wop-verdict.verdict-passive-single .wop-verdict-score { color: #1e88e5; }
+.wop-verdict.verdict-passive-full .wop-verdict-label,
+.wop-verdict.verdict-passive-partial .wop-verdict-label,
+.wop-verdict.verdict-passive-single .wop-verdict-label { color: #1565c0; }
+
+.wop-verdict.verdict-strong-full {
+    border-color: rgba(76, 175, 80, 0.5);
+    background: linear-gradient(180deg, rgba(76, 175, 80, 0.12), rgba(76, 175, 80, 0.04));
+}
+.wop-verdict.verdict-strong-full .wop-verdict-score { color: #4caf50; }
+.wop-verdict.verdict-strong-full .wop-verdict-label { color: #2e7d32; }
+
+.wop-verdict.verdict-strong-partial {
+    border-color: rgba(56, 142, 60, 0.45);
+    background: linear-gradient(180deg, rgba(56, 142, 60, 0.1), rgba(56, 142, 60, 0.03));
+}
+.wop-verdict.verdict-strong-partial .wop-verdict-score { color: #43a047; }
+.wop-verdict.verdict-strong-partial .wop-verdict-label { color: #2e7d32; }
+
+.wop-verdict.verdict-strong-single {
+    border-color: rgba(102, 142, 102, 0.4);
+    background: linear-gradient(180deg, rgba(129, 199, 132, 0.08), rgba(129, 199, 132, 0.02));
+}
+.wop-verdict.verdict-strong-single .wop-verdict-score { color: #689f6a; }
+.wop-verdict.verdict-strong-single .wop-verdict-label { color: #546e54; }
+
+.wop-verdict.verdict-mixed-composition {
+    border-color: rgba(120, 120, 120, 0.4);
+    background: linear-gradient(180deg, rgba(120, 120, 120, 0.08), rgba(120, 120, 120, 0.02));
+}
+.wop-verdict.verdict-mixed-composition .wop-verdict-score { color: #78909c; }
+.wop-verdict.verdict-mixed-composition .wop-verdict-label { color: #546e7a; }
+
+.wop-verdict.verdict-none .wop-verdict-label { color: #c62828; }
+
+.wop-verdict-sub.openings-none {
+    color: #e53935;
+    font-weight: 600;
+}
+.wop-verdict-sub.openings-passive {
+    color: #1565c0;
+    font-weight: 600;
+}
+.wop-verdict-sub.openings-strong {
+    color: #2e7d32;
+    font-weight: 600;
+}
+.wop-verdict-sub.openings-mixed {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
 /* ============================================================
  * Count chips
  * ============================================================ */
@@ -115,6 +176,10 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 0.4rem;
     flex-shrink: 0;
+}
+
+.wop-counts-two {
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .wop-count-chip {
@@ -296,6 +361,27 @@
     line-height: 1.35;
 }
 
+.wop-way-of-light-ribbon {
+    margin: 0.15rem 0.35rem 0.35rem;
+    padding: 0.38rem 0.55rem;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    background: linear-gradient(90deg, rgba(255, 223, 130, 0.28), rgba(255, 193, 7, 0.08));
+    border: 1px solid rgba(255, 193, 7, 0.45);
+    border-radius: 8px;
+    display: flex;
+    gap: 0.45rem;
+    align-items: flex-start;
+}
+
+.wop-way-of-light-glyph {
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    color: #daa520;
+}
+
 .wop-rows {
     list-style: none;
     margin: 0;
@@ -327,6 +413,45 @@
 .wop-row.is-selected .wop-row-label {
     color: var(--wop-element-color, var(--accent-color));
     font-weight: 600;
+}
+
+.wop-row.is-way-of-light {
+    border-color: rgba(255, 193, 7, 0.45);
+    background: linear-gradient(90deg, rgba(255, 223, 130, 0.12), transparent);
+}
+
+.wop-row-light-badge {
+    flex-shrink: 0;
+    font-size: 0.58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 999px;
+    color: #7a5a00;
+    border: 1px solid rgba(255, 193, 7, 0.65);
+    background: rgba(255, 223, 130, 0.35);
+    line-height: 1.2;
+}
+
+[data-theme="dark"] .wop-way-of-light-ribbon {
+    border-color: rgba(255, 214, 102, 0.48);
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.22), rgba(255, 193, 7, 0.06));
+}
+
+[data-theme="dark"] .wop-way-of-light-glyph {
+    color: #ffd54f;
+}
+
+[data-theme="dark"] .wop-row.is-way-of-light {
+    border-color: rgba(255, 214, 102, 0.42);
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.14), transparent);
+}
+
+[data-theme="dark"] .wop-row-light-badge {
+    color: #fff8e6;
+    border-color: rgba(255, 214, 102, 0.55);
+    background: rgba(255, 193, 7, 0.38);
 }
 
 .wop-row-bullet {

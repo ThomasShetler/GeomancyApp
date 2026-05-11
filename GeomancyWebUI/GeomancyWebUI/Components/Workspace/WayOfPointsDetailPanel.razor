@@ -7,11 +7,12 @@
     Renders structured detail for whichever entry was clicked on the left.
       - When `Selection.Path` is null we render the whole-Way summary
         (element header, glossary tagline, established/not chip,
-        element-interpretation tip stack, raw notes).
-      - When `Selection.Path` is non-null we additionally render the
-        path-type label, mechanism graph (Judge -> Witness -> Niece ->
-        endpoint with figure names), and the path-type interpretation
-        tip stack.
+        element-interpretation tip stack, raw notes). No Mechanism card:
+        that copy was path-gating language and read as "not established"
+        even when the way was open.
+      - When `Selection.Path` is non-null we render the path-type label,
+        mechanism graph (Judge -> Witness -> Niece -> endpoint with figure
+        names), and the path-type interpretation tip stack.
 
     The panel itself is the only scroll container in the right column.
 *@
@@ -34,24 +35,55 @@
         var quality = entry?.Quality;
         var polarity = entry?.Polarity;
         var hasPath = Selection.Path != null;
-        var titleText = hasPath ? (pathTypeEntry?.Name ?? PathTypeFallback(Selection.Path!.PathType)) : "Way Summary";
+        var wayOfLightPath = hasPath && Selection.Path!.IsClassicalWayOfLight;
+        var fireSummaryLight = !hasPath
+            && string.Equals(Selection.ElementId, "Fire", StringComparison.OrdinalIgnoreCase)
+            && Selection.Way.HasClassicalWayOfLight;
+        var titleText = wayOfLightPath
+            ? "Way of the Light"
+            : hasPath ? (pathTypeEntry?.Name ?? PathTypeFallback(Selection.Path!.PathType)) : "Way Summary";
         var endpointPill = hasPath ? EndpointPill(Selection.Path!) : (Selection.Way.CanBeEstablished ? "Established" : "Not Established");
+        var wolContext = wayOfLightPath || fireSummaryLight;
 
         <header class="wop-detail-header">
             <div class="header-titles">
-                <p class="kind-eyebrow">Way of Points · @elementKey</p>
+                <p class="kind-eyebrow @(wolContext ? "kind-eyebrow-wol" : null)">
+                    @if (wolContext)
+                    {
+                        <span>Classic Way of Points / Way of the Light</span>
+                    }
+                    else
+                    {
+                        <span>Way of Points · @elementKey</span>
+                    }
+                </p>
                 <h2 class="kind-title">
                     <span class="title-glyph">@glyph</span>
                     @titleText
                 </h2>
-                <p class="kind-subtitle">@latin@(string.IsNullOrEmpty(entry?.LineName) ? "" : $" · {entry!.LineName}")</p>
+                <p class="kind-subtitle @(wolContext ? "kind-subtitle-wol" : null)">
+                    @if (wolContext)
+                    {
+                        <span><strong>Classic Way of Points</strong> names a classical pattern on <strong>Via Puncti Ignis</strong> (the fire line).</span>
+                        <span> <strong>Way of the Light</strong> is Geofancy’s label for that pattern so it has a clear place next to the four elemental ways — not a fifth element, still ordinary Fire geometry.</span>
+                        @if (!string.IsNullOrEmpty(entry?.LineName))
+                        {
+                            <span> · @entry!.LineName</span>
+                        }
+                    }
+                    else
+                    {
+                        <span>@latin@(string.IsNullOrEmpty(entry?.LineName) ? "" : $" · {entry!.LineName}")</span>
+                    }
+                </p>
             </div>
-            <div class="header-score-pill @(hasPath ? PathTypeChipClass(Selection.Path!.PathType) : (Selection.Way.CanBeEstablished ? "pill-established" : "pill-not-established"))">
+            <div class="header-score-pill @(wayOfLightPath ? "pill-way-of-light" : (hasPath ? PathTypeChipClass(Selection.Path!.PathType) : (Selection.Way.CanBeEstablished ? "pill-established" : "pill-not-established")))">
                 @endpointPill
             </div>
         </header>
 
-        @if (entry != null && !string.IsNullOrEmpty(entry.Tagline))
+        @* Fire element glossary applies to Via Ignis broadly; skip duplicating it inside the Way-of-Light spotlight below. *@
+        @if (entry != null && !string.IsNullOrEmpty(entry.Tagline) && !wolContext)
         {
             <p class="glossary-tagline">@entry.Tagline</p>
         }
@@ -85,16 +117,65 @@
             {
                 <span class="chip chip-meta">@polarity</span>
             }
+            @if (wayOfLightPath || fireSummaryLight)
+            {
+                <span class="chip chip-way-of-light">&#9728; Classic WoP / Way of Light</span>
+            }
         </div>
 
-        @* Mechanism card: visualizes either the path graph or the gating mechanism. *@
-        <section class="detail-card mechanism-card">
-            <h3 class="card-title">
-                <span class="card-title-icon">⚙</span> Mechanism
-            </h3>
-            @if (hasPath)
-            {
-                <div class="mechanism-graph">
+        @if (wayOfLightPath || fireSummaryLight)
+        {
+            <div class="way-of-light-stack" aria-label="Classic Way of Points / Way of the Light">
+                <section class="detail-card way-of-light-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">&#9728;</span> Classical name &amp; this app’s label
+                    </h3>
+                    <p class="wol-card-body">
+                        <strong>Classic Way of Points / Way of the Light</strong> refers to one classical reading of the fire line: a single strong Via Ignis chain where every figure keeps <strong>singly active</strong> fire (one dot on the head line).
+                        Manuals vary in wording; Geofancy uses <strong>Way of the Light</strong> only as a short name so this classical slice has its own explanation beside the shared <strong>elemental Way of Points</strong> entries (Fire / Air / Water / Earth).
+                        It does not replace Via Ignis — it flags one eligible path inside it.
+                    </p>
+                </section>
+                <section class="detail-card way-of-light-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">&#9728;</span> When this pattern is marked
+                    </h3>
+                    <ul class="wol-rule-list wol-rule-list-tight">
+                        <li>Via Ignis is <strong>established</strong> — Judge’s head line matches <strong>at least one</strong> Witness (same rule as any elemental way).</li>
+                        <li>Judge’s head line is <strong>singly active</strong> (value 1), not passive or double-active.</li>
+                        <li>Exactly <strong>one strong</strong> path on fire; a second strong branch cancels the highlight.</li>
+                        <li>Every figure on that path keeps head line <strong>1</strong>; any break ends the Way-of-Light flag.</li>
+                    </ul>
+                </section>
+                <section class="detail-card way-of-light-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">&#9728;</span> Reading cues (Way of Light only)
+                    </h3>
+                    @if (wayOfLightPath)
+                    {
+                        <p class="wol-card-body">
+                            Readers often treat this chain as a bright thread for <strong>where naked will lands</strong> — endpoint <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>, weighed beside weaker Fire paths and the other three elemental ways (not instead of them).
+                            Use it as tradition-rich framing around the figures, not as an automatic outcome signal.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="wol-card-body">
+                            Open the row marked <strong>Light</strong> under Fire for the mechanism strip and endpoint house; those notes stay about this classical highlight only — general Fire meanings stay in <strong>Element interpretation</strong> below.
+                        </p>
+                    }
+                </section>
+            </div>
+        }
+
+        @* Mechanism card only when a specific path is selected (graph + endpoint). *@
+        @if (hasPath)
+        {
+            <section class="detail-card mechanism-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">⚙</span> Mechanism
+                </h3>
+                <div class="mechanism-graph @(wayOfLightPath ? "is-way-of-light-graph" : "")">
                     @{
                         var nodes = BuildPathNodes(Selection.Path!);
                     }
@@ -118,15 +199,13 @@
                 <p class="mechanism-tail">
                     Endpoint <strong>House @Selection.Path!.EndpointHouse — @GetLatinHouseName(Selection.Path.EndpointHouse)</strong>
                     on Row @Selection.Path.RowReached.
+                    @if (wayOfLightPath)
+                    {
+                        <span class="way-of-light-tail-note"> Classic Way of Points / Way of the Light: singly active fire on the head line from Judge through this chain.</span>
+                    }
                 </p>
-            }
-            else
-            {
-                <p class="mechanism-tail">
-                    @GatingExplanation(elementKey)
-                </p>
-            }
-        </section>
+            </section>
+        }
 
         @* Element interpretation tip stack — same visual vocabulary as
            PerfectionDetailPanel's interpretation tips. *@
@@ -398,20 +477,6 @@
         "Earth" => "#2ecc71",
         _ => "#7e57c2"
     };
-
-    // Plain-language gating explanation when no path was found.
-    private string GatingExplanation(string elementKey)
-    {
-        if (Chart == null)
-            return $"The {elementKey} Way could not be established on this chart — no path was found from the Judge to a leaf in the lower rows.";
-
-        var judgeFig = Chart.Judge?.Name ?? "—";
-        var rwFig = Chart.RightWitness?.Name ?? "—";
-        var lwFig = Chart.LeftWitness?.Name ?? "—";
-        return $"The Judge's {elementKey} point does not match either Witness's {elementKey} point on this chart " +
-               $"(Judge {judgeFig} → Witnesses {rwFig} & {lwFig}), so the chart offers no traversal for this element. " +
-               "The Way is technically present but cannot be established.";
-    }
 
     // ----- Token highlighting (lifted from PerfectionDetailPanel) -----
     private static readonly Regex HouseRegex = new Regex(@"\b(?:H|house\s+)(\d{1,2})\b", RegexOptions.IgnoreCase);

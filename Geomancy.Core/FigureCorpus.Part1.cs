@@ -58,8 +58,8 @@ namespace GeomancyApp
             DivinatoryMeaning = "Swift motion, the opening of a contest, surgical intervention, mechanical repair, or any matter in which force applied early shapes the field. The figure favors situations that require crossing a threshold before doubt erodes the will, and disfavors reconciliation, long-horizon finance, or delicate questions of reputation. In the older texts it stands beside justice understood as contest rather than as calm judgment.",
             Tagline = "Heat at the threshold—courage, hurry, and a blade that wants a sheath",
             CoreMeaning = new List<string> { "initiative", "collision", "courage", "impetuosity", "contest", "breakthrough" },
-            FavorableFor = new List<string> { "Decisions that cannot wait for consensus", "Physical training and honest contest", "Opening or sustaining a legal defense", "Breaking an impasse that honest force can shift", "Technical repair under genuine deadline" },
-            UnfavorableFor = new List<string> { "Repairing trust in a partnership", "Long-horizon budgeting and accumulation", "Anonymous or unattributed disclosure", "Nuanced maneuvering within institutions", "Diplomacy that requires many slow passes" },
+            FavorableFor = new List<string> { "Decisions that cannot wait for consensus", "Physical training and honest contest", "Opening or sustaining a legal defense", "Breaking an impasse that decisive action can shift", "Technical repair under genuine deadline" },
+            UnfavorableFor = new List<string> { "Repairing trust in a partnership", "Long-horizon budgeting and accumulation", "Anonymous leaks or testimony without clear attribution", "Nuanced maneuvering within institutions", "Diplomacy that requires many slow passes" },
             ElementalSynthesis = "Three active lines—fire, air, and earth—press outward while water lies passive, producing visible heat and articulation set against a dry emotional register. Inner air fans the outer fire, so that thought and speech accelerate action faster than feeling can refine it.",
             TraditionalImagery = new List<string> { "Sword or blade in classical geomantic glyphs", "Youthful masculine signifier in historical figure tables", "Mars and Aries paired in Renaissance correspondence wheels" },
             Interpretation = new List<string>
@@ -90,7 +90,7 @@ namespace GeomancyApp
             ),
             ModernExamples = new List<string>
             {
-                "Sending a firm organization-wide reply before the thread has been read with care",
+                "Sending a forceful wide reply before the correspondence has been read with care",
                 "Committing to a tournament, trial shift, or sprint chiefly to prove capacity or pride",
                 "Choosing immediate surgery when watchful waiting remains a reasonable alternative"
             },
@@ -131,8 +131,8 @@ namespace GeomancyApp
             DivinatoryMeaning = "Outflow, ransom, donation, separation, depreciation, the shedding of debt, or the loss of track of an asset. The figure favors questions that require letting go—divestment, candid confession, the exit from a binding contract—and disfavors questions that depend on retention, credit, or exclusive possession.",
             Tagline = "What leaves makes room—open purse, shifting worth",
             CoreMeaning = new List<string> { "release", "outlay", "generosity", "dispersal", "vulnerable attachment", "liquidity" },
-            FavorableFor = new List<string> { "Paying debt down with intention", "Giving, donating, or downsizing by choice", "Closing a bond that clings past its truth", "Medical or habitual detox supported by care", "Clearing stock, clutter, or backlog honestly" },
-            UnfavorableFor = new List<string> { "Raising or tightly holding capital", "Keeping secrets that require a sealed vault", "Locking into a long lease without exit", "Retention perks that bind you when leaving would be the honest course" },
+            FavorableFor = new List<string> { "Paying debt down with intention", "Giving, donating, or downsizing by choice", "Closing a bond that clings past its truth", "Medical withdrawal or habit change under skilled care", "Clearing stock, clutter, or backlog honestly" },
+            UnfavorableFor = new List<string> { "Raising or tightly holding capital", "Keeping secrets that require a sealed vault", "Locking into a long lease without exit", "Compensation or perks that delay an honest exit" },
             ElementalSynthesis = "Fire and water are both active while air and earth lie passive: appetite and feeling move, but neither mediation nor structure follows. Value slips between the fingers because no airy contract and no earthen vault close the circuit.",
             TraditionalImagery = new List<string> { "Bag or purse inverted, mouth downward", "Coins spilling in woodcut and emblem traditions", "Venus and Taurus mapped on elemental correspondence wheels" },
             Interpretation = new List<string>
@@ -204,7 +204,7 @@ namespace GeomancyApp
             DivinatoryMeaning = "Peaceful progress, study, paperwork that clears, the truce, the diagnosis that finally clarifies, and the gentle rain that follows drought. The figure disfavors brawls and any matter that requires scandal to gather attention; it favors examinations, audits in which truth is the asset, and negotiations conducted in good faith.",
             Tagline = "Still water, clear paper—quiet strength",
             CoreMeaning = new List<string> { "clarity", "study", "treaty", "restraint", "patience", "careful record" },
-            FavorableFor = new List<string> { "Drafting briefs, policies, or testimony with care", "Sustained contemplation or structured retreat", "Seeking a measured second clinical opinion", "Ethical security or compliance review in good faith", "Letters of apology or clarification that hold proportion" },
+            FavorableFor = new List<string> { "Drafting briefs, policies, or testimony with care", "Sustained contemplation or structured retreat", "Seeking a measured second clinical opinion", "Careful review of records or policy with integrity as the aim", "Letters of apology or clarification that hold proportion" },
             UnfavorableFor = new List<string> { "Attention engineered through spectacle", "Hostile acquisition or seizure by pressure", "Public brawl or street confrontation", "High-stakes deception or bluff as strategy" },
             ElementalSynthesis = "A single active water line within airy outer and inner shells: feeling and intuition move while fire and earth keep watch. Thought circulates after the manner of Mercury and Gemini, but embodiment and aggression remain temperate.",
             TraditionalImagery = new List<string> { "White cup standing upright without spill", "Mercury's caduceus echoed in later emblem decks", "Embassy-of-peace motifs in Cattan-era figure charts" },
@@ -273,7 +273,7 @@ namespace GeomancyApp
             BodyType = "A torso that holds tension at the diaphragm and a gait that subtly synchronizes with whoever walks alongside. The complexion shifts with sleep, season, and inner tide, and the classical sketches emphasize a soft, receptive midsection.",
             CharacterType = "One who mirrors the company present and whose moods are easily caught by others. Loyal to the people they call their own, yet indecisive when alone, such a person collects stories and remembers, with surprising clarity, who sat where on the day that mattered.",
             Colors = "Sea green or dark russet brown",
-            Commentary = @"Populus is the throng: every line passive, water doubled within and without. The Moon's sign of Cancer underscores collective memory, tide, and the kitchen in which everyone speaks at once. Agrippa's lineage names the figure a mirror for whatever approaches—neither good nor ill until colored by its neighbors in the chart. Elementally, nothing initiates; inertia itself becomes stability. The practitioner should therefore map the network around the question: who is actually in the room, which feed shapes the opinion, and where the quorum, not the individual, rules the outcome.",
+            Commentary = @"Populus is the throng: every line passive, water doubled within and without. The Moon's sign of Cancer underscores collective memory, tide, and the kitchen in which everyone speaks at once. Agrippa's lineage names the figure a mirror for whatever approaches—neither good nor ill until colored by its neighbors in the chart. Elementally, nothing initiates; inertia itself becomes stability. The practitioner should therefore map the network around the question: who is actually in the room, which rumor or public channel shapes the opinion, and where the quorum, not the individual, rules the outcome.",
             DivinatoryMeaning = "The assembly, the audience, the poll, the household vote, the public mood, or any outcome decided by collective sentiment rather than by a single hand. The figure favors questions that require allies, sampling, or democratic cover, and disfavors questions that depend on a solitary decision or on stealth.",
             Tagline = "Many voices, one tide—motion borrowed from the whole",
             CoreMeaning = new List<string> { "multitude", "mirror", "inertia", "public square", "forum", "circulating story" },
@@ -284,7 +284,7 @@ namespace GeomancyApp
             Interpretation = new List<string>
             {
                 "Populus invites the question of whose tide the querent is swimming in. In the absence of a strong Judge elsewhere in the chart, drift should be expected.",
-                "In contemporary readings the figure points to the distributed actor: the feed, the group chat, the collective response. Agency is dispersed, and a single villain is rarely the answer.",
+                "In contemporary readings the figure points to the distributed actor: the circulating story, the household or team's ongoing exchange, the collective response. Agency is dispersed, and a single villain is rarely the answer.",
                 "When paired with Rubeus or Puer the crowd grows volatile; when paired with Albus or Fortuna Major it tends toward the benevolent."
             },
             InHouses = H(

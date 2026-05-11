@@ -31,10 +31,10 @@ namespace GeomancyApp
             CharacterType = "A generosity that runs to depletion, an instinct to give until little remains and then to withdraw, and a guarded skepticism toward what may be received in return. Such a person learns through loss, and their humor tends toward the dry and the dark.",
             Colors = "Green, white, dark crimson, or pale tawny brown",
             Commentary = @"Cauda Draconis marks the threshold of the southern lunar node: three active lines stand against a passive earth, so that fire, air, and water rush outward while the ground withholds its receipt. The medieval authors mixed good and evil in a single breath under this figure, because endings, properly understood, fertilize the field they leave behind. Sagittarius adds the dimension of travel and of doctrine: the leaving of a church, a country, a working paradigm. The practitioner should read this figure as egress, as the final invoice, as the last episode of a long undertaking. The motion is not cruelty; it is completion with teeth.",
-            DivinatoryMeaning = "Closure, the residual risk that gathers at an exit, the formal end of a binding tie, the graduation, the decommissioning of a system, the resignation from work that has worn the querent down. The figure favors questions in which release, detoxification, or a final reckoning is required, and disfavors questions that depend on retention, renewal, or quiet preservation.",
+            DivinatoryMeaning = "Closure, the residual risk that gathers at an exit, the formal end of a binding tie, graduation, the deliberate winding-down of an organization or regimen, resignation from work that has worn the querent down. The figure favors questions in which release, detoxification, or a final reckoning is required, and disfavors questions that depend on retention, renewal, or quiet preservation.",
             Tagline = "Closure at the threshold; what exits carries consequence.",
             CoreMeaning = new List<string> { "closure", "release", "migration", "karma", "reckoning", "completion" },
-            FavorableFor = new List<string> { "Formally ending what honesty no longer sustains", "Closing a lease or tenancy with clear papers", "Accepting palliative or hospice transition", "Sunsetting a product or duty by design", "Stepping away from restrictive alliances or dogmas" },
+            FavorableFor = new List<string> { "Formally ending what honesty no longer sustains", "Closing a lease or tenancy with clear papers", "Accepting palliative or hospice transition", "Closing a long public role or practice by deliberate design", "Stepping away from restrictive alliances or dogmas" },
             UnfavorableFor = new List<string> { "Renewing vows or bonds meant to endure", "Extending provisional locks or freezes indefinitely", "Preserving tenure or standing when integrity asks release" },
             ElementalSynthesis = "Three active lines press above a passive earth: heat, idea, and tear all move outward without soil to receive them—the figure releases what it carries, after the manner of a stage discarded once its work is done.",
             TraditionalImagery = new List<string> { "Footprints leading outward", "The lunar south node", "Departure under Sagittarius" },
@@ -107,7 +107,7 @@ namespace GeomancyApp
             DivinatoryMeaning = "The new offer of work, the news of a child, the formal invitation, the first stage of a project, the arrival of a mentor. The figure favors beginnings, upgrades, and the careful work of taking up new responsibility, and disfavors questions in which the matter requires endings, silence, or the discharge of an existing obligation.",
             Tagline = "A fertile threshold; beginnings ask disciplined tending.",
             CoreMeaning = new List<string> { "ingress", "foundation", "apprenticeship", "permission", "seed", "mentorship" },
-            FavorableFor = new List<string> { "First day carrying formal duty or on-call responsibility", "Call confirming adoption or guardianship placement", "Commencement of scholarship or funded study", "Immigration milestone such as biometrics or interview", "Structuring a sabbatical or renewal leave with intent" },
+            FavorableFor = new List<string> { "Taking up sworn or rotated service that may summon at uneven hours", "Call confirming adoption or guardianship placement", "Commencement of scholarship or funded study", "Immigration milestone such as biometrics or interview", "Structuring a sabbatical or renewal leave with intent" },
             UnfavorableFor = new List<string> { "Final severance or terminal payout scenes", "Erasing archives contrary to obligation", "Shuttering an institution meant to endure" },
             ElementalSynthesis = "Air, water, and earth all act while fire waits in passivity: craft, care, and soil cooperate while the raw ignition holds in reserve—the seedling held in greenhouse conditions until the season permits its planting outdoors.",
             TraditionalImagery = new List<string> { "Footprints toward the door", "The lunar north node", "First furrow under Virgo" },
@@ -180,27 +180,27 @@ namespace GeomancyApp
             DivinatoryMeaning = "The brief win, the surge of attention, the borrowed ladder, the bonus that lands at the right moment, the moment of public favor. The figure favors questions in which speed matters more than depth, and disfavors instruments that require decades to mature, such as long marriages, long bonds, or research conducted away from view.",
             Tagline = "Swift favor from without; depth must be earned afterward.",
             CoreMeaning = new List<string> { "velocity", "patronage", "visibility", "surface", "gift", "volatility" },
-            FavorableFor = new List<string> { "Launch windows where momentum decides outcomes", "Emergency extraction or urgent rescue logistics", "Expedited access granted by trusted gatekeepers", "Short competitive sprints with transparent criteria" },
+            FavorableFor = new List<string> { "Moments where a narrow tide of fortune decides the outcome", "Emergency extraction or urgent rescue logistics", "Expedited access granted by trusted gatekeepers", "Brief contests judged on plain, published expectations" },
             UnfavorableFor = new List<string> { "Instruments meant to mature across generations", "Communities built on stable enclosure", "Undetected long-running assignments" },
             ElementalSynthesis = "Fire and air move while water and earth lie still: heat and wind cooperate, while moisture and soil wait their turn—a banner upon the battlements rather than a root within the slope.",
             TraditionalImagery = new List<string> { "Staff upon the summit", "Fortune that rides the ridge", "Leo crowned by outward air" },
             Interpretation = new List<string>
             {
-                "The first practitioner question is who owns the platform beneath the moment of visibility, since the answer determines how long the visibility itself can be sustained.",
+                "The first practitioner question is whose footing upholds this flash of fortune, since that measure foretells how long brightness can hold.",
                 "Where the Reconciler in the chart is unfavorable, the promotion conferred by this figure tends to feel hollow over time, and the practitioner does well to revisit the matter at a later date.",
                 "The instructive contrast is with Fortuna Major: the same solar sign, but very different depths of soil beneath the same crown."
             },
             InHouses = H(
                 (1, "Brief public notice; reputation sharpened by a deliberate showing."),
                 (2, "Secondary income spikes; gratuities pile on one fortunate evening."),
-                (3, "Sudden amplification of message; transport or gig earnings cluster."),
+                (3, "Sudden amplification of message; transport or piece-rate hire clusters."),
                 (4, "Competitive offers over a single open weekend."),
                 (5, "Sudden chart attention; invitation to perform before a wide crowd."),
                 (6, "Premium pay for surge hours; expedited care when timing favors."),
                 (7, "Celebration underwritten by patrons; partnership riding borrowed visibility."),
                 (8, "Patron intervenes; bridging finance arrives under pressure."),
                 (9, "Unexpected podium or lecture; reputation lifts on one gesture."),
-                (10, "Executive praise spreads quickly through professional networks."),
+                (10, "Honor conferred in haste spreads through networks of craft and patronage."),
                 (11, "Crowdfunding crests in days; supporters rally in a burst."),
                 (12, "Anonymous transfer or gift—due diligence before trust.")
             ),
@@ -249,13 +249,13 @@ namespace GeomancyApp
             BodyType = "A stomach sensitive to anticipation, a body practiced at handling motion, and the small habits of one who travels often—provisions in the bag, a phone consulted while walking, and a face that softens visibly with stress.",
             CharacterType = "A nomadic heart and a temperament that moves with its own tides. Such a person is loyal but needs new horizons to remain whole, prepares carefully for the road, and writes most clearly when between one place and the next.",
             Colors = "White, flecked with blue",
-            Commentary = @"Via opens every line: Moon in Cancer, water doubled inside and out, with all four elements active—a tidal highway. The medieval authors named the figure the road; the contemporary reader may add to that the fiber line, the supply chain, the long migration, the journey of identity. Nothing in this figure remains still; even sleep is the rhythm of cycles. The practitioner maps vectors here rather than positions. Where Populus is the inertia of the crowd, Via is the same crowd at the moment in which everyone moves at once—toward the exit, the parade, or the ferry that has just been announced.",
-            DivinatoryMeaning = "Relocation, the change of lane, the pivot, the route, the migration of data or person, the long transition. The figure favors questions in which the movement itself is the solution, and disfavors questions that require the proof of roots—long instruments, custody arguments, or any matter that demands stability under examination.",
-            Tagline = "All lines go; river keeps cutting",
-            CoreMeaning = new List<string> { "motion", "lane change", "migration", "iteration", "fleet", "tide" },
-            FavorableFor = new List<string> { "Digital nomad visa", "Kubernetes rollout", "Solo motorcycle leg", "Gender care pathway", "Agile sprint" },
-            UnfavorableFor = new List<string> { "Tenure committee", "Monastic stability", "Sealed deposition hold" },
-            ElementalSynthesis = "All four lines act: fire, air, water, and earth cycle without rest. The figure presents the complete permutation, and the doubled water of Cancer asks intuition itself to do much of the steering as the logistics unfold.",
+            Commentary = @"Via opens every line: Moon in Cancer, water doubled inside and out, with all four elements active—a tidal highway. The medieval authors named the figure the road; today one may rightly add pilgrims' routes, post-roads, caravans, long migration, and the journey of identity. Nothing in this figure remains still; even sleep is the rhythm of cycles. The practitioner maps vectors here rather than positions. Where Populus is the inertia of the crowd, Via is the same crowd at the moment in which everyone moves at once—toward the exit, the parade, or the ferry that has just been announced.",
+            DivinatoryMeaning = "Relocation, change of lane, pivot, route, movement of households, goods, rumor, or kith—the long transition. The figure favors questions in which motion itself is the solution, and disfavors questions that require proof of deep roots—obligations meant to ripen for decades, custody arguments, or any matter judged under scrutiny for unmoving continuity.",
+            Tagline = "Every line open; the stream keeps renewing its channel.",
+            CoreMeaning = new List<string> { "motion", "lane change", "migration", "successive renewal", "passage", "tide" },
+            FavorableFor = new List<string> { "Relocation and immigration paced with orderly papers and kin", "Moving household, hearth, or trade in deliberate stages with room to revise", "Journey by road or water marked by chosen halts and watchful pacing", "Long convalescence, pilgrimage, or apprenticeship unfolding in successive phases", "Handwork or study refined through repeated trials rather than one sealed design" },
+            UnfavorableFor = new List<string> { "Reputation or office judged on unmoving tenure in one chair", "Vows or covenants founded on unmoving fixity", "Custody of children, wills, titles, or evidence requiring an unbroken lawful chain" },
+            ElementalSynthesis = "All four lines act: fire, air, water, and earth cycle without rest. The figure presents the complete permutation, and the doubled water of Cancer asks intuition itself to do much of the steering as the way unfolds.",
             TraditionalImagery = new List<string> { "Forked road under moonlight", "The wayfarer's staff", "Lunar glyphs of passage" },
             Interpretation = new List<string>
             {
@@ -287,7 +287,7 @@ namespace GeomancyApp
             {
                 "Several cities in one season, domestic rhythm bent around continual relocation",
                 "Freight rerouted across continents after disruption far upstream",
-                "Operations revised nightly so steadiness must be borrowed from ritual or bond outside the task"
+                "The common work reshaped nightly, so steadiness must be borrowed from ritual or bond outside the task"
             },
             TraditionalSources = new List<TraditionalSourceEntry>
             {

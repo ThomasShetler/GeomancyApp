@@ -53,3 +53,21 @@ window.downloadTextFile = (filename, contents, mimeType) => {
         return false;
     }
 };
+
+/** localStorage helpers for Blazor (e.g. one-time mobile tips). */
+window.geofancyReadStorage = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+};
+
+window.geofancyWriteStorage = (key, value) => {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch {
+        return false;
+    }
+};

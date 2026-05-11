@@ -9,6 +9,7 @@ namespace GeomancyWebUI.Client.Models
         public string PathType { get; set; } = string.Empty;
         public int EndpointHouse { get; set; }
         public string Description { get; set; } = string.Empty;
+        public bool IsClassicalWayOfLight { get; set; }
     }
 
     public class WayOfPointsResultModel
@@ -16,6 +17,7 @@ namespace GeomancyWebUI.Client.Models
         public string WayName { get; set; } = string.Empty;
         public string LineType { get; set; } = string.Empty;
         public bool CanBeEstablished { get; set; }
+        public bool HasClassicalWayOfLight { get; set; }
         public List<WayOfPointsPathModel> AllPaths { get; set; } = new List<WayOfPointsPathModel>();
         public List<WayOfPointsPathModel> StrongPaths { get; set; } = new List<WayOfPointsPathModel>();
         public List<WayOfPointsPathModel> PassivePaths { get; set; } = new List<WayOfPointsPathModel>();
