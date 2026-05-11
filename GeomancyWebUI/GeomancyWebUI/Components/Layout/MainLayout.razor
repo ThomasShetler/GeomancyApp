@@ -1,22 +1,20 @@
 ﻿@inherits LayoutComponentBase
 
-<InteractiveShell>
-    <div class="page">
-        <div class="sidebar">
-            <NavMenu />
-        </div>
-
-        <main>
-            <article class="content px-4">
-                @Body
-            </article>
-        </main>
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
     </div>
-</InteractiveShell>
+
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
 
 @code {
-    // Theme: wwwroot/theme.js applies data-theme; NavMenu toggle + pages share
-    // one Scoped ThemeService inside InteractiveShell (see InteractiveShell.razor).
+    // Theme: Scoped ThemeService is one per circuit because Routes.razor uses
+    // @rendermode InteractiveServer for the whole Router subtree (nav + @Body).
 }
 
 <div id="blazor-error-ui">

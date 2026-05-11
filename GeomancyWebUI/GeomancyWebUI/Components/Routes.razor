@@ -1,3 +1,8 @@
+@* One interactive boundary for the whole app shell (layout + pages) so Scoped
+   services like ThemeService are not split across separate islands. Do not use
+   a wrapper with ChildContent + @rendermode — RenderFragment cannot cross that boundary. *@
+@rendermode InteractiveServer
+
 <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
