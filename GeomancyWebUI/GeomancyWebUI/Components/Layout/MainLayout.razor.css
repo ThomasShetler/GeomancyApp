@@ -16,6 +16,39 @@ main {
     min-width: 0;
 }
 
+/*
+ * /mobile hosts .mobile-shell with a fixed-position chart handle. If the
+ * outer page can scroll even a few pixels (flex min-height quirks, article
+ * padding, dynamic toolbars), the tab strip slides up under that handle.
+ * Lock the page column height and hide overflow only when the mobile
+ * workspace is the active body content.
+ */
+.page:has(.mobile-shell) {
+    min-height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+}
+
+main:has(.mobile-shell) {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+article.content:has(.mobile-shell) {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Full-bleed on phones; horizontal padding would steal width and can
+       contribute to tiny vertical overflow on strict 100dvh layouts. */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
     width: 100%;
