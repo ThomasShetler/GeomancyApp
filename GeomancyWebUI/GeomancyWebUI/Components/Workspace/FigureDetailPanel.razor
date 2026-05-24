@@ -1,4 +1,5 @@
 ﻿@using System.Linq
+@using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Models
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
@@ -48,7 +49,15 @@
                         <p class="figure-tagline">@fig.Tagline</p>
                     }
                 </div>
-                <div class="detail-header-strength @GetStrengthCssClass(fig.HouseStrength)">@strengthLabel</div>
+                <div class="detail-header-aside">
+                    <div class="detail-figure-emblem @GetStrengthCssClass(fig.HouseStrength)" aria-label="@($"{fig.Name} figure configuration")">
+                        <FigureContainer Figure="@fig"
+                                         IsInteractive="false"
+                                         ShowFigureName="false"
+                                         ShowHouseStrength="false" />
+                    </div>
+                    <div class="detail-header-strength @GetStrengthCssClass(fig.HouseStrength)">@strengthLabel</div>
+                </div>
             </header>
 
             <div class="chip-row compact-chips">

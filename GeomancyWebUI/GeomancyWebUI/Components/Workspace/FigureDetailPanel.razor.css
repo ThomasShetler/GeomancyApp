@@ -101,6 +101,68 @@
     line-height: 1.35;
 }
 
+.detail-header-aside {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.detail-figure-emblem {
+    width: 4.75rem;
+    height: 4.75rem;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: color-mix(in srgb, var(--bg-secondary) 88%, var(--bg-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.detail-figure-emblem.strength-strong {
+    border-color: rgba(76, 175, 80, 0.55);
+    background: color-mix(in srgb, rgba(76, 175, 80, 0.08) 100%, var(--bg-secondary));
+}
+
+.detail-figure-emblem.strength-weak {
+    border-color: rgba(244, 67, 54, 0.55);
+    background: color-mix(in srgb, rgba(244, 67, 54, 0.08) 100%, var(--bg-secondary));
+}
+
+.detail-figure-emblem ::deep .figure-container {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0.28rem 0.35rem;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.detail-figure-emblem ::deep .figure-container:hover {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
+.detail-figure-emblem ::deep .figure-lines {
+    gap: 1px;
+    flex: 1 1 auto;
+    justify-content: center;
+}
+
+.detail-figure-emblem ::deep .figure-line {
+    font-size: 0.82rem;
+    min-height: 1rem;
+    height: 1rem;
+    line-height: 1;
+}
+
 .detail-header-strength {
     flex-shrink: 0;
     align-self: center;
@@ -1073,6 +1135,17 @@
 @media (max-width: 640px) {
     .figure-name-display {
         font-size: 1.28rem;
+    }
+
+    .detail-figure-emblem {
+        width: 4.1rem;
+        height: 4.1rem;
+    }
+
+    .detail-figure-emblem ::deep .figure-line {
+        font-size: 0.74rem;
+        min-height: 0.9rem;
+        height: 0.9rem;
     }
 
     .jump-chip-short {
