@@ -967,34 +967,107 @@
 .sources-card.sources-footer {
     background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
     border: 1px dashed var(--border-color);
+    color: var(--text-secondary);
 }
 
 .sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
     margin: 0;
-    padding-left: 1rem;
-    font-size: 0.78rem;
-    line-height: 1.48;
+    padding: 0;
+    list-style: none;
+}
+
+.source-entry {
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--bg-primary) 55%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+}
+
+.source-citation {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--text-primary);
 }
 
 .src-author {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
+}
+
+.src-separator {
+    margin: 0 0.28rem;
+    color: var(--text-secondary);
+    opacity: 0.65;
 }
 
 .src-work {
+    font-weight: 500;
     color: var(--text-primary);
 }
 
-.src-sec,
-.src-year {
+.source-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+}
+
+.src-section-ref {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    max-width: 100%;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    border: 1px dashed color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
+    line-height: 1.35;
+}
+
+.src-section-label {
+    flex-shrink: 0;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-color);
+}
+
+.src-section-text {
+    font-size: 0.74rem;
+    font-style: italic;
     color: var(--text-secondary);
 }
 
+.src-year-badge {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0.18rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    background: color-mix(in srgb, var(--accent-color) 12%, var(--bg-secondary));
+    border: 1px solid color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
+    color: var(--accent-color);
+}
+
 .src-note {
-    margin: 0.12rem 0 0.28rem;
+    margin: 0.35rem 0 0;
+    padding-top: 0.35rem;
+    border-top: 1px dashed color-mix(in srgb, var(--border-color) 80%, transparent);
     color: var(--text-secondary);
     font-size: 0.74rem;
-    line-height: 1.4;
+    line-height: 1.45;
+    font-style: italic;
 }
 
 @media (max-width: 640px) {

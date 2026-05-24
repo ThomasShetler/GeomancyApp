@@ -590,11 +590,28 @@
                         <ul class="sources-list">
                             @foreach (var s in fig.TraditionalSources!)
                             {
-                                <li>
-                                    <span class="src-author">@s.Author</span>
-                                    <span class="src-work"> — @s.Work</span>
-                                    @if (!string.IsNullOrWhiteSpace(s.Section)) { <span class="src-sec"> (@s.Section)</span> }
-                                    @if (s.Year.HasValue) { <span class="src-year"> @s.Year</span> }
+                                <li class="source-entry">
+                                    <p class="source-citation">
+                                        <span class="src-author">@s.Author</span>
+                                        <span class="src-separator" aria-hidden="true">—</span>
+                                        <span class="src-work">@s.Work</span>
+                                    </p>
+                                    @if (!string.IsNullOrWhiteSpace(s.Section) || s.Year.HasValue)
+                                    {
+                                        <div class="source-meta">
+                                            @if (!string.IsNullOrWhiteSpace(s.Section))
+                                            {
+                                                <span class="src-section-ref" title="Section reference">
+                                                    <span class="src-section-label">Section</span>
+                                                    <span class="src-section-text">@s.Section</span>
+                                                </span>
+                                            }
+                                            @if (s.Year.HasValue)
+                                            {
+                                                <span class="src-year-badge">@s.Year</span>
+                                            }
+                                        </div>
+                                    }
                                     @if (!string.IsNullOrWhiteSpace(s.Note))
                                     {
                                         <p class="src-note">@s.Note</p>
