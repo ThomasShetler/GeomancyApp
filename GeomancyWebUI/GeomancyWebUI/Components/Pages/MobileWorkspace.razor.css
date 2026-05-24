@@ -709,9 +709,13 @@
     gap: 0.25rem;
 }
 
-.mobile-panel-body ::deep .figure-detail-panel .section-jump-nav a {
-    font-size: 0.64rem;
-    padding: 0.1rem 0.4rem;
+.mobile-panel-body ::deep .figure-detail-panel .jump-chip {
+    font-size: 0.62rem;
+    padding: 0.12rem 0.42rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .elements-grid {
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .mobile-panel-body ::deep .figure-detail-panel .detail-card {
