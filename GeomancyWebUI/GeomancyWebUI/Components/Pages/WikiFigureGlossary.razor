@@ -1,5 +1,6 @@
 @page "/wiki/glossary/figures"
 @rendermode InteractiveServer
+@using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Helpers
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
@@ -22,6 +23,41 @@
     }
     else
     {
+        <section class="wiki-pattern-selector detail-card">
+            <p class="wiki-section-eyebrow">Pattern Lookup</p>
+            <h2 class="card-title">Figure Selector</h2>
+            <div class="wiki-pattern-selector-body">
+                <div class="wiki-pattern-selector-figure">
+                    <FigureContainer Figure="@_patternFigure"
+                                     IsInteractive="true"
+                                     ShowFigureName="false"
+                                     ShowHouseStrength="false"
+                                     OnFigureChanged="OnPatternFigureChanged" />
+                </div>
+                <div class="wiki-pattern-selector-result">
+                    @if (_patternLoading)
+                    {
+                        <p class="wiki-loading">Resolving pattern…</p>
+                    }
+                    else if (_patternMatch != null)
+                    {
+                        var selectedSlug = WikiFigureSlug.ToSlug(_patternMatch.Name);
+                        <p class="wiki-pattern-name">@_patternMatch.Name</p>
+                        @if (!string.IsNullOrWhiteSpace(_patternMatch.EnglishName))
+                        {
+                            <p class="wiki-pattern-sub">@_patternMatch.EnglishName</p>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(_patternMatch.Tagline))
+                        {
+                            <p class="wiki-pattern-tagline">@_patternMatch.Tagline</p>
+                        }
+                        <p class="wiki-pattern-lines">@FigureDisplayHelper.GetLinePatternSummary(_patternMatch)</p>
+                        <a class="wiki-pattern-link" href="/wiki/glossary/figures/@selectedSlug">Open figure article</a>
+                    }
+                </div>
+            </div>
+        </section>
+
         <input class="wiki-filter" type="search" placeholder="Filter by name…" @bind="_filter" @bind:event="oninput" aria-label="Filter figures" />
 
         <ul class="wiki-glossary-list">
@@ -35,14 +71,32 @@
                         {
                             <span class="wiki-glossary-row-sub">@fig.EnglishName</span>
                         }
+                        @if (!string.IsNullOrWhiteSpace(fig.Tagline))
+                        {
+                            <span class="wiki-glossary-row-tagline">@fig.Tagline</span>
+                        }
                         <span class="wiki-glossary-row-meta">
                             @if (!string.IsNullOrWhiteSpace(fig.Planet))
                             {
-                                <span class="chip chip-planet">@FigureDisplayHelper.GetPlanetSymbol(fig.Planet) @fig.Planet</span>
+                                <span class="chip chip-planet">
+                                    <span class="chip-glyph">@FigureDisplayHelper.GetPlanetSymbol(fig.Planet)</span>
+                                    <span>@fig.Planet</span>
+                                </span>
                             }
                             @if (!string.IsNullOrWhiteSpace(fig.Sign))
                             {
-                                <span class="chip chip-sign">@FigureDisplayHelper.GetZodiacSymbol(fig.Sign) @fig.Sign</span>
+                                <span class="chip chip-sign">
+                                    <span class="chip-glyph">@FigureDisplayHelper.GetZodiacSymbol(fig.Sign)</span>
+                                    <span>@fig.Sign</span>
+                                </span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.Quality))
+                            {
+                                <span class="chip @FigureDisplayHelper.GetQualityChipClass(fig.Quality)">@fig.Quality</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.Humor))
+                            {
+                                <span class="chip chip-humor">@fig.Humor</span>
                             }
                         </span>
                     </a>
@@ -56,7 +110,10 @@
 @code {
     private List<FigureModel> _figures = new();
     private bool _loading = true;
+    private bool _patternLoading = true;
     private string _filter = string.Empty;
+    private FigureModel _patternFigure = new() { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 };
+    private FigureModel? _patternMatch;
 
     private IEnumerable<FigureModel> FilteredFigures =>
         string.IsNullOrWhiteSpace(_filter)
@@ -68,6 +125,21 @@
     protected override async Task OnInitializedAsync()
     {
         _figures = (await GeomancyService.GetAllFiguresAsync()).OrderBy(f => f.Name).ToList();
+        _patternMatch = await GeomancyService.GetFigureAsync(_patternFigure.HeadLine, _patternFigure.NeckLine, _patternFigure.BodyLine, _patternFigure.FootLine);
+        _patternFigure = _patternMatch;
+        _patternLoading = false;
         _loading = false;
+    }
+
+    private async Task OnPatternFigureChanged(FigureModel updatedFigure)
+    {
+        _patternLoading = true;
+        _patternMatch = await GeomancyService.GetFigureAsync(
+            updatedFigure.HeadLine,
+            updatedFigure.NeckLine,
+            updatedFigure.BodyLine,
+            updatedFigure.FootLine);
+        _patternFigure = _patternMatch;
+        _patternLoading = false;
     }
 }

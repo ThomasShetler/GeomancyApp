@@ -8,6 +8,8 @@ namespace GeomancyWebUI.Client.Helpers
     public static class FigureDisplayHelper
     {
         public record ElementInfo(string Name, string Symbol, string Value, bool IsActive, string CssClass);
+        public record HousePlacementInfo(int HouseNumber, string HouseName, string Text);
+        public record CourtRoleInfo(string Key, string Label, string Text);
 
         public static IEnumerable<ElementInfo> BuildElements(FigureModel fig)
         {
@@ -106,6 +108,82 @@ namespace GeomancyWebUI.Client.Helpers
             _ => string.Empty
         };
 
+        public static IEnumerable<HousePlacementInfo> BuildHousePlacements(FigureModel fig)
+        {
+            if (fig.InHouses == null || fig.InHouses.Count == 0) yield break;
+
+            foreach (var kv in fig.InHouses
+                .Select(entry => (HouseNumber: ParseHouseNumber(entry.Key), Text: entry.Value))
+                .Where(entry => entry.HouseNumber >= 1 && entry.HouseNumber <= 12 && !string.IsNullOrWhiteSpace(entry.Text))
+                .OrderBy(entry => entry.HouseNumber))
+            {
+                yield return new HousePlacementInfo(kv.HouseNumber, GetHouseName(kv.HouseNumber), kv.Text.Trim());
+            }
+        }
+
+        public static IEnumerable<CourtRoleInfo> BuildCourtRoles(FigureModel fig)
+        {
+            if (fig.InCourtRoles == null || fig.InCourtRoles.Count == 0) yield break;
+
+            var ordered = new[]
+            {
+                ("RightWitness", "Right Witness"),
+                ("LeftWitness", "Left Witness"),
+                ("Judge", "Judge"),
+                ("Reconciler", "Reconciler")
+            };
+
+            foreach (var (key, label) in ordered)
+            {
+                if (fig.InCourtRoles.TryGetValue(key, out var text) && !string.IsNullOrWhiteSpace(text))
+                {
+                    yield return new CourtRoleInfo(key, label, text.Trim());
+                }
+            }
+        }
+
+        public static int? TryResolveHouseNumber(string? houseName)
+        {
+            if (string.IsNullOrWhiteSpace(houseName)) return null;
+
+            return houseName.Trim().ToLowerInvariant() switch
+            {
+                "first" => 1,
+                "second" => 2,
+                "third" => 3,
+                "fourth" => 4,
+                "fifth" => 5,
+                "sixth" => 6,
+                "seventh" => 7,
+                "eighth" => 8,
+                "ninth" => 9,
+                "tenth" => 10,
+                "eleventh" => 11,
+                "twelfth" => 12,
+                _ => null
+            };
+        }
+
+        public static string GetHouseName(int houseNumber) => houseNumber switch
+        {
+            1 => "First",
+            2 => "Second",
+            3 => "Third",
+            4 => "Fourth",
+            5 => "Fifth",
+            6 => "Sixth",
+            7 => "Seventh",
+            8 => "Eighth",
+            9 => "Ninth",
+            10 => "Tenth",
+            11 => "Eleventh",
+            12 => "Twelfth",
+            _ => $"House {houseNumber}"
+        };
+
+        public static string GetLinePatternSummary(FigureModel fig) =>
+            $"Head {fig.HeadLine} · Neck {fig.NeckLine} · Body {fig.BodyLine} · Foot {fig.FootLine}";
+
         private static ElementInfo MakeElement(string name, string symbol, string? raw, string cssClass)
         {
             var trimmed = (raw ?? string.Empty).Trim();
@@ -116,6 +194,12 @@ namespace GeomancyWebUI.Client.Helpers
                 || trimmed.Equals("passive", StringComparison.OrdinalIgnoreCase)
                 || trimmed.Equals("false", StringComparison.OrdinalIgnoreCase);
             return new ElementInfo(name, symbol, string.IsNullOrEmpty(trimmed) ? "—" : trimmed, !dormant, cssClass);
+        }
+
+        private static int ParseHouseNumber(string? key)
+        {
+            if (int.TryParse(key, out var n)) return n;
+            return -1;
         }
     }
 }

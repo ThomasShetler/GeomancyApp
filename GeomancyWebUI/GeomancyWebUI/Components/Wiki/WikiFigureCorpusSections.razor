@@ -5,9 +5,14 @@
 {
     var fig = Figure;
     var showInterpretation = FigureDisplayHelper.HasInterpretationContent(fig);
+    var housePlacements = FigureDisplayHelper.BuildHousePlacements(fig).ToList();
+    var courtRoles = FigureDisplayHelper.BuildCourtRoles(fig).ToList();
+    var strongHouseNumber = FigureDisplayHelper.TryResolveHouseNumber(fig.StrongHouse);
+    var weakHouseNumber = FigureDisplayHelper.TryResolveHouseNumber(fig.WeakHouse);
 
     <div class="wiki-corpus">
         <section class="detail-card detail-card-primary">
+            <p class="wiki-section-eyebrow">Figure Essentials</p>
             <h3 class="card-title">Overview</h3>
             @if (!string.IsNullOrWhiteSpace(fig.DivinatoryMeaning))
             {
@@ -31,6 +36,7 @@
         </section>
 
         <section class="detail-card">
+            <p class="wiki-section-eyebrow">Quick Judgment</p>
             <h3 class="card-title">Reading Verdict</h3>
             <div class="verdict-grid">
                 <div class="verdict-col is-favorable fav-card">
@@ -59,6 +65,7 @@
         @if (showInterpretation)
         {
             <section class="detail-card">
+                <p class="wiki-section-eyebrow">Interpretive Notes</p>
                 <h3 class="card-title">Interpretation &amp; Imagery</h3>
                 @if (!string.IsNullOrWhiteSpace(fig.Imagery) || fig.TraditionalImagery?.Any() == true)
                 {
@@ -113,6 +120,7 @@
         }
 
         <section class="detail-card">
+            <p class="wiki-section-eyebrow">Attributes &amp; Correspondences</p>
             <h3 class="card-title">Body, Elements &amp; Correspondences</h3>
             <div class="elements-card">
                 <h4 class="prose-heading">Elemental Composition</h4>
@@ -188,6 +196,25 @@
                             <p class="prose-text person-body">@fig.TraditionalCharacterType</p>
                         </div>
                     }
+                    @if (!string.IsNullOrWhiteSpace(fig.Anatomy) || !string.IsNullOrWhiteSpace(fig.Colors))
+                    {
+                        <div class="person-meta-row">
+                            @if (!string.IsNullOrWhiteSpace(fig.Anatomy))
+                            {
+                                <span class="person-meta">
+                                    <span class="person-meta-label">Anatomy</span>
+                                    <span class="person-meta-value">@fig.Anatomy</span>
+                                </span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.Colors))
+                            {
+                                <span class="person-meta">
+                                    <span class="person-meta-label">Colors</span>
+                                    <span class="person-meta-value">@fig.Colors</span>
+                                </span>
+                            }
+                        </div>
+                    }
                 </div>
             }
 
@@ -201,15 +228,37 @@
                             <div class="affinity-pill affinity-strong">
                                 <span class="affinity-glyph">▲</span>
                                 <span class="affinity-label">Strong</span>
-                                <span class="affinity-value">@fig.StrongHouse</span>
+                                @if (strongHouseNumber.HasValue)
+                                {
+                                    <a class="affinity-value affinity-link" href="/wiki/glossary/houses/@strongHouseNumber.Value">
+                                        House @strongHouseNumber.Value · @fig.StrongHouse
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="affinity-value">@fig.StrongHouse</span>
+                                }
                             </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(fig.StrongHouse) && !string.IsNullOrWhiteSpace(fig.WeakHouse))
+                        {
+                            <span class="affinity-vs">vs.</span>
                         }
                         @if (!string.IsNullOrWhiteSpace(fig.WeakHouse))
                         {
                             <div class="affinity-pill affinity-weak">
                                 <span class="affinity-glyph">▼</span>
                                 <span class="affinity-label">Weak</span>
-                                <span class="affinity-value">@fig.WeakHouse</span>
+                                @if (weakHouseNumber.HasValue)
+                                {
+                                    <a class="affinity-value affinity-link" href="/wiki/glossary/houses/@weakHouseNumber.Value">
+                                        House @weakHouseNumber.Value · @fig.WeakHouse
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="affinity-value">@fig.WeakHouse</span>
+                                }
                             </div>
                         }
                     </div>
@@ -247,9 +296,48 @@
             }
         </section>
 
+        @if (housePlacements.Count > 0)
+        {
+            <section class="detail-card">
+                <p class="wiki-section-eyebrow">Placement Corpus</p>
+                <h3 class="card-title">In the Twelve Houses</h3>
+                <div class="placement-stack">
+                    @foreach (var placement in housePlacements)
+                    {
+                        <article class="placement-card">
+                            <h4 class="placement-title">
+                                <a href="/wiki/glossary/houses/@placement.HouseNumber">
+                                    House @placement.HouseNumber · @placement.HouseName
+                                </a>
+                            </h4>
+                            <p class="prose-text">@placement.Text</p>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+
+        @if (courtRoles.Count > 0)
+        {
+            <section class="detail-card">
+                <p class="wiki-section-eyebrow">Placement Corpus</p>
+                <h3 class="card-title">In Court Roles</h3>
+                <div class="placement-stack">
+                    @foreach (var role in courtRoles)
+                    {
+                        <article class="placement-card">
+                            <h4 class="placement-title">@role.Label</h4>
+                            <p class="prose-text">@role.Text</p>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+
         @if (fig.TraditionalSources?.Any() == true)
         {
             <section class="detail-card sources-card sources-footer">
+                <p class="wiki-section-eyebrow">References</p>
                 <h3 class="card-title">Traditional Sources</h3>
                 <ul class="sources-list">
                     @foreach (var s in fig.TraditionalSources)

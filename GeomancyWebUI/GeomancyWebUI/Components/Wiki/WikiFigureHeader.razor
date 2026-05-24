@@ -20,10 +20,7 @@
             {
                 <p class="wiki-figure-aliases">a.k.a. @fig.OtherNames</p>
             }
-            @if (!string.IsNullOrWhiteSpace(fig.Tagline))
-            {
-                <p class="wiki-figure-tagline">@fig.Tagline</p>
-            }
+            <p class="wiki-figure-lines">@FigureDisplayHelper.GetLinePatternSummary(fig)</p>
         </div>
         <div class="wiki-figure-emblem" aria-hidden="true">
             <FigureContainer Figure="@fig"
