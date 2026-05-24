@@ -65,8 +65,10 @@ GeomancyApp/                   Legacy WinForms desktop app
 GeomancyWebUI/                 The web app
   GeomancyWebUI/                 Server project, hosting + controllers + pages
   GeomancyWebUI.Client/          WASM client project, models + services
-HouseAndCourtDirectory/        House and court reference JSON
-WayOfPointsDirectory/          Way of Points configuration JSON
+databank/                      Static reference data (figure corpus, houses, courts, Way of Points)
+  FigureCorpus/                  All 16 geomantic figures (Figures.json)
+  HouseAndCourtDirectory/        House and court reference JSON
+  WayOfPointsDirectory/          Way of Points configuration JSON
 ```
 
 ## Local development
@@ -102,7 +104,7 @@ Thanks also to the modern practitioners whose teaching shaped the broader reviva
 Geofancy is **proprietary, source-available** software.
 
 - **Source code** is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE). You may read, study, and modify it for personal and noncommercial purposes; any commercial use requires a separate license from the author.
-- **Interpretive corpus** (the prose content of `Geomancy.Core/FigureCorpus.*.cs`, `HouseAndCourtDirectory/*.json`, and `WayOfPointsDirectory/*.json`) is licensed separately under [Creative Commons Attribution-NonCommercial 4.0 International](LICENSE-CORPUS.md).
+- **Interpretive corpus** (the prose content of `databank/FigureCorpus/Figures.json`, `databank/HouseAndCourtDirectory/*.json`, and `databank/WayOfPointsDirectory/*.json`) is licensed separately under [Creative Commons Attribution-NonCommercial 4.0 International](LICENSE-CORPUS.md).
 
 See [NOTICE.md](NOTICE.md) for the plain-English summary.
 

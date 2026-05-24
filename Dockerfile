@@ -21,8 +21,7 @@ COPY GeomancyApp.ServiceDefaults/ GeomancyApp.ServiceDefaults/
 COPY Geomancy.Core/ Geomancy.Core/
 COPY Geomancy.Api.Contracts/ Geomancy.Api.Contracts/
 COPY Geomancy.Api.Handlers/ Geomancy.Api.Handlers/
-COPY HouseAndCourtDirectory/ HouseAndCourtDirectory/
-COPY WayOfPointsDirectory/ WayOfPointsDirectory/
+COPY databank/ databank/
 COPY GeomancyWebUI/ GeomancyWebUI/
 
 RUN dotnet publish GeomancyWebUI/GeomancyWebUI/GeomancyWebUI.csproj \

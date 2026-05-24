@@ -5,7 +5,7 @@ namespace GeomancyWebUI.Client.Models
 {
     /// <summary>
     /// Reference data for a single court placement (Right Witness, Left Witness,
-    /// Judge, Reconciler) sourced from HouseAndCourtDirectory/CourtData.json via the API.
+    /// Judge, Reconciler) sourced from databank/HouseAndCourtDirectory/CourtData.json via the API.
     /// </summary>
     public class CourtDirectoryEntry
     {

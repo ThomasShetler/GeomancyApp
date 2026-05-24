@@ -12,11 +12,11 @@ namespace GeomancyWebUI.Client.Services
         Task<AspectAnalysisModel> GetAspectAnalysisAsync(GenerateFourFiguresRequest request);
         Task<WayOfPointsAnalysisModel> CalculateWayOfPointsAsync(GenerateFourFiguresRequest request);
 
-        // Static reference directory (HouseAndCourtDirectory/*.json on the API)
+        // Static reference directory (databank/HouseAndCourtDirectory/*.json on the API)
         Task<List<HouseDirectoryEntry>> GetHousesDirectoryAsync();
         Task<List<CourtDirectoryEntry>> GetCourtsDirectoryAsync();
 
-        // Static reference directory (WayOfPointsDirectory/*.json on the API)
+        // Static reference directory (databank/WayOfPointsDirectory/*.json on the API)
         Task<List<WayOfPointsElementEntry>> GetWayOfPointsElementsDirectoryAsync();
         Task<List<WayOfPointsPathTypeEntry>> GetWayOfPointsPathTypesDirectoryAsync();
     }

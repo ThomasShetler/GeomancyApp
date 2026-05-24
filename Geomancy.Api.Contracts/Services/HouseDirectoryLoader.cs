@@ -10,7 +10,7 @@ namespace GeomancyAPI.Services
     /// <summary>
     /// Loads and caches the static reference data for houses (1-12) and court placements
     /// (Right Witness, Left Witness, Judge, Reconciler) from the JSON files copied alongside
-    /// the API binaries at <c>HouseAndCourtDirectory/</c>.
+    /// the API binaries at <c>databank/HouseAndCourtDirectory/</c>.
     /// </summary>
     public static class HouseDirectoryLoader
     {
@@ -18,6 +18,7 @@ namespace GeomancyAPI.Services
         private static List<HouseDirectoryEntryResponse> _houses;
         private static List<CourtDirectoryEntryResponse> _courts;
 
+        private const string DatabankRoot = "databank";
         private const string HousesFileName = "HouseData.json";
         private const string CourtsFileName = "CourtData.json";
         private const string DirectoryFolderName = "HouseAndCourtDirectory";
@@ -103,22 +104,22 @@ namespace GeomancyAPI.Services
         {
             var baseDir = AppContext.BaseDirectory;
 
-            // 1. Linked content next to binary: <baseDir>/HouseAndCourtDirectory/<file>
-            var beside = Path.Combine(baseDir, DirectoryFolderName, fileName);
+            // 1. Linked content next to binary: <baseDir>/databank/HouseAndCourtDirectory/<file>
+            var beside = Path.Combine(baseDir, DatabankRoot, DirectoryFolderName, fileName);
             if (File.Exists(beside)) return beside;
 
             // 2. Walk up looking for the source folder (handy for IDE/debug runs)
             var dir = new DirectoryInfo(baseDir);
             while (dir != null)
             {
-                var candidate = Path.Combine(dir.FullName, DirectoryFolderName, fileName);
+                var candidate = Path.Combine(dir.FullName, DatabankRoot, DirectoryFolderName, fileName);
                 if (File.Exists(candidate)) return candidate;
                 dir = dir.Parent;
             }
 
             throw new FileNotFoundException(
                 $"Could not locate {fileName}. Expected '{beside}' (copied via csproj <Content>) " +
-                "or a parent folder named '" + DirectoryFolderName + "'.");
+                "or a parent folder named '" + DatabankRoot + "/" + DirectoryFolderName + "'.");
         }
     }
 }

@@ -108,7 +108,7 @@ namespace GeomancyApp
         {
             if (_allFigures != null) return;
 
-            _allFigures = FigureCorpus.BuildFigures();
+            _allFigures = FigureCorpusLoader.LoadFigures();
         }
 
 

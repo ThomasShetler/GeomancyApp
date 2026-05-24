@@ -2,7 +2,7 @@ namespace GeomancyWebUI.Client.Models
 {
     /// <summary>
     /// Reference data for a single Way Of Points element (Fire/Air/Water/Earth)
-    /// sourced from the WayOfPointsDirectory/ElementData.json file via the API.
+    /// sourced from the databank/WayOfPointsDirectory/ElementData.json file via the API.
     /// </summary>
     public class WayOfPointsElementEntry
     {
