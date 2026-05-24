@@ -222,6 +222,14 @@
     margin-top: 0.2rem;
 }
 
+.perf-subgroup + .perf-subgroup {
+    margin-top: 0.35rem;
+}
+
+.perf-rows + .perf-subgroup {
+    margin-top: 0.35rem;
+}
+
 .perf-subgroup-title {
     margin: 0;
     display: flex;

@@ -96,10 +96,10 @@
             <section class="perf-group">
                 <h3 class="perf-group-title">
                     <span>Perfections</span>
-                    <span class="perf-group-count">@Analysis.Perfections.Count</span>
+                    <span class="perf-group-count">@(Analysis.Perfections.Count + Analysis.PositiveAspects.Count)</span>
                 </h3>
 
-                @if (Analysis.Perfections.Count == 0)
+                @if (Analysis.Perfections.Count == 0 && Analysis.PositiveAspects.Count == 0)
                 {
                     <p class="perf-group-empty">None.</p>
                 }
@@ -176,107 +176,110 @@
                             </ul>
                         }
                     </div>
+
+                    <div class="perf-subgroup">
+                        <h4 class="perf-subgroup-title">
+                            Positive Aspects
+                            <span class="perf-subgroup-count">@Analysis.PositiveAspects.Count</span>
+                        </h4>
+                        @if (Analysis.PositiveAspects.Count == 0)
+                        {
+                            <p class="perf-subgroup-empty">None.</p>
+                        }
+                        else
+                        {
+                            <ul class="perf-rows">
+                                @for (var i = 0; i < Analysis.PositiveAspects.Count; i++)
+                                {
+                                    var idx = i;
+                                    var a = Analysis.PositiveAspects[idx];
+                                    var sel = new PerfectionSelection(PerfectionEntryKind.PositiveAspect, idx, null, a);
+                                    <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
+                                                              RowVariant="aspect-positive"
+                                                              AspectType="@a.AspectType"
+                                                              AspectDirection="@a.Direction"
+                                                              FromHouse="@a.FromHouse"
+                                                              ToHouse="@a.ToHouse"
+                                                              FromFigure="@GetHouseFigureName(a.FromHouse)"
+                                                              ToFigure="@GetHouseFigureName(a.ToHouse)"
+                                                              IsMajorAspect="@a.IsMajorAspect"
+                                                              Score="@a.FavorableScore"
+                                                              OnClick="@(() => RaiseSelect(sel))" />
+                                }
+                            </ul>
+                        }
+                    </div>
                 }
             </section>
 
             <section class="perf-group">
                 <h3 class="perf-group-title">
                     <span>Denials</span>
-                    <span class="perf-group-count">@Analysis.Denials.Count</span>
+                    <span class="perf-group-count">@(Analysis.Denials.Count + Analysis.NegativeAspects.Count)</span>
                 </h3>
-                @if (Analysis.Denials.Count == 0)
+                @if (Analysis.Denials.Count == 0 && Analysis.NegativeAspects.Count == 0)
                 {
                     <p class="perf-group-empty">None.</p>
                 }
                 else
                 {
-                    <ul class="perf-rows">
-                        @for (var i = 0; i < Analysis.Denials.Count; i++)
-                        {
-                            var idx = i;
-                            var d = Analysis.Denials[idx];
-                            var sel = new PerfectionSelection(PerfectionEntryKind.Denial, idx, d, null);
-                            <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
-                                                      RowVariant="denial"
-                                                      Mode="@d.Mode"
-                                                      BaseMode="@d.BaseMode"
-                                                      AspectType="@d.AspectBetweenSignificators"
-                                                      AspectDirection="@d.AspectDirection"
-                                                      CompanyType="@d.CompanyType"
-                                                      FromHouse="@d.QuerentHouse"
-                                                      ToHouse="@d.QuesitedHouse"
-                                                      FromFigure="@d.QuerentFigure"
-                                                      ToFigure="@d.QuesitedFigure"
-                                                      Score="@(d.FavorableScore + d.UnfavorableScore)"
-                                                      OnClick="@(() => RaiseSelect(sel))" />
-                        }
-                    </ul>
-                }
-            </section>
+                    @if (Analysis.Denials.Count > 0)
+                    {
+                        <ul class="perf-rows">
+                            @for (var i = 0; i < Analysis.Denials.Count; i++)
+                            {
+                                var idx = i;
+                                var d = Analysis.Denials[idx];
+                                var sel = new PerfectionSelection(PerfectionEntryKind.Denial, idx, d, null);
+                                <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
+                                                          RowVariant="denial"
+                                                          Mode="@d.Mode"
+                                                          BaseMode="@d.BaseMode"
+                                                          AspectType="@d.AspectBetweenSignificators"
+                                                          AspectDirection="@d.AspectDirection"
+                                                          CompanyType="@d.CompanyType"
+                                                          FromHouse="@d.QuerentHouse"
+                                                          ToHouse="@d.QuesitedHouse"
+                                                          FromFigure="@d.QuerentFigure"
+                                                          ToFigure="@d.QuesitedFigure"
+                                                          Score="@(d.FavorableScore + d.UnfavorableScore)"
+                                                          OnClick="@(() => RaiseSelect(sel))" />
+                            }
+                        </ul>
+                    }
 
-            <section class="perf-group">
-                <h3 class="perf-group-title">
-                    <span>Positive Aspects</span>
-                    <span class="perf-group-count">@Analysis.PositiveAspects.Count</span>
-                </h3>
-                @if (Analysis.PositiveAspects.Count == 0)
-                {
-                    <p class="perf-group-empty">None.</p>
-                }
-                else
-                {
-                    <ul class="perf-rows">
-                        @for (var i = 0; i < Analysis.PositiveAspects.Count; i++)
+                    <div class="perf-subgroup">
+                        <h4 class="perf-subgroup-title">
+                            Negative Aspects
+                            <span class="perf-subgroup-count">@Analysis.NegativeAspects.Count</span>
+                        </h4>
+                        @if (Analysis.NegativeAspects.Count == 0)
                         {
-                            var idx = i;
-                            var a = Analysis.PositiveAspects[idx];
-                            var sel = new PerfectionSelection(PerfectionEntryKind.PositiveAspect, idx, null, a);
-                            <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
-                                                      RowVariant="aspect-positive"
-                                                      AspectType="@a.AspectType"
-                                                      AspectDirection="@a.Direction"
-                                                      FromHouse="@a.FromHouse"
-                                                      ToHouse="@a.ToHouse"
-                                                      FromFigure="@GetHouseFigureName(a.FromHouse)"
-                                                      ToFigure="@GetHouseFigureName(a.ToHouse)"
-                                                      IsMajorAspect="@a.IsMajorAspect"
-                                                      Score="@a.FavorableScore"
-                                                      OnClick="@(() => RaiseSelect(sel))" />
+                            <p class="perf-subgroup-empty">None.</p>
                         }
-                    </ul>
-                }
-            </section>
-
-            <section class="perf-group">
-                <h3 class="perf-group-title">
-                    <span>Negative Aspects</span>
-                    <span class="perf-group-count">@Analysis.NegativeAspects.Count</span>
-                </h3>
-                @if (Analysis.NegativeAspects.Count == 0)
-                {
-                    <p class="perf-group-empty">None.</p>
-                }
-                else
-                {
-                    <ul class="perf-rows">
-                        @for (var i = 0; i < Analysis.NegativeAspects.Count; i++)
+                        else
                         {
-                            var idx = i;
-                            var a = Analysis.NegativeAspects[idx];
-                            var sel = new PerfectionSelection(PerfectionEntryKind.NegativeAspect, idx, null, a);
-                            <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
-                                                      RowVariant="aspect-negative"
-                                                      AspectType="@a.AspectType"
-                                                      AspectDirection="@a.Direction"
-                                                      FromHouse="@a.FromHouse"
-                                                      ToHouse="@a.ToHouse"
-                                                      FromFigure="@GetHouseFigureName(a.FromHouse)"
-                                                      ToFigure="@GetHouseFigureName(a.ToHouse)"
-                                                      IsMajorAspect="@a.IsMajorAspect"
-                                                      Score="@a.UnfavorableScore"
-                                                      OnClick="@(() => RaiseSelect(sel))" />
+                            <ul class="perf-rows">
+                                @for (var i = 0; i < Analysis.NegativeAspects.Count; i++)
+                                {
+                                    var idx = i;
+                                    var a = Analysis.NegativeAspects[idx];
+                                    var sel = new PerfectionSelection(PerfectionEntryKind.NegativeAspect, idx, null, a);
+                                    <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
+                                                              RowVariant="aspect-negative"
+                                                              AspectType="@a.AspectType"
+                                                              AspectDirection="@a.Direction"
+                                                              FromHouse="@a.FromHouse"
+                                                              ToHouse="@a.ToHouse"
+                                                              FromFigure="@GetHouseFigureName(a.FromHouse)"
+                                                              ToFigure="@GetHouseFigureName(a.ToHouse)"
+                                                              IsMajorAspect="@a.IsMajorAspect"
+                                                              Score="@a.UnfavorableScore"
+                                                              OnClick="@(() => RaiseSelect(sel))" />
+                                }
+                            </ul>
                         }
-                    </ul>
+                    </div>
                 }
             </section>
 
