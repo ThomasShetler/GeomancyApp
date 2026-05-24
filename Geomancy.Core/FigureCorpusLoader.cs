@@ -68,6 +68,10 @@ namespace GeomancyApp
                 WeakHouseID = dto.WeakHouseId,
                 Planet = dto.Planet,
                 Sign = dto.Sign,
+                Humor = dto.Humor,
+                PlanetaryIntelligence = dto.PlanetaryIntelligence,
+                PlanetarySpirit = dto.PlanetarySpirit,
+                PlanetaryAngel = dto.PlanetaryAngel,
                 InnerEl = dto.InnerEl,
                 OuterEl = dto.OuterEl,
                 FireElement = dto.FireElement,
@@ -76,7 +80,9 @@ namespace GeomancyApp
                 EarthElement = dto.EarthElement,
                 Anatomy = dto.Anatomy,
                 BodyType = dto.BodyType,
+                TraditionalBodyType = dto.TraditionalBodyType,
                 CharacterType = dto.CharacterType,
+                TraditionalCharacterType = dto.TraditionalCharacterType,
                 Colors = dto.Colors,
                 Commentary = dto.Commentary,
                 DivinatoryMeaning = dto.DivinatoryMeaning,
@@ -100,7 +106,8 @@ namespace GeomancyApp
                         Author = s.Author,
                         Work = s.Work,
                         Section = s.Section ?? string.Empty,
-                        Year = s.Year
+                        Year = s.Year,
+                        Note = s.Note
                     }).ToList()
             };
         }
@@ -201,6 +208,10 @@ namespace GeomancyApp
             [JsonProperty("weak_house_id")] public int WeakHouseId { get; set; }
             [JsonProperty("planet")] public string Planet { get; set; }
             [JsonProperty("sign")] public string Sign { get; set; }
+            [JsonProperty("humor")] public string Humor { get; set; }
+            [JsonProperty("planetary_intelligence")] public string PlanetaryIntelligence { get; set; }
+            [JsonProperty("planetary_spirit")] public string PlanetarySpirit { get; set; }
+            [JsonProperty("planetary_angel")] public string PlanetaryAngel { get; set; }
             [JsonProperty("inner_el")] public string InnerEl { get; set; }
             [JsonProperty("outer_el")] public string OuterEl { get; set; }
             [JsonProperty("fire_element")] public string FireElement { get; set; }
@@ -209,7 +220,9 @@ namespace GeomancyApp
             [JsonProperty("earth_element")] public string EarthElement { get; set; }
             [JsonProperty("anatomy")] public string Anatomy { get; set; }
             [JsonProperty("body_type")] public string BodyType { get; set; }
+            [JsonProperty("traditional_body_type")] public string TraditionalBodyType { get; set; }
             [JsonProperty("character_type")] public string CharacterType { get; set; }
+            [JsonProperty("traditional_character_type")] public string TraditionalCharacterType { get; set; }
             [JsonProperty("colors")] public string Colors { get; set; }
             [JsonProperty("commentary")] public string Commentary { get; set; }
             [JsonProperty("divinatory_meaning")] public string DivinatoryMeaning { get; set; }
@@ -232,6 +245,7 @@ namespace GeomancyApp
             [JsonProperty("work")] public string Work { get; set; }
             [JsonProperty("section")] public string Section { get; set; }
             [JsonProperty("year")] public int? Year { get; set; }
+            [JsonProperty("note")] public string Note { get; set; }
         }
     }
 }

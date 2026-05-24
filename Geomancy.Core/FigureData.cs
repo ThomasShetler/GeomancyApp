@@ -21,6 +21,10 @@ namespace GeomancyApp
         public int    WeakHouseID { get; set; }
         public string Planet { get; set; }
         public string Sign { get; set; }
+        public string Humor { get; set; }
+        public string PlanetaryIntelligence { get; set; }
+        public string PlanetarySpirit { get; set; }
+        public string PlanetaryAngel { get; set; }
         public string InnerEl { get; set; }
         public string OuterEl { get; set; }
         public string FireElement { get; set; }
@@ -29,7 +33,9 @@ namespace GeomancyApp
         public string EarthElement { get; set; }
         public string Anatomy { get; set; }
         public string BodyType { get; set; }
+        public string TraditionalBodyType { get; set; }
         public string CharacterType { get; set; }
+        public string TraditionalCharacterType { get; set; }
         public string Colors { get; set; }
         public string Commentary { get; set; }
         public string DivinatoryMeaning { get; set; }
@@ -63,6 +69,10 @@ namespace GeomancyApp
             target.WeakHouseID = source.WeakHouseID;
             target.Planet = source.Planet;
             target.Sign = source.Sign;
+            target.Humor = source.Humor;
+            target.PlanetaryIntelligence = source.PlanetaryIntelligence;
+            target.PlanetarySpirit = source.PlanetarySpirit;
+            target.PlanetaryAngel = source.PlanetaryAngel;
             target.InnerEl = source.InnerEl;
             target.OuterEl = source.OuterEl;
             target.FireElement = source.FireElement;
@@ -71,7 +81,9 @@ namespace GeomancyApp
             target.EarthElement = source.EarthElement;
             target.Anatomy = source.Anatomy;
             target.BodyType = source.BodyType;
+            target.TraditionalBodyType = source.TraditionalBodyType;
             target.CharacterType = source.CharacterType;
+            target.TraditionalCharacterType = source.TraditionalCharacterType;
             target.Colors = source.Colors;
             target.Commentary = source.Commentary;
             target.DivinatoryMeaning = source.DivinatoryMeaning;
@@ -95,7 +107,8 @@ namespace GeomancyApp
                     Author = s.Author,
                     Work = s.Work,
                     Section = s.Section,
-                    Year = s.Year
+                    Year = s.Year,
+                    Note = s.Note
                 })
                 : new List<TraditionalSourceEntry>();
         }

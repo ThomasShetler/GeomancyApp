@@ -699,6 +699,29 @@
     max-height: none;
 }
 
+/* Figure detail: keep jump-nav usable and avoid clipping in mobile detail mode */
+.mobile-panel-body ::deep .figure-detail-panel .detail-sticky-shell {
+    top: 0;
+    z-index: 4;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .section-jump-nav {
+    gap: 0.25rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .section-jump-nav a {
+    font-size: 0.64rem;
+    padding: 0.1rem 0.4rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .detail-card {
+    scroll-margin-top: 5.75rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel details > summary {
+    padding: 0.2rem 0;
+}
+
 /* Compact perfection rows: hide figure names first on narrow screens */
 @media (max-width: 480px) {
     .mobile-panel-body ::deep .flow-figures {

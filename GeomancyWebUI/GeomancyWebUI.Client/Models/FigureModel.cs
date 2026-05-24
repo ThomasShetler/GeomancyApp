@@ -16,6 +16,9 @@ namespace GeomancyWebUI.Client.Models
 
         [JsonPropertyName("year")]
         public int? Year { get; set; }
+
+        [JsonPropertyName("note")]
+        public string Note { get; set; } = string.Empty;
     }
 
     public enum FigureInHouseStrength
@@ -28,6 +31,8 @@ namespace GeomancyWebUI.Client.Models
     public class FigureModel
     {
         public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("english_name")]
+        public string EnglishName { get; set; } = string.Empty;
         public string OtherNames { get; set; } = string.Empty;
         public string Quality { get; set; } = string.Empty;
         public string Keyword { get; set; } = string.Empty;
@@ -36,6 +41,14 @@ namespace GeomancyWebUI.Client.Models
         public string WeakHouse { get; set; } = string.Empty;
         public string Planet { get; set; } = string.Empty;
         public string Sign { get; set; } = string.Empty;
+        [JsonPropertyName("humor")]
+        public string Humor { get; set; } = string.Empty;
+        [JsonPropertyName("planetary_intelligence")]
+        public string PlanetaryIntelligence { get; set; } = string.Empty;
+        [JsonPropertyName("planetary_spirit")]
+        public string PlanetarySpirit { get; set; } = string.Empty;
+        [JsonPropertyName("planetary_angel")]
+        public string PlanetaryAngel { get; set; } = string.Empty;
         public string InnerEl { get; set; } = string.Empty;
         public string OuterEl { get; set; } = string.Empty;
         public string FireElement { get; set; } = string.Empty;
@@ -44,7 +57,11 @@ namespace GeomancyWebUI.Client.Models
         public string EarthElement { get; set; } = string.Empty;
         public string Anatomy { get; set; } = string.Empty;
         public string BodyType { get; set; } = string.Empty;
+        [JsonPropertyName("traditional_body_type")]
+        public string TraditionalBodyType { get; set; } = string.Empty;
         public string CharacterType { get; set; } = string.Empty;
+        [JsonPropertyName("traditional_character_type")]
+        public string TraditionalCharacterType { get; set; } = string.Empty;
         public string Colors { get; set; } = string.Empty;
         public string Commentary { get; set; } = string.Empty;
         public string DivinatoryMeaning { get; set; } = string.Empty;

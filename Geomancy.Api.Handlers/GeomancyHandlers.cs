@@ -643,6 +643,7 @@ namespace GeomancyAPI.Handlers
             return new FigureResponse
             {
                 Name = figure.Name,
+                EnglishName = figure.EnglishName,
                 HouseStrength = (Models.FigureInHouseStrength)(int)figure.HouseStrength,
                 OtherNames = figure.OtherNames,
                 Quality = figure.Quality,
@@ -652,6 +653,10 @@ namespace GeomancyAPI.Handlers
                 WeakHouse = figure.WeakHouse,
                 Planet = figure.Planet,
                 Sign = figure.Sign,
+                Humor = figure.Humor,
+                PlanetaryIntelligence = figure.PlanetaryIntelligence,
+                PlanetarySpirit = figure.PlanetarySpirit,
+                PlanetaryAngel = figure.PlanetaryAngel,
                 InnerEl = figure.InnerEl,
                 OuterEl = figure.OuterEl,
                 FireElement = figure.FireElement,
@@ -660,7 +665,9 @@ namespace GeomancyAPI.Handlers
                 EarthElement = figure.EarthElement,
                 Anatomy = figure.Anatomy,
                 BodyType = figure.BodyType,
+                TraditionalBodyType = figure.TraditionalBodyType,
                 CharacterType = figure.CharacterType,
+                TraditionalCharacterType = figure.TraditionalCharacterType,
                 Colors = figure.Colors,
                 Commentary = figure.Commentary,
                 DivinatoryMeaning = figure.DivinatoryMeaning,
@@ -686,7 +693,8 @@ namespace GeomancyAPI.Handlers
                         Author = s.Author,
                         Work = s.Work,
                         Section = s.Section,
-                        Year = s.Year
+                        Year = s.Year,
+                        Note = s.Note
                     }).ToList()
             };
         }

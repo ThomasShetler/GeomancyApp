@@ -193,6 +193,7 @@ namespace GeomancyWebUI.Services
             return new FigureModel
             {
                 Name = src.Name ?? string.Empty,
+                EnglishName = src.EnglishName ?? string.Empty,
                 OtherNames = src.OtherNames ?? string.Empty,
                 Quality = src.Quality ?? string.Empty,
                 Keyword = src.Keyword ?? string.Empty,
@@ -201,6 +202,10 @@ namespace GeomancyWebUI.Services
                 WeakHouse = src.WeakHouse ?? string.Empty,
                 Planet = src.Planet ?? string.Empty,
                 Sign = src.Sign ?? string.Empty,
+                Humor = src.Humor ?? string.Empty,
+                PlanetaryIntelligence = src.PlanetaryIntelligence ?? string.Empty,
+                PlanetarySpirit = src.PlanetarySpirit ?? string.Empty,
+                PlanetaryAngel = src.PlanetaryAngel ?? string.Empty,
                 InnerEl = src.InnerEl ?? string.Empty,
                 OuterEl = src.OuterEl ?? string.Empty,
                 FireElement = src.FireElement ?? string.Empty,
@@ -209,7 +214,9 @@ namespace GeomancyWebUI.Services
                 EarthElement = src.EarthElement ?? string.Empty,
                 Anatomy = src.Anatomy ?? string.Empty,
                 BodyType = src.BodyType ?? string.Empty,
+                TraditionalBodyType = src.TraditionalBodyType ?? string.Empty,
                 CharacterType = src.CharacterType ?? string.Empty,
+                TraditionalCharacterType = src.TraditionalCharacterType ?? string.Empty,
                 Colors = src.Colors ?? string.Empty,
                 Commentary = src.Commentary ?? string.Empty,
                 DivinatoryMeaning = src.DivinatoryMeaning ?? string.Empty,
@@ -229,7 +236,8 @@ namespace GeomancyWebUI.Services
                     Author = s.Author ?? string.Empty,
                     Work = s.Work ?? string.Empty,
                     Section = s.Section ?? string.Empty,
-                    Year = s.Year
+                    Year = s.Year,
+                    Note = s.Note ?? string.Empty
                 }).ToList() ?? new List<TraditionalSourceModel>(),
                 HeadLine = src.HeadLine,
                 NeckLine = src.NeckLine,

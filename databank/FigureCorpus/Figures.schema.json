@@ -55,15 +55,31 @@
         "divinatory_meaning",
         "tagline",
         "core_meaning",
-        "favorable_for",
-        "unfavorable_for",
-        "elemental_synthesis",
-        "traditional_imagery",
-        "interpretation",
-        "in_houses",
-        "in_court_roles",
-        "modern_examples",
         "traditional_sources"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "favorable_for",
+            "unfavorable_for",
+            "elemental_synthesis",
+            "traditional_imagery",
+            "interpretation",
+            "in_houses",
+            "in_court_roles",
+            "modern_examples"
+          ]
+        },
+        {
+          "required": [
+            "humor",
+            "planetary_intelligence",
+            "planetary_spirit",
+            "planetary_angel",
+            "traditional_body_type",
+            "traditional_character_type"
+          ]
+        }
       ],
       "properties": {
         "figure_id": { "type": "string", "pattern": "^(1[0-6]|[1-9])$" },
@@ -79,6 +95,10 @@
         "weak_house_id": { "type": "integer", "minimum": 1, "maximum": 12 },
         "planet": { "type": "string" },
         "sign": { "type": "string" },
+        "humor": { "type": "string" },
+        "planetary_intelligence": { "type": "string" },
+        "planetary_spirit": { "type": "string" },
+        "planetary_angel": { "type": "string" },
         "inner_el": { "type": "string" },
         "outer_el": { "type": "string" },
         "fire_element": { "type": "string", "enum": ["Active", "Passive"] },
@@ -87,7 +107,9 @@
         "earth_element": { "type": "string", "enum": ["Active", "Passive"] },
         "anatomy": { "type": "string" },
         "body_type": { "type": "string" },
+        "traditional_body_type": { "type": "string" },
         "character_type": { "type": "string" },
+        "traditional_character_type": { "type": "string" },
         "colors": { "type": "string" },
         "commentary": { "type": "string" },
         "divinatory_meaning": { "type": "string" },
@@ -131,7 +153,8 @@
         "author": { "type": "string" },
         "work": { "type": "string" },
         "section": { "type": "string" },
-        "year": { "type": ["integer", "null"] }
+        "year": { "type": ["integer", "null"] },
+        "note": { "type": "string" }
       },
       "additionalProperties": false
     }
