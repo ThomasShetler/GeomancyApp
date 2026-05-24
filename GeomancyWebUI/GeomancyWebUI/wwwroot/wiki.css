@@ -361,13 +361,13 @@
 .wiki-figure-header {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.85rem;
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
 .wiki-figure-header-text {
     min-width: 0;
-    flex: 1 1 auto;
+    flex: 0 1 34rem;
 }
 
 .wiki-figure-name {
@@ -399,18 +399,39 @@
     color: var(--text-secondary);
 }
 
-.wiki-figure-emblem {
+.wiki-figure-pattern-card {
     flex-shrink: 0;
-    width: 4.5rem;
-    height: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.5rem 0.48rem;
+    margin-top: 0.05rem;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--border-color) 88%, var(--accent-color));
+    background: color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary));
+    box-shadow: 0 1px 8px var(--shadow);
+}
+
+.wiki-figure-pattern-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    line-height: 1;
+}
+
+.wiki-figure-emblem {
+    width: 4.1rem;
+    height: 4.1rem;
     border-radius: 50%;
     border: 2px solid var(--border-color);
-    background: color-mix(in srgb, var(--bg-secondary) 88%, var(--bg-primary));
+    background: color-mix(in srgb, var(--bg-primary) 90%, var(--bg-secondary));
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: 0 2px 10px var(--shadow);
 }
 
 .wiki-figure-emblem .figure-container {
@@ -1073,12 +1094,18 @@
     }
 
     .wiki-figure-header {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+    }
+
+    .wiki-figure-pattern-card {
+        margin-top: 0;
     }
 
     .wiki-figure-emblem {
-        width: 4.1rem;
-        height: 4.1rem;
+        width: 3.85rem;
+        height: 3.85rem;
     }
 
     .wiki-corpus .person-row {
