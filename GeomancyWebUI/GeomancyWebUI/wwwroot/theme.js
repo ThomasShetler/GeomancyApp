@@ -52,17 +52,38 @@
             window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     };
 
-    window.geofancyCasterPointerPercent = function (element, clientX, clientY) {
-        if (!element || !element.getBoundingClientRect) {
+    function clampPercent(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    // Prefer offsetX/Y (padding-box, same frame as mark placement). Fall back to
+    // getBoundingClientRect + client coords for touch / zoom edge cases.
+    window.geofancyCasterPointerPercent = function (element, clientX, clientY, offsetX, offsetY) {
+        if (!element) {
             return { x: 50, y: 50 };
         }
+
+        var w = element.clientWidth;
+        var h = element.clientHeight;
+        if (w > 0 && h > 0 && isFinite(offsetX) && isFinite(offsetY)) {
+            return {
+                x: clampPercent((offsetX / w) * 100, 5, 95),
+                y: clampPercent((offsetY / h) * 100, 12, 88)
+            };
+        }
+
+        if (!element.getBoundingClientRect) {
+            return { x: 50, y: 50 };
+        }
+
         var r = element.getBoundingClientRect();
         if (!r.width || !r.height) {
             return { x: 50, y: 50 };
         }
+
         return {
-            x: Math.max(4, Math.min(96, ((clientX - r.left) / r.width) * 100)),
-            y: Math.max(4, Math.min(96, ((clientY - r.top) / r.height) * 100))
+            x: clampPercent(((clientX - r.left) / r.width) * 100, 5, 95),
+            y: clampPercent(((clientY - r.top) / r.height) * 100, 12, 88)
         };
     };
 })();

@@ -29,6 +29,20 @@
     color: var(--text-muted);
 }
 
+.figure-dot-instruction-narrow {
+    display: none;
+}
+
+@media (max-width: 639px) {
+    .figure-dot-instruction-wide {
+        display: none;
+    }
+
+    .figure-dot-instruction-narrow {
+        display: inline;
+    }
+}
+
 .figure-dot-caster-body {
     display: flex;
     flex-direction: column;
@@ -135,23 +149,36 @@
 
 .figure-dot-row-track-wrap {
     display: flex;
-    align-items: center;
-    gap: 0.35rem;
+    align-items: stretch;
     min-width: 0;
+    width: 100%;
 }
 
 .figure-dot-canvas {
     position: relative;
     flex: 1 1 auto;
+    width: 100%;
     height: var(--canvas-height);
     min-height: var(--canvas-height);
-    border-radius: 6px;
-    border: 1px dashed var(--border-color, #bbb);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #bbb);
     background: var(--bg-secondary, #2a2a2a);
     cursor: crosshair;
-    touch-action: none;
+    touch-action: manipulation;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.figure-dot-canvas:focus-visible {
+    outline: 2px solid var(--accent-color, #c9a227);
+    outline-offset: 2px;
+}
+
+.figure-dot-canvas:active:not(.is-locked) {
+    border-color: var(--accent-color, #c9a227);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.18), 0 0 0 1px color-mix(in srgb, var(--accent-color, #c9a227) 35%, transparent);
 }
 
 [data-theme="light"] .figure-dot-canvas,
@@ -211,14 +238,37 @@
 .canvas-mark {
     position: absolute;
     z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.65rem;
+    height: 1.65rem;
     transform: translate(-50%, -50%);
-    font-size: 1.35rem;
+    font-size: 1.05rem;
     font-weight: 700;
     line-height: 1;
-    color: #4a8fd4;
+    color: #5ba3e8;
     user-select: none;
     pointer-events: none;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    background: color-mix(in srgb, #4a8fd4 22%, transparent);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.canvas-mark.is-drop {
+    animation: mark-drop 0.22s ease-out;
+}
+
+@keyframes mark-drop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.35);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 .canvas-mark.is-paired {
@@ -246,25 +296,33 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: var(--text-muted, #888);
     white-space: nowrap;
     pointer-events: none;
     z-index: 1;
+    opacity: 0.85;
 }
 
 .figure-dot-row-undo {
-    flex: 0 0 auto;
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.35rem;
+    z-index: 4;
     min-height: 36px;
     min-width: 44px;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.7rem;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    border-radius: 6px;
+    border-radius: 999px;
     border: 1px solid var(--border-color, #ccc);
-    background: var(--bg-secondary, #f5f5f5);
-    color: var(--text-muted);
+    background: color-mix(in srgb, var(--bg-primary, #fff) 88%, transparent);
+    color: var(--text-primary);
     cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .figure-dot-caster-result {
@@ -411,56 +469,112 @@
     display: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 639px) {
     .figure-dot-caster {
-        --row-label-width: 3.75rem;
-        --canvas-height: 3.25rem;
-        padding: 0.75rem;
+        --canvas-height: 4.75rem;
+        padding: 0.85rem;
+        border-radius: 10px;
     }
 
-    .figure-dot-row {
-        padding: 0.45rem;
-        gap: 0.4rem;
+    .figure-dot-caster.is-compact {
+        --canvas-height: 4.25rem;
+        padding: 0.65rem;
     }
 
-    .canvas-mark {
-        font-size: 1.2rem;
+    .figure-dot-caster-instruction {
+        font-size: 0.82rem;
+        margin-bottom: 0.75rem;
     }
-}
 
-@media (max-width: 520px) {
+    .figure-dot-caster-body {
+        gap: 1rem;
+    }
+
+    .figure-dot-caster-rows {
+        border-radius: 10px;
+    }
+
     .figure-dot-row {
         grid-template-columns: 1fr;
-        gap: 0.35rem;
+        gap: 0.45rem;
+        padding: 0.65rem 0.7rem;
     }
 
     .figure-dot-row-label {
+        display: flex;
         flex-direction: row;
-        align-items: baseline;
-        gap: 0.35rem;
+        align-items: center;
         flex-wrap: wrap;
+        gap: 0.25rem 0.5rem;
     }
 
     .figure-dot-row-count {
         margin-top: 0;
+        margin-left: auto;
+        font-size: 0.65rem;
+        padding: 0.15rem 0.45rem;
     }
 
-    .figure-dot-row-track-wrap {
-        width: 100%;
+    .figure-dot-canvas {
+        min-height: var(--canvas-height);
+        border-radius: 10px;
+    }
+
+    .canvas-mark {
+        width: 1.85rem;
+        height: 1.85rem;
+        font-size: 1.15rem;
+    }
+
+    .figure-dot-placeholder {
+        font-size: 0.75rem;
     }
 
     .figure-dot-row-undo {
-        min-width: 56px;
+        min-height: 40px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.72rem;
     }
 
     .figure-dot-caster-result {
         width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 10px;
+    }
+
+    .figure-dot-caster-result-caption {
+        font-size: 0.8rem;
+    }
+
+    .figure-build-line {
+        font-size: 1.25rem;
+        min-height: 1.5rem;
+    }
+
+    .figure-dot-caster-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.55rem;
+    }
+
+    .figure-dot-caster-btn {
+        width: 100%;
+    }
+
+    .figure-dot-caster-confirm {
+        padding: 0.85rem;
+    }
+
+    .figure-dot-pair-line {
+        stroke-width: 2.4;
     }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
     .figure-dot-pair-line.is-drawing,
     .canvas-mark.is-paired-animate,
+    .canvas-mark.is-drop,
     .figure-build-line.is-revealed,
     .figure-dot-caster-result-name {
         animation: none;

@@ -1,6 +1,7 @@
 @using GeomancyWebUI.Client.Helpers
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using Microsoft.JSInterop
 @inject IGeomancyService GeomancyService
 @inject IJSRuntime JS
 @implements IDisposable
@@ -15,7 +16,8 @@
     {
         <p class="figure-dot-caster-instruction">
             Tap anywhere in each row to drop a mark. When you generate, marks are crossed off in twos
-            (left to right) until one or two remain; the figure builds in the panel on the right.
+            (left to right) until one or two remain; the figure builds
+            <span class="figure-dot-instruction-wide"> in the panel on the right</span><span class="figure-dot-instruction-narrow"> below</span>.
         </p>
     }
 
@@ -42,8 +44,10 @@
                              class="figure-dot-canvas @(IsLocked ? "is-locked" : "")"
                              @onpointerdown="(e) => OnCanvasPointerDown(e, rowIndex)"
                              @onpointerdown:preventDefault="true"
-                             role="presentation"
-                             aria-label="@($"{RowNames[row]} row canvas, {marks.Count} marks")">
+                             @onpointerdown:stopPropagation="true"
+                             role="button"
+                             tabindex="@(_phase == CasterPhase.Marking && !IsLocked ? 0 : -1)"
+                             aria-label="@($"{RowNames[row]} row — tap to add a mark, {marks.Count} marked")">
                             <svg class="figure-dot-canvas-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                                 @foreach (var line in GetPairConnectorLines(rowIndex))
                                 {
@@ -62,19 +66,20 @@
                             }
                             @if (marks.Count == 0 && _phase == CasterPhase.Marking)
                             {
-                                <span class="figure-dot-placeholder">Tap anywhere to mark</span>
+                                <span class="figure-dot-placeholder">Tap to mark</span>
+                            }
+                            @if (_phase == CasterPhase.Marking && marks.Count > 0 && !IsLocked)
+                            {
+                                <button type="button"
+                                        class="figure-dot-row-undo"
+                                        title="Remove last mark in this row"
+                                        aria-label="@($"Remove last mark from {RowNames[row]} row")"
+                                        @onclick="() => RemoveLastMark(rowIndex)"
+                                        @onclick:stopPropagation="true">
+                                    Undo
+                                </button>
                             }
                         </div>
-                        @if (_phase == CasterPhase.Marking && marks.Count > 0 && !IsLocked)
-                        {
-                            <button type="button"
-                                    class="figure-dot-row-undo"
-                                    title="Remove last mark in this row"
-                                    aria-label="@($"Remove last mark from {RowNames[row]} row")"
-                                    @onclick="() => RemoveLastMark(rowIndex)">
-                                Undo
-                            </button>
-                        }
                     </div>
                 </div>
             }
@@ -180,6 +185,7 @@
     private int _activePairingRow = -1;
     private int _revealedFigureLines;
     private bool _figureNameRevealed;
+    private long _dropFlashMarkKey = -1;
 
     [Parameter] public string? MotherLabel { get; set; }
     [Parameter] public bool Compact { get; set; }
@@ -206,18 +212,21 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
+        if (firstRender)
         {
-            return;
+            try
+            {
+                _reducedMotion = await JS.InvokeAsync<bool>("geofancyPrefersReducedMotion");
+            }
+            catch
+            {
+                _reducedMotion = false;
+            }
         }
 
-        try
+        if (_dropFlashMarkKey >= 0)
         {
-            _reducedMotion = await JS.InvokeAsync<bool>("geofancyPrefersReducedMotion");
-        }
-        catch
-        {
-            _reducedMotion = false;
+            _dropFlashMarkKey = -1;
         }
     }
 
@@ -255,12 +264,18 @@
 
     private string GetMarkClass(int row, int markId)
     {
+        var key = MarkKey(row, markId);
+        if (key == _dropFlashMarkKey)
+        {
+            return "is-drop";
+        }
+
         if (!IsMarkPaired(row, markId))
         {
             return string.Empty;
         }
 
-        return _recentlyPairedMarks.Contains(MarkKey(row, markId)) ? "is-paired is-paired-animate" : "is-paired";
+        return _recentlyPairedMarks.Contains(key) ? "is-paired is-paired-animate" : "is-paired";
     }
 
     private static string GetMarkStyle(CanvasMark mark) =>
@@ -277,33 +292,64 @@
             return;
         }
 
+        if (e.PointerType == "mouse" && e.Button != 0)
+        {
+            return;
+        }
+
+        var pos = ResolvePointerPercent(_canvasRefs[rowIndex], e);
+        if (pos == null)
+        {
+            try
+            {
+                pos = await JS.InvokeAsync<PointerPercent>(
+                    "geofancyCasterPointerPercent",
+                    _canvasRefs[rowIndex],
+                    e.ClientX,
+                    e.ClientY,
+                    e.OffsetX,
+                    e.OffsetY);
+            }
+            catch
+            {
+                pos = new PointerPercent { X = 50, Y = 50 };
+            }
+        }
+
+        var markId = _nextMarkId++;
+        _rows[rowIndex].Add(new CanvasMark
+        {
+            Id = markId,
+            XPercent = pos.X,
+            YPercent = pos.Y
+        });
+        _dropFlashMarkKey = MarkKey(rowIndex, markId);
+
+        _statusMessage = $"{RowNames[rowIndex]}: {_rows[rowIndex].Count} marks";
+        StateHasChanged();
+    }
+
+    private PointerPercent? ResolvePointerPercent(ElementReference canvas, PointerEventArgs e)
+    {
+        if (JS is not IJSInProcessRuntime syncJs)
+        {
+            return null;
+        }
+
         try
         {
-            var pos = await JS.InvokeAsync<PointerPercent>(
+            return syncJs.Invoke<PointerPercent>(
                 "geofancyCasterPointerPercent",
-                _canvasRefs[rowIndex],
+                canvas,
                 e.ClientX,
-                e.ClientY);
-
-            _rows[rowIndex].Add(new CanvasMark
-            {
-                Id = _nextMarkId++,
-                XPercent = pos.X,
-                YPercent = pos.Y
-            });
+                e.ClientY,
+                e.OffsetX,
+                e.OffsetY);
         }
         catch
         {
-            _rows[rowIndex].Add(new CanvasMark
-            {
-                Id = _nextMarkId++,
-                XPercent = 50,
-                YPercent = 50
-            });
+            return null;
         }
-
-        _statusMessage = $"{RowNames[rowIndex]} row: {_rows[rowIndex].Count} marks.";
-        StateHasChanged();
     }
 
     private sealed class PointerPercent
