@@ -1,4 +1,5 @@
 @using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Helpers
 
 @*
     Left column of the revamped Perfections tab.
@@ -120,9 +121,40 @@
                             var p = Analysis.Perfections[idx];
                             var sel = new PerfectionSelection(PerfectionEntryKind.Perfection, idx, p, null);
                             var isSel = IsSelected(sel);
-                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                            var pDirVis = AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
+                            var hasAspect = !string.IsNullOrEmpty(p.AspectBetweenSignificators) && p.AspectBetweenSignificators != "None";
+                            <li class="perf-row perf-row-perfection @(isSel ? "is-selected" : "")"
                                 @onclick="() => RaiseSelect(sel)">
-                                <span class="perf-row-label">@BuildPerfectionLabel(p)</span>
+                                <div class="perf-row-body">
+                                    <div class="perf-row-top">
+                                        <span class="perf-mode-label">@BuildPerfectionModeLabel(p)</span>
+                                        @if (hasAspect)
+                                        {
+                                            <span class="aspect-type-badge @AspectDirectionHelper.AspectTypeClass(p.AspectBetweenSignificators)">
+                                                @p.AspectBetweenSignificators
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(pDirVis.ShortLabel))
+                                            {
+                                                <span class="aspect-dir-badge @pDirVis.CssClass">@pDirVis.ShortLabel</span>
+                                            }
+                                        }
+                                    </div>
+                                    @if (p.QuerentHouse > 0 && p.QuesitedHouse > 0)
+                                    {
+                                        <div class="aspect-house-flow is-compact">
+                                            <span class="flow-house">
+                                                <span class="flow-house-num">H@p.QuerentHouse</span>
+                                            </span>
+                                            <span class="flow-arrow @(hasAspect ? pDirVis.CssClass : "dir-neutral")"
+                                                  title="@(hasAspect ? pDirVis.Hint : string.Empty)">
+                                                @(hasAspect ? pDirVis.Glyph : "→")
+                                            </span>
+                                            <span class="flow-house">
+                                                <span class="flow-house-num">H@p.QuesitedHouse</span>
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
                                 <span class="perf-row-score @ScoreClass(p.FavorableScore + p.UnfavorableScore)">
                                     @FormatScore(p.FavorableScore + p.UnfavorableScore)
                                 </span>
@@ -182,9 +214,45 @@
                             var a = Analysis.PositiveAspects[idx];
                             var sel = new PerfectionSelection(PerfectionEntryKind.PositiveAspect, idx, null, a);
                             var isSel = IsSelected(sel);
-                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                            var dirVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
+                            var typeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
+                            <li class="perf-row perf-row-aspect is-positive @(isSel ? "is-selected" : "")"
                                 @onclick="() => RaiseSelect(sel)">
-                                <span class="perf-row-label">@BuildAspectLabel(a)</span>
+                                <div class="perf-row-body">
+                                    <div class="perf-row-top">
+                                        <span class="aspect-type-badge @typeClass">@a.AspectType</span>
+                                        <span class="aspect-rank @(a.IsMajorAspect ? "is-major" : "is-minor")">
+                                            @(a.IsMajorAspect ? "Major" : "Minor")
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(dirVis.ShortLabel))
+                                        {
+                                            <span class="aspect-dir-badge @dirVis.CssClass">@dirVis.ShortLabel</span>
+                                        }
+                                    </div>
+                                    <div class="aspect-house-flow">
+                                        <span class="flow-house">
+                                            <span class="flow-house-num">H@a.FromHouse</span>
+                                            @{
+                                                var fromFig = GetHouseFigureName(a.FromHouse);
+                                                if (!string.IsNullOrEmpty(fromFig))
+                                                {
+                                                    <span class="flow-figure">@fromFig</span>
+                                                }
+                                            }
+                                        </span>
+                                        <span class="flow-arrow @dirVis.CssClass" title="@dirVis.Hint">@dirVis.Glyph</span>
+                                        <span class="flow-house">
+                                            <span class="flow-house-num">H@a.ToHouse</span>
+                                            @{
+                                                var toFig = GetHouseFigureName(a.ToHouse);
+                                                if (!string.IsNullOrEmpty(toFig))
+                                                {
+                                                    <span class="flow-figure">@toFig</span>
+                                                }
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
                                 <span class="perf-row-score score-positive">+@a.FavorableScore</span>
                             </li>
                         }
@@ -211,9 +279,45 @@
                             var a = Analysis.NegativeAspects[idx];
                             var sel = new PerfectionSelection(PerfectionEntryKind.NegativeAspect, idx, null, a);
                             var isSel = IsSelected(sel);
-                            <li class="perf-row @(isSel ? "is-selected" : "")"
+                            var dirVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
+                            var typeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
+                            <li class="perf-row perf-row-aspect is-negative @(isSel ? "is-selected" : "")"
                                 @onclick="() => RaiseSelect(sel)">
-                                <span class="perf-row-label">@BuildAspectLabel(a)</span>
+                                <div class="perf-row-body">
+                                    <div class="perf-row-top">
+                                        <span class="aspect-type-badge @typeClass">@a.AspectType</span>
+                                        <span class="aspect-rank @(a.IsMajorAspect ? "is-major" : "is-minor")">
+                                            @(a.IsMajorAspect ? "Major" : "Minor")
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(dirVis.ShortLabel))
+                                        {
+                                            <span class="aspect-dir-badge @dirVis.CssClass">@dirVis.ShortLabel</span>
+                                        }
+                                    </div>
+                                    <div class="aspect-house-flow">
+                                        <span class="flow-house">
+                                            <span class="flow-house-num">H@a.FromHouse</span>
+                                            @{
+                                                var fromFigNeg = GetHouseFigureName(a.FromHouse);
+                                                if (!string.IsNullOrEmpty(fromFigNeg))
+                                                {
+                                                    <span class="flow-figure">@fromFigNeg</span>
+                                                }
+                                            }
+                                        </span>
+                                        <span class="flow-arrow @dirVis.CssClass" title="@dirVis.Hint">@dirVis.Glyph</span>
+                                        <span class="flow-house">
+                                            <span class="flow-house-num">H@a.ToHouse</span>
+                                            @{
+                                                var toFigNeg = GetHouseFigureName(a.ToHouse);
+                                                if (!string.IsNullOrEmpty(toFigNeg))
+                                                {
+                                                    <span class="flow-figure">@toFigNeg</span>
+                                                }
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
                                 <span class="perf-row-score score-negative">@a.UnfavorableScore</span>
                             </li>
                         }
@@ -271,6 +375,28 @@
     private static string ScoreClass(int n) => n > 0
         ? "score-positive"
         : n < 0 ? "score-negative" : "score-neutral";
+
+    private static string BuildPerfectionModeLabel(PerfectionModel p)
+    {
+        var mode = p.Mode;
+        if (p.Mode == "Company")
+        {
+            var companyDisplay = GetCompanyTypeDisplay(p);
+            mode = !string.IsNullOrEmpty(companyDisplay) ? companyDisplay : "Company";
+            if (!string.IsNullOrEmpty(p.BaseMode))
+            {
+                mode += $" · {p.BaseMode}";
+            }
+        }
+        return string.IsNullOrEmpty(mode) ? "Perfection" : mode;
+    }
+
+    private string GetHouseFigureName(int houseNumber)
+    {
+        if (Chart?.Houses == null || houseNumber <= 0) return string.Empty;
+        var house = Chart.Houses.FirstOrDefault(h => h.HouseNumber == houseNumber);
+        return house?.Figure?.Name ?? string.Empty;
+    }
 
     private static string BuildPerfectionLabel(PerfectionModel p)
     {
