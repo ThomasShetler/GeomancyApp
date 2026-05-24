@@ -1,0 +1,73 @@
+@page "/wiki/glossary/figures"
+@rendermode InteractiveServer
+@using GeomancyWebUI.Client.Helpers
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+
+<PageTitle>Geofancy Wiki - Figures</PageTitle>
+
+<WikiArticleShell Title="Figure Glossary"
+                  Lead="Sixteen geomantic figures with full corpus reference material."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki">
+
+    @if (_loading)
+    {
+        <p class="wiki-loading">Loading figures…</p>
+    }
+    else if (_figures.Count == 0)
+    {
+        <p class="wiki-empty">No figures available.</p>
+    }
+    else
+    {
+        <input class="wiki-filter" type="search" placeholder="Filter by name…" @bind="_filter" @bind:event="oninput" aria-label="Filter figures" />
+
+        <ul class="wiki-glossary-list">
+            @foreach (var fig in FilteredFigures)
+            {
+                var slug = WikiFigureSlug.ToSlug(fig.Name);
+                <li>
+                    <a class="wiki-glossary-row" href="/wiki/glossary/figures/@slug">
+                        <span class="wiki-glossary-row-title">@fig.Name</span>
+                        @if (!string.IsNullOrWhiteSpace(fig.EnglishName))
+                        {
+                            <span class="wiki-glossary-row-sub">@fig.EnglishName</span>
+                        }
+                        <span class="wiki-glossary-row-meta">
+                            @if (!string.IsNullOrWhiteSpace(fig.Planet))
+                            {
+                                <span class="chip chip-planet">@FigureDisplayHelper.GetPlanetSymbol(fig.Planet) @fig.Planet</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.Sign))
+                            {
+                                <span class="chip chip-sign">@FigureDisplayHelper.GetZodiacSymbol(fig.Sign) @fig.Sign</span>
+                            }
+                        </span>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+
+</WikiArticleShell>
+
+@code {
+    private List<FigureModel> _figures = new();
+    private bool _loading = true;
+    private string _filter = string.Empty;
+
+    private IEnumerable<FigureModel> FilteredFigures =>
+        string.IsNullOrWhiteSpace(_filter)
+            ? _figures
+            : _figures.Where(f =>
+                f.Name.Contains(_filter, StringComparison.OrdinalIgnoreCase)
+                || f.EnglishName.Contains(_filter, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        _figures = (await GeomancyService.GetAllFiguresAsync()).OrderBy(f => f.Name).ToList();
+        _loading = false;
+    }
+}

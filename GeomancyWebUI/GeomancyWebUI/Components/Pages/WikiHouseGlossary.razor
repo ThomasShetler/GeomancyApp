@@ -1,0 +1,47 @@
+@page "/wiki/glossary/houses"
+@rendermode InteractiveServer
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+
+<PageTitle>Geofancy Wiki - Houses</PageTitle>
+
+<WikiArticleShell Title="House Glossary"
+                  Lead="Twelve astrological houses with traditional names, governs lists, and reading craft."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki">
+
+    @if (_loading)
+    {
+        <p class="wiki-loading">Loading houses…</p>
+    }
+    else
+    {
+        <ul class="wiki-glossary-list">
+            @foreach (var house in _houses.OrderBy(h => h.Id))
+            {
+                <li>
+                    <a class="wiki-glossary-row" href="/wiki/glossary/houses/@house.Id">
+                        <span class="wiki-glossary-row-title">House @house.Id · @house.House</span>
+                        @if (!string.IsNullOrWhiteSpace(house.TraditionalName))
+                        {
+                            <span class="wiki-glossary-row-sub">@house.TraditionalName</span>
+                        }
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+
+</WikiArticleShell>
+
+@code {
+    private List<HouseDirectoryEntry> _houses = new();
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _houses = await GeomancyService.GetHousesDirectoryAsync();
+        _loading = false;
+    }
+}

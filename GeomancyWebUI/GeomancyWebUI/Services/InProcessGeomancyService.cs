@@ -47,6 +47,15 @@ namespace GeomancyWebUI.Services
             return Task.FromResult(MapToFigureModel(response.Figure));
         }
 
+        public Task<IReadOnlyList<FigureModel>> GetAllFiguresAsync()
+        {
+            var figures = Handlers.GetAllFigures()
+                ?.Select(MapToFigureModel)
+                .ToList()
+                ?? new List<FigureModel>();
+            return Task.FromResult((IReadOnlyList<FigureModel>)figures);
+        }
+
         public Task<List<PerfectionModel>> CalculatePerfectionAsync(PerfectionRequestModel request)
         {
             var contractsRequest = ToContractsPerfectionRequest(request);

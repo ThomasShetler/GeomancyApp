@@ -1,0 +1,44 @@
+@page "/wiki/glossary/houses/{HouseId:int}"
+@rendermode InteractiveServer
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+
+<PageTitle>@(_house != null ? $"House {_house.Id}" : "House") - Geofancy Wiki</PageTitle>
+
+<WikiArticleShell Title="@(_house != null ? $"House {_house.Id} · {_house.House}" : "House not found")"
+                  Lead="@(_house?.TraditionalName)"
+                  ParentHref="/wiki/glossary/houses"
+                  ParentLabel="Houses">
+
+    @if (_loading)
+    {
+        <p class="wiki-loading">Loading…</p>
+    }
+    else if (_house == null)
+    {
+        <div class="wiki-not-found">
+            <p>No house matches this link. Use ids 1–12.</p>
+            <p><a href="/wiki/glossary/houses">Browse all houses</a></p>
+        </div>
+    }
+    else
+    {
+        <WikiHouseReferenceStack House="@_house" />
+    }
+
+</WikiArticleShell>
+
+@code {
+    [Parameter] public int HouseId { get; set; }
+
+    private HouseDirectoryEntry? _house;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var houses = await GeomancyService.GetHousesDirectoryAsync();
+        _house = houses.FirstOrDefault(h => h.Id == HouseId);
+        _loading = false;
+    }
+}

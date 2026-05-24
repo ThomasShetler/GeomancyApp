@@ -7,6 +7,7 @@ namespace GeomancyWebUI.Client.Services
         Task<HouseChartModel> GenerateChartAsync(GenerateFourFiguresRequest request);
         Task<FigureModel> GetFigureAsync(int headLine, int neckLine, int bodyLine, int footLine);
         Task<FigureModel> GetFigureByNameAsync(string figureName);
+        Task<IReadOnlyList<FigureModel>> GetAllFiguresAsync();
         Task<List<PerfectionModel>> CalculatePerfectionAsync(PerfectionRequestModel request);
         Task<PerfectionAnalysisModel> AnalyzePerfectionsAsync(PerfectionRequestModel request);
         Task<AspectAnalysisModel> GetAspectAnalysisAsync(GenerateFourFiguresRequest request);

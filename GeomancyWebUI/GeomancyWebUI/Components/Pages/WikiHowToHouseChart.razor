@@ -1,0 +1,30 @@
+@page "/wiki/how-to/house-chart"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy Wiki - House Chart</PageTitle>
+
+<WikiArticleShell Title="How to Cast a House Chart"
+                  Lead="Projecting the shield into twelve astrological houses — traditional wheel and dawn-style layouts."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki"
+                  ShowDraftBadge="true">
+    <WikiPlaceholderBody Sections="@_sections" />
+</WikiArticleShell>
+
+@code {
+    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
+    {
+        new WikiPlaceholderBody.WikiOutlineSection("Projection", new[]
+        {
+            "Assign figures to houses 1–12 from the completed shield",
+            "Identify querent and quesited houses for the question",
+            "Note angular vs cadent strength informally"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Dawn-style layout", new[]
+        {
+            "Alternative house ordering used in some modern practice",
+            "Same twelve topics, different visual arrangement on screen"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "Switch between traditional and dawn-style views in the workspace chart; house and court reference panels follow the selected slot.")
+    };
+}

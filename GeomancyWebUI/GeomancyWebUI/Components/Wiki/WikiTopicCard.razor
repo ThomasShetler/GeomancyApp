@@ -1,0 +1,22 @@
+<a class="wiki-topic-card" href="@Href">
+    <span class="wiki-topic-card-title">@Title</span>
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <span class="wiki-topic-card-desc">@Description</span>
+    }
+    @if (IsLive)
+    {
+        <span class="wiki-topic-card-badge is-live">Live</span>
+    }
+    else
+    {
+        <span class="wiki-topic-card-badge is-draft">Coming soon</span>
+    }
+</a>
+
+@code {
+    [Parameter] public string Href { get; set; } = string.Empty;
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public bool IsLive { get; set; }
+}

@@ -1,0 +1,32 @@
+@page "/wiki/how-to/generate-figures"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy Wiki - Generate Figures</PageTitle>
+
+<WikiArticleShell Title="How to Generate the Figures"
+                  Lead="Marking four rows of dots to form the four Mothers and name the sixteen geomantic figures."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki"
+                  ShowDraftBadge="true">
+    <WikiPlaceholderBody Sections="@_sections"
+                         RelatedHint="Once your four Mothers are set, continue with How to Cast a Shield Chart." />
+</WikiArticleShell>
+
+@code {
+    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
+    {
+        new WikiPlaceholderBody.WikiOutlineSection("Mark the dots", new[]
+        {
+            "Four rows: Head (fire), Neck (air), Body (water), Foot (earth)",
+            "One dot (passive) or two dots (active) per row",
+            "Sixteen unique patterns map to the traditional figures"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Form the four Mothers", new[]
+        {
+            "Genitor (4), Fratres (3), Lucrum (2), Vita (1) in the app",
+            "Random marking or deliberate choice depending on your practice",
+            "Record each figure by name or pattern before deriving the shield"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "Use the mobile mother strip or desktop workspace to enter line values; the app names each figure from the corpus automatically.")
+    };
+}

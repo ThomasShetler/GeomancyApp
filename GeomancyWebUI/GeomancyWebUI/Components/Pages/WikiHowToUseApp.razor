@@ -1,0 +1,37 @@
+@page "/wiki/how-to/use-the-app"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy Wiki - Using Geofancy</PageTitle>
+
+<WikiArticleShell Title="How to Use the App"
+                  Lead="Desktop workspace, mobile layout, detail panels, and sharing readings."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki"
+                  ShowDraftBadge="true">
+    <WikiPlaceholderBody Sections="@_sections"
+                         RelatedHint="Try the live workspace at /workspace (desktop) or /mobile on a phone." />
+</WikiArticleShell>
+
+@code {
+    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
+    {
+        new WikiPlaceholderBody.WikiOutlineSection("Cast a chart", new[]
+        {
+            "Enter four Mothers, then explore the shield and houses",
+            "Share links with ?seed= for reproducible charts",
+            "Export JSON for archives or study groups"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Workspace tabs", new[]
+        {
+            "Court & Houses — figure and slot reference",
+            "Perfections & Aspects — querent/quesited analysis",
+            "Way of Points — elemental paths",
+            "Triplicates and Lots & Other"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Detail panel", new[]
+        {
+            "Jump chips scroll to Context, Verdict, Elements, House/Court reference, Sources",
+            "Figure emblem shows the four-line pattern at a glance"
+        })
+    };
+}

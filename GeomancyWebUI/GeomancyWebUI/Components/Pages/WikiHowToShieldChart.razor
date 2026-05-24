@@ -1,0 +1,32 @@
+@page "/wiki/how-to/shield-chart"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy Wiki - Shield Chart</PageTitle>
+
+<WikiArticleShell Title="How to Cast a Shield Chart"
+                  Lead="Deriving Daughters, Nieces, Witnesses, Judge, and Reconciler from the four Mothers."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki"
+                  ShowDraftBadge="true">
+    <WikiPlaceholderBody Sections="@_sections" />
+</WikiArticleShell>
+
+@code {
+    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
+    {
+        new WikiPlaceholderBody.WikiOutlineSection("Shield structure", new[]
+        {
+            "Four Mothers at the base",
+            "Four Daughters derived by column addition",
+            "Four Nieces from paired Mothers",
+            "Right and Left Witnesses, Judge, and Reconciler (Sentence)"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Reading order", new[]
+        {
+            "Witnesses frame the judgment",
+            "Judge as the heart of the answer",
+            "Reconciler as outcome or fallout depending on tradition"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "The chart surface builds the shield automatically when Mothers are set; tap any figure to open the detail panel.")
+    };
+}

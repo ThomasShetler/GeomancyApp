@@ -92,6 +92,18 @@ namespace GeomancyWebUI.Client.Services
             return MapToFigureModel(apiResponse?.Figure);
         }
 
+        public async Task<IReadOnlyList<FigureModel>> GetAllFiguresAsync()
+        {
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/figures/all";
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiFigures = await response.Content.ReadFromJsonAsync<List<FigureResponse>>();
+            var figures = apiFigures?.Select(MapToFigureModel).ToList() ?? new List<FigureModel>();
+            return figures;
+        }
+
         public async Task<List<PerfectionModel>> CalculatePerfectionAsync(PerfectionRequestModel request)
         {
             // Use absolute URI to bypass service discovery issues

@@ -1,0 +1,35 @@
+@page "/wiki/methods/way-of-points"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy Wiki - Way of Points</PageTitle>
+
+<WikiArticleShell Title="Way of Points"
+                  Lead="Elemental paths (Via Puncti), path types, and the Classic Way of Points / Way of the Light."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki"
+                  ShowDraftBadge="true">
+    <WikiPlaceholderBody Sections="@_sections"
+                         RelatedHint="Open the Way of Points tab in the workspace to see paths on your current chart." />
+</WikiArticleShell>
+
+@code {
+    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
+    {
+        new WikiPlaceholderBody.WikiOutlineSection("Four elemental ways", new[]
+        {
+            "Fire, Air, Water, Earth — each with establishment rules",
+            "Paths trace singly active points through the shield to an endpoint house"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Path types", new[]
+        {
+            "Strong, Strong Passive, Weaker Passive, Passive",
+            "Verdict composition: established, passively open, or blocked"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Way of the Light", new[]
+        {
+            "Classic Way of Points along the fire line",
+            "Distinct from the four elemental via puncti in naming and emphasis"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "Element and path-type reference text is loaded from the Way of Points databank; calculator notes show how the current chart was classified.")
+    };
+}
