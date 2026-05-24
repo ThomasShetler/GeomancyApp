@@ -50,7 +50,13 @@
             <header class="perf-detail-header">
                 <div class="header-titles">
                     <p class="kind-eyebrow @(isDenial ? "is-denial" : "is-perfection")">@headerEyebrow</p>
-                    <h2 class="kind-title">@modeTitle</h2>
+                    <h2 class="kind-title kind-title-with-icon">
+                        <PerfectionIcon Mode="@p.Mode"
+                                        AspectType="@p.AspectBetweenSignificators"
+                                        CompanyType="@p.CompanyType"
+                                        Large="true" />
+                        <span>@modeTitle</span>
+                    </h2>
                 </div>
                 <div class="header-score-pill @ScoreClass(totalScore)">
                     @FormatScore(totalScore)
@@ -277,7 +283,10 @@
             <header class="perf-detail-header">
                 <div class="header-titles">
                     <p class="kind-eyebrow @(isPositive ? "is-positive" : "is-negative")">@headerEyebrow</p>
-                    <h2 class="kind-title @aspectTypeClass">@a.AspectType</h2>
+                    <h2 class="kind-title kind-title-with-icon @aspectTypeClass">
+                        <PerfectionIcon AspectType="@a.AspectType" Large="true" />
+                        <span>@a.AspectType</span>
+                    </h2>
                 </div>
                 <div class="header-score-pill @(isPositive ? "score-positive" : "score-negative")">
                     @FormatScore(totalScore)

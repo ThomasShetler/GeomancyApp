@@ -1,0 +1,148 @@
+@using GeomancyWebUI.Client.Helpers
+
+<li class="compact-perf-row @RowClass @(IsSelected ? "is-selected" : "")"
+    @onclick="OnClick">
+    <div class="compact-perf-row-main">
+        @if (ShowIcon)
+        {
+            <PerfectionIcon Mode="@Mode"
+                            AspectType="@AspectType"
+                            CompanyType="@CompanyType"
+                            Title="@IconTitle" />
+        }
+
+        @if (!string.IsNullOrEmpty(PrimaryLabel))
+        {
+            <span class="compact-primary">@PrimaryLabel</span>
+        }
+
+        @if (FromHouse > 0 && ToHouse > 0)
+        {
+            <span class="compact-sep" aria-hidden="true">·</span>
+            <span class="compact-house-flow">
+                <span class="flow-house-num">@HouseLabel(FromHouse)</span>
+                <span class="flow-arrow @DirectionVis.CssClass"
+                      title="@DirectionVis.Hint">@FlowGlyph</span>
+                <span class="flow-house-num">@HouseLabel(ToHouse)</span>
+                @if (!string.IsNullOrEmpty(FromFigure) || !string.IsNullOrEmpty(ToFigure))
+                {
+                    <span class="flow-figures">
+                        @if (!string.IsNullOrEmpty(FromFigure)) { <span>@FromFigure</span> }
+                        @if (!string.IsNullOrEmpty(FromFigure) && !string.IsNullOrEmpty(ToFigure))
+                        {
+                            <span class="flow-fig-sep">·</span>
+                        }
+                        @if (!string.IsNullOrEmpty(ToFigure)) { <span>@ToFigure</span> }
+                    </span>
+                }
+            </span>
+        }
+
+        @if (ShowRank)
+        {
+            <span class="compact-sep" aria-hidden="true">·</span>
+            <span class="aspect-rank-dot @(IsMajorAspect ? "is-major" : "is-minor")"
+                  title="@(IsMajorAspect ? "Major aspect" : "Minor aspect")"></span>
+        }
+    </div>
+
+    <span class="compact-score @ScoreClassValue">@ScoreText</span>
+</li>
+
+@code {
+    [Parameter] public bool IsSelected { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    [Parameter] public string RowVariant { get; set; } = "perfection";
+
+    [Parameter] public string? Mode { get; set; }
+    [Parameter] public string? BaseMode { get; set; }
+    [Parameter] public string? AspectType { get; set; }
+    [Parameter] public string? AspectDirection { get; set; }
+    [Parameter] public string? CompanyType { get; set; }
+
+    [Parameter] public int FromHouse { get; set; }
+    [Parameter] public int ToHouse { get; set; }
+    [Parameter] public string? FromFigure { get; set; }
+    [Parameter] public string? ToFigure { get; set; }
+
+    [Parameter] public bool IsMajorAspect { get; set; }
+    [Parameter] public int Score { get; set; }
+    [Parameter] public string? PrimaryLabelOverride { get; set; }
+
+    private bool ShowIcon => true;
+
+    private bool ShowRank => RowVariant is "aspect-positive" or "aspect-negative";
+
+    private string RowClass => RowVariant switch
+    {
+        "denial" => "is-denial",
+        "aspect-positive" => "is-aspect is-positive",
+        "aspect-negative" => "is-aspect is-negative",
+        _ => "is-perfection"
+    };
+
+    private AspectDirectionHelper.DirectionVis DirectionVis =>
+        AspectDirectionHelper.Resolve(AspectDirection, AspectType);
+
+    private string FlowGlyph
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(AspectType) && AspectType != "None")
+                return DirectionVis.Glyph;
+            return "→";
+        }
+    }
+
+    private string PrimaryLabel => PrimaryLabelOverride ?? BuildPrimaryLabel();
+
+    private string IconTitle => PrimaryLabel;
+
+    private string ScoreText => Score > 0 ? $"+{Score}" : Score.ToString();
+
+    private string ScoreClassValue => Score > 0
+        ? "score-positive"
+        : Score < 0 ? "score-negative" : "score-neutral";
+
+    private static string HouseLabel(int house) => house > 0 ? $"H{house}" : "—";
+
+    private string BuildPrimaryLabel()
+    {
+        if (RowVariant == "aspect-positive" || RowVariant == "aspect-negative")
+        {
+            return AspectDirectionHelper.AspectTypeAbbrev(AspectType);
+        }
+
+        if (RowVariant == "denial")
+        {
+            if (Mode == "None" || Mode == "Impedition")
+                return Mode == "Impedition" ? "Impedition" : "No perfection";
+        }
+
+        if (Mode == "Company")
+        {
+            var company = GetCompanyShort(CompanyType);
+            var label = !string.IsNullOrEmpty(company) ? company : "Company";
+            if (!string.IsNullOrEmpty(BaseMode) && BaseMode != "Company")
+                label += $" · {BaseMode}";
+            if (!string.IsNullOrEmpty(AspectType) && AspectType != "None")
+                label += $" · {AspectDirectionHelper.AspectTypeAbbrev(AspectType)}";
+            return label;
+        }
+
+        if (Mode == "Aspect" && !string.IsNullOrEmpty(AspectType) && AspectType != "None")
+            return AspectDirectionHelper.AspectTypeAbbrev(AspectType);
+
+        return string.IsNullOrEmpty(Mode) ? "Perfection" : Mode;
+    }
+
+    private static string GetCompanyShort(string? companyType) => companyType switch
+    {
+        "Simple" => "Co. Simple",
+        "DemiSimple" => "Co. Demi",
+        "Compound" => "Co. Compound",
+        "Capitular" => "Co. Cap.",
+        _ => string.Empty
+    };
+}

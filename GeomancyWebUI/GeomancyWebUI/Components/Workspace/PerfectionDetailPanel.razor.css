@@ -73,6 +73,17 @@
     letter-spacing: -0.01em;
 }
 
+.kind-title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.kind-title-with-icon ::deep .perf-icon-lg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
 .header-score-pill {
     flex-shrink: 0;
     align-self: center;

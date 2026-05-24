@@ -699,6 +699,13 @@
     max-height: none;
 }
 
+/* Compact perfection rows: hide figure names first on narrow screens */
+@media (max-width: 480px) {
+    .mobile-panel-body ::deep .flow-figures {
+        display: none;
+    }
+}
+
 /* ============================================================
  * Triplicates (mobile)
  * ============================================================ */
