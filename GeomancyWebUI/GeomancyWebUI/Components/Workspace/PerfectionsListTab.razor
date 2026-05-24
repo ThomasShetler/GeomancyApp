@@ -55,7 +55,6 @@
             ? "Favorable"
             : Analysis.NetScore < 0 ? "Unfavorable" : "Neutral";
 
-        var aspectCount = CountByMode(IsAspectPerfection);
         var classicalCount = CountByMode(IsClassicalPerfection);
         var companyCount = CountByMode(IsCompanyPerfection);
 
@@ -106,42 +105,6 @@
                 }
                 else
                 {
-                    <div class="perf-subgroup">
-                        <h4 class="perf-subgroup-title">
-                            By Aspect
-                            <span class="perf-subgroup-count">@aspectCount</span>
-                        </h4>
-                        @if (aspectCount == 0)
-                        {
-                            <p class="perf-subgroup-empty">None.</p>
-                        }
-                        else
-                        {
-                            <ul class="perf-rows">
-                                @for (var i = 0; i < Analysis.Perfections.Count; i++)
-                                {
-                                    var p = Analysis.Perfections[i];
-                                    if (!IsAspectPerfection(p)) continue;
-                                    var idx = i;
-                                    var sel = new PerfectionSelection(PerfectionEntryKind.Perfection, idx, p, null);
-                                    <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
-                                                              RowVariant="perfection"
-                                                              Mode="@p.Mode"
-                                                              BaseMode="@p.BaseMode"
-                                                              AspectType="@p.AspectBetweenSignificators"
-                                                              AspectDirection="@p.AspectDirection"
-                                                              CompanyType="@p.CompanyType"
-                                                              FromHouse="@p.QuerentHouse"
-                                                              ToHouse="@p.QuesitedHouse"
-                                                              FromFigure="@p.QuerentFigure"
-                                                              ToFigure="@p.QuesitedFigure"
-                                                              Score="@(p.FavorableScore + p.UnfavorableScore)"
-                                                              OnClick="@(() => RaiseSelect(sel))" />
-                                }
-                            </ul>
-                        }
-                    </div>
-
                     <div class="perf-subgroup">
                         <h4 class="perf-subgroup-title">
                             Classical Modes
@@ -352,9 +315,6 @@
 
     private int CountByMode(Func<PerfectionModel, bool> predicate) =>
         Analysis?.Perfections.Count(predicate) ?? 0;
-
-    private static bool IsAspectPerfection(PerfectionModel p) =>
-        string.Equals(p.Mode, "Aspect", StringComparison.OrdinalIgnoreCase);
 
     private static bool IsClassicalPerfection(PerfectionModel p) =>
         p.Mode is "Occupation" or "Conjunction" or "Translation" or "Mutation";
