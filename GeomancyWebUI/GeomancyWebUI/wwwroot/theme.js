@@ -51,4 +51,18 @@
         return window.matchMedia &&
             window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     };
+
+    window.geofancyCasterPointerPercent = function (element, clientX, clientY) {
+        if (!element || !element.getBoundingClientRect) {
+            return { x: 50, y: 50 };
+        }
+        var r = element.getBoundingClientRect();
+        if (!r.width || !r.height) {
+            return { x: 50, y: 50 };
+        }
+        return {
+            x: Math.max(4, Math.min(96, ((clientX - r.left) / r.width) * 100)),
+            y: Math.max(4, Math.min(96, ((clientY - r.top) / r.height) * 100))
+        };
+    };
 })();

@@ -25,7 +25,9 @@
             <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                              @ref="_activeCaster"
                              MotherLabel="@current.Label"
+                             Compact="true"
                              AutoReset="false"
+                             ShowInstruction="false"
                              ShowMarkAgainButton="false"
                              OnFigureCompleted="OnMotherFigureCompleted" />
         }

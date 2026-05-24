@@ -1,16 +1,19 @@
 namespace GeomancyWebUI.Client.Helpers
 {
     /// <summary>
-    /// Classical geomantic dot-marking: pair dots two at a time from the top of each row/column
-    /// until 0, 1, or 2 remain. Odd remainder → single/active line (1); even → double/passive (2).
+    /// Classical geomantic dot-marking (stick-and-surface): four horizontal rows of dots;
+    /// pair two at a time left-to-right in each row until 0, 1, or 2 remain.
+    /// Odd remainder → single/active line (1); even → double/passive (2).
     /// </summary>
     public static class FigureMarking
     {
-        public const int MinDotsPerColumn = 3;
-        public const int MaxDotsPerColumn = 16;
+        public const int MinDotsPerRow = 3;
+
+        /// <summary>Alias for <see cref="MinDotsPerRow"/>.</summary>
+        public const int MinDotsPerColumn = MinDotsPerRow;
 
         /// <summary>
-        /// Resolves a geomantic line value (1 or 2) from the number of dots marked in one row/column.
+        /// Resolves a geomantic line value (1 or 2) from the number of dots marked in one horizontal row.
         /// </summary>
         public static int ResolveLineFromDotCount(int dotCount)
         {
@@ -29,8 +32,9 @@ namespace GeomancyWebUI.Client.Helpers
         }
 
         /// <summary>
-        /// Returns ordered index pairs (top-down) for pairing animation within one column.
-        /// Indices are 0-based from the top of the stack.
+        /// Returns ordered index pairs (left-to-right) for pairing animation within one row.
+        /// Pairs are drawn until only one or two marks remain (classical stick-and-surface rule).
+        /// Indices are 0-based from the left end of the row.
         /// </summary>
         public static IReadOnlyList<(int a, int b)> GetPairingSteps(int dotCount)
         {
@@ -41,58 +45,64 @@ namespace GeomancyWebUI.Client.Helpers
 
             var steps = new List<(int, int)>();
             var paired = new bool[dotCount];
-            var pairedCount = 0;
 
-            while (pairedCount < dotCount)
+            while (true)
             {
-                var first = -1;
+                var unpaired = new List<int>();
                 for (var i = 0; i < dotCount; i++)
                 {
                     if (!paired[i])
                     {
-                        first = i;
-                        break;
+                        unpaired.Add(i);
                     }
                 }
 
-                if (first < 0)
+                if (unpaired.Count <= 2)
                 {
                     break;
                 }
 
-                var second = -1;
-                for (var i = first + 1; i < dotCount; i++)
-                {
-                    if (!paired[i])
-                    {
-                        second = i;
-                        break;
-                    }
-                }
-
-                if (second < 0)
-                {
-                    break;
-                }
-
-                steps.Add((first, second));
-                paired[first] = true;
-                paired[second] = true;
-                pairedCount += 2;
+                steps.Add((unpaired[0], unpaired[1]));
+                paired[unpaired[0]] = true;
+                paired[unpaired[1]] = true;
             }
 
             return steps;
         }
 
-        public static bool AllColumnsReady(IReadOnlyList<int> columnDotCounts, int minDots = MinDotsPerColumn)
+        /// <summary>
+        /// Pairing steps using mark indices sorted left-to-right by canvas X position.
+        /// </summary>
+        public static IReadOnlyList<(int a, int b)> GetPairingStepsByHorizontalOrder(
+            IReadOnlyList<double> xPercents)
         {
-            if (columnDotCounts == null || columnDotCounts.Count != 4)
+            if (xPercents == null || xPercents.Count == 0)
+            {
+                return Array.Empty<(int, int)>();
+            }
+
+            var order = Enumerable.Range(0, xPercents.Count)
+                .OrderBy(i => xPercents[i])
+                .ThenBy(i => i)
+                .ToArray();
+
+            var steps = GetPairingSteps(xPercents.Count);
+            return steps.Select(p => (order[p.a], order[p.b])).ToList();
+        }
+
+        public static bool AllRowsReady(IReadOnlyList<int> rowDotCounts, int minDots = MinDotsPerRow)
+        {
+            if (rowDotCounts == null || rowDotCounts.Count != 4)
             {
                 return false;
             }
 
-            return columnDotCounts.All(c => c >= minDots);
+            return rowDotCounts.All(c => c >= minDots);
         }
+
+        /// <summary>Alias for <see cref="AllRowsReady"/>.</summary>
+        public static bool AllColumnsReady(IReadOnlyList<int> columnDotCounts, int minDots = MinDotsPerRow)
+            => AllRowsReady(columnDotCounts, minDots);
     }
 
 }

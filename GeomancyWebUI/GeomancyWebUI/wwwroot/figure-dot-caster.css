@@ -1,8 +1,8 @@
-/* Interactive dot-marking figure caster (wiki + walkthrough) */
+/* Interactive dot-marking — canvas rows + figure build panel */
 
 .figure-dot-caster {
-    --dot-size: 2.75rem;
-    --dot-gap: 0.5rem;
+    --canvas-height: 3.75rem;
+    --row-label-width: 4.5rem;
     padding: 1rem;
     background: var(--bg-secondary, #f5f5f5);
     border: 1px solid var(--border-color, #ddd);
@@ -11,19 +11,28 @@
 
 .figure-dot-caster.is-compact {
     padding: 0.75rem;
-    --dot-size: 2.25rem;
+    --canvas-height: 3.25rem;
+    --row-label-width: 3.75rem;
 }
 
 .figure-dot-caster-label {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.35rem;
     font-weight: 600;
     font-size: 1rem;
     color: var(--text-primary);
 }
 
+.figure-dot-caster-instruction {
+    margin: 0 0 0.85rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+}
+
 .figure-dot-caster-body {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 1.25rem;
 }
 
@@ -34,144 +43,293 @@
         gap: 1.5rem;
     }
 
-    .figure-dot-caster-columns {
+    .figure-dot-caster-rows {
         flex: 1 1 auto;
+        min-width: 0;
     }
 
     .figure-dot-caster-result {
         flex: 0 0 auto;
-        min-width: 7rem;
+        min-width: 8rem;
     }
 }
 
-.figure-dot-caster-columns {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-}
-
-@media (max-width: 480px) {
-    .figure-dot-caster-columns {
-        gap: 0.35rem;
-    }
-
-    .figure-dot-caster.is-compact .figure-dot-caster-columns {
-        grid-template-columns: repeat(2, 1fr);
+@media (min-width: 1024px) {
+    .figure-dot-caster-result {
+        min-width: 9.5rem;
+        position: sticky;
+        top: 0.75rem;
     }
 }
 
-.figure-dot-column {
+.figure-dot-caster-rows {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-width: 0;
-}
-
-.figure-dot-column.is-pairing-active .figure-dot-stack {
-    outline: 2px solid var(--accent-color, #c9a227);
-    outline-offset: 2px;
+    gap: 0;
+    border: 1px solid var(--border-color, #ccc);
     border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-primary, #fff);
 }
 
-.figure-dot-column-header {
-    text-align: center;
-    margin-bottom: 0.35rem;
+.figure-dot-row {
+    display: grid;
+    grid-template-columns: var(--row-label-width) 1fr;
+    gap: 0.5rem;
+    align-items: stretch;
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.figure-dot-row:last-child {
+    border-bottom: none;
+}
+
+.figure-dot-row.is-pairing-active .figure-dot-canvas {
+    outline: 2px solid var(--accent-color, #c9a227);
+    outline-offset: 1px;
+}
+
+.figure-dot-row-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     line-height: 1.2;
 }
 
-.figure-dot-column-name {
-    display: block;
-    font-size: 0.75rem;
+.figure-dot-row-name {
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-primary);
 }
 
-.figure-dot-column-element {
-    display: block;
+.figure-dot-row-element {
     font-size: 0.65rem;
     color: var(--text-muted, #666);
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
-.figure-dot-column-count {
+.figure-dot-row-count {
     display: inline-block;
     margin-top: 0.2rem;
     padding: 0.1rem 0.35rem;
     font-size: 0.6rem;
     font-weight: 600;
     border-radius: 4px;
-    background: var(--bg-primary, #fff);
+    background: var(--bg-secondary, #f5f5f5);
     color: var(--text-muted, #666);
     border: 1px solid var(--border-color, #ddd);
+    width: fit-content;
 }
 
-.figure-dot-column-count.is-progress {
+.figure-dot-row-count.is-progress {
     color: var(--text-primary);
 }
 
-.figure-dot-column-count.is-ready {
+.figure-dot-row-count.is-ready {
     color: var(--accent-text, #1a1a1a);
     background: var(--accent-color, #c9a227);
     border-color: var(--accent-color, #c9a227);
 }
 
-.figure-dot-stack {
+.figure-dot-row-track-wrap {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    min-height: calc(var(--dot-size) * 2 + var(--dot-gap));
-    width: 100%;
-    max-width: 5rem;
-    padding: 0.35rem;
-    gap: var(--dot-gap);
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.15s ease;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.figure-dot-canvas {
+    position: relative;
+    flex: 1 1 auto;
+    height: var(--canvas-height);
+    min-height: var(--canvas-height);
+    border-radius: 6px;
+    border: 1px dashed var(--border-color, #bbb);
+    background: var(--bg-secondary, #2a2a2a);
+    cursor: crosshair;
+    touch-action: none;
+    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
 }
 
-.figure-dot-stack:hover:not(:has(.figure-dot)) {
-    background: var(--bg-hover, rgba(0, 0, 0, 0.04));
+[data-theme="light"] .figure-dot-canvas,
+.figure-dot-canvas {
+    background: color-mix(in srgb, var(--bg-secondary, #e8e8e8) 85%, var(--bg-primary, #fff));
 }
 
-.figure-dot-caster.is-locked .figure-dot-stack {
+[data-theme="dark"] .figure-dot-canvas {
+    background: color-mix(in srgb, var(--bg-primary, #1e1e1e) 90%, #000);
+}
+
+.figure-dot-canvas.is-locked {
     cursor: default;
     pointer-events: none;
 }
 
+.figure-dot-canvas-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.figure-dot-pair-line {
+    stroke: #e85d5d;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.figure-dot-pair-line.is-drawing {
+    opacity: 1;
+    animation: pair-line-draw 0.35s ease-out forwards;
+}
+
+.figure-dot-pair-line.is-settled {
+    opacity: 0.85;
+}
+
+@keyframes pair-line-draw {
+    from {
+        stroke-dashoffset: 100;
+        stroke-dasharray: 100;
+        opacity: 0.3;
+    }
+    to {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 100;
+        opacity: 1;
+    }
+}
+
+.canvas-mark {
+    position: absolute;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #4a8fd4;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.canvas-mark.is-paired {
+    color: #6a8aaa;
+    opacity: 0.45;
+}
+
+.canvas-mark.is-paired-animate {
+    animation: mark-pair-flash 0.4s ease-out;
+}
+
+@keyframes mark-pair-flash {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0.45;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
 .figure-dot-placeholder {
-    font-size: 0.65rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
     color: var(--text-muted, #888);
-    text-align: center;
-    padding: 0.5rem 0.25rem;
-    line-height: 1.3;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
 }
 
-.figure-dot {
-    position: relative;
-    width: var(--dot-size);
-    height: var(--dot-size);
+.figure-dot-row-undo {
+    flex: 0 0 auto;
+    min-height: 36px;
     min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--border-color, #ccc);
+    background: var(--bg-secondary, #f5f5f5);
+    color: var(--text-muted);
     cursor: pointer;
-    flex-shrink: 0;
 }
 
-.figure-dot-mark {
-    width: 0.65rem;
-    height: 0.65rem;
-    border-radius: 50%;
-    background: var(--text-primary, #1a1a1a);
-    box-shadow: 0 0 0 2px var(--bg-secondary, #f5f5f5);
+.figure-dot-caster-result {
+    text-align: center;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 8px;
+    background: var(--bg-primary, #fff);
+    min-width: 7rem;
 }
 
-[data-theme="dark"] .figure-dot-mark {
-    box-shadow: 0 0 0 2px var(--bg-secondary, #2a2a2a);
+.figure-dot-caster-result-caption {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.figure-dot-caster-figure-build {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    min-height: 5.5rem;
+    justify-content: center;
+}
+
+.figure-build-line {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    opacity: 0.35;
+    min-height: 1.35rem;
+    transition: opacity 0.35s ease, color 0.35s ease, transform 0.35s ease;
+}
+
+.figure-build-line.is-revealed {
+    opacity: 1;
+    color: var(--accent-color, #c9a227);
+    animation: figure-line-pop 0.35s ease-out;
+}
+
+@keyframes figure-line-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.figure-dot-caster-result-name {
+    margin: 0.65rem 0 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    animation: figure-line-pop 0.35s ease-out;
+}
+
+.figure-dot-caster-result-sub {
+    margin: 0.2rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 .figure-dot-caster-status {
@@ -184,87 +342,6 @@
 
 .figure-dot-caster-status:empty {
     display: none;
-}
-
-.figure-dot-caster.is-complete .figure-dot-stack {
-    pointer-events: none;
-}
-
-.figure-dot-strike {
-    position: absolute;
-    inset: 15%;
-    pointer-events: none;
-}
-
-.figure-dot-strike::before,
-.figure-dot-strike::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 85%;
-    height: 2px;
-    background: var(--accent-color, #c44);
-    transform-origin: center;
-    opacity: 0;
-}
-
-.figure-dot.is-paired .figure-dot-mark {
-    opacity: 0.35;
-}
-
-.figure-dot.is-paired-animate .figure-dot-strike::before {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(45deg);
-    animation: figure-dot-strike-in 0.25s ease-out forwards;
-}
-
-.figure-dot.is-paired-animate .figure-dot-strike::after {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    animation: figure-dot-strike-in 0.25s ease-out forwards;
-}
-
-@keyframes figure-dot-strike-in {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -50%) scaleX(0.2) rotate(45deg);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%) scaleX(1) rotate(45deg);
-    }
-}
-
-.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::before,
-.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::after {
-    opacity: 1;
-}
-
-.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.figure-dot-column-result {
-    margin-top: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    color: var(--accent-color, #c9a227);
-}
-
-.figure-dot-caster-result {
-    text-align: center;
-}
-
-.figure-dot-caster-result-sub {
-    margin: 0.35rem 0 0;
-    font-size: 0.85rem;
-    color: var(--text-muted);
 }
 
 .figure-dot-caster-actions {
@@ -330,10 +407,62 @@
     font-weight: 500;
 }
 
+.figure-dot-caster.is-pairing .figure-dot-row-undo {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    .figure-dot-caster {
+        --row-label-width: 3.75rem;
+        --canvas-height: 3.25rem;
+        padding: 0.75rem;
+    }
+
+    .figure-dot-row {
+        padding: 0.45rem;
+        gap: 0.4rem;
+    }
+
+    .canvas-mark {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .figure-dot-row {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .figure-dot-row-label {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+    }
+
+    .figure-dot-row-count {
+        margin-top: 0;
+    }
+
+    .figure-dot-row-track-wrap {
+        width: 100%;
+    }
+
+    .figure-dot-row-undo {
+        min-width: 56px;
+    }
+
+    .figure-dot-caster-result {
+        width: 100%;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .figure-dot.is-paired-animate .figure-dot-strike::before,
-    .figure-dot.is-paired-animate .figure-dot-strike::after {
+    .figure-dot-pair-line.is-drawing,
+    .canvas-mark.is-paired-animate,
+    .figure-build-line.is-revealed,
+    .figure-dot-caster-result-name {
         animation: none;
-        opacity: 1;
     }
 }
