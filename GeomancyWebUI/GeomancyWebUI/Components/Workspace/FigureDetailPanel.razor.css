@@ -829,20 +829,32 @@
 }
 
 /* ============================================================
- * Reference
+ * Reference (house / court directory stacks)
  * ============================================================ */
-.reference-card {
+.reference-section {
     border-left: 3px solid var(--accent-color);
 }
 
-.reference-block + .reference-block {
-    padding-top: 0.55rem;
-    border-top: 1px dashed var(--border-color);
+.reference-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.reference-subcard {
+    scroll-margin-top: 0;
+    margin: 0;
+}
+
+.reference-subcard.reference-card {
+    border-left: 3px solid var(--accent-color);
 }
 
 .reference-section-eyebrow {
-    margin: 0 0 0.2rem;
-    font-size: 0.68rem;
+    margin: 0 0 0.15rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px dashed var(--border-color);
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -851,15 +863,55 @@
 
 .reference-title-line {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.02rem;
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .reference-subtitle {
-    margin: 0.1rem 0 0.35rem;
-    font-size: 0.84rem;
+    margin: 0.15rem 0 0;
+    font-size: 0.85rem;
     color: var(--text-secondary);
+}
+
+.reading-craft-card {
+    gap: 0.85rem;
+}
+
+.craft-subsection + .craft-subsection {
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.craft-subheading {
+    margin: 0 0 0.4rem 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+.bullet-warning {
+    color: var(--text-primary);
+}
+
+.bullet-warning li::marker {
+    color: #ef5350;
+}
+
+.example-questions-card .bullet-list {
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.governs-card .two-col-bullets {
+    column-gap: 1.25rem;
+}
+
+/* Legacy reference helpers (callouts elsewhere) */
+.reference-card {
+    border-left: 3px solid var(--accent-color);
 }
 
 /* ============================================================

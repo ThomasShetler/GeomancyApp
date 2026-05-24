@@ -1,4 +1,4 @@
-@using System.Linq
+﻿@using System.Linq
 @using GeomancyWebUI.Client.Models
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
@@ -20,10 +20,12 @@
         var houseEntry = ResolveHouseEntry();
         var courtEntry = ResolveCourtEntry();
         var showInterpretation = HasInterpretationContent(fig);
-        var showReference = houseEntry != null || courtEntry != null;
+        var showHouse = houseEntry != null;
+        var showCourt = courtEntry != null;
         var showSources = fig.TraditionalSources?.Any() == true;
         var openInterpretation = IsInterpretationOpenByDefault(inSlot);
-        var openReference = IsReferenceOpenByDefault(houseEntry, courtEntry);
+        var openHouse = IsHouseOpenByDefault(houseEntry);
+        var openCourt = IsCourtOpenByDefault(courtEntry);
         var openCorrespondences = IsCorrespondencesOpenByDefault(inSlot);
         var hasContext = HasContextContent(fig, inSlot);
         var qualityChipClass = GetQualityChipClass(fig.Quality);
@@ -86,9 +88,13 @@
                     <button type="button" class="jump-chip @JumpClass("section-interpretation")" aria-current="@JumpAria("section-interpretation")" @onclick='() => ScrollToSection("section-interpretation")'>Interpretation</button>
                 }
                 <button type="button" class="jump-chip jump-chip-short @JumpClass("section-correspondences")" aria-current="@JumpAria("section-correspondences")" @onclick='() => ScrollToSection("section-correspondences")'>Elements</button>
-                @if (showReference)
+                @if (showHouse)
                 {
-                    <button type="button" class="jump-chip @JumpClass("section-reference")" aria-current="@JumpAria("section-reference")" @onclick='() => ScrollToSection("section-reference")'>Reference</button>
+                    <button type="button" class="jump-chip @JumpClass("section-house")" aria-current="@JumpAria("section-house")" @onclick='() => ScrollToSection("section-house")'>House</button>
+                }
+                @if (showCourt)
+                {
+                    <button type="button" class="jump-chip @JumpClass("section-court")" aria-current="@JumpAria("section-court")" @onclick='() => ScrollToSection("section-court")'>Court</button>
                 }
                 @if (showSources)
                 {
@@ -386,91 +392,188 @@
             </details>
         </section>
 
-        @if (showReference)
+
+        @if (showHouse)
         {
-            <section id="section-reference" class="detail-card reference-card">
-                <details open="@openReference">
-                    <summary class="details-summary">Slot Reference</summary>
-                    <div class="details-body">
-                        @if (houseEntry != null)
+            <section id="section-house" class="detail-card reference-section">
+                <details open="@openHouse">
+                    <summary class="details-summary">House · @houseEntry!.House</summary>
+                    <div class="details-body reference-stack">
+                        <p class="reference-section-eyebrow">House Reference · @houseEntry.House</p>
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName)
+                             || !string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
                         {
-                            <div class="reference-block">
-                                <p class="reference-section-eyebrow">House Reference</p>
-                                <h4 class="reference-title-line">@houseEntry.House House</h4>
+                            <div class="reference-subcard detail-card reference-card house-identity-card">
+                                <h3 class="card-title">House Identity</h3>
                                 @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName))
                                 {
-                                    <p class="reference-subtitle">@houseEntry.TraditionalName</p>
+                                    <p class="reference-title-line">@houseEntry.TraditionalName</p>
                                 }
-                                @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
+                                @if (!string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
                                 {
-                                    <p class="prose-text">@houseEntry.InterpretiveEssence</p>
-                                }
-                                @if (houseEntry.Governs?.Any() == true)
-                                {
-                                    <ul class="bullet-list compact two-col-bullets">
-                                        @foreach (var g in houseEntry.Governs) { <li>@g</li> }
-                                    </ul>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(houseEntry.SignificatorOfQuesitedWhen))
-                                {
-                                    <p class="prose-text"><strong>Quesited when:</strong> @houseEntry.SignificatorOfQuesitedWhen</p>
-                                }
-                                @if (houseEntry.ExampleQuestions?.Any() == true)
-                                {
-                                    <h4 class="prose-heading">Example Questions</h4>
-                                    <ul class="bullet-list compact">
-                                        @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
-                                    </ul>
+                                    <p class="prose-text reference-subtitle">@houseEntry.AstrologicalCorrespondence</p>
                                 }
                             </div>
                         }
-                        @if (courtEntry != null)
+
+                        @if (houseEntry.Governs?.Any() == true)
                         {
-                            <div class="reference-block">
-                                <p class="reference-section-eyebrow">Court Reference</p>
-                                <h4 class="reference-title-line">@courtEntry.Placement</h4>
-                                @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName))
+                            <div class="reference-subcard detail-card governs-card">
+                                <h3 class="card-title">What it Governs</h3>
+                                <ul class="bullet-list two-col-bullets">
+                                    @foreach (var g in houseEntry.Governs) { <li>@g</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.SignificatorOfQuesitedWhen))
+                        {
+                            <div class="reference-subcard detail-card prose-card significator-card">
+                                <h3 class="card-title">When This House Is the Quesited</h3>
+                                <p class="prose-text">@houseEntry.SignificatorOfQuesitedWhen</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
+                        {
+                            <div class="reference-subcard detail-card prose-card essence-card">
+                                <h3 class="card-title">Interpretive Essence</h3>
+                                <p class="prose-text">@houseEntry.InterpretiveEssence</p>
+                            </div>
+                        }
+
+                        @if (HasReadingCraftContent(houseEntry))
+                        {
+                            <div class="reference-subcard detail-card reading-craft-card">
+                                <h3 class="card-title">Reading Craft</h3>
+                                @if (houseEntry.KeySignificators?.Any() == true)
                                 {
-                                    <p class="reference-subtitle">@courtEntry.TraditionalName</p>
-                                }
-                                @if (courtEntry.Meaning?.Any() == true)
-                                {
-                                    <ul class="bullet-list compact">
-                                        @foreach (var m in courtEntry.Meaning) { <li>@m</li> }
-                                    </ul>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(courtEntry.UtilityInReading))
-                                {
-                                    <p class="prose-text"><strong>Utility:</strong> @courtEntry.UtilityInReading</p>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(courtEntry.Essence))
-                                {
-                                    <div class="reference-callout">
-                                        <h4 class="prose-heading">Essence</h4>
-                                        <p class="prose-text">@courtEntry.Essence</p>
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Key Significators</h4>
+                                        <div class="pill-row">
+                                            @foreach (var ks in houseEntry.KeySignificators) { <span class="meaning-pill">@ks</span> }
+                                        </div>
                                     </div>
                                 }
-                                @if (courtEntry.ReadWhen?.Any() == true)
+                                @if (houseEntry.CommonMisreadings?.Any() == true)
                                 {
-                                    <h4 class="prose-heading">Read When</h4>
-                                    <ul class="bullet-list compact">
-                                        @foreach (var rw in courtEntry.ReadWhen) { <li>@rw</li> }
-                                    </ul>
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Common Misreadings</h4>
+                                        <ul class="bullet-list compact bullet-warning">
+                                            @foreach (var m in houseEntry.CommonMisreadings) { <li>@m</li> }
+                                        </ul>
+                                    </div>
                                 }
-                                @if (courtEntry.Pitfalls?.Any() == true)
+                                @if (!string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch))
                                 {
-                                    <h4 class="prose-heading">Pitfalls</h4>
-                                    <ul class="bullet-list compact bullet-unfavorable">
-                                        @foreach (var p in courtEntry.Pitfalls) { <li>@p</li> }
-                                    </ul>
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Figure Combinations to Watch</h4>
+                                        <p class="prose-text">@houseEntry.FigureCombinationsToWatch</p>
+                                    </div>
                                 }
-                                @if (courtEntry.Examples?.Any() == true)
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.Notes))
+                        {
+                            <div class="reference-subcard detail-card prose-card notes-card">
+                                <h3 class="card-title">Notes</h3>
+                                <p class="prose-text">@houseEntry.Notes</p>
+                            </div>
+                        }
+
+                        @if (houseEntry.ExampleQuestions?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card example-questions-card">
+                                <h3 class="card-title">Example Questions</h3>
+                                <ul class="bullet-list">
+                                    @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </details>
+            </section>
+        }
+
+        @if (showCourt)
+        {
+            <section id="section-court" class="detail-card reference-section">
+                <details open="@openCourt">
+                    <summary class="details-summary">Court · @courtEntry!.Placement</summary>
+                    <div class="details-body reference-stack">
+                        <p class="reference-section-eyebrow">Court Reference · @courtEntry.Placement</p>
+
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName)
+                             || !string.IsNullOrWhiteSpace(courtEntry.GeneratedBy))
+                        {
+                            <div class="reference-subcard detail-card reference-card court-identity-card">
+                                <h3 class="card-title">Court Identity</h3>
+                                @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName))
                                 {
-                                    <h4 class="prose-heading">Examples</h4>
-                                    <ul class="bullet-list compact callout-list">
-                                        @foreach (var e in courtEntry.Examples) { <li>@e</li> }
-                                    </ul>
+                                    <p class="reference-title-line">@courtEntry.TraditionalName</p>
                                 }
+                                @if (!string.IsNullOrWhiteSpace(courtEntry.GeneratedBy))
+                                {
+                                    <p class="prose-text reference-subtitle">Generated by: @courtEntry.GeneratedBy</p>
+                                }
+                            </div>
+                        }
+
+                        @if (courtEntry.Meaning?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card meaning-card">
+                                <h3 class="card-title">Meaning</h3>
+                                <ul class="bullet-list">
+                                    @foreach (var m in courtEntry.Meaning) { <li>@m</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.UtilityInReading))
+                        {
+                            <div class="reference-subcard detail-card prose-card utility-card">
+                                <h3 class="card-title">Utility in Reading</h3>
+                                <p class="prose-text">@courtEntry.UtilityInReading</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.Essence))
+                        {
+                            <div class="reference-subcard detail-card prose-card essence-card">
+                                <h3 class="card-title">Essence</h3>
+                                <p class="prose-text">@courtEntry.Essence</p>
+                            </div>
+                        }
+
+                        @if (courtEntry.ReadWhen?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card read-when-card">
+                                <h3 class="card-title">Read When</h3>
+                                <ul class="bullet-list compact">
+                                    @foreach (var rw in courtEntry.ReadWhen) { <li>@rw</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (courtEntry.Pitfalls?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card pitfalls-card">
+                                <h3 class="card-title">Pitfalls</h3>
+                                <ul class="bullet-list compact bullet-warning">
+                                    @foreach (var p in courtEntry.Pitfalls) { <li>@p</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (courtEntry.Examples?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card examples-card">
+                                <h3 class="card-title">Examples</h3>
+                                <ul class="bullet-list compact">
+                                    @foreach (var e in courtEntry.Examples) { <li>@e</li> }
+                                </ul>
                             </div>
                         }
                     </div>
@@ -588,10 +691,16 @@
     private static bool IsInterpretationOpenByDefault(InSlotInfo? inSlot) =>
         inSlot == null;
 
-    private static bool IsReferenceOpenByDefault(
-        HouseDirectoryEntry? houseEntry,
-        CourtDirectoryEntry? courtEntry) =>
-        houseEntry != null || courtEntry != null;
+    private static bool IsHouseOpenByDefault(HouseDirectoryEntry? houseEntry) =>
+        houseEntry != null;
+
+    private static bool IsCourtOpenByDefault(CourtDirectoryEntry? courtEntry) =>
+        courtEntry != null;
+
+    private static bool HasReadingCraftContent(HouseDirectoryEntry houseEntry) =>
+        houseEntry.KeySignificators?.Any() == true
+        || houseEntry.CommonMisreadings?.Any() == true
+        || !string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch);
 
     private static bool IsCorrespondencesOpenByDefault(InSlotInfo? inSlot) =>
         inSlot == null;
