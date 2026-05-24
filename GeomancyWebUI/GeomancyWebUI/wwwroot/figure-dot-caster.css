@@ -1,0 +1,339 @@
+/* Interactive dot-marking figure caster (wiki + walkthrough) */
+
+.figure-dot-caster {
+    --dot-size: 2.75rem;
+    --dot-gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-secondary, #f5f5f5);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 12px;
+}
+
+.figure-dot-caster.is-compact {
+    padding: 0.75rem;
+    --dot-size: 2.25rem;
+}
+
+.figure-dot-caster-label {
+    margin: 0 0 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.figure-dot-caster-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .figure-dot-caster-body {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .figure-dot-caster-columns {
+        flex: 1 1 auto;
+    }
+
+    .figure-dot-caster-result {
+        flex: 0 0 auto;
+        min-width: 7rem;
+    }
+}
+
+.figure-dot-caster-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+@media (max-width: 480px) {
+    .figure-dot-caster-columns {
+        gap: 0.35rem;
+    }
+
+    .figure-dot-caster.is-compact .figure-dot-caster-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.figure-dot-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.figure-dot-column.is-pairing-active .figure-dot-stack {
+    outline: 2px solid var(--accent-color, #c9a227);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+.figure-dot-column-header {
+    text-align: center;
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+}
+
+.figure-dot-column-name {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.figure-dot-column-element {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted, #666);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.figure-dot-column-count {
+    display: inline-block;
+    margin-top: 0.2rem;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    border-radius: 4px;
+    background: var(--bg-primary, #fff);
+    color: var(--text-muted, #666);
+    border: 1px solid var(--border-color, #ddd);
+}
+
+.figure-dot-column-count.is-progress {
+    color: var(--text-primary);
+}
+
+.figure-dot-column-count.is-ready {
+    color: var(--accent-text, #1a1a1a);
+    background: var(--accent-color, #c9a227);
+    border-color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: calc(var(--dot-size) * 2 + var(--dot-gap));
+    width: 100%;
+    max-width: 5rem;
+    padding: 0.35rem;
+    gap: var(--dot-gap);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.figure-dot-stack:hover:not(:has(.figure-dot)) {
+    background: var(--bg-hover, rgba(0, 0, 0, 0.04));
+}
+
+.figure-dot-caster.is-locked .figure-dot-stack {
+    cursor: default;
+    pointer-events: none;
+}
+
+.figure-dot-placeholder {
+    font-size: 0.65rem;
+    color: var(--text-muted, #888);
+    text-align: center;
+    padding: 0.5rem 0.25rem;
+    line-height: 1.3;
+}
+
+.figure-dot {
+    position: relative;
+    width: var(--dot-size);
+    height: var(--dot-size);
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.figure-dot-mark {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--text-primary, #1a1a1a);
+    box-shadow: 0 0 0 2px var(--bg-secondary, #f5f5f5);
+}
+
+[data-theme="dark"] .figure-dot-mark {
+    box-shadow: 0 0 0 2px var(--bg-secondary, #2a2a2a);
+}
+
+.figure-dot-caster-status {
+    margin: 0.5rem 0 0;
+    min-height: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.figure-dot-caster-status:empty {
+    display: none;
+}
+
+.figure-dot-caster.is-complete .figure-dot-stack {
+    pointer-events: none;
+}
+
+.figure-dot-strike {
+    position: absolute;
+    inset: 15%;
+    pointer-events: none;
+}
+
+.figure-dot-strike::before,
+.figure-dot-strike::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 85%;
+    height: 2px;
+    background: var(--accent-color, #c44);
+    transform-origin: center;
+    opacity: 0;
+}
+
+.figure-dot.is-paired .figure-dot-mark {
+    opacity: 0.35;
+}
+
+.figure-dot.is-paired-animate .figure-dot-strike::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(45deg);
+    animation: figure-dot-strike-in 0.25s ease-out forwards;
+}
+
+.figure-dot.is-paired-animate .figure-dot-strike::after {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    animation: figure-dot-strike-in 0.25s ease-out forwards;
+}
+
+@keyframes figure-dot-strike-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scaleX(0.2) rotate(45deg);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scaleX(1) rotate(45deg);
+    }
+}
+
+.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::before,
+.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::after {
+    opacity: 1;
+}
+
+.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.figure-dot.is-paired:not(.is-paired-animate) .figure-dot-strike::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.figure-dot-column-result {
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-caster-result {
+    text-align: center;
+}
+
+.figure-dot-caster-result-sub {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.figure-dot-caster-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.figure-dot-caster-btn {
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.figure-dot-caster-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.figure-dot-caster-btn-primary {
+    background: var(--accent-color, #c9a227);
+    color: var(--accent-text, #1a1a1a);
+    border-color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-caster-btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border-color, #ccc);
+}
+
+.figure-dot-caster-confirm {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.figure-dot-caster-confirm-text {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.figure-dot-caster-hint {
+    margin: 0.75rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    width: 100%;
+}
+
+.figure-dot-caster-hint-active {
+    color: var(--accent-color, #c9a227);
+    font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .figure-dot.is-paired-animate .figure-dot-strike::before,
+    .figure-dot.is-paired-animate .figure-dot-strike::after {
+        animation: none;
+        opacity: 1;
+    }
+}

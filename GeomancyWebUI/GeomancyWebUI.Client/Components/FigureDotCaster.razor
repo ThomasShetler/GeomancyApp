@@ -1,0 +1,410 @@
+@using GeomancyWebUI.Client.Helpers
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+@inject IJSRuntime JS
+@implements IDisposable
+
+<div class="figure-dot-caster @GetRootClass()">
+    @if (!string.IsNullOrWhiteSpace(MotherLabel))
+    {
+        <p class="figure-dot-caster-label">@MotherLabel</p>
+    }
+
+    <div class="figure-dot-caster-body">
+        <div class="figure-dot-caster-columns" aria-label="Mark dots in four columns">
+            @for (var col = 0; col < 4; col++)
+            {
+                var columnIndex = col;
+                var dotCount = _columns[columnIndex].Count;
+                <div class="figure-dot-column @GetColumnClass(columnIndex)">
+                    <div class="figure-dot-column-header">
+                        <span class="figure-dot-column-name">@ColumnNames[col]</span>
+                        <span class="figure-dot-column-element">@ColumnElements[col]</span>
+                        @if (_phase == CasterPhase.Marking)
+                        {
+                            <span class="figure-dot-column-count @GetColumnCountClass(dotCount)"
+                                  aria-label="@($"{dotCount} dots marked, need at least {FigureMarking.MinDotsPerColumn}")">
+                                @dotCount/@FigureMarking.MinDotsPerColumn
+                            </span>
+                        }
+                    </div>
+                    <div class="figure-dot-stack"
+                         @onclick="() => AddDot(columnIndex)"
+                         @onkeydown="(e) => OnStackKeydown(e, columnIndex)"
+                         role="button"
+                         tabindex="@(_phase == CasterPhase.Marking && !IsLocked ? 0 : -1)"
+                         aria-label="@($"Add dot to {ColumnNames[col]} column, {dotCount} marked")"
+                         aria-disabled="@(IsLocked || dotCount >= FigureMarking.MaxDotsPerColumn)">
+                        @for (var i = 0; i < dotCount; i++)
+                        {
+                            var dotIndex = i;
+                            <div class="figure-dot @GetDotClass(columnIndex, dotIndex)"
+                                 @onclick="() => RemoveDot(columnIndex, dotIndex)"
+                                 @onclick:stopPropagation="true"
+                                 title="Remove this dot">
+                                <span class="figure-dot-mark"></span>
+                                @if (IsDotPaired(columnIndex, dotIndex))
+                                {
+                                    <span class="figure-dot-strike" aria-hidden="true"></span>
+                                }
+                            </div>
+                        }
+                        @if (dotCount == 0)
+                        {
+                            <span class="figure-dot-placeholder">Tap to mark</span>
+                        }
+                    </div>
+                    @if (_phase >= CasterPhase.Complete && _resolvedLines != null)
+                    {
+                        <div class="figure-dot-column-result" aria-label="@($"{ColumnNames[col]} line result")">
+                            @GetLineDisplay(_resolvedLines[columnIndex]!.Value)
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (_resolvedFigure != null && ShowResultFigure)
+        {
+            <div class="figure-dot-caster-result">
+                <FigureContainer Figure="@_resolvedFigure"
+                                 IsInteractive="false"
+                                 ShowFigureName="true"
+                                 ShowHouseStrength="false" />
+                @if (!string.IsNullOrWhiteSpace(_resolvedFigure.EnglishName))
+                {
+                    <p class="figure-dot-caster-result-sub">@_resolvedFigure.EnglishName</p>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="figure-dot-caster-status" aria-live="polite" aria-atomic="true">@_statusMessage</div>
+
+    @if (_phase == CasterPhase.Confirm)
+    {
+        <div class="figure-dot-caster-confirm"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="@_confirmTitleId">
+            <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text">
+                Generate this figure from your marks? Dots will be paired two at a time in each column, from Head through Foot.
+            </p>
+            <div class="figure-dot-caster-actions">
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">
+                    Cancel
+                </button>
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">
+                    OK, generate
+                </button>
+            </div>
+        </div>
+    }
+    else if (_phase == CasterPhase.Marking && !HideActions)
+    {
+        <div class="figure-dot-caster-actions">
+            <button type="button"
+                    class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
+                    disabled="@(!CanClear)"
+                    @onclick="ClearAll">
+                Clear
+            </button>
+            <button type="button"
+                    class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                    disabled="@(!CanGenerate)"
+                    @onclick="ShowConfirm">
+                Generate figure
+            </button>
+        </div>
+        @if (!CanGenerate)
+        {
+            <p class="figure-dot-caster-hint">Mark at least @FigureMarking.MinDotsPerColumn dots in each column.</p>
+        }
+    }
+    else if (_phase == CasterPhase.Pairing)
+    {
+        <p class="figure-dot-caster-hint figure-dot-caster-hint-active">Pairing dots…</p>
+    }
+    else if (_phase == CasterPhase.Complete && ShowMarkAgainButton)
+    {
+        <div class="figure-dot-caster-actions">
+            <button type="button"
+                    class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
+                    @onclick="ClearAll">
+                Mark again
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    private static readonly string[] ColumnNames = { "Head", "Neck", "Body", "Foot" };
+    private static readonly string[] ColumnElements = { "Fire", "Air", "Water", "Earth" };
+
+    private enum CasterPhase { Marking, Confirm, Pairing, Complete }
+
+    private readonly string _instanceId = Guid.NewGuid().ToString("N")[..8];
+    private readonly string _confirmTitleId;
+
+    private readonly List<int>[] _columns = { new(), new(), new(), new() };
+    private readonly HashSet<long> _pairedDots = new();
+    private readonly HashSet<long> _recentlyPaired = new();
+
+    private CasterPhase _phase = CasterPhase.Marking;
+    private int?[]? _resolvedLines;
+    private FigureModel? _resolvedFigure;
+    private CancellationTokenSource? _animationCts;
+    private string _statusMessage = string.Empty;
+    private bool _reducedMotion;
+    private int _activePairingColumn = -1;
+
+    public FigureDotCaster()
+    {
+        _confirmTitleId = $"caster-confirm-{_instanceId}";
+    }
+
+    [Parameter] public string? MotherLabel { get; set; }
+    [Parameter] public bool Compact { get; set; }
+    [Parameter] public bool AutoReset { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool HideActions { get; set; }
+    [Parameter] public bool ShowResultFigure { get; set; } = true;
+    [Parameter] public bool ShowMarkAgainButton { get; set; } = true;
+    [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
+
+    private bool IsLocked => Disabled || _phase == CasterPhase.Pairing;
+    private bool CanGenerate => !IsLocked && _phase == CasterPhase.Marking
+        && FigureMarking.AllColumnsReady(_columns.Select(c => c.Count).ToArray());
+    private bool CanClear => !IsLocked && (_phase == CasterPhase.Marking || _phase == CasterPhase.Complete)
+        && _columns.Any(c => c.Count > 0);
+
+    public bool IsComplete => _phase == CasterPhase.Complete;
+    public FigureModel? ResolvedFigure => _resolvedFigure;
+
+    private int PairingStepDelayMs => _reducedMotion ? 60 : 350;
+    private int ColumnCompleteDelayMs => _reducedMotion ? 40 : 200;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        try
+        {
+            _reducedMotion = await JS.InvokeAsync<bool>("geofancyPrefersReducedMotion");
+        }
+        catch
+        {
+            _reducedMotion = false;
+        }
+    }
+
+    private string GetRootClass()
+    {
+        var classes = new List<string>();
+        if (Compact) classes.Add("is-compact");
+        if (IsLocked) classes.Add("is-locked");
+        if (_phase == CasterPhase.Pairing) classes.Add("is-pairing");
+        if (_phase == CasterPhase.Complete) classes.Add("is-complete");
+        return string.Join(" ", classes);
+    }
+
+    private static string GetColumnCountClass(int count)
+    {
+        if (count >= FigureMarking.MinDotsPerColumn)
+        {
+            return "is-ready";
+        }
+
+        return count > 0 ? "is-progress" : string.Empty;
+    }
+
+    private string GetColumnClass(int columnIndex)
+    {
+        if (_phase == CasterPhase.Pairing && _activePairingColumn == columnIndex)
+        {
+            return "is-pairing-active";
+        }
+
+        if (_phase >= CasterPhase.Complete && _resolvedLines != null)
+        {
+            return "is-resolved";
+        }
+
+        return string.Empty;
+    }
+
+    private long DotKey(int column, int index) => ((long)column << 32) | (uint)index;
+
+    private bool IsDotPaired(int column, int index) => _pairedDots.Contains(DotKey(column, index));
+
+    private string GetDotClass(int column, int index)
+    {
+        if (!IsDotPaired(column, index))
+        {
+            return string.Empty;
+        }
+
+        return _recentlyPaired.Contains(DotKey(column, index)) ? "is-paired is-paired-animate" : "is-paired";
+    }
+
+    private static string GetLineDisplay(int lineValue) => lineValue == 1 ? "◆" : "◆ ◆";
+
+    private void OnStackKeydown(KeyboardEventArgs e, int columnIndex)
+    {
+        if (e.Key is "Enter" or " " or "Spacebar")
+        {
+            AddDot(columnIndex);
+        }
+    }
+
+    private void AddDot(int columnIndex)
+    {
+        if (_phase != CasterPhase.Marking || IsLocked)
+        {
+            return;
+        }
+
+        if (_columns[columnIndex].Count >= FigureMarking.MaxDotsPerColumn)
+        {
+            _statusMessage = $"Maximum {FigureMarking.MaxDotsPerColumn} dots per column.";
+            return;
+        }
+
+        _columns[columnIndex].Add(_columns[columnIndex].Count);
+        _statusMessage = $"{ColumnNames[columnIndex]} column: {_columns[columnIndex].Count} dots.";
+        StateHasChanged();
+    }
+
+    private void RemoveDot(int columnIndex, int dotIndex)
+    {
+        if (_phase != CasterPhase.Marking || IsLocked)
+        {
+            return;
+        }
+
+        if (dotIndex < 0 || dotIndex >= _columns[columnIndex].Count)
+        {
+            return;
+        }
+
+        _columns[columnIndex].RemoveAt(dotIndex);
+        _statusMessage = $"{ColumnNames[columnIndex]} column: {_columns[columnIndex].Count} dots.";
+        StateHasChanged();
+    }
+
+    private void ShowConfirm()
+    {
+        if (!CanGenerate)
+        {
+            return;
+        }
+
+        _phase = CasterPhase.Confirm;
+        _statusMessage = "Confirm to pair dots and reveal the figure.";
+    }
+
+    private void CancelConfirm()
+    {
+        _phase = CasterPhase.Marking;
+        _statusMessage = string.Empty;
+    }
+
+    private async Task RunPairingAsync()
+    {
+        _phase = CasterPhase.Pairing;
+        _pairedDots.Clear();
+        _recentlyPaired.Clear();
+        _resolvedLines = new int?[4];
+        _animationCts?.Cancel();
+        _animationCts = new CancellationTokenSource();
+        var token = _animationCts.Token;
+        _statusMessage = "Pairing dots column by column…";
+
+        try
+        {
+            for (var col = 0; col < 4; col++)
+            {
+                token.ThrowIfCancellationRequested();
+                _activePairingColumn = col;
+                StateHasChanged();
+
+                var count = _columns[col].Count;
+                var steps = FigureMarking.GetPairingSteps(count);
+
+                foreach (var (a, b) in steps)
+                {
+                    token.ThrowIfCancellationRequested();
+                    _recentlyPaired.Clear();
+                    _recentlyPaired.Add(DotKey(col, a));
+                    _recentlyPaired.Add(DotKey(col, b));
+                    _pairedDots.Add(DotKey(col, a));
+                    _pairedDots.Add(DotKey(col, b));
+                    StateHasChanged();
+                    await Task.Delay(PairingStepDelayMs, token);
+                }
+
+                _resolvedLines[col] = FigureMarking.ResolveLineFromDotCount(count);
+                StateHasChanged();
+                await Task.Delay(ColumnCompleteDelayMs, token);
+            }
+
+            _activePairingColumn = -1;
+            var head = _resolvedLines[0]!.Value;
+            var neck = _resolvedLines[1]!.Value;
+            var body = _resolvedLines[2]!.Value;
+            var foot = _resolvedLines[3]!.Value;
+
+            _resolvedFigure = await GeomancyService.GetFigureAsync(head, neck, body, foot);
+            _resolvedFigure.HeadLine = head;
+            _resolvedFigure.NeckLine = neck;
+            _resolvedFigure.BodyLine = body;
+            _resolvedFigure.FootLine = foot;
+
+            _phase = CasterPhase.Complete;
+            _statusMessage = $"Figure complete: {_resolvedFigure.Name}.";
+            StateHasChanged();
+
+            await OnFigureCompleted.InvokeAsync(_resolvedFigure);
+
+            if (AutoReset)
+            {
+                await Task.Delay(_reducedMotion ? 150 : 400, token);
+                Reset();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Component disposed or reset during animation.
+        }
+    }
+
+    public void Reset()
+    {
+        _animationCts?.Cancel();
+        for (var i = 0; i < 4; i++)
+        {
+            _columns[i].Clear();
+        }
+
+        _pairedDots.Clear();
+        _recentlyPaired.Clear();
+        _resolvedLines = null;
+        _resolvedFigure = null;
+        _activePairingColumn = -1;
+        _phase = CasterPhase.Marking;
+        _statusMessage = string.Empty;
+        StateHasChanged();
+    }
+
+    private void ClearAll() => Reset();
+
+    public void Dispose()
+    {
+        _animationCts?.Cancel();
+        _animationCts?.Dispose();
+    }
+}

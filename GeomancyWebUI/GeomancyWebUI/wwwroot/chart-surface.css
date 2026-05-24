@@ -310,3 +310,22 @@
     transform: scale(1.05);
     z-index: 10;
 }
+
+/* Wiki / tutorial highlight mode for ChartSurface */
+.chart-surface-tutorial-active .shield-chart-container .col:not(.wiki-tutorial-highlight):not(.chart-empty-cell),
+.chart-surface-tutorial-active .shield-chart-container .col-3:not(.wiki-tutorial-highlight),
+.chart-surface-tutorial-active .shield-chart-container .col-4:not(.wiki-tutorial-highlight):not(.chart-empty-cell),
+.chart-surface-tutorial-active .shield-chart-container .col-6:not(.wiki-tutorial-highlight) {
+    opacity: 0.32;
+    filter: grayscale(0.35);
+    transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.chart-surface-tutorial-active .wiki-tutorial-highlight {
+    opacity: 1;
+    filter: none;
+    outline: 2px solid var(--accent-color, #c9a227);
+    outline-offset: 2px;
+    border-radius: 8px;
+    z-index: 2;
+}

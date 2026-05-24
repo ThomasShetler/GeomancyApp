@@ -47,4 +47,8 @@
     window.geofancyDeviceIsMobile = function () {
         return window.geofancyDevice.isMobile();
     };
+    window.geofancyPrefersReducedMotion = function () {
+        return window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    };
 })();

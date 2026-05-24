@@ -1,32 +1,61 @@
 @page "/wiki/how-to/generate-figures"
 @rendermode InteractiveServer
+@using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Models
 
 <PageTitle>Geofancy Wiki - Generate Figures</PageTitle>
 
 <WikiArticleShell Title="How to Generate the Figures"
-                  Lead="Marking four rows of dots to form the four Mothers and name the sixteen geomantic figures."
+                  Lead="Mark dots in four columns to form the four Mothers and name the sixteen geomantic figures."
                   ParentHref="/wiki"
-                  ParentLabel="Wiki"
-                  ShowDraftBadge="true">
-    <WikiPlaceholderBody Sections="@_sections"
-                         RelatedHint="Once your four Mothers are set, continue with How to Cast a Shield Chart." />
-</WikiArticleShell>
+                  ParentLabel="Wiki">
 
-@code {
-    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
-    {
-        new WikiPlaceholderBody.WikiOutlineSection("Mark the dots", new[]
-        {
-            "Four rows: Head (fire), Neck (air), Body (water), Foot (earth)",
-            "One dot (passive) or two dots (active) per row",
-            "Sixteen unique patterns map to the traditional figures"
-        }),
-        new WikiPlaceholderBody.WikiOutlineSection("Form the four Mothers", new[]
-        {
-            "Genitor (4), Fratres (3), Lucrum (2), Vita (1) in the app",
-            "Random marking or deliberate choice depending on your practice",
-            "Record each figure by name or pattern before deriving the shield"
-        }),
-        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "Use the mobile mother strip or desktop workspace to enter line values; the app names each figure from the corpus automatically.")
-    };
-}
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Introduction</h2>
+        <p class="wiki-casting-section-lead">
+            A geomantic figure has four lines — Head (fire), Neck (air), Body (water), and Foot (earth).
+            Each line is either <strong>active</strong> (one dot) or <strong>passive</strong> (two dots).
+            Sixteen unique patterns map to the traditional figure names in the
+            <a href="/wiki/glossary/figures">Figure Glossary</a>.
+        </p>
+        <div class="wiki-casting-callout">
+            In Geofancy, active lines are stored as <code>1</code> (single ◆) and passive lines as
+            <code>2</code> (double ◆ ◆). The app names each figure from the corpus once the four lines are known.
+        </div>
+    </section>
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Mark the dots</h2>
+        <p class="wiki-casting-section-lead">
+            Make random marks in four columns — one column per line of the figure. When you are ready,
+            pair dots off two at a time from the top of each column. If one dot remains, that line is
+            active (single); if zero or two remain, the line is passive (double).
+        </p>
+        <FigureDotCaster MotherLabel="Practice figure — tap a column to add dots" />
+    </section>
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Form the four Mothers</h2>
+        <p class="wiki-casting-section-lead">
+            A full chart requires four Mother figures. Traditional casting order starts with
+            Mother 4 (Genitor), then 3 (Fratres), 2 (Lucrum), and 1 (Vita). These become
+            Houses 1–4 at the base of the shield.
+        </p>
+        <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly" />
+    </section>
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Other ways to enter figures</h2>
+        <p class="wiki-casting-section-lead">
+            Geofancy does not randomize marks for you — the randomization stays with your hands.
+            Once you know the four lines, you can also enter them directly in the
+            <a href="/workspace">Workspace</a> or <a href="/mobile">Mobile View</a> by tapping each line
+            on the Mother figures to toggle between single and double dots.
+        </p>
+        <p class="wiki-casting-section-lead">
+            When your four Mothers are set, continue to
+            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a> to derive the rest of the chart.
+        </p>
+    </section>
+
+</WikiArticleShell>

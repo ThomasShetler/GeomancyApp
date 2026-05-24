@@ -8,7 +8,7 @@
     component does not need a scoped .razor.css.
 *@
 
-<div class="charts-side-by-side">
+<div class="charts-side-by-side @GetTutorialRootClass()">
     @if (View == ChartSurfaceView.Both || View == ChartSurfaceView.Shield)
     {
         <div class="shield-chart-container @(ShowTriplicates ? "show-triplicates" : "")">
@@ -38,28 +38,28 @@
                     <div class="section-label-overlay section-label-mothers">Mothers</div>
                     <div class="section-label-overlay section-label-daughters">Daughters</div>
                 }
-                <div class="col text-center section-daughters" data-house="8">
+                <div class="col text-center section-daughters @GetHouseHighlightClass(8)" data-house="8">
                     <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col text-center section-daughters" data-house="7">
+                <div class="col text-center section-daughters @GetHouseHighlightClass(7)" data-house="7">
                     <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col text-center section-daughters" data-house="6">
+                <div class="col text-center section-daughters @GetHouseHighlightClass(6)" data-house="6">
                     <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col text-center section-daughters" data-house="5">
+                <div class="col text-center section-daughters @GetHouseHighlightClass(5)" data-house="5">
                     <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col text-center section-mothers" data-house="4">
+                <div class="col text-center section-mothers @GetHouseHighlightClass(4)" data-house="4">
                     <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
                 </div>
-                <div class="col text-center section-mothers" data-house="3">
+                <div class="col text-center section-mothers @GetHouseHighlightClass(3)" data-house="3">
                     <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
                 </div>
-                <div class="col text-center section-mothers" data-house="2">
+                <div class="col text-center section-mothers @GetHouseHighlightClass(2)" data-house="2">
                     <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
                 </div>
-                <div class="col text-center section-mothers" data-house="1">
+                <div class="col text-center section-mothers @GetHouseHighlightClass(1)" data-house="1">
                     <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
                 </div>
             </div>
@@ -69,16 +69,16 @@
                 {
                     <div class="section-label-overlay section-label-nieces">Nieces</div>
                 }
-                <div class="col-3 text-center section-nieces" data-house="12">
+                <div class="col-3 text-center section-nieces @GetHouseHighlightClass(12)" data-house="12">
                     <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col-3 text-center section-nieces" data-house="11">
+                <div class="col-3 text-center section-nieces @GetHouseHighlightClass(11)" data-house="11">
                     <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col-3 text-center section-nieces" data-house="10">
+                <div class="col-3 text-center section-nieces @GetHouseHighlightClass(10)" data-house="10">
                     <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
                 </div>
-                <div class="col-3 text-center section-nieces" data-house="9">
+                <div class="col-3 text-center section-nieces @GetHouseHighlightClass(9)" data-house="9">
                     <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
                 </div>
             </div>
@@ -88,20 +88,20 @@
                 {
                     <div class="section-label-overlay section-label-court">Court</div>
                 }
-                <div class="col-6 text-center">
+                <div class="col-6 text-center @GetCourtHighlightClass(ChartHighlightCourt.LeftWitness)" data-court="left-witness">
                     <FigureContainer Figure="@Chart?.LeftWitness" Label="Left Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
                 </div>
-                <div class="col-6 text-center">
+                <div class="col-6 text-center @GetCourtHighlightClass(ChartHighlightCourt.RightWitness)" data-court="right-witness">
                     <FigureContainer Figure="@Chart?.RightWitness" Label="Right Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
                 </div>
             </div>
 
             <div class="row section-court">
-                <div class="col-4"></div>
-                <div class="col-4 text-center">
+                <div class="col-4 chart-empty-cell" aria-hidden="true"></div>
+                <div class="col-4 text-center @GetCourtHighlightClass(ChartHighlightCourt.Judge)" data-court="judge">
                     <FigureContainer Figure="@Chart?.Judge" Label="Judge" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
                 </div>
-                <div class="col-4 text-center">
+                <div class="col-4 text-center @GetCourtHighlightClass(ChartHighlightCourt.Sentence)" data-court="sentence">
                     <FigureContainer Figure="@Chart?.Sentence" Label="Fallout" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
                 </div>
             </div>
@@ -200,10 +200,48 @@
     [Parameter] public ChartSurfaceView View { get; set; } = ChartSurfaceView.Both;
     [Parameter] public bool ShowSectionLabels { get; set; } = false;
     [Parameter] public bool ShowTriplicates { get; set; } = false;
+    [Parameter] public IReadOnlySet<int>? HighlightedHouseNumbers { get; set; }
+    [Parameter] public IReadOnlySet<ChartHighlightCourt>? HighlightedCourt { get; set; }
 
     private FigureModel? GetHouseFigure(int houseNumber)
     {
         if (Chart == null) return null;
         return Chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+    }
+
+    private string GetTutorialRootClass()
+    {
+        if (!HasTutorialHighlights())
+        {
+            return string.Empty;
+        }
+
+        return "chart-surface-tutorial-active";
+    }
+
+    private bool HasTutorialHighlights()
+    {
+        return (HighlightedHouseNumbers != null && HighlightedHouseNumbers.Count > 0)
+            || (HighlightedCourt != null && HighlightedCourt.Count > 0);
+    }
+
+    private string GetHouseHighlightClass(int houseNumber)
+    {
+        if (HighlightedHouseNumbers == null || !HighlightedHouseNumbers.Contains(houseNumber))
+        {
+            return string.Empty;
+        }
+
+        return "wiki-tutorial-highlight";
+    }
+
+    private string GetCourtHighlightClass(ChartHighlightCourt court)
+    {
+        if (HighlightedCourt == null || !HighlightedCourt.Contains(court))
+        {
+            return string.Empty;
+        }
+
+        return "wiki-tutorial-highlight";
     }
 }

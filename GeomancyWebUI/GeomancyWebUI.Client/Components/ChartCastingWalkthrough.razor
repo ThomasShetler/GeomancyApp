@@ -1,0 +1,407 @@
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+
+<div class="chart-casting-walkthrough">
+    @if (_phase == WalkthroughPhase.Mothers)
+    {
+        <div class="chart-casting-progress" aria-label="Mother casting progress">
+            @foreach (var slot in _motherSlots)
+            {
+                <div class="chart-casting-progress-item @(slot.IsComplete ? "is-done" : slot.IsCurrent ? "is-current" : "is-pending")">
+                    <span class="chart-casting-progress-house">@slot.HouseNumber</span>
+                    <span class="chart-casting-progress-name">@slot.ShortName</span>
+                    @if (slot.Figure != null)
+                    {
+                        <span class="chart-casting-progress-figure">@slot.Figure.Name</span>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
+        {
+            var current = _motherSlots[_currentMotherIndex];
+            <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
+                             @ref="_activeCaster"
+                             MotherLabel="@current.Label"
+                             AutoReset="false"
+                             ShowMarkAgainButton="false"
+                             OnFigureCompleted="OnMotherFigureCompleted" />
+        }
+        else if (_motherSlots.All(s => s.Figure != null))
+        {
+            <div class="chart-casting-mothers-summary detail-card">
+                <h3 class="card-title">Four Mothers complete</h3>
+                <ul class="chart-casting-mother-list">
+                    @foreach (var slot in _motherSlots.OrderBy(s => s.HouseNumber))
+                    {
+                        <li>
+                            <strong>House @slot.HouseNumber (@slot.ShortName):</strong> @slot.Figure!.Name
+                        </li>
+                    }
+                </ul>
+                <div class="chart-casting-summary-actions">
+                    @if (Mode == ChartCastingMode.MothersOnly)
+                    {
+                        <p class="chart-casting-next-hint">
+                            Continue to <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a> to see how the shield is built from these Mothers.
+                        </p>
+                        <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                           href="@_workspaceSharePath">
+                            Open in Workspace
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                disabled="@_isLoadingChart"
+                                @onclick="BeginShieldTutorialAsync">
+                            @(_isLoadingChart ? "Building chart…" : "Build the shield chart")
+                        </button>
+                    }
+                    <button type="button"
+                            class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
+                            @onclick="RestartMothers">
+                        Cast again
+                    </button>
+                </div>
+            </div>
+        }
+    }
+    else if (_phase == WalkthroughPhase.Shield)
+    {
+        <div class="chart-casting-shield-tutorial">
+            <div class="chart-casting-step-nav">
+                <button type="button"
+                        class="chart-casting-step-btn"
+                        disabled="@(_shieldStepIndex <= 0)"
+                        @onclick="PreviousShieldStep">
+                    Previous
+                </button>
+                <span class="chart-casting-step-indicator">
+                    Step @(_shieldStepIndex + 1) of @_shieldSteps.Length
+                </span>
+                <button type="button"
+                        class="chart-casting-step-btn"
+                        disabled="@(_shieldStepIndex >= _shieldSteps.Length - 1)"
+                        @onclick="NextShieldStep">
+                    Next
+                </button>
+            </div>
+            <button type="button" class="chart-casting-recast-link" @onclick="RestartMothers">
+                Recast the four Mothers
+            </button>
+
+            <article class="chart-casting-step-panel detail-card">
+                <h3 class="card-title">@_shieldSteps[_shieldStepIndex].Title</h3>
+                <p class="chart-casting-step-lead">@_shieldSteps[_shieldStepIndex].Lead</p>
+                @if (_shieldSteps[_shieldStepIndex].Bullets?.Count > 0)
+                {
+                    <ul class="chart-casting-step-bullets">
+                        @foreach (var bullet in _shieldSteps[_shieldStepIndex].Bullets!)
+                        {
+                            <li>@bullet</li>
+                        }
+                    </ul>
+                }
+            </article>
+
+            @if (!string.IsNullOrWhiteSpace(_chartError))
+            {
+                <p class="chart-casting-error" role="alert">@_chartError</p>
+            }
+
+            @if (_chart != null)
+            {
+                <div class="chart-casting-chart-preview">
+                    <ChartSurface Chart="@_chart"
+                                  View="ChartSurfaceView.Shield"
+                                  ShowSectionLabels="true"
+                                  House1Figure="@_motherByHouse[1]"
+                                  House2Figure="@_motherByHouse[2]"
+                                  House3Figure="@_motherByHouse[3]"
+                                  House4Figure="@_motherByHouse[4]"
+                                  HighlightedHouseNumbers="@_activeHouseHighlights"
+                                  HighlightedCourt="@_activeCourtHighlights" />
+                </div>
+            }
+
+            @if (_shieldStepIndex == _shieldSteps.Length - 1)
+            {
+                <div class="chart-casting-finish">
+                    <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                       href="@_workspaceSharePath">
+                        Open this chart in Workspace
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private enum WalkthroughPhase { Mothers, Shield }
+
+    private sealed class MotherSlot
+    {
+        public int HouseNumber { get; init; }
+        public string ShortName { get; init; } = string.Empty;
+        public string Label { get; init; } = string.Empty;
+        public FigureModel? Figure { get; set; }
+        public bool IsComplete => Figure != null;
+        public bool IsCurrent { get; set; }
+    }
+
+    private sealed class ShieldTutorialStep
+    {
+        public string Title { get; init; } = string.Empty;
+        public string Lead { get; init; } = string.Empty;
+        public IReadOnlyList<string>? Bullets { get; init; }
+        public IReadOnlySet<int>? HouseHighlights { get; init; }
+        public IReadOnlySet<ChartHighlightCourt>? CourtHighlights { get; init; }
+    }
+
+    private static readonly int[] MotherCastOrder = { 4, 3, 2, 1 };
+
+    private static readonly Dictionary<int, (string Short, string Full)> MotherNames = new()
+    {
+        [1] = ("Vita", "Mother 1 — Vita (Querent)"),
+        [2] = ("Lucrum", "Mother 2 — Lucrum (Quesited)"),
+        [3] = ("Fratres", "Mother 3 — Fratres"),
+        [4] = ("Genitor", "Mother 4 — Genitor")
+    };
+
+    private MotherSlot[] _motherSlots = Array.Empty<MotherSlot>();
+    private int _currentMotherIndex;
+    private FigureDotCaster? _activeCaster;
+    private readonly Dictionary<int, FigureModel> _motherByHouse = new();
+    private WalkthroughPhase _phase = WalkthroughPhase.Mothers;
+    private HouseChartModel? _chart;
+    private string _workspaceSharePath = "/workspace";
+    private int _shieldStepIndex;
+    private IReadOnlySet<int>? _activeHouseHighlights;
+    private IReadOnlySet<ChartHighlightCourt>? _activeCourtHighlights;
+    private ShieldTutorialStep[] _shieldSteps = Array.Empty<ShieldTutorialStep>();
+    private bool _isLoadingChart;
+    private string? _chartError;
+    [Parameter] public ChartCastingMode Mode { get; set; } = ChartCastingMode.Full;
+
+    protected override void OnInitialized()
+    {
+        _motherSlots = MotherCastOrder
+            .Select(h => new MotherSlot
+            {
+                HouseNumber = h,
+                ShortName = MotherNames[h].Short,
+                Label = $"Cast {MotherNames[h].Full}"
+            })
+            .ToArray();
+
+        _currentMotherIndex = 0;
+        _motherSlots[0].IsCurrent = true;
+
+        _shieldSteps = BuildShieldSteps();
+        ApplyShieldStepHighlights();
+    }
+
+    private async Task OnMotherFigureCompleted(FigureModel figure)
+    {
+        if (_currentMotherIndex < 0 || _currentMotherIndex >= _motherSlots.Length)
+        {
+            return;
+        }
+
+        var slot = _motherSlots[_currentMotherIndex];
+        slot.Figure = figure;
+        slot.IsCurrent = false;
+        _motherByHouse[slot.HouseNumber] = figure;
+
+        _currentMotherIndex++;
+        if (_currentMotherIndex < _motherSlots.Length)
+        {
+            _motherSlots[_currentMotherIndex].IsCurrent = true;
+        }
+        else
+        {
+            _workspaceSharePath = ChartSeedCodec.BuildSharePath(
+                "/workspace",
+                _motherByHouse[1],
+                _motherByHouse[2],
+                _motherByHouse[3],
+                _motherByHouse[4]);
+        }
+
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task BeginShieldTutorialAsync()
+    {
+        _isLoadingChart = true;
+        _chartError = null;
+        StateHasChanged();
+
+        try
+        {
+            var request = BuildChartRequest();
+            _chart = await GeomancyService.GenerateChartAsync(request);
+            _phase = WalkthroughPhase.Shield;
+            _shieldStepIndex = 0;
+            ApplyShieldStepHighlights();
+        }
+        catch
+        {
+            _chartError = "Could not build the chart. Check your connection and try again.";
+        }
+        finally
+        {
+            _isLoadingChart = false;
+            StateHasChanged();
+        }
+    }
+
+    private void RestartMothers()
+    {
+        _motherByHouse.Clear();
+        _chart = null;
+        _chartError = null;
+        _phase = WalkthroughPhase.Mothers;
+        _currentMotherIndex = 0;
+        _shieldStepIndex = 0;
+
+        _motherSlots = MotherCastOrder
+            .Select(h => new MotherSlot
+            {
+                HouseNumber = h,
+                ShortName = MotherNames[h].Short,
+                Label = $"Cast {MotherNames[h].Full}"
+            })
+            .ToArray();
+
+        _motherSlots[0].IsCurrent = true;
+        ApplyShieldStepHighlights();
+    }
+
+    private GenerateFourFiguresRequest BuildChartRequest()
+    {
+        return new GenerateFourFiguresRequest
+        {
+            House1 = ToRequest(_motherByHouse[1]),
+            House2 = ToRequest(_motherByHouse[2]),
+            House3 = ToRequest(_motherByHouse[3]),
+            House4 = ToRequest(_motherByHouse[4])
+        };
+    }
+
+    private static GenerateFigureRequest ToRequest(FigureModel figure) => new()
+    {
+        HeadLine = figure.HeadLine,
+        NeckLine = figure.NeckLine,
+        BodyLine = figure.BodyLine,
+        FootLine = figure.FootLine
+    };
+
+    private void PreviousShieldStep()
+    {
+        if (_shieldStepIndex > 0)
+        {
+            _shieldStepIndex--;
+            ApplyShieldStepHighlights();
+            StateHasChanged();
+        }
+    }
+
+    private void NextShieldStep()
+    {
+        if (_shieldStepIndex < _shieldSteps.Length - 1)
+        {
+            _shieldStepIndex++;
+            ApplyShieldStepHighlights();
+            StateHasChanged();
+        }
+    }
+
+    private void ApplyShieldStepHighlights()
+    {
+        if (_shieldSteps.Length == 0)
+        {
+            return;
+        }
+
+        var step = _shieldSteps[_shieldStepIndex];
+        _activeHouseHighlights = step.HouseHighlights;
+        _activeCourtHighlights = step.CourtHighlights;
+    }
+
+    private static ShieldTutorialStep[] BuildShieldSteps() => new[]
+    {
+        new ShieldTutorialStep
+        {
+            Title = "The four Mothers",
+            Lead = "Everything in the shield begins with four figures you mark by hand. In Geofancy these are Houses 1–4 (Vita, Lucrum, Fratres, Genitor). No other figure is entered manually.",
+            Bullets = new[]
+            {
+                "House 1 (Vita) — the querent",
+                "House 2 (Lucrum) — the quesited / matter asked about",
+                "Houses 3 and 4 — supporting context in the reading"
+            },
+            HouseHighlights = new HashSet<int> { 1, 2, 3, 4 }
+        },
+        new ShieldTutorialStep
+        {
+            Title = "The four Daughters",
+            Lead = "Daughters are read down the columns of the Mothers. House 5 takes every Head line; House 6 every Neck line; House 7 Body; House 8 Foot.",
+            Bullets = new[]
+            {
+                "House 5 = Head lines of Mothers 1–4",
+                "House 6 = Neck lines of Mothers 1–4",
+                "House 7 = Body lines of Mothers 1–4",
+                "House 8 = Foot lines of Mothers 1–4"
+            },
+            HouseHighlights = new HashSet<int> { 5, 6, 7, 8 }
+        },
+        new ShieldTutorialStep
+        {
+            Title = "The four Nieces",
+            Lead = "Each Niece combines two figures line by line using geomantic parity (odd sum → single dot, even sum → double dot).",
+            Bullets = new[]
+            {
+                "House 9 = Mothers 1 + 2",
+                "House 10 = Mothers 3 + 4",
+                "House 11 = Daughters 5 + 6",
+                "House 12 = Daughters 7 + 8"
+            },
+            HouseHighlights = new HashSet<int> { 9, 10, 11, 12 }
+        },
+        new ShieldTutorialStep
+        {
+            Title = "The Witnesses",
+            Lead = "The Right Witness sums Nieces 9 and 10; the Left Witness sums Nieces 11 and 12. They frame the judgment.",
+            HouseHighlights = new HashSet<int> { 9, 10, 11, 12 },
+            CourtHighlights = new HashSet<ChartHighlightCourt>
+            {
+                ChartHighlightCourt.RightWitness,
+                ChartHighlightCourt.LeftWitness
+            }
+        },
+        new ShieldTutorialStep
+        {
+            Title = "The Judge",
+            Lead = "The Judge combines the two Witnesses line by line—the heart of the answer in many traditions.",
+            CourtHighlights = new HashSet<ChartHighlightCourt> { ChartHighlightCourt.Judge }
+        },
+        new ShieldTutorialStep
+        {
+            Title = "The Reconciler (Sentence)",
+            Lead = "The Reconciler (shown as Fallout in the app) combines the Judge with Mother 1 (Vita), describing how the matter settles or fallout from the judgment.",
+            CourtHighlights = new HashSet<ChartHighlightCourt>
+            {
+                ChartHighlightCourt.Judge,
+                ChartHighlightCourt.Sentence
+            },
+            HouseHighlights = new HashSet<int> { 1 }
+        }
+    };
+}
