@@ -1,13 +1,11 @@
 @page "/wiki/how-to/generate-figures"
 @rendermode InteractiveServer
 @using GeomancyWebUI.Client.Components
-@using GeomancyWebUI.Client.Models
-@inject IJSRuntime JSRuntime
 
 <PageTitle>Geofancy Wiki - Generate Figures</PageTitle>
 
 <WikiArticleShell Title="How to Generate the Figures"
-                  Lead="Mark dots in four horizontal rows (stick-and-surface) to form the four Mothers and name the sixteen geomantic figures."
+                  Lead="Mark dots in four horizontal rows (stick-and-surface) to form the sixteen geomantic figures and read their meanings from the corpus."
                   ParentHref="/wiki"
                   ParentLabel="Wiki">
 
@@ -26,6 +24,43 @@
     </section>
 
     <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">The sixteen figures</h2>
+        <p class="wiki-casting-section-lead">
+            Geomancy uses exactly <strong>sixteen figures</strong> — every possible combination of four
+            active or passive lines (2⁴ = 16). Each line is read top to bottom as Fire, Air, Water, and Earth.
+            Medieval and Renaissance manuals gave each pattern a Latin name, planet, sign, and interpretive quality;
+            Geofancy stores that material in the figure corpus.
+        </p>
+        <p class="wiki-casting-section-lead">
+            Browse names, imagery, and full readings in the
+            <a href="/wiki/glossary/figures">Figure Glossary</a>.
+        </p>
+        <ul class="wiki-sixteen-figures-list">
+            <li>Via (The Way)</li>
+            <li>Populus (The People)</li>
+            <li>Fortuna Major (Greater Fortune)</li>
+            <li>Fortuna Minor (Lesser Fortune)</li>
+            <li>Coniunctio (Conjunction)</li>
+            <li>Carcer (The Prison)</li>
+            <li>Tristitia (Sorrow)</li>
+            <li>Laetitia (Joy)</li>
+            <li>Acquisitio (Gain)</li>
+            <li>Amissio (Loss)</li>
+            <li>Albus (Whiteness)</li>
+            <li>Rubeus (The Red)</li>
+            <li>Puella (The Girl)</li>
+            <li>Puer (The Boy)</li>
+            <li>Caput Draconis (Dragon's Head)</li>
+            <li>Cauda Draconis (Dragon's Tail)</li>
+        </ul>
+        <div class="wiki-casting-callout">
+            Further reading:
+            <a href="https://en.wikipedia.org/wiki/Geomantic_figures" rel="noopener noreferrer">Wikipedia — Geomantic figures</a>,
+            <a href="http://www.princeton.edu/~ezb/geomancy/figures.html" rel="noopener noreferrer">Princeton — Medieval geomantic figures</a>.
+        </div>
+    </section>
+
+    <section class="wiki-casting-section">
         <h2 class="wiki-casting-section-title">Mark the dots</h2>
         <p class="wiki-casting-section-lead">
             In the traditional stick-and-surface method you make <strong>four horizontal rows</strong> of
@@ -34,35 +69,23 @@
             line is active (single); if zero or two remain, the line is passive (double). Reading the four
             finished rows top to bottom gives you one figure.
         </p>
-        <FigureDotCaster MotherLabel="Practice figure"
-                         MobileProgressiveRows="@(_useMobileWikiCasting == true)"
-                         MobileActionsFirst="@(_useMobileWikiCasting == true)" />
+        <WikiFigurePracticeSection />
     </section>
 
-    <section class="wiki-casting-section wiki-casting-section--mothers-walkthrough">
-        <h2 class="wiki-casting-section-title">Form the four Mothers</h2>
+    <section class="wiki-casting-section wiki-casting-section--interactive-cta">
+        <h2 class="wiki-casting-section-title">Cast the four Mothers on a chart</h2>
         <p class="wiki-casting-section-lead">
-            A full chart requires four Mother figures. Cast the <strong>First Mother</strong>,
-            <strong>Vita (house 1)</strong>, into the rightmost slot first, then Lucrum (2), Fratres (3), and
-            Genitor (4). The top row reads <strong>8, 7, 6, 5, 4, 3, 2, 1</strong> left to right — each Mother
-            goes into the slot with the <strong>same house number</strong>.
+            Placing four Mother figures on the shield and deriving the rest of the chart is covered in the
+            shield-chart walkthrough — not on this page.
         </p>
-        @if (_useMobileWikiCasting == true)
-        {
-            <CastingMobileShell @ref="mobileShell"
-                                Walkthrough="@mothersWalkthrough"
-                                MothersOnlyPreview="true">
-                <ChartCastingWalkthrough @ref="mothersWalkthrough"
-                                         Mode="ChartCastingMode.MothersOnly"
-                                         ShowChartColumn="false"
-                                         HostMode="ChartCastingHostMode.WikiMobile"
-                                         OnMothersPreviewChanged="HandleMothersPreviewChangedAsync" />
-            </CastingMobileShell>
-        }
-        else if (_useMobileWikiCasting == false)
-        {
-            <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly" />
-        }
+        <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+           href="/wiki/how-to/shield-chart/interactive">
+            Open Interactive Shield Walkthrough
+        </a>
+        <p class="wiki-casting-section-lead">
+            Prefer the article walkthrough?
+            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a>
+        </p>
     </section>
 
     <section class="wiki-casting-section">
@@ -80,31 +103,3 @@
     </section>
 
 </WikiArticleShell>
-
-@code {
-    private bool? _useMobileWikiCasting;
-    private CastingMobileShell? mobileShell;
-    private ChartCastingWalkthrough? mothersWalkthrough;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender || _useMobileWikiCasting.HasValue)
-        {
-            return;
-        }
-
-        try
-        {
-            _useMobileWikiCasting = await JSRuntime.InvokeAsync<bool>("geofancyDeviceIsMobile");
-        }
-        catch
-        {
-            _useMobileWikiCasting = false;
-        }
-
-        StateHasChanged();
-    }
-
-    private Task HandleMothersPreviewChangedAsync(MothersPreviewChangedEventArgs args) =>
-        mobileShell?.ApplyMothersPreviewAsync(args) ?? Task.CompletedTask;
-}

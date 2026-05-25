@@ -1,0 +1,14 @@
+@page "/wiki/how-to/generate-figures/interactive"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Geofancy Wiki - Redirecting…</PageTitle>
+
+<p class="wiki-casting-section-lead">Redirecting to the interactive shield walkthrough…</p>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo("/wiki/how-to/shield-chart/interactive", replace: true);
+    }
+}

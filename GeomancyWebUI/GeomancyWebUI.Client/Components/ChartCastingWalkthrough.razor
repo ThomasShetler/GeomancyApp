@@ -119,8 +119,8 @@
                             else if (HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.MothersOnly)
                             {
                                 <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
-                                   href="@_workspaceSharePath">
-                                    Open in Workspace
+                                   href="@MothersCompleteHref">
+                                    @MothersCompleteLabel
                                 </a>
                             }
                             <button type="button"
@@ -147,8 +147,8 @@
                             else if (Mode == ChartCastingMode.MothersOnly)
                             {
                                 <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
-                                   href="@_workspaceSharePath">
-                                    Open in Workspace
+                                   href="@MothersCompleteHref">
+                                    @MothersCompleteLabel
                                 </a>
                             }
                             else
@@ -713,6 +713,16 @@
         HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.Full && WikiMobileIntro != null;
 
     private bool ShowStageTabs => HostMode != ChartCastingHostMode.EmbeddedWorkspace && Mode == ChartCastingMode.Full;
+
+    private string MothersCompleteHref =>
+        HostMode == ChartCastingHostMode.EmbeddedWorkspace
+            ? _workspaceSharePath
+            : "/wiki/how-to/shield-chart";
+
+    private string MothersCompleteLabel =>
+        HostMode == ChartCastingHostMode.EmbeddedWorkspace
+            ? "Open in Workspace"
+            : "Continue to Shield Chart";
 
     private string GetWalkthroughRootClass()
     {

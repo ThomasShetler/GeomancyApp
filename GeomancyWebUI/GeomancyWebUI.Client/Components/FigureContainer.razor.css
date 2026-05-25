@@ -21,6 +21,38 @@
     transform: translateY(-1px);
 }
 
+/* Wiki panels and other fixed-size preview boxes */
+.figure-container.is-compact {
+    min-height: 0;
+    padding: 0.5rem;
+    contain: none;
+}
+
+.figure-container.is-compact:hover {
+    transform: none;
+}
+
+.figure-container.is-compact .figure-lines {
+    gap: 3px;
+}
+
+.figure-container.is-compact .figure-line {
+    font-size: 0.82rem;
+    min-height: 0;
+    height: auto;
+    line-height: 1.15;
+}
+
+.figure-container.is-compact .figure-line-glyphs {
+    gap: 0.32em;
+    min-width: 1.1em;
+}
+
+.figure-container.is-compact .figure-line-glyphs--pair {
+    gap: 0.42em;
+    min-width: 1.85em;
+}
+
 .figure-label {
     font-weight: bold;
     font-size: 12px;

@@ -670,3 +670,80 @@
         animation: none;
     }
 }
+
+/*
+ * Wiki generate-figures article: compact rows (same density as glossary pattern selector column).
+ * Always column body; labels stack above canvases so marks stay inside the track.
+ */
+.figure-dot-caster.is-wiki-article {
+    --canvas-height: 2.85rem;
+    --row-label-width: 3.5rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: 10px;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-body {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-rows {
+    width: 100%;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+    padding: 0.45rem 0.55rem 0.5rem;
+    align-items: stretch;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row-label {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem 0.45rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row-count {
+    margin-top: 0;
+    margin-left: auto;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row-track-wrap {
+    width: 100%;
+    min-width: 0;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-canvas {
+    container-type: size;
+    width: 100%;
+    height: var(--canvas-height);
+    min-height: var(--canvas-height);
+    max-height: var(--canvas-height);
+}
+
+.figure-dot-caster.is-wiki-article .canvas-mark {
+    width: clamp(0.62rem, 18cqh, 0.88rem);
+    height: clamp(0.62rem, 18cqh, 0.88rem);
+    font-size: clamp(0.52rem, 13cqh, 0.65rem);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-pair-line {
+    stroke-width: 1.15;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-placeholder,
+.figure-dot-caster.is-wiki-article .figure-dot-refocus-mask-text {
+    font-size: 0.66rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-actions {
+    margin-top: 0.1rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-actions .figure-dot-caster-btn {
+    width: 100%;
+}

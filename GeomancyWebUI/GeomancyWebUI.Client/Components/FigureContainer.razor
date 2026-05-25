@@ -1,6 +1,6 @@
 @using GeomancyWebUI.Client.Models
 
-<div class="figure-container @GetHouseStrengthClass()" title="@Figure?.Name">
+<div class="figure-container @(Compact ? "is-compact" : "") @GetHouseStrengthClass()" title="@Figure?.Name">
     @if (!string.IsNullOrEmpty(Label))
     {
         <div class="figure-label">
@@ -47,6 +47,7 @@
     [Parameter] public bool IsInteractive { get; set; } = true;
     [Parameter] public bool ShowFigureName { get; set; } = false;
     [Parameter] public bool ShowHouseStrength { get; set; } = true;  // Show house strength by default
+    [Parameter] public bool Compact { get; set; }
     [Parameter] public int? HighlightedLineNumber { get; set; }
     [Parameter] public int? RevealLineCount { get; set; }
     [Parameter] public string? HighlightTheme { get; set; }

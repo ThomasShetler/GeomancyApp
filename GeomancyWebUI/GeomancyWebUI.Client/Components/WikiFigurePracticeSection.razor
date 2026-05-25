@@ -1,0 +1,26 @@
+@using GeomancyWebUI.Client.Models
+
+<div class="wiki-figure-practice detail-card">
+    <div class="wiki-figure-practice-body">
+        <div class="wiki-figure-practice-marking">
+            <FigureDotCaster MotherLabel="Practice figure"
+                             WikiArticleLayout="true"
+                             ShowInstruction="false"
+                             ShowResultFigure="false"
+                             MobileProgressiveRows="false"
+                             MobileActionsFirst="false"
+                             OnFigureCompleted="HandleFigureCompleted" />
+        </div>
+        <WikiFigureDataPanel Figure="@_resolvedFigure" />
+    </div>
+</div>
+
+@code {
+    private FigureModel? _resolvedFigure;
+
+    private Task HandleFigureCompleted(FigureModel figure)
+    {
+        _resolvedFigure = figure;
+        return InvokeAsync(StateHasChanged);
+    }
+}

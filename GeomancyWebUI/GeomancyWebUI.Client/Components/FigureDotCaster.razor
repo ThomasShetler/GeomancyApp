@@ -234,6 +234,8 @@
     [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
     [Parameter] public bool MobileProgressiveRows { get; set; }
     [Parameter] public bool MobileActionsFirst { get; set; }
+    /// <summary>Narrow wiki article column: smaller canvases and marks, stacked row labels.</summary>
+    [Parameter] public bool WikiArticleLayout { get; set; }
 
     private int _activeRowIndex;
     private int? _editUnlockedRow;
@@ -283,6 +285,7 @@
         if (_phase == CasterPhase.Complete) classes.Add("is-complete");
         if (MobileProgressiveRows) classes.Add("is-mobile-progressive");
         if (MobileActionsFirst) classes.Add("is-mobile-actions-first");
+        if (WikiArticleLayout) classes.Add("is-wiki-article");
         return string.Join(" ", classes);
     }
 
