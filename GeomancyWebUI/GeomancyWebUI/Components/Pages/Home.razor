@@ -1,12 +1,16 @@
-﻿@page "/"
+@page "/"
 @using GeomancyApp
 @using GeomancyWebUI.Components
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Services
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 
-<PageTitle>Geofancy</PageTitle>
+<PageSeo Title="Free Geomancy Software"
+          Description="Cast shield and house charts, study perfections and the Way of Points, browse the geomancy wiki, and learn with interactive walkthroughs. Free, no account, no AI in readings."
+          CanonicalPath="/"
+          JsonLd="@HomeJsonLd" />
 
 <div class="landing">
     <section class="landing-hero" aria-labelledby="landing-title">
@@ -241,6 +245,42 @@
 </div>
 
 @code {
+    private static readonly object HomeJsonLd = new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@graph"] = new object[]
+        {
+            new Dictionary<string, object>
+            {
+                ["@type"] = "WebSite",
+                ["name"] = SeoSite.SiteName,
+                ["url"] = SeoSite.SiteUrl,
+                ["description"] = SeoSite.DefaultDescription,
+                ["inLanguage"] = "en"
+            },
+            new Dictionary<string, object>
+            {
+                ["@type"] = "SoftwareApplication",
+                ["name"] = SeoSite.SiteName,
+                ["applicationCategory"] = "EducationalApplication",
+                ["operatingSystem"] = "Web",
+                ["url"] = SeoSite.SiteUrl,
+                ["description"] = SeoSite.DefaultDescription,
+                ["offers"] = new Dictionary<string, object>
+                {
+                    ["@type"] = "Offer",
+                    ["price"] = "0",
+                    ["priceCurrency"] = "USD"
+                },
+                ["author"] = new Dictionary<string, object>
+                {
+                    ["@type"] = "Person",
+                    ["name"] = SeoSite.Author
+                }
+            }
+        }
+    };
+
     private bool _showCastDialog;
 
     private Task CastAChartAsync()

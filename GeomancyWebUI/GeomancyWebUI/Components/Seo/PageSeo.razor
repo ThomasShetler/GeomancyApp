@@ -1,0 +1,90 @@
+@using System.Text.Json
+@using GeomancyWebUI.Services
+@inject NavigationManager Navigation
+
+<PageTitle>@DocumentTitle</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@MetaDescription" />
+    <meta name="keywords" content="@MetaKeywords" />
+    <meta name="author" content="@SeoSite.Author" />
+    <meta name="application-name" content="@SeoSite.SiteName" />
+    <meta name="robots" content="@RobotsDirective" />
+
+    <link rel="canonical" href="@CanonicalUrl" />
+
+    <meta property="og:locale" content="@SeoSite.Locale" />
+    <meta property="og:site_name" content="@SeoSite.SiteName" />
+    <meta property="og:type" content="@OgType" />
+    <meta property="og:title" content="@DocumentTitle" />
+    <meta property="og:description" content="@MetaDescription" />
+    <meta property="og:url" content="@CanonicalUrl" />
+    <meta property="og:image" content="@OgImageAbsoluteUrl" />
+
+    <meta name="twitter:card" content="@SeoSite.TwitterCard" />
+    <meta name="twitter:title" content="@DocumentTitle" />
+    <meta name="twitter:description" content="@MetaDescription" />
+    <meta name="twitter:image" content="@OgImageAbsoluteUrl" />
+
+    @if (JsonLdMarkup is not null)
+    {
+        <script type="application/ld+json">@JsonLdMarkup</script>
+    }
+</HeadContent>
+
+@code {
+    /// <summary>Short page title (formatted with site name unless it already includes Geofancy).</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Keywords { get; set; }
+
+    /// <summary>Path only, e.g. /wiki. Defaults to current path without query string.</summary>
+    [Parameter]
+    public string? CanonicalPath { get; set; }
+
+    [Parameter]
+    public string OgType { get; set; } = "website";
+
+    [Parameter]
+    public string? ImagePath { get; set; }
+
+    [Parameter]
+    public bool NoIndex { get; set; }
+
+    /// <summary>Optional JSON-LD object serialized into a script tag.</summary>
+    [Parameter]
+    public object? JsonLd { get; set; }
+
+    private string DocumentTitle => SeoSite.FormatTitle(Title);
+    private string MetaDescription => SeoSite.Truncate(Description);
+    private string MetaKeywords => string.IsNullOrWhiteSpace(Keywords) ? SeoSite.DefaultKeywords : Keywords.Trim();
+    private string RobotsDirective => NoIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large";
+    private string OgImageAbsoluteUrl => SeoSite.AbsoluteUrl(ImagePath ?? SeoSite.DefaultOgImagePath);
+
+    private string CanonicalUrl
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(CanonicalPath))
+                return SeoSite.AbsoluteUrl(CanonicalPath);
+
+            var uri = new Uri(Navigation.Uri);
+            return SeoSite.AbsoluteUrl(uri.AbsolutePath);
+        }
+    }
+
+    private MarkupString? JsonLdMarkup =>
+        JsonLd is null
+            ? null
+            : new MarkupString(JsonSerializer.Serialize(JsonLd, JsonLdOptions));
+
+    private static readonly JsonSerializerOptions JsonLdOptions = new()
+    {
+        WriteIndented = false
+    };
+}

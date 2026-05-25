@@ -1,8 +1,8 @@
 .site-footer {
     margin-top: auto;
-    padding: 1.5rem 1rem 2rem;
+    padding: 1.25rem 1rem 1.75rem;
     border-top: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    background: linear-gradient(180deg, transparent 0%, var(--bg-secondary) 12%);
     color: var(--text-secondary);
     font-size: 0.85rem;
 }
@@ -10,6 +10,14 @@
 .site-footer-inner {
     max-width: 42rem;
     margin: 0 auto;
+    padding: 0 0.25rem;
+}
+
+/* Content pages: breathing room above footer without affecting immersive shells */
+.page:has(.landing) .site-footer,
+.page:has(.about-page) .site-footer,
+.page:has(.wiki-page) .site-footer {
+    margin-top: 2rem;
 }
 
 .site-footer-brand {
@@ -66,8 +74,9 @@
     font-size: 0.8rem;
 }
 
-/* Full-bleed mobile/wiki shells: footer stays readable without stealing chart height */
+/* Immersive flows: no footer (workspace, mobile, interactive wiki/chart tools) */
+.page:has(.workspace-shell) .site-footer,
 .page:has(.mobile-shell) .site-footer,
-.page:has(.wiki-interactive-shell--mobile) .site-footer {
+.page:has(.wiki-interactive-shell) .site-footer {
     display: none;
 }

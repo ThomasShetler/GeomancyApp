@@ -79,6 +79,57 @@ article.content:has(.wiki-interactive-shell--mobile) {
     padding-right: 0 !important;
 }
 
+/*
+ * Desktop workspace: lock to one viewport under the nav (no footer).
+ * Bounded height lets tab list/detail columns keep their internal overflow-y scroll.
+ */
+.page:has(.workspace-shell) {
+    min-height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+}
+
+main:has(.workspace-shell) {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+article.content:has(.workspace-shell) {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+}
+
+/* Wiki interactive (desktop): same full-height treatment */
+.page:has(.wiki-interactive-shell:not(.wiki-interactive-shell--mobile)) {
+    min-height: 100dvh;
+}
+
+main:has(.wiki-interactive-shell:not(.wiki-interactive-shell--mobile)) {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+article.content:has(.wiki-interactive-shell:not(.wiki-interactive-shell--mobile)) {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+}
+
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
     width: 100%;
