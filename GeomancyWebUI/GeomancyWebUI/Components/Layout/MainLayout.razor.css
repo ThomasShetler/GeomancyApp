@@ -4,29 +4,40 @@
  * - on phones it stays as a sticky top bar (with the nav links collapsing
  *   behind the existing hamburger toggler in NavMenu.razor.css).
  */
+/* Visually hidden until keyboard focus; lives inside main so it never stacks above the nav. */
 .skip-link {
     position: absolute;
-    left: -9999px;
-    top: auto;
     width: 1px;
     height: 1px;
+    padding: 0;
+    margin: -1px;
     overflow: hidden;
-    z-index: 2000;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 0.5rem;
     padding: 0.5rem 1rem;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
     background: var(--bg-primary, #fff);
     color: var(--accent-color, #007bff);
     font-weight: 600;
     text-decoration: none;
-    border-radius: 0 0 4px 0;
+    border-radius: 4px;
     box-shadow: 0 2px 8px var(--shadow, rgba(0, 0, 0, 0.15));
 }
 
-.skip-link:focus {
-    left: 0;
-    top: 0;
-    width: auto;
-    height: auto;
-    overflow: visible;
+main:has(.mobile-shell) > .skip-link,
+main:has(.workspace-shell) > .skip-link,
+main:has(.wiki-interactive-shell) > .skip-link {
+    display: none;
 }
 
 .page {
@@ -52,14 +63,20 @@ main {
  */
 .page:has(.mobile-shell),
 .page:has(.wiki-interactive-shell--mobile) {
-    min-height: 100dvh;
+    height: 100dvh;
     max-height: 100dvh;
+    min-height: 0;
     overflow: hidden;
+}
+
+.page:has(.mobile-shell) .sidebar,
+.page:has(.wiki-interactive-shell--mobile) .sidebar {
+    flex: 0 0 auto;
 }
 
 main:has(.mobile-shell),
 main:has(.wiki-interactive-shell--mobile) {
-    flex: 1;
+    flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
     display: flex;
@@ -68,15 +85,14 @@ main:has(.wiki-interactive-shell--mobile) {
 
 article.content:has(.mobile-shell),
 article.content:has(.wiki-interactive-shell--mobile) {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     /* Full-bleed on phones; horizontal padding would steal width and can
        contribute to tiny vertical overflow on strict 100dvh layouts. */
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding: 0 !important;
 }
 
 /*
