@@ -8,10 +8,10 @@
     component does not need a scoped .razor.css.
 *@
 
-<div class="charts-side-by-side">
+<div class="charts-side-by-side @GetTutorialRootClass()">
     @if (View == ChartSurfaceView.Both || View == ChartSurfaceView.Shield)
     {
-        <div class="shield-chart-container @(ShowTriplicates ? "show-triplicates" : "")">
+        <div class="shield-chart-container @GetShieldContainerClass()">
             @if (ShowTriplicates)
             {
                 <div class="triplicate-overlay triplicate-1">
@@ -32,79 +32,64 @@
                 </div>
             }
 
-            <div class="row mb-3 row-1">
-                @if (ShowSectionLabels)
-                {
-                    <div class="section-label-overlay section-label-mothers">Mothers</div>
-                    <div class="section-label-overlay section-label-daughters">Daughters</div>
-                }
-                <div class="col text-center section-daughters" data-house="8">
-                    <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
+            @if (ShowRow1)
+            {
+                <div class="row mb-3 row-1 @GetRow1FocusClass()">
+                    @if (ShowSectionLabels)
+                    {
+                        <div class="section-label-overlay section-label-mothers">Mothers</div>
+                        <div class="section-label-overlay section-label-daughters">Daughters</div>
+                    }
+                    @ShieldHouseSlot(8, "col", "section-daughters", isMother: false)
+                    @ShieldHouseSlot(7, "col", "section-daughters", isMother: false)
+                    @ShieldHouseSlot(6, "col", "section-daughters", isMother: false)
+                    @ShieldHouseSlot(5, "col", "section-daughters", isMother: false)
+                    @ShieldHouseSlot(4, "col", "section-mothers", isMother: true)
+                    @ShieldHouseSlot(3, "col", "section-mothers", isMother: true)
+                    @ShieldHouseSlot(2, "col", "section-mothers", isMother: true)
+                    @ShieldHouseSlot(1, "col", "section-mothers", isMother: true)
                 </div>
-                <div class="col text-center section-daughters" data-house="7">
-                    <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
-                </div>
-                <div class="col text-center section-daughters" data-house="6">
-                    <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
-                </div>
-                <div class="col text-center section-daughters" data-house="5">
-                    <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
-                </div>
-                <div class="col text-center section-mothers" data-house="4">
-                    <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
-                </div>
-                <div class="col text-center section-mothers" data-house="3">
-                    <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
-                </div>
-                <div class="col text-center section-mothers" data-house="2">
-                    <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
-                </div>
-                <div class="col text-center section-mothers" data-house="1">
-                    <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
-                </div>
-            </div>
+            }
 
-            <div class="row mb-3 row-2">
-                @if (ShowSectionLabels)
-                {
-                    <div class="section-label-overlay section-label-nieces">Nieces</div>
-                }
-                <div class="col-3 text-center section-nieces" data-house="12">
-                    <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
+            @if (ShowNiecesRow)
+            {
+                <div class="row mb-3 row-2 @GetNiecesRowFocusClass()">
+                    @if (ShowSectionLabels)
+                    {
+                        <div class="section-label-overlay section-label-nieces">Nieces</div>
+                    }
+                    @ShieldHouseSlot(12, "col-3", "section-nieces", isMother: false)
+                    @ShieldHouseSlot(11, "col-3", "section-nieces", isMother: false)
+                    @ShieldHouseSlot(10, "col-3", "section-nieces", isMother: false)
+                    @ShieldHouseSlot(9, "col-3", "section-nieces", isMother: false)
                 </div>
-                <div class="col-3 text-center section-nieces" data-house="11">
-                    <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
-                </div>
-                <div class="col-3 text-center section-nieces" data-house="10">
-                    <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
-                </div>
-                <div class="col-3 text-center section-nieces" data-house="9">
-                    <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
-                </div>
-            </div>
+            }
 
-            <div class="row mb-3 section-court">
-                @if (ShowSectionLabels)
-                {
-                    <div class="section-label-overlay section-label-court">Court</div>
-                }
-                <div class="col-6 text-center">
-                    <FigureContainer Figure="@Chart?.LeftWitness" Label="Left Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+            @if (ShowCourtRows)
+            {
+                <div class="row mb-3 section-court @GetCourtRowFocusClass()">
+                    @if (ShowSectionLabels)
+                    {
+                        <div class="section-label-overlay section-label-court">Court</div>
+                    }
+                    <div class="col-6 text-center @GetCourtHighlightClass(ChartHighlightCourt.LeftWitness) @GetCourtLineSourceClass(ChartHighlightCourt.LeftWitness)" data-court="left-witness">
+                        @RenderCourtSlot(ChartHighlightCourt.LeftWitness, ShouldShowCourtFigure(Chart?.LeftWitness), Chart?.LeftWitness, "Left Wit")
+                    </div>
+                    <div class="col-6 text-center @GetCourtHighlightClass(ChartHighlightCourt.RightWitness) @GetCourtLineSourceClass(ChartHighlightCourt.RightWitness)" data-court="right-witness">
+                        @RenderCourtSlot(ChartHighlightCourt.RightWitness, ShouldShowCourtFigure(Chart?.RightWitness), Chart?.RightWitness, "Right Wit")
+                    </div>
                 </div>
-                <div class="col-6 text-center">
-                    <FigureContainer Figure="@Chart?.RightWitness" Label="Right Wit" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
-                </div>
-            </div>
 
-            <div class="row section-court">
-                <div class="col-4"></div>
-                <div class="col-4 text-center">
-                    <FigureContainer Figure="@Chart?.Judge" Label="Judge" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
+                <div class="row section-court @GetCourtRowFocusClass()">
+                    <div class="col-4 chart-empty-cell" aria-hidden="true"></div>
+                    <div class="col-4 text-center @GetCourtHighlightClass(ChartHighlightCourt.Judge) @GetCourtLineSourceClass(ChartHighlightCourt.Judge)" data-court="judge">
+                        @RenderCourtSlot(ChartHighlightCourt.Judge, ShouldShowCourtFigure(Chart?.Judge), Chart?.Judge, "Judge")
+                    </div>
+                    <div class="col-4 text-center @GetCourtHighlightClass(ChartHighlightCourt.Sentence) @GetCourtLineSourceClass(ChartHighlightCourt.Sentence)" data-court="sentence">
+                        @RenderCourtSlot(ChartHighlightCourt.Sentence, ShouldShowCourtFigure(Chart?.Sentence), Chart?.Sentence, "Fallout")
+                    </div>
                 </div>
-                <div class="col-4 text-center">
-                    <FigureContainer Figure="@Chart?.Sentence" Label="Fallout" IsInteractive="false" ShowFigureName="true" ShowHouseStrength="false" />
-                </div>
-            </div>
+            }
         </div>
     }
 
@@ -127,7 +112,7 @@
                 </foreignObject>
                 <foreignObject x="150" y="550" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container">
-                        <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
+                        <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="850" y="550" width="1" height="1">
@@ -137,7 +122,7 @@
                 </foreignObject>
                 <foreignObject x="500" y="900" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container">
-                        <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
+                        <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="250" y="150" width="1" height="1">
@@ -172,12 +157,12 @@
                 </foreignObject>
                 <foreignObject x="80" y="814" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container">
-                        <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
+                        <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="250" y="935" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container">
-                        <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="true" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
+                        <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
                     </div></div>
                 </foreignObject>
             </svg>
@@ -200,10 +185,368 @@
     [Parameter] public ChartSurfaceView View { get; set; } = ChartSurfaceView.Both;
     [Parameter] public bool ShowSectionLabels { get; set; } = false;
     [Parameter] public bool ShowTriplicates { get; set; } = false;
+    [Parameter] public ShieldRowVisibility ShieldRowVisibility { get; set; } = ShieldRowVisibility.All;
+    [Parameter] public ShieldSectionFocus SectionFocus { get; set; } = ShieldSectionFocus.Full;
+    [Parameter] public bool ShowEmptyDerivedSlots { get; set; } = false;
+    [Parameter] public bool LayoutOnly { get; set; }
+    [Parameter] public bool InteractiveMothers { get; set; } = true;
+    [Parameter] public bool IsWikiLayout { get; set; }
+    [Parameter] public bool ShowCourtFigures { get; set; } = true;
+    [Parameter] public IReadOnlySet<int>? VisibleHouseNumbers { get; set; }
+    [Parameter] public IReadOnlyDictionary<int, int>? HouseHighlightedLines { get; set; }
+    [Parameter] public IReadOnlyDictionary<int, int>? HouseRevealLineCounts { get; set; }
+    [Parameter] public IReadOnlyDictionary<int, string>? HouseLineHighlightThemes { get; set; }
+    [Parameter] public IReadOnlyDictionary<ChartHighlightCourt, int>? CourtHighlightedLines { get; set; }
+    [Parameter] public IReadOnlyDictionary<ChartHighlightCourt, int>? CourtRevealLineCounts { get; set; }
+    [Parameter] public IReadOnlyDictionary<ChartHighlightCourt, string>? CourtLineHighlightThemes { get; set; }
+    [Parameter] public IReadOnlySet<int>? HighlightedHouseNumbers { get; set; }
+    [Parameter] public IReadOnlySet<ChartHighlightCourt>? HighlightedCourt { get; set; }
+
+    private bool ShowRow1 => SectionFocus is ShieldSectionFocus.Full or ShieldSectionFocus.Mothers or ShieldSectionFocus.Daughters
+        || ShieldRowVisibility == ShieldRowVisibility.MothersRowOnly;
+
+    private bool ShowNiecesRow => SectionFocus is ShieldSectionFocus.Full or ShieldSectionFocus.Nieces;
+
+    private bool ShowCourtRows => SectionFocus is ShieldSectionFocus.Full or ShieldSectionFocus.Court;
+
+    private RenderFragment ShieldHouseSlot(int houseNumber, string colClass, string sectionClass, bool isMother) => builder =>
+    {
+        var figure = GetShieldSlotFigure(houseNumber);
+        var useEmpty = ShouldRenderEmptySlot(houseNumber, figure);
+        var isMuted = SectionFocus != ShieldSectionFocus.Full && !IsHouseInSectionFocus(houseNumber);
+        var seq = 0;
+
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class",
+            $"{colClass} text-center {sectionClass} {GetHouseHighlightClass(houseNumber)} {GetLineSourceClass(houseNumber)} {(isMuted ? "chart-slot-muted" : "")}");
+        builder.AddAttribute(seq++, "data-house", houseNumber.ToString());
+
+        if (useEmpty)
+        {
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", isMuted ? "chart-slot-empty chart-slot-muted" : "chart-slot-empty");
+            builder.AddAttribute(seq++, "aria-label", $"House {houseNumber}, awaiting figure");
+            builder.OpenElement(seq++, "span");
+            builder.AddAttribute(seq++, "class", "chart-slot-empty-label");
+            builder.AddContent(seq++, houseNumber.ToString());
+            builder.CloseElement();
+            builder.CloseElement();
+        }
+        else
+        {
+            builder.OpenComponent<FigureContainer>(seq++);
+            builder.AddAttribute(seq++, "Figure", figure);
+            builder.AddAttribute(seq++, "Label", houseNumber.ToString());
+            builder.AddAttribute(seq++, "IsInteractive", isMother && InteractiveMothers);
+            builder.AddAttribute(seq++, "ShowFigureName", true);
+            builder.AddAttribute(seq++, "HighlightedLineNumber", GetHighlightedLine(houseNumber));
+            builder.AddAttribute(seq++, "RevealLineCount", GetRevealLineCount(houseNumber));
+            builder.AddAttribute(seq++, "HighlightTheme", GetHighlightTheme(houseNumber));
+            if (isMother)
+            {
+                builder.AddAttribute(seq++, "OnFigureChanged", GetMotherChangedCallback(houseNumber));
+            }
+            builder.CloseComponent();
+        }
+
+        builder.CloseElement();
+    };
+
+    private RenderFragment RenderCourtSlot(ChartHighlightCourt court, bool showFigure, FigureModel? figure, string label) => builder =>
+    {
+        var seq = 0;
+        var courtFocused = SectionFocus is ShieldSectionFocus.Full or ShieldSectionFocus.Court;
+
+        if (!showFigure || figure == null)
+        {
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class",
+                courtFocused ? "chart-slot-empty" : "chart-slot-empty chart-slot-muted");
+            builder.AddAttribute(seq++, "aria-label", $"{label}, awaiting figure");
+            builder.OpenElement(seq++, "span");
+            builder.AddAttribute(seq++, "class", "chart-slot-empty-label");
+            builder.AddContent(seq++, label);
+            builder.CloseElement();
+            builder.CloseElement();
+        }
+        else
+        {
+            builder.OpenComponent<FigureContainer>(seq++);
+            builder.AddAttribute(seq++, "Figure", figure);
+            builder.AddAttribute(seq++, "Label", label);
+            builder.AddAttribute(seq++, "IsInteractive", false);
+            builder.AddAttribute(seq++, "ShowFigureName", true);
+            builder.AddAttribute(seq++, "ShowHouseStrength", false);
+            builder.AddAttribute(seq++, "HighlightedLineNumber", GetCourtHighlightedLine(court));
+            builder.AddAttribute(seq++, "RevealLineCount", GetCourtRevealLineCount(court));
+            builder.AddAttribute(seq++, "HighlightTheme", GetCourtHighlightTheme(court));
+            builder.CloseComponent();
+        }
+    };
+
+    private bool ShouldShowCourtFigure(FigureModel? figure) =>
+        ShowCourtFigures && !LayoutOnly && (SectionFocus is ShieldSectionFocus.Full or ShieldSectionFocus.Court);
+
+    private bool IsHouseInSectionFocus(int houseNumber) => SectionFocus switch
+    {
+        ShieldSectionFocus.Mothers => houseNumber is >= 1 and <= 4,
+        ShieldSectionFocus.Daughters => houseNumber is >= 5 and <= 8,
+        ShieldSectionFocus.Nieces => houseNumber is >= 9 and <= 12,
+        _ => true
+    };
+
+    private bool ShouldRenderEmptySlot(int houseNumber, FigureModel? figure)
+    {
+        if (!IsHouseVisible(houseNumber))
+        {
+            return true;
+        }
+
+        if (LayoutOnly)
+        {
+            return true;
+        }
+
+        if (SectionFocus != ShieldSectionFocus.Full && !IsHouseInSectionFocus(houseNumber))
+        {
+            return true;
+        }
+
+        if (figure != null)
+        {
+            return false;
+        }
+
+        return ShowEmptyDerivedSlots || SectionFocus != ShieldSectionFocus.Full;
+    }
+
+    private FigureModel? GetShieldSlotFigure(int houseNumber)
+    {
+        if (!IsHouseVisible(houseNumber))
+        {
+            return null;
+        }
+
+        if (LayoutOnly)
+        {
+            return null;
+        }
+
+        if (SectionFocus != ShieldSectionFocus.Full && !IsHouseInSectionFocus(houseNumber))
+        {
+            return null;
+        }
+
+        return houseNumber switch
+        {
+            1 => House1Figure,
+            2 => House2Figure,
+            3 => House3Figure,
+            4 => House4Figure,
+            _ => GetHouseFigure(houseNumber)
+        };
+    }
+
+    private EventCallback<FigureModel> GetMotherChangedCallback(int houseNumber) => houseNumber switch
+    {
+        1 => OnHouse1Changed,
+        2 => OnHouse2Changed,
+        3 => OnHouse3Changed,
+        4 => OnHouse4Changed,
+        _ => default
+    };
+
+    private string GetShieldContainerClass()
+    {
+        var classes = new List<string>();
+        if (IsWikiLayout)
+        {
+            classes.Add("is-wiki");
+        }
+
+        if (ShieldRowVisibility == ShieldRowVisibility.MothersRowOnly)
+        {
+            classes.Add("shield-chart-mothers-row-only");
+        }
+
+        if (SectionFocus != ShieldSectionFocus.Full)
+        {
+            classes.Add($"shield-section-focus-{SectionFocus.ToString().ToLowerInvariant()}");
+        }
+
+        return string.Join(" ", classes);
+    }
+
+    private string GetRow1FocusClass() =>
+        SectionFocus is ShieldSectionFocus.Mothers or ShieldSectionFocus.Daughters
+            ? "chart-row-section-active"
+            : string.Empty;
+
+    private string GetNiecesRowFocusClass() =>
+        SectionFocus == ShieldSectionFocus.Nieces ? "chart-row-section-active" : string.Empty;
+
+    private string GetCourtRowFocusClass() =>
+        SectionFocus == ShieldSectionFocus.Court ? "chart-row-section-active" : string.Empty;
 
     private FigureModel? GetHouseFigure(int houseNumber)
     {
-        if (Chart == null) return null;
+        if (Chart == null)
+        {
+            return null;
+        }
+
         return Chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+    }
+
+    private string GetTutorialRootClass()
+    {
+        var classes = new List<string>();
+        if (SectionFocus != ShieldSectionFocus.Full || HasTutorialHighlights())
+        {
+            classes.Add("chart-surface-tutorial-active");
+        }
+
+        if (SectionFocus != ShieldSectionFocus.Full)
+        {
+            classes.Add("chart-surface-section-focus");
+        }
+
+        return string.Join(" ", classes);
+    }
+
+    private bool HasTutorialHighlights()
+    {
+        return (HighlightedHouseNumbers != null && HighlightedHouseNumbers.Count > 0)
+            || (HighlightedCourt != null && HighlightedCourt.Count > 0);
+    }
+
+    private string GetHouseHighlightClass(int houseNumber)
+    {
+        if (SectionFocus != ShieldSectionFocus.Full && IsHouseInSectionFocus(houseNumber))
+        {
+            return "wiki-section-highlight wiki-tutorial-highlight";
+        }
+
+        if (HighlightedHouseNumbers != null && HighlightedHouseNumbers.Contains(houseNumber))
+        {
+            return "wiki-tutorial-highlight";
+        }
+
+        return string.Empty;
+    }
+
+    private string GetCourtHighlightClass(ChartHighlightCourt court)
+    {
+        if (SectionFocus == ShieldSectionFocus.Court)
+        {
+            return "wiki-section-highlight wiki-tutorial-highlight";
+        }
+
+        if (HighlightedCourt != null && HighlightedCourt.Contains(court))
+        {
+            return "wiki-tutorial-highlight";
+        }
+
+        return string.Empty;
+    }
+
+    private bool IsHouseVisible(int houseNumber)
+    {
+        if (VisibleHouseNumbers == null || VisibleHouseNumbers.Count == 0)
+        {
+            return true;
+        }
+
+        return VisibleHouseNumbers.Contains(houseNumber);
+    }
+
+    private int? GetHighlightedLine(int houseNumber)
+    {
+        if (HouseHighlightedLines == null || !HouseHighlightedLines.TryGetValue(houseNumber, out var line))
+        {
+            return null;
+        }
+
+        return line;
+    }
+
+    private int? GetRevealLineCount(int houseNumber)
+    {
+        if (HouseRevealLineCounts == null || !HouseRevealLineCounts.TryGetValue(houseNumber, out var revealCount))
+        {
+            return null;
+        }
+
+        return revealCount;
+    }
+
+    private string? GetHighlightTheme(int houseNumber)
+    {
+        if (HouseLineHighlightThemes == null || !HouseLineHighlightThemes.TryGetValue(houseNumber, out var theme))
+        {
+            return null;
+        }
+
+        return theme;
+    }
+
+    private string GetLineSourceClass(int houseNumber)
+    {
+        if (HouseHighlightedLines == null || !HouseHighlightedLines.ContainsKey(houseNumber))
+        {
+            return string.Empty;
+        }
+
+        if (HighlightedHouseNumbers != null && HighlightedHouseNumbers.Contains(houseNumber))
+        {
+            return string.Empty;
+        }
+
+        return "wiki-line-source-active";
+    }
+
+    private int? GetCourtHighlightedLine(ChartHighlightCourt court)
+    {
+        if (CourtHighlightedLines == null || !CourtHighlightedLines.TryGetValue(court, out var line))
+        {
+            return null;
+        }
+
+        return line;
+    }
+
+    private int? GetCourtRevealLineCount(ChartHighlightCourt court)
+    {
+        if (CourtRevealLineCounts == null || !CourtRevealLineCounts.TryGetValue(court, out var revealCount))
+        {
+            return null;
+        }
+
+        return revealCount;
+    }
+
+    private string? GetCourtHighlightTheme(ChartHighlightCourt court)
+    {
+        if (CourtLineHighlightThemes == null || !CourtLineHighlightThemes.TryGetValue(court, out var theme))
+        {
+            return null;
+        }
+
+        return theme;
+    }
+
+    private string GetCourtLineSourceClass(ChartHighlightCourt court)
+    {
+        if (CourtHighlightedLines == null || !CourtHighlightedLines.ContainsKey(court))
+        {
+            return string.Empty;
+        }
+
+        if (HighlightedCourt != null && HighlightedCourt.Contains(court))
+        {
+            return string.Empty;
+        }
+
+        return "wiki-line-source-active";
     }
 }

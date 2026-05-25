@@ -1,0 +1,69 @@
+@using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Helpers
+@using GeomancyWebUI.Client.Models
+
+@if (Figure != null)
+{
+    var fig = Figure;
+    var planetSymbol = FigureDisplayHelper.GetPlanetSymbol(fig.Planet);
+    var zodiacSymbol = FigureDisplayHelper.GetZodiacSymbol(fig.Sign);
+    var qualityChipClass = FigureDisplayHelper.GetQualityChipClass(fig.Quality);
+
+    <header class="wiki-figure-header">
+        <div class="wiki-figure-header-text">
+            <h2 class="wiki-figure-name">@fig.Name</h2>
+            @if (!string.IsNullOrWhiteSpace(fig.EnglishName))
+            {
+                <p class="wiki-figure-english">@fig.EnglishName</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(fig.OtherNames))
+            {
+                <p class="wiki-figure-aliases">a.k.a. @fig.OtherNames</p>
+            }
+            <p class="wiki-figure-lines">@FigureDisplayHelper.GetLinePatternSummary(fig)</p>
+        </div>
+        <aside class="wiki-figure-pattern-card" aria-label="@($"{fig.Name} dot pattern")">
+            <span class="wiki-figure-pattern-label">Pattern</span>
+            <div class="wiki-figure-emblem" aria-hidden="true">
+                <FigureContainer Figure="@fig"
+                                 Compact="true"
+                                 IsInteractive="false"
+                                 ShowFigureName="false"
+                                 ShowHouseStrength="false" />
+            </div>
+        </aside>
+    </header>
+
+    <div class="chip-row compact-chips wiki-figure-chips">
+        @if (!string.IsNullOrWhiteSpace(fig.Planet))
+        {
+            <span class="chip chip-planet">
+                <span class="chip-glyph">@planetSymbol</span>
+                <span class="chip-text">@fig.Planet</span>
+            </span>
+        }
+        @if (!string.IsNullOrWhiteSpace(fig.Sign))
+        {
+            <span class="chip chip-sign">
+                <span class="chip-glyph">@zodiacSymbol</span>
+                <span class="chip-text">@fig.Sign</span>
+            </span>
+        }
+        @if (!string.IsNullOrWhiteSpace(fig.Quality))
+        {
+            <span class="chip @qualityChipClass">@fig.Quality</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(fig.Keyword))
+        {
+            <span class="chip chip-keyword">"@fig.Keyword"</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(fig.Humor))
+        {
+            <span class="chip chip-humor">@fig.Humor</span>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public FigureModel? Figure { get; set; }
+}

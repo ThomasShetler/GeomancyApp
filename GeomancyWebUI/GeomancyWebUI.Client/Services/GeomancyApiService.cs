@@ -92,6 +92,18 @@ namespace GeomancyWebUI.Client.Services
             return MapToFigureModel(apiResponse?.Figure);
         }
 
+        public async Task<IReadOnlyList<FigureModel>> GetAllFiguresAsync()
+        {
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/figures/all";
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiFigures = await response.Content.ReadFromJsonAsync<List<FigureResponse>>();
+            var figures = apiFigures?.Select(MapToFigureModel).ToList() ?? new List<FigureModel>();
+            return figures;
+        }
+
         public async Task<List<PerfectionModel>> CalculatePerfectionAsync(PerfectionRequestModel request)
         {
             // Use absolute URI to bypass service discovery issues
@@ -414,6 +426,7 @@ namespace GeomancyWebUI.Client.Services
             return new FigureModel
             {
                 Name = apiFigure.Name ?? string.Empty,
+                EnglishName = apiFigure.EnglishName ?? string.Empty,
                 OtherNames = apiFigure.OtherNames ?? string.Empty,
                 Quality = apiFigure.Quality ?? string.Empty,
                 Keyword = apiFigure.Keyword ?? string.Empty,
@@ -422,6 +435,10 @@ namespace GeomancyWebUI.Client.Services
                 WeakHouse = apiFigure.WeakHouse ?? string.Empty,
                 Planet = apiFigure.Planet ?? string.Empty,
                 Sign = apiFigure.Sign ?? string.Empty,
+                Humor = apiFigure.Humor ?? string.Empty,
+                PlanetaryIntelligence = apiFigure.PlanetaryIntelligence ?? string.Empty,
+                PlanetarySpirit = apiFigure.PlanetarySpirit ?? string.Empty,
+                PlanetaryAngel = apiFigure.PlanetaryAngel ?? string.Empty,
                 InnerEl = apiFigure.InnerEl ?? string.Empty,
                 OuterEl = apiFigure.OuterEl ?? string.Empty,
                 FireElement = apiFigure.FireElement ?? string.Empty,
@@ -430,7 +447,9 @@ namespace GeomancyWebUI.Client.Services
                 EarthElement = apiFigure.EarthElement ?? string.Empty,
                 Anatomy = apiFigure.Anatomy ?? string.Empty,
                 BodyType = apiFigure.BodyType ?? string.Empty,
+                TraditionalBodyType = apiFigure.TraditionalBodyType ?? string.Empty,
                 CharacterType = apiFigure.CharacterType ?? string.Empty,
+                TraditionalCharacterType = apiFigure.TraditionalCharacterType ?? string.Empty,
                 Colors = apiFigure.Colors ?? string.Empty,
                 Commentary = apiFigure.Commentary ?? string.Empty,
                 DivinatoryMeaning = apiFigure.DivinatoryMeaning ?? string.Empty,
@@ -450,7 +469,8 @@ namespace GeomancyWebUI.Client.Services
                     Author = s.Author ?? string.Empty,
                     Work = s.Work ?? string.Empty,
                     Section = s.Section ?? string.Empty,
-                    Year = s.Year
+                    Year = s.Year,
+                    Note = s.Note ?? string.Empty
                 }).ToList() ?? new List<TraditionalSourceModel>(),
                 HeadLine = apiFigure.HeadLine,
                 NeckLine = apiFigure.NeckLine,
@@ -494,6 +514,8 @@ namespace GeomancyWebUI.Client.Services
         private class FigureResponse
         {
             public string Name { get; set; } = string.Empty;
+            [JsonPropertyName("english_name")]
+            public string? EnglishName { get; set; }
             public string OtherNames { get; set; } = string.Empty;
             public string Quality { get; set; } = string.Empty;
             public string Keyword { get; set; } = string.Empty;
@@ -502,6 +524,14 @@ namespace GeomancyWebUI.Client.Services
             public string WeakHouse { get; set; } = string.Empty;
             public string Planet { get; set; } = string.Empty;
             public string Sign { get; set; } = string.Empty;
+            [JsonPropertyName("humor")]
+            public string? Humor { get; set; }
+            [JsonPropertyName("planetary_intelligence")]
+            public string? PlanetaryIntelligence { get; set; }
+            [JsonPropertyName("planetary_spirit")]
+            public string? PlanetarySpirit { get; set; }
+            [JsonPropertyName("planetary_angel")]
+            public string? PlanetaryAngel { get; set; }
             public string InnerEl { get; set; } = string.Empty;
             public string OuterEl { get; set; } = string.Empty;
             public string FireElement { get; set; } = string.Empty;
@@ -510,7 +540,11 @@ namespace GeomancyWebUI.Client.Services
             public string EarthElement { get; set; } = string.Empty;
             public string Anatomy { get; set; } = string.Empty;
             public string BodyType { get; set; } = string.Empty;
+            [JsonPropertyName("traditional_body_type")]
+            public string? TraditionalBodyType { get; set; }
             public string CharacterType { get; set; } = string.Empty;
+            [JsonPropertyName("traditional_character_type")]
+            public string? TraditionalCharacterType { get; set; }
             public string Colors { get; set; } = string.Empty;
             public string Commentary { get; set; } = string.Empty;
             public string DivinatoryMeaning { get; set; } = string.Empty;
@@ -568,6 +602,9 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("year")]
             public int? Year { get; set; }
+
+            [JsonPropertyName("note")]
+            public string? Note { get; set; }
         }
 
         private class HouseResponse

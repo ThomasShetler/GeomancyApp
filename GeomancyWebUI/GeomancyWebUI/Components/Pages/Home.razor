@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using GeomancyApp
+@using GeomancyWebUI.Components
+@using GeomancyWebUI.Client.Services
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
@@ -23,16 +25,28 @@
              fetchpriority="high" />
         <h1 id="landing-title" class="landing-title sr-only">Geofancy</h1>
         <p class="landing-tagline">
-            The most advanced geomancy software available—built with practitioners in mind,
-            developed by a devoted reader, and powered by the <strong>Geofancy API</strong>.
+            The most advanced geomancy software available — desktop and mobile workspaces,
+            a live geomancy wiki, interactive shield walkthroughs, perfections, and the
+            <strong>Way of Points</strong>, built for practitioners and powered by the
+            <strong>Geofancy API</strong>.
         </p>
-        <button type="button" class="landing-cta" @onclick="CastAChartAsync">
-            Cast a chart!
-        </button>
+        <div class="landing-cta-row">
+            <button type="button" class="landing-cta" @onclick="CastAChartAsync">
+                Cast a chart!
+            </button>
+            <a class="landing-cta-secondary" href="/wiki">
+                Open the wiki
+                <span aria-hidden="true">&nbsp;&rarr;</span>
+            </a>
+        </div>
         <p class="landing-cta-hint">
-            Opens the workspace suited to your screen size (desktop workspace or mobile layout).
+            Choose how you want to start — workspace, mark the four Mothers, or the interactive walkthrough.
         </p>
     </section>
+
+    <CastChartEntryDialog Visible="_showCastDialog"
+                          OnClose="CloseCastDialog"
+                          OnChoice="OnCastEntryChoice" />
 
     <section class="landing-section" aria-labelledby="intro-heading">
         <h2 id="intro-heading" class="landing-h2">What is geomancy?</h2>
@@ -48,7 +62,7 @@
                 Readings interpret how figures occupy houses, how significators relate through
                 <strong>perfections</strong> (occupation, conjunction, mutation, translation, and more),
                 and how elemental routes trace the <strong>Way of Points</strong>. Like other symbolic arts,
-                geomancy frames timing, parties, and obstacles as patterns you reflect on—not guarantees.
+                geomancy frames timing, parties, and obstacles as patterns you reflect on — not guarantees.
             </p>
         </div>
     </section>
@@ -83,6 +97,12 @@
             <li><strong>Reference, not an oracle</strong> — use the text as vocabulary and prompts alongside your own judgment.</li>
         </ul>
         <p class="landing-about-more">
+            <a class="landing-about-link" href="/wiki">
+                Browse the geomancy wiki — glossaries, how-tos, and methods
+                <span aria-hidden="true">&nbsp;&rarr;</span>
+            </a>
+        </p>
+        <p class="landing-about-more">
             <a class="landing-about-link" href="/about">
                 Full story — lineage, corpus, Greer &amp; tradition, and how AI was used in development
                 <span aria-hidden="true">&nbsp;&rarr;</span>
@@ -98,6 +118,14 @@
                 <p>Generate shield and traditional twelve-house charts with interactive figures.</p>
             </li>
             <li class="landing-card">
+                <h3 class="landing-h3">Geomancy Wiki</h3>
+                <p>Live figure and house glossaries, casting how-tos, and corpus-backed reference beside the chart.</p>
+            </li>
+            <li class="landing-card">
+                <h3 class="landing-h3">Learn interactively</h3>
+                <p>Step through shield derivation with animations, or practice marking dots to form the sixteen figures.</p>
+            </li>
+            <li class="landing-card">
                 <h3 class="landing-h3">Court &amp; Houses</h3>
                 <p>Explore court roles and house placements with directory-backed detail panels.</p>
             </li>
@@ -107,7 +135,7 @@
             </li>
             <li class="landing-card">
                 <h3 class="landing-h3">Way of Points</h3>
-                <p>Follow elemental paths with interpretive notes for elements and path types.</p>
+                <p>Follow elemental paths with interpretive notes, including Classic Way of Points / Way of the Light.</p>
             </li>
             <li class="landing-card">
                 <h3 class="landing-h3">Desktop &amp; mobile workspaces</h3>
@@ -115,13 +143,19 @@
             </li>
             <li class="landing-card">
                 <h3 class="landing-h3">Light &amp; dark</h3>
-                <p>Theme follows your choice—toggle whenever you like from the navigation menu.</p>
+                <p>Theme follows your choice — toggle whenever you like from the navigation menu.</p>
             </li>
             <li class="landing-card">
                 <h3 class="landing-h3">Share &amp; export</h3>
-                <p>Copy a shareable link that rebuilds the chart from a compact seed, or download / copy the full reading as JSON for study groups, teachers, or your notes.</p>
+                <p>Copy a shareable link that rebuilds the chart from a compact seed, or download / copy the full reading as JSON.</p>
             </li>
         </ul>
+        <p class="landing-feature-links">
+            <a class="landing-about-link" href="/wiki/how-to/shield-chart/interactive">
+                Try the interactive shield walkthrough
+                <span aria-hidden="true">&nbsp;&rarr;</span>
+            </a>
+        </p>
     </section>
 
     <section class="landing-section landing-release" aria-labelledby="release-heading">
@@ -137,49 +171,39 @@
             </header>
 
             <p class="landing-release-summary">
-                A workflow release focused on getting readings <em>out</em> of the app. Share a chart with
-                one click via a self-contained URL, archive a reading as a JSON file, or paste it straight
-                into another tool — no more re-entering the four Mothers by hand to compare notes with a
-                teacher or a study group.
+                <strong>Geofancy 1.0.0</strong> is the first official public release of the web app: a complete
+                geomancy workspace with a live wiki, interactive casting walkthroughs, polished mobile and desktop
+                layouts, and the full interpretation stack from the stable 0.2 line.
             </p>
 
             <h4 class="landing-release-h4">Highlights</h4>
             <ul class="landing-notes">
                 <li>
-                    <strong>Shareable chart links.</strong> A new <strong>Share Chart</strong> button on
-                    every workspace copies a self-contained URL like
-                    <code>?seed=2122.1212.2222.1122</code> to the clipboard. Anyone who opens that URL
-                    lands on the same chart on first paint — no flash of the default reading, no extra
-                    clicks. The seed format is fully readable and round-trips through any chat, email, or
-                    browser without escaping.
+                    <strong>Geomancy Wiki.</strong> Live figure and house glossaries, how-tos for generating
+                    figures and casting a shield chart, plus an interactive shield walkthrough and figure-dot
+                    practice caster.
                 </li>
                 <li>
-                    <strong>Mobile-aware redirect.</strong> Phones that open a <code>/workspace?seed=…</code>
-                    link are auto-redirected to <code>/mobile?seed=…</code> while preserving the seed, so
-                    a single canonical link works across desktop and mobile.
+                    <strong>Casting entry.</strong> <em>Cast a chart!</em> opens a dialog: workspace with Mothers
+                    ready, in-app Mothers marking, or the interactive shield walkthrough — with one mobile/desktop
+                    routing rule.
                 </li>
                 <li>
-                    <strong>Download JSON on Lots &amp; Other.</strong> A new export card pinned to the top
-                    of the <em>Lots &amp; Other</em> tab streams the full reading — the four Mothers, the
-                    resolved chart, the perfection analysis, the Way of Points result — into a single
-                    timestamped file like <code>geofancy-chart-20260510-103213.json</code>. The payload
-                    includes the share URL and seed so the file can also reproduce the chart by URL.
+                    <strong>Mobile workspace.</strong> Mothers drawer, chart overlay, and casting-shell parity with
+                    the wiki on phones; share links opened on desktop redirect to mobile while preserving the seed.
                 </li>
                 <li>
-                    <strong>Copy JSON for paste-into-anything use.</strong> A second button next to
-                    <em>Download JSON</em> copies the same payload to the clipboard, for users who want to
-                    drop a reading straight into an editor, a notebook, or a chat without the file
-                    roundtrip. Both buttons emit byte-identical output.
+                    <strong>Perfections &amp; Way of Points.</strong> Full perfection engine, denials, Classic Way of
+                    Points / Way of the Light on Via Ignis, and structured corpus in the detail panels.
                 </li>
                 <li>
-                    <strong>Versioned export schema.</strong> Files are stamped with
-                    <code>schema: "geofancy.chart-export"</code> and <code>schemaVersion: 1</code> so
-                    future format evolution stays clean.
+                    <strong>Share &amp; export.</strong> Readable <code>?seed=</code> share links and timestamped JSON
+                    export from <em>Lots &amp; Other</em> (<code>schemaVersion: 1</code>).
                 </li>
                 <li>
-                    <strong>Forgiving share parser.</strong> Malformed <code>?seed=…</code> values silently
-                    fall back to the default chart instead of erroring out, so a tampered or truncated URL
-                    never throws in front of a user.
+                    <strong>Stability.</strong> Theme persistence per browser session, fixed interactive render
+                    boundary, and a <strong>768px</strong> mobile breakpoint so modest desktop widths stay on the
+                    desktop workspace.
                 </li>
             </ul>
 
@@ -187,10 +211,11 @@
                 <summary class="landing-summary">Known limitations</summary>
                 <div class="landing-details-body">
                     <ul class="landing-notes">
-                        <li>Server-side chart persistence (named saved readings, history, accounts) is still on the roadmap. For now, share links and JSON exports are the way to keep a reading.</li>
-                        <li>The legacy WinForms desktop app remains available for offline use but does not yet reflect the full corpus rewrite or the new card layout. The web app is the recommended surface.</li>
-                        <li>The Aspect Analysis page is marked <strong>experimental</strong> in places where its interpretive layer is still being expanded.</li>
-                        <li>Mobile chart minimum render size is enforced at 435 × 435 to preserve diagram integrity; on very narrow screens the chart drawer scales rather than reflows.</li>
+                        <li>Server-side chart persistence (saved readings, history, accounts) is still on the roadmap. Share links and JSON export are how you keep a reading today.</li>
+                        <li>The legacy WinForms desktop app remains available for offline use but does not yet reflect the full web corpus layout. The web app is the recommended surface.</li>
+                        <li>Aspect analysis under <strong>Lots &amp; Other</strong> is marked <strong>experimental</strong> — the Perfections tab is the primary interpretive path.</li>
+                        <li>Some wiki topics (house-chart how-to, app guide, perfections &amp; WoP method articles) are outlined as <em>Coming soon</em>.</li>
+                        <li>Desktop workspace enforces a minimum width (~1380px); very narrow viewports use the mobile layout or chart drawer scaling.</li>
                     </ul>
                 </div>
             </details>
@@ -216,9 +241,36 @@
 </div>
 
 @code {
-    private async Task CastAChartAsync()
+    private bool _showCastDialog;
+
+    private Task CastAChartAsync()
     {
+        _showCastDialog = true;
+        return Task.CompletedTask;
+    }
+
+    private Task CloseCastDialog()
+    {
+        _showCastDialog = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task OnCastEntryChoice(CastChartEntryDialog.CastChartEntryChoice choice)
+    {
+        _showCastDialog = false;
         var isMobile = await JS.InvokeAsync<bool>("geofancyDeviceIsMobile");
-        Nav.NavigateTo(isMobile ? "/mobile" : "/workspace");
+
+        switch (choice)
+        {
+            case CastChartEntryDialog.CastChartEntryChoice.HasMothers:
+                Nav.NavigateTo(isMobile ? "/mobile" : "/workspace");
+                break;
+            case CastChartEntryDialog.CastChartEntryChoice.NeedMothers:
+                Nav.NavigateTo(WorkspaceEntryQuery.BuildMothersSetupPath(isMobile ? "/mobile" : "/workspace"));
+                break;
+            case CastChartEntryDialog.CastChartEntryChoice.LearnInteractive:
+                Nav.NavigateTo("/wiki/how-to/shield-chart/interactive");
+                break;
+        }
     }
 }

@@ -11,4 +11,8 @@
     <ProjectGuid>{B0A1C9D2-3E4F-4A5B-6C7D-8E9F0A1B2C3D}</ProjectGuid>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
 </Project>

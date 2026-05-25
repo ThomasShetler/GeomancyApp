@@ -1,5 +1,6 @@
 @using System.Text.RegularExpressions
 @using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Helpers
 
 @*
     Right-column detail panel for the revamped Perfections tab.
@@ -44,12 +45,18 @@
             var companyDisplay = GetCompanyTypeDisplay(p);
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
-            var directionVis = GetDirectionVis(p.AspectDirection, p.AspectBetweenSignificators);
+            var directionVis = AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
                     <p class="kind-eyebrow @(isDenial ? "is-denial" : "is-perfection")">@headerEyebrow</p>
-                    <h2 class="kind-title">@modeTitle</h2>
+                    <h2 class="kind-title kind-title-with-icon">
+                        <PerfectionIcon Mode="@p.Mode"
+                                        AspectType="@p.AspectBetweenSignificators"
+                                        CompanyType="@p.CompanyType"
+                                        Large="true" />
+                        <span>@modeTitle</span>
+                    </h2>
                 </div>
                 <div class="header-score-pill @ScoreClass(totalScore)">
                     @FormatScore(totalScore)
@@ -74,15 +81,15 @@
                 }
                 @if (!string.IsNullOrEmpty(p.AspectBetweenSignificators) && p.AspectBetweenSignificators != "None")
                 {
-                    <span class="chip chip-aspect">
+                    <span class="chip chip-aspect @AspectDirectionHelper.AspectTypeClass(p.AspectBetweenSignificators)">
                         @if (!string.IsNullOrEmpty(directionVis.Glyph))
                         {
-                            <span class="chip-arrow">@directionVis.Glyph</span>
+                            <span class="chip-arrow @directionVis.CssClass">@directionVis.Glyph</span>
                         }
                         @p.AspectBetweenSignificators
-                        @if (!string.IsNullOrEmpty(p.AspectDirection))
+                        @if (!string.IsNullOrEmpty(directionVis.ShortLabel))
                         {
-                            <span class="chip-aux"> (@p.AspectDirection)</span>
+                            <span class="chip-aux">· @directionVis.ShortLabel</span>
                         }
                     </span>
                 }
@@ -105,8 +112,8 @@
                         <span class="sig-house">House @p.QuerentHouse</span>
                         <span class="sig-figure">@(string.IsNullOrEmpty(p.QuerentFigure) ? "—" : p.QuerentFigure)</span>
                     </div>
-                    <div class="sig-arrow">
-                        @(string.IsNullOrEmpty(directionVis.Glyph) ? "→" : directionVis.Glyph)
+                    <div class="sig-arrow @directionVis.CssClass" title="@directionVis.Hint">
+                        @directionVis.Glyph
                     </div>
                     <div class="sig-cell">
                         <span class="sig-eyebrow">Quesited</span>
@@ -267,7 +274,8 @@
             var headerEyebrow = isPositive ? "Positive Aspect" : "Negative Aspect";
             var totalScore = isPositive ? a.FavorableScore : a.UnfavorableScore;
             var aspectGlossary = GetAspectGlossary(a.AspectType, a.Direction);
-            var aDirectionVis = GetDirectionVisFromString(a.Direction, a.AspectType);
+            var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
+            var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
             // Description on AspectRecord is just joined Notes from the source perfection,
             // so the same parser that extracts mechanism vs interpretation works here.
             var aNoteParts = ParseDescription(a.Description);
@@ -275,12 +283,26 @@
             <header class="perf-detail-header">
                 <div class="header-titles">
                     <p class="kind-eyebrow @(isPositive ? "is-positive" : "is-negative")">@headerEyebrow</p>
-                    <h2 class="kind-title">@a.AspectType</h2>
+                    <h2 class="kind-title kind-title-with-icon @aspectTypeClass">
+                        <PerfectionIcon AspectType="@a.AspectType" Large="true" />
+                        <span>@a.AspectType</span>
+                    </h2>
                 </div>
                 <div class="header-score-pill @(isPositive ? "score-positive" : "score-negative")">
                     @FormatScore(totalScore)
                 </div>
             </header>
+
+            @if (!string.IsNullOrEmpty(aDirectionVis.ShortLabel))
+            {
+                <div class="direction-callout @aDirectionVis.CssClass">
+                    <span class="direction-callout-arrow">@aDirectionVis.Glyph</span>
+                    <div class="direction-callout-copy">
+                        <span class="direction-callout-label">@aDirectionVis.ShortLabel aspect</span>
+                        <span class="direction-callout-hint">@aDirectionVis.Hint</span>
+                    </div>
+                </div>
+            }
 
             @if (!string.IsNullOrEmpty(aspectGlossary))
             {
@@ -293,14 +315,11 @@
                     <span class="chip-arrow">@(a.IsMajorAspect ? "★" : "·")</span>
                     @(a.IsMajorAspect ? "Major" : "Minor")
                 </span>
-                @if (!string.IsNullOrEmpty(a.Direction))
+                @if (!string.IsNullOrEmpty(aDirectionVis.ShortLabel))
                 {
-                    <span class="chip chip-aspect">
-                        @if (!string.IsNullOrEmpty(aDirectionVis.Glyph))
-                        {
-                            <span class="chip-arrow">@aDirectionVis.Glyph</span>
-                        }
-                        @a.Direction
+                    <span class="chip chip-aspect @aspectTypeClass @aDirectionVis.CssClass">
+                        <span class="chip-arrow @aDirectionVis.CssClass">@aDirectionVis.Glyph</span>
+                        @aDirectionVis.ShortLabel
                     </span>
                 }
                 @if (a.MadeThroughCompany)
@@ -310,19 +329,33 @@
             </div>
 
             <!-- Houses card -->
-            <section class="detail-card">
-                <h3 class="card-title">Aspect</h3>
+            <section class="detail-card aspect-flow-card @aspectTypeClass">
+                <h3 class="card-title">House flow</h3>
                 <div class="significators-grid">
                     <div class="sig-cell">
                         <span class="sig-eyebrow">From</span>
                         <span class="sig-house">House @a.FromHouse</span>
+                        @{
+                            var fromFigure = GetHouseFigureName(a.FromHouse);
+                            if (!string.IsNullOrEmpty(fromFigure))
+                            {
+                                <span class="sig-figure">@fromFigure</span>
+                            }
+                        }
                     </div>
-                    <div class="sig-arrow">
-                        @(string.IsNullOrEmpty(aDirectionVis.Glyph) ? "→" : aDirectionVis.Glyph)
+                    <div class="sig-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">
+                        @aDirectionVis.Glyph
                     </div>
                     <div class="sig-cell">
                         <span class="sig-eyebrow">To</span>
                         <span class="sig-house">House @a.ToHouse</span>
+                        @{
+                            var toFigure = GetHouseFigureName(a.ToHouse);
+                            if (!string.IsNullOrEmpty(toFigure))
+                            {
+                                <span class="sig-figure">@toFigure</span>
+                            }
+                        }
                     </div>
                 </div>
             </section>
@@ -385,6 +418,14 @@
 @code {
     [Parameter] public PerfectionSelection? Selection { get; set; }
     [Parameter] public PerfectionAnalysisModel? Analysis { get; set; }
+    [Parameter] public HouseChartModel? Chart { get; set; }
+
+    private string GetHouseFigureName(int houseNumber)
+    {
+        if (Chart?.Houses == null || houseNumber <= 0) return string.Empty;
+        var house = Chart.Houses.FirstOrDefault(h => h.HouseNumber == houseNumber);
+        return house?.Figure?.Name ?? string.Empty;
+    }
 
     // ----- Score helpers -----
     private static string FormatScore(int n) => n > 0 ? $"+{n}" : n.ToString();
@@ -473,28 +514,7 @@
     }
 
     // ----- Direction visualization -----
-    private record DirectionVis(string Glyph, string Cls);
-
-    private static DirectionVis GetDirectionVis(string direction, string aspectType)
-    {
-        if (!string.IsNullOrEmpty(aspectType) && aspectType.Equals("Opposition", StringComparison.OrdinalIgnoreCase))
-            return new DirectionVis("↔", "dir-opposition");
-        if (!string.IsNullOrEmpty(direction))
-        {
-            if (direction.Contains("Dexter", StringComparison.OrdinalIgnoreCase))
-                return new DirectionVis("←", "dir-dexter");
-            if (direction.Contains("Sinister", StringComparison.OrdinalIgnoreCase))
-                return new DirectionVis("→", "dir-sinister");
-        }
-        return new DirectionVis(string.Empty, string.Empty);
-    }
-
-    private static DirectionVis GetDirectionVisFromString(string directionField, string aspectType)
-    {
-        // The aspect record's Direction field already carries "Dexter (Backward)",
-        // "Sinister (Forward)", "Opposition", or the bare aspect type.
-        return GetDirectionVis(directionField, aspectType);
-    }
+    // (shared via AspectDirectionHelper)
 
     // ----- Notes parsing -----
     // InterpretationTips: each entry is one rendered "tip box" in the UI. We split

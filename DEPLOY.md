@@ -21,10 +21,10 @@ in-process API is wired up).
 
 1. Create a Railway account and a new project.
 2. **New Project -> Deploy from GitHub repo** -> pick this repository.
-3. **Settings -> Source -> Branch** -> set to `web-app` (or whichever branch
-   contains the `Dockerfile` + `GeomancyWebUI/`). The `master` branch is the
-   pre-refactor WinForms snapshot and will fail the Railpack auto-detect with
-   "could not determine how to build the app" because it has no `Dockerfile`.
+3. **Settings -> Source -> Branch** -> set to **`master`** for production deploys.
+   The repo's `master` branch contains the `Dockerfile` and `GeomancyWebUI/`.
+   Use **`web-app`** as the integration / testing branch; merge tested work into
+   `master` via pull request to ship to Railway.
 4. **Settings -> Build -> Builder** -> `Dockerfile` (the committed
    `railway.toml` already pins this, but confirm it stuck). Dockerfile path is
    `Dockerfile` at the repo root.

@@ -11,7 +11,7 @@ namespace GeomancyAPI.Services
     /// Loads and caches the static reference data for the four Way Of Points elements
     /// (Fire/Air/Water/Earth) and the four path-type classifications (Strong / StrongPassive
     /// / WeakerPassive / Passive) from the JSON files copied alongside the API binaries
-    /// at <c>WayOfPointsDirectory/</c>.
+    /// at <c>databank/WayOfPointsDirectory/</c>.
     /// </summary>
     public static class WayOfPointsDirectoryLoader
     {
@@ -19,6 +19,7 @@ namespace GeomancyAPI.Services
         private static List<WayOfPointsElementEntryResponse> _elements;
         private static List<WayOfPointsPathTypeEntryResponse> _pathTypes;
 
+        private const string DatabankRoot = "databank";
         private const string ElementsFileName = "ElementData.json";
         private const string PathTypesFileName = "PathTypeData.json";
         private const string DirectoryFolderName = "WayOfPointsDirectory";
@@ -100,22 +101,22 @@ namespace GeomancyAPI.Services
         {
             var baseDir = AppContext.BaseDirectory;
 
-            // 1. Linked content next to binary: <baseDir>/WayOfPointsDirectory/<file>
-            var beside = Path.Combine(baseDir, DirectoryFolderName, fileName);
+            // 1. Linked content next to binary: <baseDir>/databank/WayOfPointsDirectory/<file>
+            var beside = Path.Combine(baseDir, DatabankRoot, DirectoryFolderName, fileName);
             if (File.Exists(beside)) return beside;
 
             // 2. Walk up looking for the source folder (handy for IDE/debug runs)
             var dir = new DirectoryInfo(baseDir);
             while (dir != null)
             {
-                var candidate = Path.Combine(dir.FullName, DirectoryFolderName, fileName);
+                var candidate = Path.Combine(dir.FullName, DatabankRoot, DirectoryFolderName, fileName);
                 if (File.Exists(candidate)) return candidate;
                 dir = dir.Parent;
             }
 
             throw new FileNotFoundException(
                 $"Could not locate {fileName}. Expected '{beside}' (copied via csproj <Content>) " +
-                "or a parent folder named '" + DirectoryFolderName + "'.");
+                "or a parent folder named '" + DatabankRoot + "/" + DirectoryFolderName + "'.");
         }
     }
 }

@@ -1,0 +1,94 @@
+.cast-entry-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.55);
+    box-sizing: border-box;
+}
+
+.cast-entry-dialog {
+    width: min(100%, 32rem);
+    max-height: calc(100dvh - 2.5rem);
+    overflow: auto;
+    padding: 1.35rem 1.5rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    box-shadow: 0 12px 40px var(--shadow);
+    box-sizing: border-box;
+}
+
+.cast-entry-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.cast-entry-lead {
+    margin: 0 0 1rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.cast-entry-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.cast-entry-option {
+    appearance: none;
+    width: 100%;
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cast-entry-option:hover {
+    border-color: color-mix(in srgb, var(--accent-color, #c9a227) 45%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 8%, var(--bg-secondary));
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.cast-entry-option-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.cast-entry-option-desc {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+.cast-entry-cancel {
+    margin-top: 1rem;
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.cast-entry-cancel:hover {
+    color: var(--text-primary);
+}

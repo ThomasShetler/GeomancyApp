@@ -1,0 +1,46 @@
+@page "/wiki/glossary/figures/{Slug}"
+@rendermode InteractiveServer
+@using GeomancyWebUI.Client.Helpers
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+
+<PageTitle>@(_figure?.Name ?? "Figure") - Geofancy Wiki</PageTitle>
+
+<WikiArticleShell Title="@(_figure?.Name ?? "Figure not found")"
+                  Lead="@(_figure?.Tagline)"
+                  ParentHref="/wiki/glossary/figures"
+                  ParentLabel="Figures">
+
+    @if (_loading)
+    {
+        <p class="wiki-loading">Loading…</p>
+    }
+    else if (_figure == null)
+    {
+        <div class="wiki-not-found">
+            <p>No figure matches this link.</p>
+            <p><a href="/wiki/glossary/figures">Browse all figures</a></p>
+        </div>
+    }
+    else
+    {
+        <WikiFigureHeader Figure="@_figure" />
+        <WikiFigureCorpusSections Figure="@_figure" />
+    }
+
+</WikiArticleShell>
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+
+    private FigureModel? _figure;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await GeomancyService.GetAllFiguresAsync();
+        _figure = WikiFigureSlug.Resolve(all, Slug);
+        _loading = false;
+    }
+}

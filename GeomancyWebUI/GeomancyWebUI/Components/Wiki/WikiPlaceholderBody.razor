@@ -1,0 +1,36 @@
+@if (Sections?.Any() == true)
+{
+    <div class="wiki-outline">
+        @foreach (var outlineSection in Sections)
+        {
+            <section class="wiki-outline-section">
+                <h2 class="wiki-outline-heading">@outlineSection.Heading</h2>
+                @if (outlineSection.Items?.Any() == true)
+                {
+                    <ul class="wiki-outline-list">
+                        @foreach (var item in outlineSection.Items)
+                        {
+                            <li>@item</li>
+                        }
+                    </ul>
+                }
+                @if (!string.IsNullOrWhiteSpace(outlineSection.Description))
+                {
+                    <p class="wiki-outline-desc">@outlineSection.Description</p>
+                }
+            </section>
+        }
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(RelatedHint))
+{
+    <p class="wiki-related-hint">@RelatedHint</p>
+}
+
+@code {
+    [Parameter] public IReadOnlyList<WikiOutlineSection>? Sections { get; set; }
+    [Parameter] public string? RelatedHint { get; set; }
+
+    public record WikiOutlineSection(string Heading, IReadOnlyList<string>? Items = null, string? Description = null);
+}

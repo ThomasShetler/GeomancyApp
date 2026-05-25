@@ -2,6 +2,7 @@
 @using System.Text.Json
 @using GeomancyApp
 @using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Components.Workspace
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Components
@@ -23,6 +24,18 @@
         <div class="alert alert-danger">@errorMessage</div>
     }
 
+    @if (showMothersSetup)
+    {
+        <div class="workspace-mothers-setup-grid" role="region" aria-label="Cast the four Mothers">
+            <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly"
+                                     ShowChartColumn="true"
+                                     HostMode="ChartCastingHostMode.EmbeddedWorkspace"
+                                     WorkspaceBasePath="/workspace"
+                                     OnMothersCompleted="HandleMothersCompletedAsync" />
+        </div>
+    }
+    else
+    {
     <div class="workspace-grid">
         <!-- LEFT: Chart area -->
         <section class="workspace-chart-pane">
@@ -107,7 +120,8 @@
                             </div>
                             <div class="perfections-detail-col">
                                 <PerfectionDetailPanel Selection="@selectedPerfection"
-                                                       Analysis="@perfectionAnalysis" />
+                                                       Analysis="@perfectionAnalysis"
+                                                       Chart="@houseChart" />
                             </div>
                         </div>
                         break;
@@ -269,6 +283,7 @@
             </div>
         </section>
     </div>
+    }
 </div>
 
 @code {
@@ -313,6 +328,7 @@
     };
 
     private WorkspaceTab activeTab = WorkspaceTab.CourtAndHouses;
+    private bool showMothersSetup;
 
     // ----- Selection state shared between tab and detail panel -----
     private SlotSelection? selectedSlot;
@@ -347,7 +363,8 @@
         // If the user followed a "?seed=..." share link, hydrate the four Mother
         // line values from the URL BEFORE building the chart so the page renders
         // the shared reading on first paint instead of the default chart.
-        TryApplySeedFromUrl();
+        var hasSeed = TryApplySeedFromUrl();
+        showMothersSetup = !hasSeed && TryGetMothersSetupFromUrl();
 
         try
         {
@@ -689,7 +706,7 @@
     /// malformed seeds so a stripped/edited URL just falls back to the default
     /// chart instead of erroring out.
     /// </summary>
-    private void TryApplySeedFromUrl()
+    private bool TryApplySeedFromUrl()
     {
         try
         {
@@ -697,21 +714,80 @@
             var query = QueryHelpers.ParseQuery(uri.Query);
             if (!query.TryGetValue(ChartSeedCodec.ParamName, out var seedValues))
             {
-                return;
+                return false;
             }
             if (!ChartSeedCodec.TryDecode(seedValues.ToString(), out var mothers))
             {
-                return;
+                return false;
             }
 
             ApplyMother(house1Figure, mothers[0]);
             ApplyMother(house2Figure, mothers[1]);
             ApplyMother(house3Figure, mothers[2]);
             ApplyMother(house4Figure, mothers[3]);
+            return true;
         }
         catch
         {
-            // Bad URL or query: leave the default chart alone.
+            return false;
+        }
+    }
+
+    private bool TryGetMothersSetupFromUrl()
+    {
+        try
+        {
+            var uri = new Uri(NavigationManager.Uri);
+            var query = QueryHelpers.ParseQuery(uri.Query);
+            if (!query.TryGetValue(WorkspaceEntryQuery.SetupParam, out var setupValues))
+            {
+                return false;
+            }
+
+            return string.Equals(setupValues.ToString(), WorkspaceEntryQuery.SetupMothers, StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private async Task HandleMothersCompletedAsync(MothersCompletedEventArgs args)
+    {
+        CopyMotherFigure(house1Figure, args.House1);
+        CopyMotherFigure(house2Figure, args.House2);
+        CopyMotherFigure(house3Figure, args.House3);
+        CopyMotherFigure(house4Figure, args.House4);
+
+        try
+        {
+            await GenerateChartAsync();
+            var path = ChartSeedCodec.BuildSharePath(
+                "/workspace", house1Figure, house2Figure, house3Figure, house4Figure);
+            NavigationManager.NavigateTo(path, replace: true);
+            showMothersSetup = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error building chart from Mothers: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+
+    private static void CopyMotherFigure(FigureModel target, FigureModel source)
+    {
+        target.HeadLine = source.HeadLine;
+        target.NeckLine = source.NeckLine;
+        target.BodyLine = source.BodyLine;
+        target.FootLine = source.FootLine;
+        if (!string.IsNullOrWhiteSpace(source.Name))
+        {
+            target.Name = source.Name;
+        }
+
+        if (!string.IsNullOrWhiteSpace(source.EnglishName))
+        {
+            target.EnglishName = source.EnglishName;
         }
     }
 

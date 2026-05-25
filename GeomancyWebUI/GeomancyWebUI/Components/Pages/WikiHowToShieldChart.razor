@@ -1,0 +1,120 @@
+@page "/wiki/how-to/shield-chart"
+
+@rendermode InteractiveServer
+
+@using GeomancyWebUI.Client.Components
+
+@using GeomancyWebUI.Client.Models
+
+
+
+<PageTitle>Geofancy Wiki - Shield Chart</PageTitle>
+
+
+
+<WikiArticleShell Title="How to Cast a Shield Chart"
+
+                  Lead="Deriving Daughters, Nieces, Witnesses, Judge, and Reconciler from the four Mothers."
+
+                  ParentHref="/wiki"
+
+                  ParentLabel="Wiki">
+
+
+
+    <section class="wiki-casting-section">
+
+        <h2 class="wiki-casting-section-title">Shield structure</h2>
+
+        <p class="wiki-casting-section-lead">
+
+            The shield is built entirely from the four Mothers (see
+            <a href="/wiki/how-to/generate-figures">How to Generate the Figures</a> if you have not cast them yet).
+            No other figure is marked by hand.
+
+            Geofancy derives Daughters, Nieces, Witnesses, the Judge, and the Reconciler (Sentence / Fallout)
+
+            using line parity — the same odd/even rule you use when pairing dots.
+
+        </p>
+
+        <ShieldChartStructureGuide />
+
+    </section>
+
+
+
+    <section class="wiki-casting-section">
+
+        <h2 class="wiki-casting-section-title">How each row is derived</h2>
+
+        <ul class="chart-casting-step-bullets">
+
+            <li><strong>Daughters (5–8):</strong> read <em>across</em> the four Mother figures row by row (transpose) — House 5 = all Head lines from Mothers 1–4, 6 = all Neck lines, and so on.</li>
+
+            <li><strong>Nieces (9–12):</strong> combine adjacent pairs — 9 from Mothers 1+2, 10 from 3+4, 11 from Daughters 5+6, 12 from 7+8.</li>
+
+            <li><strong>Witnesses:</strong> Right Witness from Nieces 9+10; Left Witness from 11+12 (shown left and right in the shield).</li>
+
+            <li><strong>Judge:</strong> combines the two Witnesses line by line.</li>
+
+            <li><strong>Reconciler:</strong> combines the Judge with Mother 1 (Vita).</li>
+
+        </ul>
+
+        <div class="wiki-casting-callout">
+
+            Parity rule: when two lines are combined, an odd number of single dots yields one dot (active);
+
+            an even count yields two dots (passive). This matches pairing marks two at a time on the sand.
+
+        </div>
+
+        <DaughterGenerationVisualizer />
+
+    </section>
+
+
+
+    <section class="wiki-casting-section">
+
+        <h2 class="wiki-casting-section-title">Reading order</h2>
+
+        <p class="wiki-casting-section-lead">
+
+            Many readers weigh the Witnesses before the Judge, then look to the Reconciler for how the
+
+            judgment lands or what fallout follows. The twelve <em>houses</em> use the same twelve figures
+
+            from the shield, rearranged on the astrological wheel — see
+
+            <a href="/wiki/how-to/house-chart">How to Cast a House Chart</a>.
+
+        </p>
+
+    </section>
+
+
+
+    <section class="wiki-casting-section">
+
+        <h2 class="wiki-casting-section-title">Interactive walkthrough</h2>
+
+        <p class="wiki-casting-section-lead">
+
+            Open the dedicated interactive space to cast the four Mothers and step through
+            Daughter generation in a workspace-style layout. The desktop view uses a split
+            chart/control panel; mobile uses a stacked flow.
+
+        </p>
+        <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+           href="/wiki/how-to/shield-chart/interactive">
+            Open Interactive Shield Walkthrough
+        </a>
+
+    </section>
+
+
+
+</WikiArticleShell>
+

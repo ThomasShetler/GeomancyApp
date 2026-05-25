@@ -1,0 +1,749 @@
+/* Interactive dot-marking — canvas rows + figure build panel */
+
+.figure-dot-caster {
+    --canvas-height: 3.75rem;
+    --row-label-width: 4.5rem;
+    padding: 1rem;
+    background: var(--bg-secondary, #f5f5f5);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 12px;
+}
+
+.figure-dot-caster.is-compact {
+    padding: 0.75rem;
+    --canvas-height: 3.25rem;
+    --row-label-width: 3.75rem;
+}
+
+.figure-dot-caster-label {
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.figure-dot-caster-instruction {
+    margin: 0 0 0.85rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+}
+
+.figure-dot-instruction-narrow {
+    display: none;
+}
+
+@media (max-width: 639px) {
+    .figure-dot-instruction-wide {
+        display: none;
+    }
+
+    .figure-dot-instruction-narrow {
+        display: inline;
+    }
+}
+
+.figure-dot-caster-body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .figure-dot-caster-body {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .figure-dot-caster-rows {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .figure-dot-caster-result {
+        flex: 0 0 auto;
+        min-width: 8rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .figure-dot-caster-result {
+        min-width: 9.5rem;
+        position: sticky;
+        top: 0.75rem;
+    }
+}
+
+.figure-dot-caster-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-primary, #fff);
+}
+
+.figure-dot-row {
+    display: grid;
+    grid-template-columns: var(--row-label-width) 1fr;
+    gap: 0.5rem;
+    align-items: stretch;
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.figure-dot-row:last-child {
+    border-bottom: none;
+}
+
+.figure-dot-row.is-pairing-active .figure-dot-canvas {
+    outline: 2px solid var(--accent-color, #c9a227);
+    outline-offset: 1px;
+}
+
+.figure-dot-row-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;
+}
+
+.figure-dot-row-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.figure-dot-row-element {
+    font-size: 0.65rem;
+    color: var(--text-muted, #666);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.figure-dot-row-count {
+    display: inline-block;
+    margin-top: 0.2rem;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    border-radius: 4px;
+    background: var(--bg-secondary, #f5f5f5);
+    color: var(--text-muted, #666);
+    border: 1px solid var(--border-color, #ddd);
+    width: fit-content;
+}
+
+.figure-dot-row-count.is-progress {
+    color: var(--text-primary);
+}
+
+.figure-dot-row-count.is-ready {
+    color: var(--accent-text, #1a1a1a);
+    background: var(--accent-color, #c9a227);
+    border-color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-row-track-wrap {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    width: 100%;
+}
+
+.figure-dot-canvas {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    height: var(--canvas-height);
+    min-height: var(--canvas-height);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #bbb);
+    background: var(--bg-secondary, #2a2a2a);
+    cursor: crosshair;
+    touch-action: manipulation;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.figure-dot-canvas:focus-visible {
+    outline: 2px solid var(--accent-color, #c9a227);
+    outline-offset: 2px;
+}
+
+.figure-dot-canvas:active:not(.is-locked) {
+    border-color: var(--accent-color, #c9a227);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.18), 0 0 0 1px color-mix(in srgb, var(--accent-color, #c9a227) 35%, transparent);
+}
+
+[data-theme="light"] .figure-dot-canvas,
+.figure-dot-canvas {
+    background: color-mix(in srgb, var(--bg-secondary, #e8e8e8) 85%, var(--bg-primary, #fff));
+}
+
+[data-theme="dark"] .figure-dot-canvas {
+    background: color-mix(in srgb, var(--bg-primary, #1e1e1e) 90%, #000);
+}
+
+.figure-dot-canvas.is-locked {
+    cursor: default;
+    pointer-events: none;
+}
+
+.figure-dot-canvas-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.figure-dot-pair-line {
+    stroke: #e85d5d;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.figure-dot-pair-line.is-drawing {
+    opacity: 1;
+    animation: pair-line-draw 0.35s ease-out forwards;
+}
+
+.figure-dot-pair-line.is-settled {
+    opacity: 0.85;
+}
+
+@keyframes pair-line-draw {
+    from {
+        stroke-dashoffset: 100;
+        stroke-dasharray: 100;
+        opacity: 0.3;
+    }
+    to {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 100;
+        opacity: 1;
+    }
+}
+
+.canvas-mark {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    transform: translate(-50%, -50%);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #5ba3e8;
+    user-select: none;
+    pointer-events: none;
+    border-radius: 50%;
+    background: color-mix(in srgb, #4a8fd4 22%, transparent);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.canvas-mark.is-drop {
+    animation: mark-drop 0.22s ease-out;
+}
+
+@keyframes mark-drop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.35);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.canvas-mark.is-paired {
+    color: #6a8aaa;
+    opacity: 0.45;
+}
+
+.canvas-mark.is-paired-animate {
+    animation: mark-pair-flash 0.4s ease-out;
+}
+
+@keyframes mark-pair-flash {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0.45;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.figure-dot-placeholder {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.72rem;
+    color: var(--text-muted, #888);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.85;
+}
+
+.figure-dot-row-undo {
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.35rem;
+    z-index: 4;
+    min-height: 36px;
+    min-width: 44px;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1px solid var(--border-color, #ccc);
+    background: color-mix(in srgb, var(--bg-primary, #fff) 88%, transparent);
+    color: var(--text-primary);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.figure-dot-caster-result {
+    text-align: center;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 8px;
+    background: var(--bg-primary, #fff);
+    min-width: 7rem;
+}
+
+.figure-dot-caster-result-caption {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.figure-dot-caster-figure-build {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    min-height: 5.5rem;
+    justify-content: center;
+}
+
+.figure-build-line {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    opacity: 0.35;
+    min-height: 1.35rem;
+    transition: opacity 0.35s ease, color 0.35s ease, transform 0.35s ease;
+}
+
+.figure-build-line.is-revealed {
+    opacity: 1;
+    color: var(--accent-color, #c9a227);
+    animation: figure-line-pop 0.35s ease-out;
+}
+
+@keyframes figure-line-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.figure-dot-caster-result-name {
+    margin: 0.65rem 0 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    animation: figure-line-pop 0.35s ease-out;
+}
+
+.figure-dot-caster-result-sub {
+    margin: 0.2rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.figure-dot-caster-status {
+    margin: 0.5rem 0 0;
+    min-height: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.figure-dot-caster-status:empty {
+    display: none;
+}
+
+.figure-dot-caster-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.figure-dot-caster-btn {
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.figure-dot-caster-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.figure-dot-caster-btn-primary {
+    background: var(--accent-color, #c9a227);
+    color: var(--accent-text, #1a1a1a);
+    border-color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-caster-btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border-color, #ccc);
+}
+
+.figure-dot-caster-confirm {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.figure-dot-caster-confirm-text {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.figure-dot-caster-hint {
+    margin: 0.75rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    width: 100%;
+}
+
+.figure-dot-caster-hint-active {
+    color: var(--accent-color, #c9a227);
+    font-weight: 500;
+}
+
+.figure-dot-caster.is-pairing .figure-dot-row-undo {
+    display: none;
+}
+
+@media (max-width: 639px) {
+    .figure-dot-caster {
+        --canvas-height: 4.75rem;
+        padding: 0.85rem;
+        border-radius: 10px;
+    }
+
+    .figure-dot-caster.is-compact {
+        --canvas-height: 4.25rem;
+        padding: 0.65rem;
+    }
+
+    .figure-dot-caster-instruction {
+        font-size: 0.82rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .figure-dot-caster-body {
+        gap: 1rem;
+    }
+
+    .figure-dot-caster-rows {
+        border-radius: 10px;
+    }
+
+    .figure-dot-row {
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+        padding: 0.65rem 0.7rem;
+    }
+
+    .figure-dot-row-label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.25rem 0.5rem;
+    }
+
+    .figure-dot-row-count {
+        margin-top: 0;
+        margin-left: auto;
+        font-size: 0.65rem;
+        padding: 0.15rem 0.45rem;
+    }
+
+    .figure-dot-canvas {
+        min-height: var(--canvas-height);
+        border-radius: 10px;
+    }
+
+    .canvas-mark {
+        width: 1.85rem;
+        height: 1.85rem;
+        font-size: 1.15rem;
+    }
+
+    .figure-dot-placeholder {
+        font-size: 0.75rem;
+    }
+
+    .figure-dot-row-undo {
+        min-height: 40px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.72rem;
+    }
+
+    .figure-dot-caster-result {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 10px;
+    }
+
+    .figure-dot-caster-result-caption {
+        font-size: 0.8rem;
+    }
+
+    .figure-build-line {
+        font-size: 1.25rem;
+        min-height: 1.5rem;
+    }
+
+    .figure-dot-caster-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.55rem;
+    }
+
+    .figure-dot-caster-btn {
+        width: 100%;
+    }
+
+    .figure-dot-caster-confirm {
+        padding: 0.85rem;
+    }
+
+    .figure-dot-pair-line {
+        stroke-width: 2.4;
+    }
+}
+
+
+/* Mobile mothers setup: figure preview, then actions, then dot rows */
+.figure-dot-caster.is-mobile-actions-first {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-result--mobile-top {
+    flex: 0 0 auto;
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #ddd);
+    background: var(--bg-primary, #fff);
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-actions--top {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-body--mobile {
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-rows {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked {
+    opacity: 0.45;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked .figure-dot-canvas.is-locked {
+    cursor: not-allowed;
+}
+
+/* Locked rows above the active row stay tappable for refocus (double-tap). */
+.figure-dot-caster.is-mobile-progressive .figure-dot-canvas.is-refocus-eligible {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-canvas.is-refocus-prompt {
+    outline: 2px solid color-mix(in srgb, var(--accent-color, #c9a227) 70%, transparent);
+    outline-offset: 1px;
+}
+
+.figure-dot-refocus-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    box-sizing: border-box;
+    background: color-mix(in srgb, var(--bg-primary, #1a1a1a) 55%, transparent);
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+.figure-dot-refocus-mask-text {
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-placeholder--refocus {
+    color: var(--accent-color, #c9a227);
+    font-weight: 600;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-focused {
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 8%, var(--bg-primary, #fff));
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-focused .figure-dot-canvas.is-row-focused {
+    outline: 2px solid color-mix(in srgb, var(--accent-color, #c9a227) 55%, transparent);
+    outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .figure-dot-pair-line.is-drawing,
+    .canvas-mark.is-paired-animate,
+    .canvas-mark.is-drop,
+    .figure-build-line.is-revealed,
+    .figure-dot-caster-result-name {
+        animation: none;
+    }
+}
+
+/*
+ * Wiki generate-figures article: compact rows (same density as glossary pattern selector column).
+ * Always column body; labels stack above canvases so marks stay inside the track.
+ */
+.figure-dot-caster.is-wiki-article {
+    --canvas-height: 2.85rem;
+    --row-label-width: 3.5rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: 10px;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-body {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-rows {
+    width: 100%;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+    padding: 0.45rem 0.55rem 0.5rem;
+    align-items: stretch;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row-label {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem 0.45rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row-count {
+    margin-top: 0;
+    margin-left: auto;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-row-track-wrap {
+    width: 100%;
+    min-width: 0;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-canvas {
+    container-type: size;
+    width: 100%;
+    height: var(--canvas-height);
+    min-height: var(--canvas-height);
+    max-height: var(--canvas-height);
+}
+
+.figure-dot-caster.is-wiki-article .canvas-mark {
+    width: clamp(0.62rem, 18cqh, 0.88rem);
+    height: clamp(0.62rem, 18cqh, 0.88rem);
+    font-size: clamp(0.52rem, 13cqh, 0.65rem);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-pair-line {
+    stroke-width: 1.15;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-placeholder,
+.figure-dot-caster.is-wiki-article .figure-dot-refocus-mask-text {
+    font-size: 0.66rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-actions {
+    margin-top: 0.1rem;
+}
+
+.figure-dot-caster.is-wiki-article .figure-dot-caster-actions .figure-dot-caster-btn {
+    width: 100%;
+}

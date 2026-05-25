@@ -11,7 +11,7 @@
 
 **Live app:** <https://geofancy.up.railway.app>
 
-> **Beta release.** Geofancy is in active development. Charts, interpretations, perfections, and the Way of Points engine are stable and tested, but the app continues to evolve. Bug reports and feedback are welcome.
+> **Official release (v1.0.0).** Geofancy is a production-ready web workspace with a live geomancy wiki, interactive casting walkthroughs, and the full perfections and Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
 
 ---
 
@@ -38,7 +38,7 @@ It is meant for both the working practitioner and the serious student.
 
 ## Try it
 
-Open <https://geofancy.up.railway.app> on any device. Cast a chart and the workspace will load.
+Open <https://geofancy.up.railway.app> on any device. **Cast a chart!** opens the workspace (or an interactive shield walkthrough). Browse the **[geomancy wiki](https://geofancy.up.railway.app/wiki)** for glossaries and how-tos.
 
 ## Geomancy in one paragraph
 
@@ -65,8 +65,10 @@ GeomancyApp/                   Legacy WinForms desktop app
 GeomancyWebUI/                 The web app
   GeomancyWebUI/                 Server project, hosting + controllers + pages
   GeomancyWebUI.Client/          WASM client project, models + services
-HouseAndCourtDirectory/        House and court reference JSON
-WayOfPointsDirectory/          Way of Points configuration JSON
+databank/                      Static reference data (figure corpus, houses, courts, Way of Points)
+  FigureCorpus/                  All 16 geomantic figures (Figures.json)
+  HouseAndCourtDirectory/        House and court reference JSON
+  WayOfPointsDirectory/          Way of Points configuration JSON
 ```
 
 ## Local development
@@ -102,7 +104,7 @@ Thanks also to the modern practitioners whose teaching shaped the broader reviva
 Geofancy is **proprietary, source-available** software.
 
 - **Source code** is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE). You may read, study, and modify it for personal and noncommercial purposes; any commercial use requires a separate license from the author.
-- **Interpretive corpus** (the prose content of `Geomancy.Core/FigureCorpus.*.cs`, `HouseAndCourtDirectory/*.json`, and `WayOfPointsDirectory/*.json`) is licensed separately under [Creative Commons Attribution-NonCommercial 4.0 International](LICENSE-CORPUS.md).
+- **Interpretive corpus** (the prose content of `databank/FigureCorpus/Figures.json`, `databank/HouseAndCourtDirectory/*.json`, and `databank/WayOfPointsDirectory/*.json`) is licensed separately under [Creative Commons Attribution-NonCommercial 4.0 International](LICENSE-CORPUS.md).
 
 See [NOTICE.md](NOTICE.md) for the plain-English summary.
 

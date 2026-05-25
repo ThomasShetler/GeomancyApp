@@ -1,0 +1,902 @@
+﻿@using System.Linq
+@using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Models
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+<div @ref="_panelRef" class="figure-detail-panel @(Selection?.Figure == null ? "is-empty" : "") @( _contentReady ? "is-ready" : "")">
+    @if (Selection?.Figure == null)
+    {
+        <div class="detail-empty-state">
+            <p>Select a house or court row to inspect its occupant figure.</p>
+        </div>
+    }
+    else
+    {
+        var fig = Selection.Figure;
+        var planetSymbol = GetPlanetSymbol(fig.Planet);
+        var zodiacSymbol = GetZodiacSymbol(fig.Sign);
+        var strengthLabel = GetStrengthLabel(fig.HouseStrength);
+        var inSlot = ResolveInSlotText(fig);
+        var houseEntry = ResolveHouseEntry();
+        var courtEntry = ResolveCourtEntry();
+        var showInterpretation = HasInterpretationContent(fig);
+        var showHouse = houseEntry != null;
+        var showCourt = courtEntry != null;
+        var showSources = fig.TraditionalSources?.Any() == true;
+        var openInterpretation = IsInterpretationOpenByDefault(inSlot);
+        var openHouse = IsHouseOpenByDefault(houseEntry);
+        var openCourt = IsCourtOpenByDefault(courtEntry);
+        var openCorrespondences = IsCorrespondencesOpenByDefault(inSlot);
+        var hasContext = HasContextContent(fig, inSlot);
+        var qualityChipClass = GetQualityChipClass(fig.Quality);
+
+        <div class="detail-summary-block">
+            <header class="detail-header">
+                <div class="detail-header-titles">
+                    <p class="slot-eyebrow">@FormatSlotLabel(Selection)</p>
+                    <h2 class="figure-name-display">@fig.Name</h2>
+                    @if (!string.IsNullOrWhiteSpace(fig.EnglishName))
+                    {
+                        <p class="english-name">@fig.EnglishName</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(fig.OtherNames))
+                    {
+                        <p class="other-names">a.k.a. @fig.OtherNames</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(fig.Tagline))
+                    {
+                        <p class="figure-tagline">@fig.Tagline</p>
+                    }
+                </div>
+                <div class="detail-header-aside">
+                    <div class="detail-figure-emblem @GetStrengthCssClass(fig.HouseStrength)" aria-label="@($"{fig.Name} figure configuration")">
+                        <FigureContainer Figure="@fig"
+                                         IsInteractive="false"
+                                         ShowFigureName="false"
+                                         ShowHouseStrength="false" />
+                    </div>
+                    <div class="detail-header-strength @GetStrengthCssClass(fig.HouseStrength)">@strengthLabel</div>
+                </div>
+            </header>
+
+            <div class="chip-row compact-chips">
+                @if (!string.IsNullOrWhiteSpace(fig.Planet))
+                {
+                    <span class="chip chip-planet">
+                        <span class="chip-glyph">@planetSymbol</span>
+                        <span class="chip-text">@fig.Planet</span>
+                    </span>
+                }
+                @if (!string.IsNullOrWhiteSpace(fig.Sign))
+                {
+                    <span class="chip chip-sign">
+                        <span class="chip-glyph">@zodiacSymbol</span>
+                        <span class="chip-text">@fig.Sign</span>
+                    </span>
+                }
+                @if (!string.IsNullOrWhiteSpace(fig.Quality))
+                {
+                    <span class="chip @qualityChipClass">@fig.Quality</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(fig.Keyword))
+                {
+                    <span class="chip chip-keyword">"@fig.Keyword"</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(fig.Humor))
+                {
+                    <span class="chip chip-humor" title="Traditional humor">@fig.Humor</span>
+                }
+            </div>
+        </div>
+
+        <nav class="section-jump-nav detail-sticky-tabs" aria-label="Figure detail sections">
+                <button type="button" class="jump-chip @JumpClass("section-context")" aria-current="@JumpAria("section-context")" @onclick='() => ScrollToSection("section-context")'>Context</button>
+                <button type="button" class="jump-chip @JumpClass("section-verdict")" aria-current="@JumpAria("section-verdict")" @onclick='() => ScrollToSection("section-verdict")'>Verdict</button>
+                @if (showInterpretation)
+                {
+                    <button type="button" class="jump-chip @JumpClass("section-interpretation")" aria-current="@JumpAria("section-interpretation")" @onclick='() => ScrollToSection("section-interpretation")'>Interpretation</button>
+                }
+                <button type="button" class="jump-chip jump-chip-short @JumpClass("section-correspondences")" aria-current="@JumpAria("section-correspondences")" @onclick='() => ScrollToSection("section-correspondences")'>Elements</button>
+                @if (showHouse)
+                {
+                    <button type="button" class="jump-chip @JumpClass("section-house")" aria-current="@JumpAria("section-house")" @onclick='() => ScrollToSection("section-house")'>House</button>
+                }
+                @if (showCourt)
+                {
+                    <button type="button" class="jump-chip @JumpClass("section-court")" aria-current="@JumpAria("section-court")" @onclick='() => ScrollToSection("section-court")'>Court</button>
+                }
+                @if (showSources)
+                {
+                    <button type="button" class="jump-chip @JumpClass("section-sources")" aria-current="@JumpAria("section-sources")" @onclick='() => ScrollToSection("section-sources")'>Sources</button>
+                }
+        </nav>
+
+        <section id="section-context" class="detail-card detail-card-primary">
+            <h3 class="card-title">Immediate Context</h3>
+            @if (inSlot != null)
+            {
+                <div class="in-slot-card">
+                    <p class="in-slot-eyebrow">@inSlot.Eyebrow</p>
+                    <h4 class="in-slot-title">@inSlot.Title</h4>
+                    <p class="in-slot-body prose-text">@inSlot.Body</p>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(fig.DivinatoryMeaning))
+            {
+                <div class="context-block divinatory-hero @(inSlot == null ? "is-lead" : "")">
+                    <h4 class="prose-heading">Divinatory Meaning</h4>
+                    <p class="prose-text divinatory-text">@fig.DivinatoryMeaning</p>
+                </div>
+            }
+            @if (fig.CoreMeaning?.Any() == true)
+            {
+                <div class="context-block">
+                    <h4 class="prose-heading">Core Meaning</h4>
+                    <div class="pill-row">
+                        @foreach (var tag in fig.CoreMeaning)
+                        {
+                            <span class="meaning-pill">@tag</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if (!hasContext)
+            {
+                <p class="mini-empty">No contextual reading data for this slot.</p>
+            }
+        </section>
+
+        <section id="section-verdict" class="detail-card">
+            <h3 class="card-title">Reading Verdict</h3>
+            <div class="verdict-grid">
+                <div class="verdict-col is-favorable fav-card">
+                    <h4>Favorable</h4>
+                    @if (fig.FavorableFor?.Any() == true)
+                    {
+                        <ul class="bullet-list compact bullet-favorable">
+                            @foreach (var x in fig.FavorableFor) { <li>@x</li> }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="mini-empty">No entries.</p>
+                    }
+                </div>
+                <div class="verdict-col is-unfavorable unfav-card">
+                    <h4>Unfavorable</h4>
+                    @if (fig.UnfavorableFor?.Any() == true)
+                    {
+                        <ul class="bullet-list compact bullet-unfavorable">
+                            @foreach (var x in fig.UnfavorableFor) { <li>@x</li> }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="mini-empty">No entries.</p>
+                    }
+                </div>
+            </div>
+        </section>
+
+        @if (showInterpretation)
+        {
+            <section id="section-interpretation" class="detail-card">
+                <details open="@openInterpretation">
+                    <summary class="details-summary">Interpretation &amp; Imagery</summary>
+                    <div class="details-body">
+                        @if (!string.IsNullOrWhiteSpace(fig.Imagery) || fig.TraditionalImagery?.Any() == true)
+                        {
+                            <div class="context-block imagery-card">
+                                <h4 class="prose-heading">Imagery</h4>
+                                @if (!string.IsNullOrWhiteSpace(fig.Imagery))
+                                {
+                                    <p class="imagery-primary prose-text">@fig.Imagery</p>
+                                }
+                                @if (fig.TraditionalImagery?.Any() == true)
+                                {
+                                    <ul class="bullet-list compact imagery-bullets">
+                                        @foreach (var im in fig.TraditionalImagery) { <li>@im</li> }
+                                    </ul>
+                                }
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(fig.ElementalSynthesis))
+                        {
+                            <div class="context-block prose-card">
+                                <h4 class="prose-heading">Elemental Synthesis</h4>
+                                <p class="prose-text">@fig.ElementalSynthesis</p>
+                            </div>
+                        }
+                        @if (fig.Interpretation?.Any() == true)
+                        {
+                            <div class="context-block corpus-interpretation">
+                                <h4 class="prose-heading">Structured Interpretation</h4>
+                                @foreach (var para in fig.Interpretation)
+                                {
+                                    <p class="prose-text interpretation-para">@para</p>
+                                }
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(fig.Commentary))
+                        {
+                            <div class="context-block prose-card">
+                                <h4 class="prose-heading">Commentary</h4>
+                                <p class="prose-text">@fig.Commentary</p>
+                            </div>
+                        }
+                        @if (fig.ModernExamples?.Any() == true)
+                        {
+                            <div class="context-block callout-block">
+                                <h4 class="prose-heading">Modern Examples</h4>
+                                <ul class="bullet-list compact callout-list">
+                                    @foreach (var ex in fig.ModernExamples) { <li>@ex</li> }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </details>
+            </section>
+        }
+
+        <section id="section-correspondences" class="detail-card">
+            <details open="@openCorrespondences">
+                <summary class="details-summary">Body, Elements &amp; Correspondences</summary>
+                <div class="details-body">
+                    <div class="elements-card">
+                        <h4 class="prose-heading">Elemental Composition</h4>
+                        <div class="elements-grid">
+                            @foreach (var el in BuildElements(fig))
+                            {
+                                <div class="element-badge @el.CssClass @(el.IsActive ? "is-active" : "is-dormant")">
+                                    <div class="element-glyph">@el.Symbol</div>
+                                    <div class="element-label">@el.Name</div>
+                                    <div class="element-value">@el.Value</div>
+                                </div>
+                            }
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(fig.InnerEl) || !string.IsNullOrWhiteSpace(fig.OuterEl) || !string.IsNullOrWhiteSpace(fig.ElementalPattern))
+                        {
+                            <div class="inner-outer-row">
+                                @if (!string.IsNullOrWhiteSpace(fig.InnerEl))
+                                {
+                                    <span class="io-pill">
+                                        <span class="io-label">Inner</span>
+                                        <span class="io-glyph @GetElementCssClass(fig.InnerEl)">@GetElementSymbol(fig.InnerEl)</span>
+                                        <span class="io-value">@fig.InnerEl</span>
+                                    </span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(fig.OuterEl))
+                                {
+                                    <span class="io-pill">
+                                        <span class="io-label">Outer</span>
+                                        <span class="io-glyph @GetElementCssClass(fig.OuterEl)">@GetElementSymbol(fig.OuterEl)</span>
+                                        <span class="io-value">@fig.OuterEl</span>
+                                    </span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(fig.ElementalPattern))
+                                {
+                                    <span class="io-pill io-pill-pattern">
+                                        <span class="io-label">Pattern</span>
+                                        <span class="io-value">@fig.ElementalPattern</span>
+                                    </span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    @if (HasPersonContent(fig))
+                    {
+                        <div class="person-card">
+                            <h4 class="prose-heading">Person &amp; Body</h4>
+                            @if (!string.IsNullOrWhiteSpace(fig.BodyType))
+                            {
+                                <div class="person-row">
+                                    <p class="person-label">Body</p>
+                                    <p class="prose-text person-body">@fig.BodyType</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.TraditionalBodyType))
+                            {
+                                <div class="person-row">
+                                    <p class="person-label">Body (Trad.)</p>
+                                    <p class="prose-text person-body">@fig.TraditionalBodyType</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.CharacterType))
+                            {
+                                <div class="person-row">
+                                    <p class="person-label">Character</p>
+                                    <p class="prose-text person-body">@fig.CharacterType</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.TraditionalCharacterType))
+                            {
+                                <div class="person-row">
+                                    <p class="person-label">Character (Trad.)</p>
+                                    <p class="prose-text person-body">@fig.TraditionalCharacterType</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(fig.Anatomy) || !string.IsNullOrWhiteSpace(fig.Colors))
+                            {
+                                <div class="person-meta-row">
+                                    @if (!string.IsNullOrWhiteSpace(fig.Anatomy))
+                                    {
+                                        <span class="person-meta">
+                                            <span class="person-meta-label">Anatomy</span>
+                                            <span class="person-meta-value">@fig.Anatomy</span>
+                                        </span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(fig.Colors))
+                                    {
+                                        <span class="person-meta">
+                                            <span class="person-meta-label">Colors</span>
+                                            <span class="person-meta-value">@fig.Colors</span>
+                                        </span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(fig.StrongHouse) || !string.IsNullOrWhiteSpace(fig.WeakHouse))
+                    {
+                        <div class="house-affinity-card">
+                            <h4 class="prose-heading">House Affinity</h4>
+                            <div class="affinity-row">
+                                @if (!string.IsNullOrWhiteSpace(fig.StrongHouse))
+                                {
+                                    <div class="affinity-pill affinity-strong">
+                                        <span class="affinity-glyph">▲</span>
+                                        <span class="affinity-label">Strong</span>
+                                        <span class="affinity-value">@fig.StrongHouse</span>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(fig.StrongHouse) && !string.IsNullOrWhiteSpace(fig.WeakHouse))
+                                {
+                                    <span class="affinity-vs">vs.</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(fig.WeakHouse))
+                                {
+                                    <div class="affinity-pill affinity-weak">
+                                        <span class="affinity-glyph">▼</span>
+                                        <span class="affinity-label">Weak</span>
+                                        <span class="affinity-value">@fig.WeakHouse</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (HasPlanetaryContent(fig))
+                    {
+                        <div class="correspondence-meta-block">
+                            <h4 class="prose-heading">Planetary Correspondences</h4>
+                            <div class="correspondence-meta-row">
+                                @if (!string.IsNullOrWhiteSpace(fig.PlanetaryIntelligence))
+                                {
+                                    <span class="correspondence-meta">
+                                        <span class="correspondence-meta-label">Intelligence</span>
+                                        <span class="correspondence-meta-value">@fig.PlanetaryIntelligence</span>
+                                    </span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(fig.PlanetarySpirit))
+                                {
+                                    <span class="correspondence-meta">
+                                        <span class="correspondence-meta-label">Spirit</span>
+                                        <span class="correspondence-meta-value">@fig.PlanetarySpirit</span>
+                                    </span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(fig.PlanetaryAngel))
+                                {
+                                    <span class="correspondence-meta">
+                                        <span class="correspondence-meta-label">Angel</span>
+                                        <span class="correspondence-meta-value">@fig.PlanetaryAngel</span>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </details>
+        </section>
+
+
+        @if (showHouse)
+        {
+            <section id="section-house" class="detail-card reference-section">
+                <details open="@openHouse">
+                    <summary class="details-summary">House · @houseEntry!.House</summary>
+                    <div class="details-body reference-stack">
+                        <p class="reference-section-eyebrow">House Reference · @houseEntry.House</p>
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName)
+                             || !string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
+                        {
+                            <div class="reference-subcard detail-card reference-card house-identity-card">
+                                <h3 class="card-title">House Identity</h3>
+                                @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName))
+                                {
+                                    <p class="reference-title-line">@houseEntry.TraditionalName</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
+                                {
+                                    <p class="prose-text reference-subtitle">@houseEntry.AstrologicalCorrespondence</p>
+                                }
+                            </div>
+                        }
+
+                        @if (houseEntry.Governs?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card governs-card">
+                                <h3 class="card-title">What it Governs</h3>
+                                <ul class="bullet-list two-col-bullets">
+                                    @foreach (var g in houseEntry.Governs) { <li>@g</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.SignificatorOfQuesitedWhen))
+                        {
+                            <div class="reference-subcard detail-card prose-card significator-card">
+                                <h3 class="card-title">When This House Is the Quesited</h3>
+                                <p class="prose-text">@houseEntry.SignificatorOfQuesitedWhen</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
+                        {
+                            <div class="reference-subcard detail-card prose-card essence-card">
+                                <h3 class="card-title">Interpretive Essence</h3>
+                                <p class="prose-text">@houseEntry.InterpretiveEssence</p>
+                            </div>
+                        }
+
+                        @if (HasReadingCraftContent(houseEntry))
+                        {
+                            <div class="reference-subcard detail-card reading-craft-card">
+                                <h3 class="card-title">Reading Craft</h3>
+                                @if (houseEntry.KeySignificators?.Any() == true)
+                                {
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Key Significators</h4>
+                                        <div class="pill-row">
+                                            @foreach (var ks in houseEntry.KeySignificators) { <span class="meaning-pill">@ks</span> }
+                                        </div>
+                                    </div>
+                                }
+                                @if (houseEntry.CommonMisreadings?.Any() == true)
+                                {
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Common Misreadings</h4>
+                                        <ul class="bullet-list compact bullet-warning">
+                                            @foreach (var m in houseEntry.CommonMisreadings) { <li>@m</li> }
+                                        </ul>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch))
+                                {
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Figure Combinations to Watch</h4>
+                                        <p class="prose-text">@houseEntry.FigureCombinationsToWatch</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(houseEntry.Notes))
+                        {
+                            <div class="reference-subcard detail-card prose-card notes-card">
+                                <h3 class="card-title">Notes</h3>
+                                <p class="prose-text">@houseEntry.Notes</p>
+                            </div>
+                        }
+
+                        @if (houseEntry.ExampleQuestions?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card example-questions-card">
+                                <h3 class="card-title">Example Questions</h3>
+                                <ul class="bullet-list">
+                                    @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </details>
+            </section>
+        }
+
+        @if (showCourt)
+        {
+            <section id="section-court" class="detail-card reference-section">
+                <details open="@openCourt">
+                    <summary class="details-summary">Court · @courtEntry!.Placement</summary>
+                    <div class="details-body reference-stack">
+                        <p class="reference-section-eyebrow">Court Reference · @courtEntry.Placement</p>
+
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName)
+                             || !string.IsNullOrWhiteSpace(courtEntry.GeneratedBy))
+                        {
+                            <div class="reference-subcard detail-card reference-card court-identity-card">
+                                <h3 class="card-title">Court Identity</h3>
+                                @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName))
+                                {
+                                    <p class="reference-title-line">@courtEntry.TraditionalName</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(courtEntry.GeneratedBy))
+                                {
+                                    <p class="prose-text reference-subtitle">Generated by: @courtEntry.GeneratedBy</p>
+                                }
+                            </div>
+                        }
+
+                        @if (courtEntry.Meaning?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card meaning-card">
+                                <h3 class="card-title">Meaning</h3>
+                                <ul class="bullet-list">
+                                    @foreach (var m in courtEntry.Meaning) { <li>@m</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.UtilityInReading))
+                        {
+                            <div class="reference-subcard detail-card prose-card utility-card">
+                                <h3 class="card-title">Utility in Reading</h3>
+                                <p class="prose-text">@courtEntry.UtilityInReading</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.Essence))
+                        {
+                            <div class="reference-subcard detail-card prose-card essence-card">
+                                <h3 class="card-title">Essence</h3>
+                                <p class="prose-text">@courtEntry.Essence</p>
+                            </div>
+                        }
+
+                        @if (courtEntry.ReadWhen?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card read-when-card">
+                                <h3 class="card-title">Read When</h3>
+                                <ul class="bullet-list compact">
+                                    @foreach (var rw in courtEntry.ReadWhen) { <li>@rw</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (courtEntry.Pitfalls?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card pitfalls-card">
+                                <h3 class="card-title">Pitfalls</h3>
+                                <ul class="bullet-list compact bullet-warning">
+                                    @foreach (var p in courtEntry.Pitfalls) { <li>@p</li> }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (courtEntry.Examples?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card examples-card">
+                                <h3 class="card-title">Examples</h3>
+                                <ul class="bullet-list compact">
+                                    @foreach (var e in courtEntry.Examples) { <li>@e</li> }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </details>
+            </section>
+        }
+
+        @if (showSources)
+        {
+            <section id="section-sources" class="detail-card sources-card sources-footer">
+                <details>
+                    <summary class="details-summary">Sources</summary>
+                    <div class="details-body">
+                        <ul class="sources-list">
+                            @foreach (var s in fig.TraditionalSources!)
+                            {
+                                <li class="source-entry">
+                                    <p class="source-citation">
+                                        <span class="src-author">@s.Author</span>
+                                        <span class="src-separator" aria-hidden="true">—</span>
+                                        <span class="src-work">@s.Work</span>
+                                    </p>
+                                    @if (!string.IsNullOrWhiteSpace(s.Section) || s.Year.HasValue)
+                                    {
+                                        <div class="source-meta">
+                                            @if (!string.IsNullOrWhiteSpace(s.Section))
+                                            {
+                                                <span class="src-section-ref" title="Section reference">
+                                                    <span class="src-section-label">Section</span>
+                                                    <span class="src-section-text">@s.Section</span>
+                                                </span>
+                                            }
+                                            @if (s.Year.HasValue)
+                                            {
+                                                <span class="src-year-badge">@s.Year</span>
+                                            }
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(s.Note))
+                                    {
+                                        <p class="src-note">@s.Note</p>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </details>
+            </section>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public SlotSelection? Selection { get; set; }
+    [Parameter] public IReadOnlyList<HouseDirectoryEntry> Houses { get; set; } = Array.Empty<HouseDirectoryEntry>();
+    [Parameter] public IReadOnlyList<CourtDirectoryEntry> Courts { get; set; } = Array.Empty<CourtDirectoryEntry>();
+
+    private ElementReference _panelRef;
+    private string? _lastSelectionKey;
+    private string? _activeSection = "section-context";
+    private bool _contentReady;
+
+    private record ElementInfo(string Name, string Symbol, string Value, bool IsActive, string CssClass);
+
+    private record InSlotInfo(string Eyebrow, string Title, string Body);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var key = BuildSelectionKey(Selection);
+        if (string.Equals(key, _lastSelectionKey, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _lastSelectionKey = key;
+        _activeSection = "section-context";
+        _contentReady = Selection?.Figure != null;
+        await JSRuntime.InvokeVoidAsync("geofancyScrollElementToTop", _panelRef);
+        StateHasChanged();
+    }
+
+    private static string? BuildSelectionKey(SlotSelection? selection) =>
+        selection == null
+            ? null
+            : $"{selection.Kind}|{selection.HouseNumber}|{selection.SlotLabel}|{selection.Figure?.Name}";
+
+    private async Task ScrollToSection(string sectionId)
+    {
+        _activeSection = sectionId;
+        await JSRuntime.InvokeVoidAsync("geofancyScrollToId", sectionId);
+    }
+
+    private string JumpClass(string sectionId) =>
+        string.Equals(_activeSection, sectionId, StringComparison.Ordinal) ? "is-active" : string.Empty;
+
+    private string? JumpAria(string sectionId) =>
+        string.Equals(_activeSection, sectionId, StringComparison.Ordinal) ? "true" : null;
+
+    private static bool HasContextContent(FigureModel fig, InSlotInfo? inSlot) =>
+        inSlot != null
+        || !string.IsNullOrWhiteSpace(fig.DivinatoryMeaning)
+        || fig.CoreMeaning?.Any() == true;
+
+    private static string GetQualityChipClass(string? quality) => quality?.Trim().ToLowerInvariant() switch
+    {
+        "mobile" => "chip-quality chip-quality-mobile",
+        "stable" => "chip-quality chip-quality-stable",
+        _ => "chip-quality"
+    };
+
+    private static bool HasInterpretationContent(FigureModel fig) =>
+        !string.IsNullOrWhiteSpace(fig.Imagery)
+        || fig.TraditionalImagery?.Any() == true
+        || !string.IsNullOrWhiteSpace(fig.ElementalSynthesis)
+        || fig.Interpretation?.Any() == true
+        || !string.IsNullOrWhiteSpace(fig.Commentary)
+        || fig.ModernExamples?.Any() == true;
+
+    private static bool HasPersonContent(FigureModel fig) =>
+        !string.IsNullOrWhiteSpace(fig.BodyType)
+        || !string.IsNullOrWhiteSpace(fig.TraditionalBodyType)
+        || !string.IsNullOrWhiteSpace(fig.CharacterType)
+        || !string.IsNullOrWhiteSpace(fig.TraditionalCharacterType)
+        || !string.IsNullOrWhiteSpace(fig.Anatomy)
+        || !string.IsNullOrWhiteSpace(fig.Colors);
+
+    private static bool HasPlanetaryContent(FigureModel fig) =>
+        !string.IsNullOrWhiteSpace(fig.PlanetaryIntelligence)
+        || !string.IsNullOrWhiteSpace(fig.PlanetarySpirit)
+        || !string.IsNullOrWhiteSpace(fig.PlanetaryAngel);
+
+    private static bool IsInterpretationOpenByDefault(InSlotInfo? inSlot) =>
+        inSlot == null;
+
+    private static bool IsHouseOpenByDefault(HouseDirectoryEntry? houseEntry) =>
+        houseEntry != null;
+
+    private static bool IsCourtOpenByDefault(CourtDirectoryEntry? courtEntry) =>
+        courtEntry != null;
+
+    private static bool HasReadingCraftContent(HouseDirectoryEntry houseEntry) =>
+        houseEntry.KeySignificators?.Any() == true
+        || houseEntry.CommonMisreadings?.Any() == true
+        || !string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch);
+
+    private static bool IsCorrespondencesOpenByDefault(InSlotInfo? inSlot) =>
+        inSlot == null;
+
+    private InSlotInfo? ResolveInSlotText(FigureModel fig)
+    {
+        if (Selection == null) return null;
+
+        var courtKey = Selection.Kind switch
+        {
+            SlotKind.RightWitness => "RightWitness",
+            SlotKind.LeftWitness  => "LeftWitness",
+            SlotKind.Judge        => "Judge",
+            SlotKind.Sentence     => "Reconciler",
+            _ => null
+        };
+        if (courtKey != null)
+        {
+            if (fig.InCourtRoles != null
+                && fig.InCourtRoles.TryGetValue(courtKey, out var courtBody)
+                && !string.IsNullOrWhiteSpace(courtBody))
+            {
+                var title = courtKey switch
+                {
+                    "RightWitness" => "As Right Witness",
+                    "LeftWitness"  => "As Left Witness",
+                    "Judge"        => "As Judge",
+                    "Reconciler"   => "As Reconciler",
+                    _              => "In this slot"
+                };
+                return new InSlotInfo("This figure in this court slot", title, courtBody);
+            }
+            return null;
+        }
+
+        if (Selection.Kind == SlotKind.House && Selection.HouseNumber.HasValue)
+        {
+            var n = Selection.HouseNumber.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (fig.InHouses != null
+                && fig.InHouses.TryGetValue(n, out var houseBody)
+                && !string.IsNullOrWhiteSpace(houseBody))
+            {
+                return new InSlotInfo("This figure in this house slot", $"In House {n}", houseBody);
+            }
+        }
+
+        return null;
+    }
+
+    private string FormatSlotLabel(SlotSelection s)
+    {
+        if (s.Kind == SlotKind.House && s.HouseNumber.HasValue)
+        {
+            var entry = Houses.FirstOrDefault(h => h.Id == s.HouseNumber.Value);
+            return entry != null
+                ? $"{s.SlotLabel} · {entry.House} House"
+                : s.SlotLabel;
+        }
+        return s.SlotLabel;
+    }
+
+    private HouseDirectoryEntry? ResolveHouseEntry()
+    {
+        if (Selection?.Kind != SlotKind.House || Selection.HouseNumber == null) return null;
+        return Houses.FirstOrDefault(h => h.Id == Selection.HouseNumber.Value);
+    }
+
+    private CourtDirectoryEntry? ResolveCourtEntry()
+    {
+        if (Selection == null) return null;
+        var key = Selection.Kind switch
+        {
+            SlotKind.RightWitness => "Right Witness",
+            SlotKind.LeftWitness => "Left Witness",
+            SlotKind.Judge => "The Judge",
+            SlotKind.Sentence => "The Reconciler",
+            _ => null
+        };
+        if (key == null) return null;
+        return Courts.FirstOrDefault(c =>
+            string.Equals(c.Placement, key, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<ElementInfo> BuildElements(FigureModel fig)
+    {
+        yield return MakeElement("Fire",  "🜂", fig.FireElement,  "fire");
+        yield return MakeElement("Air",   "🜁", fig.AirElement,   "air");
+        yield return MakeElement("Water", "🜄", fig.WaterElement, "water");
+        yield return MakeElement("Earth", "🜃", fig.EarthElement, "earth");
+    }
+
+    private static ElementInfo MakeElement(string name, string symbol, string raw, string cssClass)
+    {
+        var trimmed = (raw ?? string.Empty).Trim();
+        var dormant = string.IsNullOrEmpty(trimmed)
+            || trimmed.Equals("0", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("none", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("inactive", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("passive", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("false", StringComparison.OrdinalIgnoreCase);
+        return new ElementInfo(name, symbol, string.IsNullOrEmpty(trimmed) ? "—" : trimmed, !dormant, cssClass);
+    }
+
+    private static string GetElementSymbol(string element) => element?.Trim().ToLowerInvariant() switch
+    {
+        "fire"  => "🜂",
+        "air"   => "🜁",
+        "water" => "🜄",
+        "earth" => "🜃",
+        _       => "✦"
+    };
+
+    private static string GetElementCssClass(string element) => element?.Trim().ToLowerInvariant() switch
+    {
+        "fire"  => "fire",
+        "air"   => "air",
+        "water" => "water",
+        "earth" => "earth",
+        _       => string.Empty
+    };
+
+    private static string GetPlanetSymbol(string planet) => planet?.Trim().ToLowerInvariant() switch
+    {
+        "sun"            => "☉",
+        "moon"           => "☽",
+        "mercury"        => "☿",
+        "venus"          => "♀",
+        "mars"           => "♂",
+        "jupiter"        => "♃",
+        "saturn"         => "♄",
+        "uranus"         => "♅",
+        "neptune"        => "♆",
+        "pluto"          => "♇",
+        "north node"     => "☊",
+        "ascending node" => "☊",
+        "south node"     => "☋",
+        "descending node" => "☋",
+        "dragon's head"   => "☊",
+        "dragon's tail"   => "☋",
+        _                 => "✦"
+    };
+
+    private static string GetZodiacSymbol(string sign) => sign?.Trim().ToLowerInvariant() switch
+    {
+        "aries"       => "♈",
+        "taurus"      => "♉",
+        "gemini"      => "♊",
+        "cancer"      => "♋",
+        "leo"         => "♌",
+        "virgo"       => "♍",
+        "libra"       => "♎",
+        "scorpio"     => "♏",
+        "sagittarius" => "♐",
+        "capricorn"   => "♑",
+        "aquarius"    => "♒",
+        "pisces"      => "♓",
+        _             => "✧"
+    };
+
+    private static string GetStrengthLabel(FigureInHouseStrength s) => s switch
+    {
+        FigureInHouseStrength.StrongInHouse => "Strong",
+        FigureInHouseStrength.WeakInHouse   => "Weak",
+        _                                   => "Neutral"
+    };
+
+    private static string GetStrengthCssClass(FigureInHouseStrength s) => s switch
+    {
+        FigureInHouseStrength.StrongInHouse => "strength-strong",
+        FigureInHouseStrength.WeakInHouse   => "strength-weak",
+        _                                   => "strength-neutral"
+    };
+}

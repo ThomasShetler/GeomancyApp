@@ -313,6 +313,34 @@
     );
 }
 
+/* Mothers setup: Mother strip on top, wiki shield below (535px native size). */
+.mobile-chart-body--mothers-setup {
+    justify-content: flex-start;
+    padding-top: 0.35rem;
+}
+
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage,
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage--mothers-preview {
+    --chart-native-size: 535px;
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 8.6rem),
+        70dvh
+    );
+}
+
+.mobile-chart-drawer.is-mothers-setup .mobile-chart-stage--mothers-preview ::deep > .charts-side-by-side {
+    width: var(--chart-native-size) !important;
+    height: var(--chart-native-size) !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform-origin: top center;
+    transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
+}
+
 /* ============================================================
  * Mother input strip
  *
@@ -605,6 +633,60 @@
     -webkit-overflow-scrolling: touch;
 }
 
+/* Mothers setup: dot-caster pinned to top of panel; chart in drawer above. */
+.mobile-mothers-setup {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    height: 100%;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-walkthrough.is-embedded-mobile-mothers {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-info-pane {
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-guidance-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mobile-mothers-setup ::deep .figure-dot-caster.is-mobile-actions-first {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-primary);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--bg-primary) 70%, transparent);
+}
+
+.mobile-mothers-setup ::deep .chart-casting-shield-hint--mobile,
+.mobile-mothers-setup ::deep .chart-casting-slot-target--mobile {
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-summary-actions--mobile-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-summary-actions--mobile-top .figure-dot-caster-btn {
+    width: 100%;
+}
+
 /* One-time (dismissible) orientation card; storage key in MobileWorkspace.razor */
 .mobile-welcome-callout {
     flex-shrink: 0;
@@ -697,6 +779,40 @@
 .mobile-panel-body ::deep .wop-groups {
     overflow: visible;
     max-height: none;
+}
+
+/* Figure detail: keep jump-nav usable and avoid clipping in mobile detail mode */
+.mobile-panel-body ::deep .figure-detail-panel .detail-sticky-tabs {
+    top: 0;
+    z-index: 4;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .section-jump-nav {
+    gap: 0.25rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .jump-chip {
+    font-size: 0.62rem;
+    padding: 0.12rem 0.42rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .elements-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.mobile-panel-body ::deep .figure-detail-panel .detail-card {
+    scroll-margin-top: 3.25rem;
+}
+
+.mobile-panel-body ::deep .figure-detail-panel details > summary {
+    padding: 0.2rem 0;
+}
+
+/* Compact perfection rows: hide figure names first on narrow screens */
+@media (max-width: 480px) {
+    .mobile-panel-body ::deep .flow-figures {
+        display: none;
+    }
 }
 
 /* ============================================================

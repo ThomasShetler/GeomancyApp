@@ -1,0 +1,105 @@
+@page "/wiki/how-to/generate-figures"
+@rendermode InteractiveServer
+@using GeomancyWebUI.Client.Components
+
+<PageTitle>Geofancy Wiki - Generate Figures</PageTitle>
+
+<WikiArticleShell Title="How to Generate the Figures"
+                  Lead="Mark dots in four horizontal rows (stick-and-surface) to form the sixteen geomantic figures and read their meanings from the corpus."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki">
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Introduction</h2>
+        <p class="wiki-casting-section-lead">
+            A geomantic figure has four lines — Head (fire), Neck (air), Body (water), and Foot (earth).
+            Each line is either <strong>active</strong> (one dot) or <strong>passive</strong> (two dots).
+            Sixteen unique patterns map to the traditional figure names in the
+            <a href="/wiki/glossary/figures">Figure Glossary</a>.
+        </p>
+        <div class="wiki-casting-callout">
+            In Geofancy, active lines are stored as <code>1</code> (single ◆) and passive lines as
+            <code>2</code> (double ◆ ◆). The app names each figure from the corpus once the four lines are known.
+        </div>
+    </section>
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">The sixteen figures</h2>
+        <p class="wiki-casting-section-lead">
+            Geomancy uses exactly <strong>sixteen figures</strong> — every possible combination of four
+            active or passive lines (2⁴ = 16). Each line is read top to bottom as Fire, Air, Water, and Earth.
+            Medieval and Renaissance manuals gave each pattern a Latin name, planet, sign, and interpretive quality;
+            Geofancy stores that material in the figure corpus.
+        </p>
+        <p class="wiki-casting-section-lead">
+            Browse names, imagery, and full readings in the
+            <a href="/wiki/glossary/figures">Figure Glossary</a>.
+        </p>
+        <ul class="wiki-sixteen-figures-list">
+            <li>Via (The Way)</li>
+            <li>Populus (The People)</li>
+            <li>Fortuna Major (Greater Fortune)</li>
+            <li>Fortuna Minor (Lesser Fortune)</li>
+            <li>Coniunctio (Conjunction)</li>
+            <li>Carcer (The Prison)</li>
+            <li>Tristitia (Sorrow)</li>
+            <li>Laetitia (Joy)</li>
+            <li>Acquisitio (Gain)</li>
+            <li>Amissio (Loss)</li>
+            <li>Albus (Whiteness)</li>
+            <li>Rubeus (The Red)</li>
+            <li>Puella (The Girl)</li>
+            <li>Puer (The Boy)</li>
+            <li>Caput Draconis (Dragon's Head)</li>
+            <li>Cauda Draconis (Dragon's Tail)</li>
+        </ul>
+        <div class="wiki-casting-callout">
+            Further reading:
+            <a href="https://en.wikipedia.org/wiki/Geomantic_figures" rel="noopener noreferrer">Wikipedia — Geomantic figures</a>,
+            <a href="http://www.princeton.edu/~ezb/geomancy/figures.html" rel="noopener noreferrer">Princeton — Medieval geomantic figures</a>.
+        </div>
+    </section>
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Mark the dots</h2>
+        <p class="wiki-casting-section-lead">
+            In the traditional stick-and-surface method you make <strong>four horizontal rows</strong> of
+            random dots — Head (fire) on top through Foot (earth) on the bottom. When you are ready, pair
+            dots off two at a time in each row, <strong>left to right</strong>. If one dot remains, that
+            line is active (single); if zero or two remain, the line is passive (double). Reading the four
+            finished rows top to bottom gives you one figure.
+        </p>
+        <WikiFigurePracticeSection />
+    </section>
+
+    <section class="wiki-casting-section wiki-casting-section--interactive-cta">
+        <h2 class="wiki-casting-section-title">Cast the four Mothers on a chart</h2>
+        <p class="wiki-casting-section-lead">
+            Placing four Mother figures on the shield and deriving the rest of the chart is covered in the
+            shield-chart walkthrough — not on this page.
+        </p>
+        <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+           href="/wiki/how-to/shield-chart/interactive">
+            Open Interactive Shield Walkthrough
+        </a>
+        <p class="wiki-casting-section-lead">
+            Prefer the article walkthrough?
+            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a>
+        </p>
+    </section>
+
+    <section class="wiki-casting-section">
+        <h2 class="wiki-casting-section-title">Other ways to enter figures</h2>
+        <p class="wiki-casting-section-lead">
+            Geofancy does not randomize marks for you — the randomization stays with your hands.
+            Once you know the four lines, you can also enter them directly in the
+            <a href="/workspace">Workspace</a> or <a href="/mobile">Mobile View</a> by tapping each line
+            on the Mother figures to toggle between single and double dots.
+        </p>
+        <p class="wiki-casting-section-lead">
+            When your four Mothers are set, continue to
+            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a> to derive the rest of the chart.
+        </p>
+    </section>
+
+</WikiArticleShell>

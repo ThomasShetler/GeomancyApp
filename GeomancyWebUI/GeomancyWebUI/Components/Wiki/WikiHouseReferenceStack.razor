@@ -1,0 +1,107 @@
+@using GeomancyWebUI.Client.Helpers
+@using GeomancyWebUI.Client.Models
+
+@if (House != null)
+{
+    var houseEntry = House;
+
+    <div class="reference-stack wiki-house-stack">
+        <p class="reference-section-eyebrow">House Reference · @houseEntry.House</p>
+
+        @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName)
+             || !string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
+        {
+            <div class="reference-subcard detail-card reference-card house-identity-card">
+                <h3 class="card-title">House Identity</h3>
+                @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName))
+                {
+                    <p class="reference-title-line">@houseEntry.TraditionalName</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
+                {
+                    <p class="prose-text reference-subtitle">@houseEntry.AstrologicalCorrespondence</p>
+                }
+            </div>
+        }
+
+        @if (houseEntry.Governs?.Any() == true)
+        {
+            <div class="reference-subcard detail-card governs-card">
+                <h3 class="card-title">What it Governs</h3>
+                <ul class="bullet-list two-col-bullets">
+                    @foreach (var g in houseEntry.Governs) { <li>@g</li> }
+                </ul>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(houseEntry.SignificatorOfQuesitedWhen))
+        {
+            <div class="reference-subcard detail-card prose-card significator-card">
+                <h3 class="card-title">When This House Is the Quesited</h3>
+                <p class="prose-text">@houseEntry.SignificatorOfQuesitedWhen</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
+        {
+            <div class="reference-subcard detail-card prose-card essence-card">
+                <h3 class="card-title">Interpretive Essence</h3>
+                <p class="prose-text">@houseEntry.InterpretiveEssence</p>
+            </div>
+        }
+
+        @if (FigureDisplayHelper.HasReadingCraftContent(houseEntry))
+        {
+            <div class="reference-subcard detail-card reading-craft-card">
+                <h3 class="card-title">Reading Craft</h3>
+                @if (houseEntry.KeySignificators?.Any() == true)
+                {
+                    <div class="craft-subsection">
+                        <h4 class="craft-subheading">Key Significators</h4>
+                        <div class="pill-row">
+                            @foreach (var ks in houseEntry.KeySignificators) { <span class="meaning-pill">@ks</span> }
+                        </div>
+                    </div>
+                }
+                @if (houseEntry.CommonMisreadings?.Any() == true)
+                {
+                    <div class="craft-subsection">
+                        <h4 class="craft-subheading">Common Misreadings</h4>
+                        <ul class="bullet-list compact bullet-warning">
+                            @foreach (var m in houseEntry.CommonMisreadings) { <li>@m</li> }
+                        </ul>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch))
+                {
+                    <div class="craft-subsection">
+                        <h4 class="craft-subheading">Figure Combinations to Watch</h4>
+                        <p class="prose-text">@houseEntry.FigureCombinationsToWatch</p>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(houseEntry.Notes))
+        {
+            <div class="reference-subcard detail-card prose-card notes-card">
+                <h3 class="card-title">Notes</h3>
+                <p class="prose-text">@houseEntry.Notes</p>
+            </div>
+        }
+
+        @if (houseEntry.ExampleQuestions?.Any() == true)
+        {
+            <div class="reference-subcard detail-card example-questions-card">
+                <h3 class="card-title">Example Questions</h3>
+                <ul class="bullet-list">
+                    @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
+                </ul>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public HouseDirectoryEntry? House { get; set; }
+}

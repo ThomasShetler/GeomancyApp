@@ -4,6 +4,31 @@
  * - on phones it stays as a sticky top bar (with the nav links collapsing
  *   behind the existing hamburger toggler in NavMenu.razor.css).
  */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 2000;
+    padding: 0.5rem 1rem;
+    background: var(--bg-primary, #fff);
+    color: var(--accent-color, #007bff);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+    box-shadow: 0 2px 8px var(--shadow, rgba(0, 0, 0, 0.15));
+}
+
+.skip-link:focus {
+    left: 0;
+    top: 0;
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
+
 .page {
     position: relative;
     display: flex;
@@ -14,6 +39,8 @@
 main {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /*
@@ -23,13 +50,15 @@ main {
  * Lock the page column height and hide overflow only when the mobile
  * workspace is the active body content.
  */
-.page:has(.mobile-shell) {
+.page:has(.mobile-shell),
+.page:has(.wiki-interactive-shell--mobile) {
     min-height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
 }
 
-main:has(.mobile-shell) {
+main:has(.mobile-shell),
+main:has(.wiki-interactive-shell--mobile) {
     flex: 1;
     min-height: 0;
     overflow: hidden;
@@ -37,7 +66,8 @@ main:has(.mobile-shell) {
     flex-direction: column;
 }
 
-article.content:has(.mobile-shell) {
+article.content:has(.mobile-shell),
+article.content:has(.wiki-interactive-shell--mobile) {
     flex: 1;
     min-height: 0;
     overflow: hidden;

@@ -1,0 +1,44 @@
+@* Shared wiki page wrapper: breadcrumb, title, body slot. *@
+
+<div class="wiki-page">
+    <nav class="wiki-breadcrumb" aria-label="Breadcrumb">
+        <a href="/wiki">Wiki</a>
+        @if (!string.IsNullOrWhiteSpace(ParentHref) && !string.IsNullOrWhiteSpace(ParentLabel))
+        {
+            <span class="wiki-breadcrumb-sep" aria-hidden="true">/</span>
+            <a href="@ParentHref">@ParentLabel</a>
+        }
+    </nav>
+
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        <header class="wiki-header">
+            <h1 class="wiki-h1">@Title</h1>
+            @if (!string.IsNullOrWhiteSpace(Lead))
+            {
+                <p class="wiki-lead">@Lead</p>
+            }
+            @if (ShowDraftBadge)
+            {
+                <p class="wiki-draft-badge">Draft — content coming soon</p>
+            }
+        </header>
+    }
+
+    <div class="wiki-body">
+        @ChildContent
+    </div>
+
+    <footer class="wiki-footer">
+        <a href="/wiki" class="wiki-back-link">← Back to Wiki</a>
+    </footer>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string? Lead { get; set; }
+    [Parameter] public string? ParentHref { get; set; }
+    [Parameter] public string? ParentLabel { get; set; }
+    [Parameter] public bool ShowDraftBadge { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

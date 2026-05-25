@@ -1,0 +1,43 @@
+.perf-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    color: var(--text-secondary);
+}
+
+.perf-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.perf-icon-lg {
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+/* Aspect tints */
+.perf-icon.aspect-sextile { color: #66bb6a; }
+.perf-icon.aspect-trine { color: #43a047; }
+.perf-icon.aspect-square { color: #ef5350; }
+.perf-icon.aspect-opposition { color: #ab47bc; }
+.perf-icon.aspect-conjunction,
+.perf-icon.aspect-generic { color: #42a5f5; }
+
+/* Mode tints */
+.perf-icon.icon-mode-occupation { color: #78909c; }
+.perf-icon.icon-mode-conjunction { color: #42a5f5; }
+.perf-icon.icon-mode-translation { color: #26a69a; }
+.perf-icon.icon-mode-mutation { color: #ff7043; }
+
+/* Company */
+.perf-icon.icon-company { color: #9575cd; }
+.perf-icon.icon-company-simple { color: #7e57c2; }
+.perf-icon.icon-company-demisimple { color: #8e6fd0; }
+.perf-icon.icon-company-compound { color: #6a4c93; }
+.perf-icon.icon-company-capitular { color: #b39ddb; }
+
+.perf-icon.icon-denial { color: #ff9800; }

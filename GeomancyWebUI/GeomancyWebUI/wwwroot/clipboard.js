@@ -71,3 +71,39 @@ window.geofancyWriteStorage = (key, value) => {
         return false;
     }
 };
+
+/** Scroll a panel section into view without triggering Blazor router navigation. */
+window.geofancyScrollToId = (id) => {
+    const el = document.getElementById(id);
+    if (!el) {
+        return false;
+    }
+
+    const details = el.querySelector('details:not([open])');
+    if (details) {
+        details.open = true;
+    }
+
+    const scroller = el.closest('.figure-detail-panel');
+    if (scroller) {
+        const sticky = scroller.querySelector('.detail-sticky-tabs');
+        const stickyH = sticky ? sticky.getBoundingClientRect().height : 0;
+        const scrollerRect = scroller.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        const delta = elRect.top - scrollerRect.top + scroller.scrollTop - stickyH - 8;
+        scroller.scrollTo({ top: Math.max(0, delta), behavior: 'smooth' });
+    } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    return true;
+};
+
+/** Reset scroll position on a scrollable panel element. */
+window.geofancyScrollElementToTop = (el) => {
+    if (el) {
+        el.scrollTop = 0;
+        return true;
+    }
+    return false;
+};

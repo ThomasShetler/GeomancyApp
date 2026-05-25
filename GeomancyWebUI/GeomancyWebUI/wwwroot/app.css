@@ -55,7 +55,8 @@ a, .btn-link {
    to fit its 100dvh - nav math; the article wrapper's chrome padding (px-4 +
    the .content padding-top above) eats screen real estate that the
    chart overlay then has to scroll around. Drop all of it on /mobile. */
-article.content:has(.mobile-shell) {
+article.content:has(.mobile-shell),
+article.content:has(.wiki-interactive-shell--mobile) {
     padding: 0 !important;
 }
 
@@ -149,4 +150,48 @@ html[data-theme="dark"] .alert {
 
 html[data-theme="dark"] .text-muted {
     color: var(--text-secondary) !important;
+}
+
+/* Branded utility pages */
+.not-found,
+.error-page {
+    max-width: 36rem;
+    margin: 2rem auto 3rem;
+    padding: 0 0.5rem;
+}
+
+.not-found-title,
+.error-page-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.75rem;
+    color: var(--text-primary);
+}
+
+.not-found-lead,
+.error-page-lead {
+    margin: 0 0 1.25rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+.not-found-links,
+.error-page-links {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.8;
+}
+
+.not-found-links a,
+.error-page-links a {
+    color: var(--accent-color);
+}
+
+.error-page-request {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.error-page-request-hint {
+    font-weight: normal;
 }

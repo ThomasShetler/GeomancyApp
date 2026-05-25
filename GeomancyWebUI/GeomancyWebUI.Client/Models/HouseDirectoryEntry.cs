@@ -5,7 +5,7 @@ namespace GeomancyWebUI.Client.Models
 {
     /// <summary>
     /// Reference data for a single house (1-12) sourced from the
-    /// HouseAndCourtDirectory/HouseData.json file via the API.
+    /// databank/HouseAndCourtDirectory/HouseData.json file via the API.
     /// </summary>
     public class HouseDirectoryEntry
     {

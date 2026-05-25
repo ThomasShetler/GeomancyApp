@@ -60,12 +60,17 @@ namespace GeomancyAPI.Models
 
         [JsonProperty("year")]
         public int? Year { get; set; }
+
+        [JsonProperty("note")]
+        public string Note { get; set; }
     }
 
     // Response model for a single figure
     public class FigureResponse
     {
         public string Name { get; set; }
+        [JsonProperty("english_name")]
+        public string EnglishName { get; set; }
         public string OtherNames { get; set; }
         public string Quality { get; set; }
         public string Keyword { get; set; }
@@ -74,6 +79,14 @@ namespace GeomancyAPI.Models
         public string WeakHouse { get; set; }
         public string Planet { get; set; }
         public string Sign { get; set; }
+        [JsonProperty("humor")]
+        public string Humor { get; set; }
+        [JsonProperty("planetary_intelligence")]
+        public string PlanetaryIntelligence { get; set; }
+        [JsonProperty("planetary_spirit")]
+        public string PlanetarySpirit { get; set; }
+        [JsonProperty("planetary_angel")]
+        public string PlanetaryAngel { get; set; }
         public string InnerEl { get; set; }
         public string OuterEl { get; set; }
         public string FireElement { get; set; }
@@ -82,7 +95,11 @@ namespace GeomancyAPI.Models
         public string EarthElement { get; set; }
         public string Anatomy { get; set; }
         public string BodyType { get; set; }
+        [JsonProperty("traditional_body_type")]
+        public string TraditionalBodyType { get; set; }
         public string CharacterType { get; set; }
+        [JsonProperty("traditional_character_type")]
+        public string TraditionalCharacterType { get; set; }
         public string Colors { get; set; }
         public string Commentary { get; set; }
         public string DivinatoryMeaning { get; set; }
@@ -357,7 +374,7 @@ namespace GeomancyAPI.Models
         public WayOfPointsResultResponse EarthWay { get; set; } = new WayOfPointsResultResponse();
     }
 
-    // Reference directory entry for a single house (1-12), sourced from HouseAndCourtDirectory/HouseData.json
+    // Reference directory entry for a single house (1-12), sourced from databank/HouseAndCourtDirectory/HouseData.json
     public class HouseDirectoryEntryResponse
     {
         [JsonProperty("id")]
@@ -457,7 +474,7 @@ namespace GeomancyAPI.Models
     }
 
     // Reference directory entry for a single Way Of Points element (Fire/Air/Water/Earth),
-    // sourced from WayOfPointsDirectory/ElementData.json
+    // sourced from databank/WayOfPointsDirectory/ElementData.json
     public class WayOfPointsElementEntryResponse
     {
         [JsonProperty("id")]
@@ -507,7 +524,7 @@ namespace GeomancyAPI.Models
     }
 
     // Reference directory entry for a single Way Of Points path type (Strong / StrongPassive
-    // / WeakerPassive / Passive), sourced from WayOfPointsDirectory/PathTypeData.json
+    // / WeakerPassive / Passive), sourced from databank/WayOfPointsDirectory/PathTypeData.json
     public class WayOfPointsPathTypeEntryResponse
     {
         [JsonProperty("id")]

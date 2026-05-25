@@ -1,0 +1,780 @@
+@using GeomancyWebUI.Client.Helpers
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@using Microsoft.JSInterop
+@inject IGeomancyService GeomancyService
+@inject IJSRuntime JS
+@implements IDisposable
+
+<div class="figure-dot-caster @GetRootClass()">
+    @if (!string.IsNullOrWhiteSpace(MotherLabel))
+    {
+        <p class="figure-dot-caster-label">@MotherLabel</p>
+    }
+
+    @if (ShowInstruction)
+    {
+        <p class="figure-dot-caster-instruction">
+            Tap anywhere in each row to drop a mark. When you generate, marks are crossed off in twos
+            (left to right) until one or two remain; the figure builds
+            <span class="figure-dot-instruction-wide"> in the panel on the right</span><span class="figure-dot-instruction-narrow"> below</span>.
+        </p>
+    }
+
+    @if (MobileActionsFirst && ShowResultFigure)
+    {
+        <div class="figure-dot-caster-result figure-dot-caster-result--mobile-top" aria-live="polite">
+            <p class="figure-dot-caster-result-caption">Figure (read top to bottom)</p>
+            <div class="figure-dot-caster-figure-build">
+                @for (var line = 0; line < 4; line++)
+                {
+                    var revealed = line < _revealedFigureLines;
+                    var lineValue = revealed && _resolvedLines != null ? _resolvedLines[line] : null;
+                    <div class="figure-build-line @(revealed ? "is-revealed" : "")">
+                        @(lineValue.HasValue ? GetLineDisplay(lineValue.Value) : "·")
+                    </div>
+                }
+            </div>
+            @if (_resolvedFigure != null && _figureNameRevealed)
+            {
+                <p class="figure-dot-caster-result-name">@_resolvedFigure.Name</p>
+                @if (!string.IsNullOrWhiteSpace(_resolvedFigure.EnglishName))
+                {
+                    <p class="figure-dot-caster-result-sub">@_resolvedFigure.EnglishName</p>
+                }
+            }
+        </div>
+    }
+
+    @if (MobileActionsFirst && _phase == CasterPhase.Marking && !HideActions)
+    {
+        <div class="figure-dot-caster-actions figure-dot-caster-actions--top">
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="GenerateFigureAsync">Generate figure</button>
+        </div>
+    }
+
+    <div class="figure-dot-caster-body @(MobileActionsFirst ? "figure-dot-caster-body--mobile" : "")">
+        <div class="figure-dot-caster-rows" aria-label="Mark dots in four horizontal rows">
+            @for (var row = 0; row < 4; row++)
+            {
+                var rowIndex = row;
+                var marks = _rows[rowIndex];
+                <div class="figure-dot-row @GetRowClass(rowIndex)">
+                    <div class="figure-dot-row-label">
+                        <span class="figure-dot-row-name">@RowNames[row]</span>
+                        <span class="figure-dot-row-element">@RowElements[row]</span>
+                        @if (ShowRowCounts && _phase == CasterPhase.Marking)
+                        {
+                            <span class="figure-dot-row-count @GetRowCountClass(marks.Count)"
+                                  aria-label="@($"{marks.Count} dots marked, need at least {FigureMarking.MinDotsPerRow}")">
+                                @marks.Count/@FigureMarking.MinDotsPerRow
+                            </span>
+                        }
+                    </div>
+                    <div class="figure-dot-row-track-wrap">
+                        <div @ref="_canvasRefs[rowIndex]"
+                             class="figure-dot-canvas @GetCanvasClass(rowIndex)"
+                             @onpointerdown="(e) => OnCanvasPointerDown(e, rowIndex)"
+                             @onpointerdown:preventDefault="true"
+                             @onpointerdown:stopPropagation="true"
+                             role="button"
+                             tabindex="@(_phase == CasterPhase.Marking && (!IsRowInputLocked(rowIndex) || CanRequestRowRefocus(rowIndex)) ? 0 : -1)"
+                             aria-label="@GetRowAriaLabel(rowIndex, marks.Count)">
+                            <svg class="figure-dot-canvas-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                @foreach (var line in GetPairConnectorLines(rowIndex))
+                                {
+                                    <line x1="@line.X1.ToString("F1")"
+                                          y1="@line.Y1.ToString("F1")"
+                                          x2="@line.X2.ToString("F1")"
+                                          y2="@line.Y2.ToString("F1")"
+                                          class="figure-dot-pair-line @line.CssClass" />
+                                }
+                            </svg>
+                            @foreach (var mark in marks)
+                            {
+                                <span class="canvas-mark @GetMarkClass(rowIndex, mark.Id)"
+                                      style="@GetMarkStyle(mark)"
+                                      aria-hidden="true">×</span>
+                            }
+                            @if (ShowRefocusPrompt(rowIndex))
+                            {
+                                <div class="figure-dot-refocus-mask" aria-live="polite">
+                                    <span class="figure-dot-refocus-mask-text">Tap again to focus @RowNames[rowIndex]</span>
+                                </div>
+                            }
+                            else if (marks.Count == 0 && _phase == CasterPhase.Marking && !IsRowInputLocked(rowIndex))
+                            {
+                                <span class="figure-dot-placeholder">@GetRowPlaceholder(rowIndex)</span>
+                            }
+                            else if (CanRequestRowRefocus(rowIndex) && _phase == CasterPhase.Marking && IsRowInputLocked(rowIndex))
+                            {
+                                <span class="figure-dot-placeholder figure-dot-placeholder--refocus">Tap again to focus</span>
+                            }
+                            @if (ShowRowUndo && _phase == CasterPhase.Marking && marks.Count > 0 && !IsRowInputLocked(rowIndex))
+                            {
+                                <button type="button"
+                                        class="figure-dot-row-undo"
+                                        title="Remove last mark in this row"
+                                        aria-label="@($"Remove last mark from {RowNames[row]} row")"
+                                        @onclick="() => RemoveLastMark(rowIndex)"
+                                        @onclick:stopPropagation="true">
+                                    Undo
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (ShowResultFigure && !MobileActionsFirst)
+        {
+            <div class="figure-dot-caster-result">
+                <p class="figure-dot-caster-result-caption">Figure (read top to bottom)</p>
+                <div class="figure-dot-caster-figure-build" aria-live="polite">
+                    @for (var line = 0; line < 4; line++)
+                    {
+                        var revealed = line < _revealedFigureLines;
+                        var lineValue = revealed && _resolvedLines != null ? _resolvedLines[line] : null;
+                        <div class="figure-build-line @(revealed ? "is-revealed" : "")">
+                            @(lineValue.HasValue ? GetLineDisplay(lineValue.Value) : "·")
+                        </div>
+                    }
+                </div>
+                @if (_resolvedFigure != null && _figureNameRevealed)
+                {
+                    <p class="figure-dot-caster-result-name">@_resolvedFigure.Name</p>
+                    @if (!string.IsNullOrWhiteSpace(_resolvedFigure.EnglishName))
+                    {
+                        <p class="figure-dot-caster-result-sub">@_resolvedFigure.EnglishName</p>
+                    }
+                }
+            </div>
+        }
+    </div>
+
+    @if (_phase == CasterPhase.Confirm && !MobileActionsFirst)
+    {
+        <div class="figure-dot-caster-confirm" role="dialog" aria-modal="true" aria-labelledby="@_confirmTitleId">
+            <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text">
+                Cross marks off in twos until one or two remain in each row, then build the figure on the right?
+            </p>
+            <div class="figure-dot-caster-actions">
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">Cancel</button>
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">OK, generate</button>
+            </div>
+        </div>
+    }
+    else if (_phase == CasterPhase.Marking && !HideActions && !MobileActionsFirst)
+    {
+        <div class="figure-dot-caster-actions">
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
+        </div>
+    }
+    else if (_phase == CasterPhase.Complete && ShowMarkAgainButton)
+    {
+        <div class="figure-dot-caster-actions">
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="ClearAll">Mark again</button>
+        </div>
+    }
+</div>
+
+@code {
+    private sealed class CanvasMark
+    {
+        public int Id { get; init; }
+        public double XPercent { get; init; }
+        public double YPercent { get; init; }
+    }
+
+    private sealed record PairConnectorLine(double X1, double Y1, double X2, double Y2, string CssClass);
+
+    private static readonly string[] RowNames = { "Head", "Neck", "Body", "Foot" };
+    private static readonly string[] RowElements = { "Fire", "Air", "Water", "Earth" };
+    /// <summary>Minimum marks on the row above before the next row can be marked.</summary>
+    private const int MinDotsToUnlockNextRow = 2;
+
+    private enum CasterPhase { Marking, Confirm, Pairing, Complete }
+
+    private readonly string _confirmTitleId = $"caster-confirm-{Guid.NewGuid():N}"[..16];
+
+    private readonly List<CanvasMark>[] _rows = { new(), new(), new(), new() };
+    private readonly HashSet<long> _pairedMarks = new();
+    private readonly HashSet<long> _recentlyPairedMarks = new();
+    private readonly List<PairConnectorLine>[] _pairLines =
+    {
+        new(), new(), new(), new()
+    };
+
+    private readonly ElementReference[] _canvasRefs = new ElementReference[4];
+
+    private int _nextMarkId = 1;
+    private CasterPhase _phase = CasterPhase.Marking;
+    private int?[]? _resolvedLines;
+    private FigureModel? _resolvedFigure;
+    private CancellationTokenSource? _animationCts;
+    private bool _reducedMotion;
+    private int _activePairingRow = -1;
+    private int _revealedFigureLines;
+    private bool _figureNameRevealed;
+    private long _dropFlashMarkKey = -1;
+
+    [Parameter] public string? MotherLabel { get; set; }
+    [Parameter] public bool Compact { get; set; }
+    [Parameter] public bool AutoReset { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool HideActions { get; set; }
+    [Parameter] public bool ShowResultFigure { get; set; } = true;
+    [Parameter] public bool ShowMarkAgainButton { get; set; } = true;
+    [Parameter] public bool ShowInstruction { get; set; } = true;
+    [Parameter] public bool ShowRowCounts { get; set; } = true;
+    [Parameter] public bool ShowRowUndo { get; set; } = true;
+    [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
+    [Parameter] public bool MobileProgressiveRows { get; set; }
+    [Parameter] public bool MobileActionsFirst { get; set; }
+    /// <summary>Narrow wiki article column: smaller canvases and marks, stacked row labels.</summary>
+    [Parameter] public bool WikiArticleLayout { get; set; }
+
+    private int _activeRowIndex;
+    private int? _editUnlockedRow;
+    private int? _pendingRefocusRow;
+    private DateTime _lastRowTapUtc;
+    private int _lastRowTapIndex = -1;
+
+    private bool IsLocked => Disabled || _phase == CasterPhase.Pairing;
+    private bool CanGenerate => !IsLocked && _phase == CasterPhase.Marking
+        && FigureMarking.AllRowsReady(_rows.Select(r => r.Count).ToArray());
+    private bool CanClear => !IsLocked && (_phase == CasterPhase.Marking || _phase == CasterPhase.Complete)
+        && _rows.Any(r => r.Count > 0);
+
+    public bool IsComplete => _phase == CasterPhase.Complete;
+    public FigureModel? ResolvedFigure => _resolvedFigure;
+
+    private int PairingStepDelayMs => _reducedMotion ? 80 : 450;
+    private int RowCompleteDelayMs => _reducedMotion ? 50 : 250;
+    private int FigureLineRevealDelayMs => _reducedMotion ? 80 : 400;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _reducedMotion = await JS.InvokeAsync<bool>("geofancyPrefersReducedMotion");
+            }
+            catch
+            {
+                _reducedMotion = false;
+            }
+        }
+
+        if (_dropFlashMarkKey >= 0)
+        {
+            _dropFlashMarkKey = -1;
+        }
+    }
+
+    private string GetRootClass()
+    {
+        var classes = new List<string>();
+        if (Compact) classes.Add("is-compact");
+        if (IsLocked) classes.Add("is-locked");
+        if (_phase == CasterPhase.Pairing) classes.Add("is-pairing");
+        if (_phase == CasterPhase.Complete) classes.Add("is-complete");
+        if (MobileProgressiveRows) classes.Add("is-mobile-progressive");
+        if (MobileActionsFirst) classes.Add("is-mobile-actions-first");
+        if (WikiArticleLayout) classes.Add("is-wiki-article");
+        return string.Join(" ", classes);
+    }
+
+    private int GetMaxUnlockedRow()
+    {
+        for (var i = 1; i < 4; i++)
+        {
+            if (_rows[i - 1].Count < MinDotsToUnlockNextRow)
+            {
+                return i - 1;
+            }
+        }
+
+        return 3;
+    }
+
+    private bool IsRowInputLocked(int rowIndex)
+    {
+        if (IsLocked)
+        {
+            return true;
+        }
+
+        if (!MobileProgressiveRows || _phase != CasterPhase.Marking)
+        {
+            return false;
+        }
+
+        if (rowIndex > GetMaxUnlockedRow())
+        {
+            return true;
+        }
+
+        if (rowIndex < _activeRowIndex)
+        {
+            return _editUnlockedRow != rowIndex;
+        }
+
+        return false;
+    }
+
+    private bool CanRequestRowRefocus(int rowIndex) =>
+        MobileProgressiveRows
+        && _phase == CasterPhase.Marking
+        && rowIndex < _activeRowIndex
+        && rowIndex <= GetMaxUnlockedRow();
+
+    private bool ShowRefocusPrompt(int rowIndex) =>
+        _pendingRefocusRow == rowIndex && CanRequestRowRefocus(rowIndex);
+
+    private string GetCanvasClass(int rowIndex)
+    {
+        var classes = new List<string>();
+        var inputLocked = IsRowInputLocked(rowIndex);
+        if (IsLocked || (inputLocked && !CanRequestRowRefocus(rowIndex)))
+        {
+            classes.Add("is-locked");
+        }
+        else if (inputLocked && CanRequestRowRefocus(rowIndex))
+        {
+            classes.Add("is-refocus-eligible");
+        }
+
+        if (ShowRefocusPrompt(rowIndex))
+        {
+            classes.Add("is-refocus-prompt");
+        }
+
+        if (MobileProgressiveRows && _phase == CasterPhase.Marking && rowIndex == _activeRowIndex && !inputLocked)
+        {
+            classes.Add("is-row-focused");
+        }
+
+        return string.Join(' ', classes);
+    }
+
+    private string GetRowAriaLabel(int rowIndex, int markCount)
+    {
+        if (IsRowInputLocked(rowIndex))
+        {
+            if (rowIndex > GetMaxUnlockedRow())
+            {
+                var prerequisite = RowNames[GetMaxUnlockedRow()];
+                return $"{RowNames[rowIndex]} row — add at least {MinDotsToUnlockNextRow} marks to {prerequisite} first";
+            }
+
+            return $"{RowNames[rowIndex]} row — double-tap to edit";
+        }
+
+        return $"{RowNames[rowIndex]} row — tap to add a mark, {markCount} marked";
+    }
+
+    private string GetRowPlaceholder(int rowIndex)
+    {
+        if (MobileProgressiveRows && rowIndex > GetMaxUnlockedRow())
+        {
+            return $"Add {MinDotsToUnlockNextRow}+ marks to {RowNames[GetMaxUnlockedRow()]} first";
+        }
+
+        if (MobileProgressiveRows && rowIndex < _activeRowIndex)
+        {
+            return "Double-tap to edit";
+        }
+
+        return "Tap to mark";
+    }
+
+    private void ClampActiveRowIndex()
+    {
+        if (!MobileProgressiveRows)
+        {
+            return;
+        }
+
+        if (_activeRowIndex > GetMaxUnlockedRow())
+        {
+            _activeRowIndex = GetMaxUnlockedRow();
+        }
+
+        if (_editUnlockedRow.HasValue && _editUnlockedRow.Value > _activeRowIndex)
+        {
+            _editUnlockedRow = null;
+        }
+    }
+
+    private bool TryUnlockRowForEdit(int rowIndex)
+    {
+        if (!CanRequestRowRefocus(rowIndex))
+        {
+            return false;
+        }
+
+        var now = DateTime.UtcNow;
+        if (_lastRowTapIndex == rowIndex && (now - _lastRowTapUtc).TotalMilliseconds < 900)
+        {
+            _editUnlockedRow = rowIndex;
+            _activeRowIndex = rowIndex;
+            _pendingRefocusRow = null;
+            _lastRowTapIndex = -1;
+            return true;
+        }
+
+        _lastRowTapIndex = rowIndex;
+        _lastRowTapUtc = now;
+        _pendingRefocusRow = rowIndex;
+        return false;
+    }
+
+    private void ClearRefocusPrompt()
+    {
+        _pendingRefocusRow = null;
+        _lastRowTapIndex = -1;
+    }
+
+    private void OnMobileRowFocus(int rowIndex)
+    {
+        if (!MobileProgressiveRows)
+        {
+            return;
+        }
+
+        if (rowIndex > _activeRowIndex)
+        {
+            _activeRowIndex = rowIndex;
+            _editUnlockedRow = null;
+            ClearRefocusPrompt();
+        }
+        else if (rowIndex < _activeRowIndex && _editUnlockedRow == rowIndex)
+        {
+            _activeRowIndex = rowIndex;
+        }
+    }
+
+    private static string GetRowCountClass(int count) =>
+        count >= FigureMarking.MinDotsPerRow ? "is-ready" : count > 0 ? "is-progress" : string.Empty;
+
+    private string GetRowClass(int rowIndex)
+    {
+        if (_phase == CasterPhase.Pairing && _activePairingRow == rowIndex)
+        {
+            return "is-pairing-active";
+        }
+
+        if (_phase >= CasterPhase.Complete && _resolvedLines != null)
+        {
+            return "is-resolved";
+        }
+
+        if (MobileProgressiveRows && _phase == CasterPhase.Marking)
+        {
+            if (IsRowInputLocked(rowIndex))
+            {
+                return "is-row-locked";
+            }
+
+            if (rowIndex == _activeRowIndex)
+            {
+                return "is-row-focused";
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private long MarkKey(int row, int markId) => ((long)row << 32) | (uint)markId;
+
+    private bool IsMarkPaired(int row, int markId) => _pairedMarks.Contains(MarkKey(row, markId));
+
+    private string GetMarkClass(int row, int markId)
+    {
+        var key = MarkKey(row, markId);
+        if (key == _dropFlashMarkKey)
+        {
+            return "is-drop";
+        }
+
+        if (!IsMarkPaired(row, markId))
+        {
+            return string.Empty;
+        }
+
+        return _recentlyPairedMarks.Contains(key) ? "is-paired is-paired-animate" : "is-paired";
+    }
+
+    private static string GetMarkStyle(CanvasMark mark) =>
+        $"left: {mark.XPercent:F2}%; top: {mark.YPercent:F2}%;";
+
+    private static string GetLineDisplay(int lineValue) => lineValue == 1 ? "◆" : "◆ ◆";
+
+    private IReadOnlyList<PairConnectorLine> GetPairConnectorLines(int rowIndex) => _pairLines[rowIndex];
+
+    private async Task OnCanvasPointerDown(PointerEventArgs e, int rowIndex)
+    {
+        if (Disabled || _phase != CasterPhase.Marking)
+        {
+            return;
+        }
+
+        if (IsRowInputLocked(rowIndex))
+        {
+            if (TryUnlockRowForEdit(rowIndex))
+            {
+                StateHasChanged();
+                return;
+            }
+
+            StateHasChanged();
+            return;
+        }
+
+        ClearRefocusPrompt();
+        OnMobileRowFocus(rowIndex);
+
+        if (e.PointerType == "mouse" && e.Button != 0)
+        {
+            return;
+        }
+
+        var pos = ResolvePointerPercent(_canvasRefs[rowIndex], e);
+        if (pos == null)
+        {
+            try
+            {
+                pos = await JS.InvokeAsync<PointerPercent>(
+                    "geofancyCasterPointerPercent",
+                    _canvasRefs[rowIndex],
+                    e.ClientX,
+                    e.ClientY,
+                    e.OffsetX,
+                    e.OffsetY);
+            }
+            catch
+            {
+                pos = new PointerPercent { X = 50, Y = 50 };
+            }
+        }
+
+        var markId = _nextMarkId++;
+        _rows[rowIndex].Add(new CanvasMark
+        {
+            Id = markId,
+            XPercent = pos.X,
+            YPercent = pos.Y
+        });
+        _dropFlashMarkKey = MarkKey(rowIndex, markId);
+
+        StateHasChanged();
+    }
+
+    private PointerPercent? ResolvePointerPercent(ElementReference canvas, PointerEventArgs e)
+    {
+        if (JS is not IJSInProcessRuntime syncJs)
+        {
+            return null;
+        }
+
+        try
+        {
+            return syncJs.Invoke<PointerPercent>(
+                "geofancyCasterPointerPercent",
+                canvas,
+                e.ClientX,
+                e.ClientY,
+                e.OffsetX,
+                e.OffsetY);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private sealed class PointerPercent
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
+    private void RemoveLastMark(int rowIndex)
+    {
+        if (Disabled || _phase != CasterPhase.Marking || IsRowInputLocked(rowIndex) || _rows[rowIndex].Count == 0)
+        {
+            return;
+        }
+
+        _rows[rowIndex].RemoveAt(_rows[rowIndex].Count - 1);
+        ClampActiveRowIndex();
+        StateHasChanged();
+    }
+
+    private void ShowConfirm()
+    {
+        if (!CanGenerate)
+        {
+            return;
+        }
+
+        _phase = CasterPhase.Confirm;
+    }
+
+    private async Task GenerateFigureAsync()
+    {
+        if (!CanGenerate)
+        {
+            return;
+        }
+
+        if (MobileActionsFirst)
+        {
+            await RunPairingAsync();
+            return;
+        }
+
+        ShowConfirm();
+    }
+
+    private void CancelConfirm()
+    {
+        _phase = CasterPhase.Marking;
+        StateHasChanged();
+    }
+
+    private async Task RunPairingAsync()
+    {
+        _phase = CasterPhase.Pairing;
+        _pairedMarks.Clear();
+        _recentlyPairedMarks.Clear();
+        _resolvedLines = new int?[4];
+        _revealedFigureLines = 0;
+        _figureNameRevealed = false;
+        _resolvedFigure = null;
+        for (var i = 0; i < 4; i++)
+        {
+            _pairLines[i].Clear();
+        }
+
+        _animationCts?.Cancel();
+        _animationCts = new CancellationTokenSource();
+        var token = _animationCts.Token;
+        StateHasChanged();
+
+        try
+        {
+            for (var row = 0; row < 4; row++)
+            {
+                token.ThrowIfCancellationRequested();
+                _activePairingRow = row;
+                var marks = _rows[row];
+                var xPercents = marks.Select(m => m.XPercent).ToArray();
+                var steps = FigureMarking.GetPairingStepsByHorizontalOrder(xPercents);
+
+                foreach (var (indexA, indexB) in steps)
+                {
+                    token.ThrowIfCancellationRequested();
+                    var markA = marks[indexA];
+                    var markB = marks[indexB];
+
+                    _pairLines[row].Add(new PairConnectorLine(
+                        markA.XPercent, markA.YPercent,
+                        markB.XPercent, markB.YPercent,
+                        "is-drawing"));
+
+                    StateHasChanged();
+                    await Task.Delay(PairingStepDelayMs / 2, token);
+
+                    _recentlyPairedMarks.Clear();
+                    _recentlyPairedMarks.Add(MarkKey(row, markA.Id));
+                    _recentlyPairedMarks.Add(MarkKey(row, markB.Id));
+                    _pairedMarks.Add(MarkKey(row, markA.Id));
+                    _pairedMarks.Add(MarkKey(row, markB.Id));
+
+                    var lastIndex = _pairLines[row].Count - 1;
+                    _pairLines[row][lastIndex] = _pairLines[row][lastIndex] with { CssClass = "is-settled" };
+
+                    StateHasChanged();
+                    await Task.Delay(PairingStepDelayMs, token);
+                }
+
+                _resolvedLines[row] = FigureMarking.ResolveLineFromDotCount(marks.Count);
+                StateHasChanged();
+                await Task.Delay(RowCompleteDelayMs, token);
+            }
+
+            _activePairingRow = -1;
+            var head = _resolvedLines[0]!.Value;
+            var neck = _resolvedLines[1]!.Value;
+            var body = _resolvedLines[2]!.Value;
+            var foot = _resolvedLines[3]!.Value;
+
+            _resolvedFigure = await GeomancyService.GetFigureAsync(head, neck, body, foot);
+            _resolvedFigure.HeadLine = head;
+            _resolvedFigure.NeckLine = neck;
+            _resolvedFigure.BodyLine = body;
+            _resolvedFigure.FootLine = foot;
+
+            for (var line = 0; line < 4; line++)
+            {
+                token.ThrowIfCancellationRequested();
+                _revealedFigureLines = line + 1;
+                StateHasChanged();
+                await Task.Delay(FigureLineRevealDelayMs, token);
+            }
+
+            _figureNameRevealed = true;
+            _phase = CasterPhase.Complete;
+            StateHasChanged();
+
+            await OnFigureCompleted.InvokeAsync(_resolvedFigure);
+
+            if (AutoReset)
+            {
+                await Task.Delay(_reducedMotion ? 150 : 400, token);
+                Reset();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Component disposed or reset during animation.
+        }
+    }
+
+    public void Reset()
+    {
+        _animationCts?.Cancel();
+        for (var i = 0; i < 4; i++)
+        {
+            _rows[i].Clear();
+            _pairLines[i].Clear();
+        }
+
+        _pairedMarks.Clear();
+        _recentlyPairedMarks.Clear();
+        _resolvedLines = null;
+        _resolvedFigure = null;
+        _activePairingRow = -1;
+        _revealedFigureLines = 0;
+        _figureNameRevealed = false;
+        _phase = CasterPhase.Marking;
+        _activeRowIndex = 0;
+        _editUnlockedRow = null;
+        ClearRefocusPrompt();
+        StateHasChanged();
+    }
+
+    private void ClearAll() => Reset();
+
+    public void Dispose()
+    {
+        _animationCts?.Cancel();
+        _animationCts?.Dispose();
+    }
+}

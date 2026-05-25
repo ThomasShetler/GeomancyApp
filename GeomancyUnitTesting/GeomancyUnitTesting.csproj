@@ -49,21 +49,42 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FigureCorpusLoaderTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="AspectEngineTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="..\databank\FigureCorpus\Figures.json">
+      <Link>databank\FigureCorpus\Figures.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\databank\HouseAndCourtDirectory\HouseData.json">
+      <Link>databank\HouseAndCourtDirectory\HouseData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\databank\HouseAndCourtDirectory\CourtData.json">
+      <Link>databank\HouseAndCourtDirectory\CourtData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\databank\WayOfPointsDirectory\ElementData.json">
+      <Link>databank\WayOfPointsDirectory\ElementData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\databank\WayOfPointsDirectory\PathTypeData.json">
+      <Link>databank\WayOfPointsDirectory\PathTypeData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeomancyApp\GeomancyApp.csproj">
-      <Project>{4e7070d6-9a74-4c2c-9b15-aee0cd954fce}</Project>
-      <Name>GeomancyApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Geomancy.Core\Geomancy.Core.csproj">
       <Project>{B0A1C9D2-3E4F-4A5B-6C7D-8E9F0A1B2C3D}</Project>
       <Name>Geomancy.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Geomancy.Api.Contracts\Geomancy.Api.Contracts.csproj">
+      <Project>{C1B2D3E4-5F6A-4B7C-8D9E-0F1A2B3C4D5E}</Project>
+      <Name>Geomancy.Api.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

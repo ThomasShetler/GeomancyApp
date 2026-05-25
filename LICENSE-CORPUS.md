@@ -6,13 +6,10 @@ The interpretive corpus distributed with Geofancy is licensed separately from th
 
 The corpus consists of the prose content (descriptions, interpretations, taglines, lists, contextual blurbs, and reference notes) embedded in:
 
-- `Geomancy.Core/FigureCorpus.Part1.cs`
-- `Geomancy.Core/FigureCorpus.Part2.cs`
-- `Geomancy.Core/FigureCorpus.Part3.cs`
-- `Geomancy.Core/FigureCorpus.Part4.cs`
-- `HouseAndCourtDirectory/HouseData.json`
-- `HouseAndCourtDirectory/CourtData.json`
-- `WayOfPointsDirectory/*.json`
+- `databank/FigureCorpus/Figures.json`
+- `databank/HouseAndCourtDirectory/HouseData.json`
+- `databank/HouseAndCourtDirectory/CourtData.json`
+- `databank/WayOfPointsDirectory/*.json`
 
 Source-code constructs that surround the prose (class declarations, methods, JSON keys, and the like) are governed by the project's source-code license, not by this license.
 

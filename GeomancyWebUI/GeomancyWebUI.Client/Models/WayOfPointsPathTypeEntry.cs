@@ -3,7 +3,7 @@ namespace GeomancyWebUI.Client.Models
     /// <summary>
     /// Reference data for a single Way Of Points path-type classification
     /// (Strong / StrongPassive / WeakerPassive / Passive) sourced from the
-    /// WayOfPointsDirectory/PathTypeData.json file via the API.
+    /// databank/WayOfPointsDirectory/PathTypeData.json file via the API.
     /// </summary>
     public class WayOfPointsPathTypeEntry
     {

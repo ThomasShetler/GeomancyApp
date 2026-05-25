@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geofancy.local/databank/FigureCorpus/Figures.schema.json",
+  "title": "Geofancy Figure Corpus",
+  "type": "object",
+  "required": ["FigureCorpus"],
+  "properties": {
+    "FigureCorpus": {
+      "type": "object",
+      "required": ["schema_version", "figures"],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "figures": {
+          "type": "array",
+          "minItems": 16,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/figure" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "figure": {
+      "type": "object",
+      "required": [
+        "figure_id",
+        "name",
+        "english_name",
+        "other_names",
+        "quality",
+        "keyword",
+        "imagery",
+        "strong_house",
+        "strong_house_id",
+        "weak_house",
+        "weak_house_id",
+        "planet",
+        "sign",
+        "inner_el",
+        "outer_el",
+        "fire_element",
+        "air_element",
+        "water_element",
+        "earth_element",
+        "anatomy",
+        "body_type",
+        "character_type",
+        "colors",
+        "commentary",
+        "divinatory_meaning",
+        "tagline",
+        "core_meaning",
+        "traditional_sources"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "favorable_for",
+            "unfavorable_for",
+            "elemental_synthesis",
+            "traditional_imagery",
+            "interpretation",
+            "in_houses",
+            "in_court_roles",
+            "modern_examples"
+          ]
+        },
+        {
+          "required": [
+            "humor",
+            "planetary_intelligence",
+            "planetary_spirit",
+            "planetary_angel",
+            "traditional_body_type",
+            "traditional_character_type"
+          ]
+        }
+      ],
+      "properties": {
+        "figure_id": { "type": "string", "pattern": "^(1[0-6]|[1-9])$" },
+        "name": { "type": "string", "minLength": 1 },
+        "english_name": { "type": "string" },
+        "other_names": { "type": "string" },
+        "quality": { "type": "string", "enum": ["Mobile", "Stable"] },
+        "keyword": { "type": "string" },
+        "imagery": { "type": "string" },
+        "strong_house": { "type": "string" },
+        "strong_house_id": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "weak_house": { "type": "string" },
+        "weak_house_id": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "planet": { "type": "string" },
+        "sign": { "type": "string" },
+        "humor": { "type": "string" },
+        "planetary_intelligence": { "type": "string" },
+        "planetary_spirit": { "type": "string" },
+        "planetary_angel": { "type": "string" },
+        "inner_el": { "type": "string" },
+        "outer_el": { "type": "string" },
+        "fire_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "air_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "water_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "earth_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "anatomy": { "type": "string" },
+        "body_type": { "type": "string" },
+        "traditional_body_type": { "type": "string" },
+        "character_type": { "type": "string" },
+        "traditional_character_type": { "type": "string" },
+        "colors": { "type": "string" },
+        "commentary": { "type": "string" },
+        "divinatory_meaning": { "type": "string" },
+        "tagline": { "type": "string" },
+        "core_meaning": { "type": "array", "items": { "type": "string" } },
+        "favorable_for": { "type": "array", "items": { "type": "string" } },
+        "unfavorable_for": { "type": "array", "items": { "type": "string" } },
+        "elemental_synthesis": { "type": "string" },
+        "traditional_imagery": { "type": "array", "items": { "type": "string" } },
+        "interpretation": { "type": "array", "items": { "type": "string" } },
+        "in_houses": {
+          "type": "object",
+          "propertyNames": { "pattern": "^(1[0-2]|[1-9])$" },
+          "minProperties": 12,
+          "maxProperties": 12,
+          "additionalProperties": { "type": "string" }
+        },
+        "in_court_roles": {
+          "type": "object",
+          "required": ["RightWitness", "LeftWitness", "Judge", "Reconciler"],
+          "properties": {
+            "RightWitness": { "type": "string" },
+            "LeftWitness": { "type": "string" },
+            "Judge": { "type": "string" },
+            "Reconciler": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "modern_examples": { "type": "array", "items": { "type": "string" } },
+        "traditional_sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/traditional_source" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "traditional_source": {
+      "type": "object",
+      "required": ["author", "work"],
+      "properties": {
+        "author": { "type": "string" },
+        "work": { "type": "string" },
+        "section": { "type": "string" },
+        "year": { "type": ["integer", "null"] },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

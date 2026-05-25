@@ -21,6 +21,38 @@
     transform: translateY(-1px);
 }
 
+/* Wiki panels and other fixed-size preview boxes */
+.figure-container.is-compact {
+    min-height: 0;
+    padding: 0.5rem;
+    contain: none;
+}
+
+.figure-container.is-compact:hover {
+    transform: none;
+}
+
+.figure-container.is-compact .figure-lines {
+    gap: 3px;
+}
+
+.figure-container.is-compact .figure-line {
+    font-size: 0.82rem;
+    min-height: 0;
+    height: auto;
+    line-height: 1.15;
+}
+
+.figure-container.is-compact .figure-line-glyphs {
+    gap: 0.32em;
+    min-width: 1.1em;
+}
+
+.figure-container.is-compact .figure-line-glyphs--pair {
+    gap: 0.42em;
+    min-width: 1.85em;
+}
+
 .figure-label {
     font-weight: bold;
     font-size: 12px;
@@ -52,6 +84,32 @@
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.figure-line-glyphs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    min-width: 1.35em;
+    flex: 0 0 auto;
+}
+
+.figure-line-glyphs--pair {
+    gap: 0.55em;
+    min-width: 2.35em;
+}
+
+.figure-line-glyphs--placeholder {
+    gap: 0.55em;
+    min-width: 2.35em;
+    opacity: 0.45;
+}
+
+.figure-glyph {
+    flex: 0 0 auto;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .figure-line.interactive {

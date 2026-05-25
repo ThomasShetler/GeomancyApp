@@ -1,0 +1,38 @@
+@page "/wiki/methods/perfections-and-aspects"
+@rendermode InteractiveServer
+
+<PageTitle>Geofancy Wiki - Perfections &amp; Aspects</PageTitle>
+
+<WikiArticleShell Title="Perfections &amp; Aspects"
+                  Lead="How significators perfect by classical modes, company, aspects, and denials — and how Geofancy scores them."
+                  ParentHref="/wiki"
+                  ParentLabel="Wiki"
+                  ShowDraftBadge="true">
+    <WikiPlaceholderBody Sections="@_sections"
+                         RelatedHint="Run a live analysis in the workspace under Perfections &amp; Aspects after choosing querent and quesited houses." />
+</WikiArticleShell>
+
+@code {
+    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
+    {
+        new WikiPlaceholderBody.WikiOutlineSection("Classical modes", new[]
+        {
+            "Occupation — same house",
+            "Conjunction — adjacent houses meeting",
+            "Translation — carrier figure moves perfection",
+            "Mutation — exchange at a distance"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Company of houses", new[]
+        {
+            "Simple, Demi-Simple, Compound, Capitular",
+            "Aspect-mediated company when significators aspect across the wheel"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("Aspects & denials", new[]
+        {
+            "Sextile, trine, square, opposition with Dexter and Sinister direction",
+            "Positive and negative aspect lists separate from mode perfections",
+            "Impedition and net favorable / unfavorable scoring"
+        }),
+        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "Full interpretive notes appear in the perfection detail panel when you select any row in the list.")
+    };
+}

@@ -1,0 +1,792 @@
+/* Shared mobile chart drawer for wiki casting shell and mothers preview. */
+.mobile-shell {
+    /* Establishes the positioning context for the chart drawer's
+       absolutely-positioned body, so it overlays the tabstrip + panel
+       without reflowing them. */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /*
+     * Fill the flex column carved out by MainLayout when .mobile-shell is
+     * present (see MainLayout.razor.css :has(.mobile-shell) rules). Avoid a
+     * standalone 100dvh calc here so the shell never exceeds its parent —
+     * that mismatch is what let the document scroll slightly and pulled tabs
+     * under the fixed chart handle.
+     */
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.mobile-alert {
+    margin: 0.4rem 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+ * 1) Chart drawer (handle + overlay body)
+ * ============================================================ */
+
+/* Drawer wrapper. Reserves a fixed 2.2rem strip in the .mobile-shell flex
+   layout that the (separately fixed-positioned) handle occupies visually,
+   so the tabstrip + panel below start at the right offset whether the
+   chart is expanded or collapsed. */
+.mobile-chart-drawer {
+    position: relative;
+    flex: 0 0 2.2rem;
+    /* Fixed handle height when collapsed; expanded overrides for two-line handle + hint. */
+    --mobile-chart-handle-stack: 2.2rem;
+    /*
+     * z-index only while expanded: a constant z-index here kept the entire
+     * drawer subtree (including the fixed full-screen .mobile-chart-body)
+     * stacked above .mobile-tabstrip / .mobile-panel even when the chart
+     * was collapsed, which blocked taps/scroll on some mobile browsers.
+     */
+}
+
+.mobile-chart-drawer.is-expanded {
+    z-index: 20;
+    /* Room for two-line handle + hint so chart body top clears the fixed handle. */
+    --mobile-chart-handle-stack: 3.5rem;
+}
+
+/* Collapsed: never steal events from the tab strip or panel below. */
+.mobile-chart-drawer.is-collapsed {
+    pointer-events: none;
+}
+
+.mobile-chart-drawer.is-collapsed .mobile-chart-handle {
+    pointer-events: auto;
+}
+
+/* Always-visible handle pinned to the viewport just below the nav. Using
+   position: fixed (instead of riding the .mobile-shell flow) guarantees the
+   button is reachable in every state - chart expanded or collapsed, URL bar
+   visible or hidden, panel scrolled or not. z-index: 30 places it above the
+   chart body (z-index: 25) so it sits *on top of* the overlay's top edge,
+   visually anchoring the drawer like a sheet handle. */
+.mobile-chart-handle {
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
+    right: 0;
+    height: 2.2rem;
+    z-index: 30;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+.mobile-chart-handle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.mobile-chart-handle-hint {
+    display: block;
+    width: 100%;
+    max-width: 24rem;
+    margin: 0 auto;
+    padding: 0 0.35rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* In the expanded state lift the handle visually onto the chart sheet so it
+   reads as the sheet's own header rather than an unrelated nav strip. */
+.mobile-chart-drawer.is-expanded .mobile-chart-handle {
+    background: var(--bg-primary);
+    box-shadow: 0 2px 8px var(--shadow);
+    border-bottom-color: var(--accent-color);
+    flex-direction: column;
+    height: auto;
+    min-height: 2.2rem;
+    gap: 0.12rem;
+    padding: 0.28rem 0.45rem 0.34rem;
+}
+
+.mobile-chart-handle:hover,
+.mobile-chart-handle:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+    outline: none;
+}
+
+.mobile-chart-handle .handle-grip {
+    width: 2.5rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+    margin-right: 0.4rem;
+}
+
+.mobile-chart-handle .handle-chevron {
+    font-family: monospace;
+    font-size: 1rem;
+    line-height: 1;
+    margin-left: 0.4rem;
+    transform: translateY(-1px);
+}
+
+/* The chart body is a FULL-VIEWPORT OVERLAY: position: fixed anchors it to
+   the viewport (not just the shell) so it can claim every pixel from the
+   nav strip to the bottom edge regardless of where in the page the user
+   has scrolled. Stays mounted in the DOM when collapsed (so ChartSurface's
+   circuit isn't torn down), but is faded + scaled out and non-interactive.
+   No internal scrolling: .mobile-chart-stage uses transform: scale() to
+   guarantee the chart always fits the available square region, even on
+   narrow phones, without compromising figure proportions. */
+.mobile-chart-body {
+    position: fixed;
+    top: calc(3.5rem + var(--mobile-chart-handle-stack));
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    /* Extra bottom padding gives the Mother input strip breathing room
+       from the drawer's bottom edge instead of sitting flush against it. */
+    padding: 0.5rem 0.5rem 0.95rem;
+    box-sizing: border-box;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 6px 14px var(--shadow);
+    transform-origin: top center;
+    transition: transform 0.22s ease, opacity 0.22s ease,
+                visibility 0s linear 0.22s;
+    z-index: 25;
+    overflow: hidden;
+}
+
+.mobile-chart-drawer.is-collapsed .mobile-chart-body {
+    transform: translateY(-12px) scaleY(0.96);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    /* Sit below .mobile-tabstrip / .mobile-panel when drawer is not expanded. */
+    z-index: 1;
+}
+
+.mobile-chart-drawer.is-expanded .mobile-chart-body {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    /* When expanding, drop the visibility delay so it appears immediately. */
+    transition: transform 0.22s ease, opacity 0.22s ease,
+                visibility 0s linear 0s;
+    /* Gap below fixed handle so chart top is not clipped under hint text. */
+    padding-top: 0.4rem;
+}
+
+.mobile-chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.mobile-pill-btn {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px var(--shadow);
+}
+
+.mobile-pill-btn:hover,
+.mobile-pill-btn:focus-visible {
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--shadow-hover);
+    outline: none;
+}
+
+.mobile-pill-btn:active {
+    transform: translateY(0);
+}
+
+.mobile-chart-type-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Square stage that always fits the available viewport region without
+   ever requiring the user to scroll inside the overlay. Strategy:
+     1. --chart-fit picks the smaller of (viewport width minus a tiny
+        gutter), (vertical room left in the overlay after the toolbar),
+        and a 70dvh ceiling so the chart never dominates a tall phone.
+     2. The hosted ChartSurface is rendered at a fixed comfortable
+        480x480 native size (well above the ~435 "things start to break"
+        threshold the user observed), then transform: scale()'d down by
+        the ratio --chart-fit/480 so the rendered output fits exactly
+        the calculated stage size.
+   This preserves figure proportions and glyph sharpness on every phone
+   from a 360px-wide budget device up to a tablet, with zero compression
+   artifacts and zero internal scrolling. */
+.mobile-chart-stage {
+    /* Vertical budget breakdown (subtracted from 100dvh):
+         - 3.5rem  top nav
+         - 2.2rem  chart drawer handle
+         - 2.4rem  chart toolbar (Switch Chart Type + label)
+         - ~9.5rem Mother input strip (label + 4 compact lines + name + padding)
+         - ~1.6rem body padding + flex gaps + bottom breathing room
+       Total ~19.2rem -> the chart-fit subtracts a single rounded 11rem on top
+       of nav + handle to reserve room for the toolbar + strip + bottom gap.
+       The 70dvh ceiling still applies on tall phones so the chart never
+       dominates the screen even when there is headroom. */
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - 2.2rem - 11rem),
+        70dvh
+    );
+    width: var(--chart-fit);
+    height: var(--chart-fit);
+    margin: 0 auto;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Handle grows when chart is open (hint line); keep chart scaling honest. */
+.mobile-chart-drawer.is-expanded .mobile-chart-stage {
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 11rem),
+        70dvh
+    );
+}
+
+/* Mothers setup: Mother strip on top, wiki shield below (535px native size). */
+.mobile-chart-body--mothers-setup {
+    justify-content: flex-start;
+    padding-top: 0.35rem;
+}
+
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage,
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage--mothers-preview {
+    --chart-native-size: 535px;
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 8rem),
+        70dvh
+    );
+}
+
+.mobile-chart-drawer.is-mothers-setup .mobile-chart-stage--mothers-preview > .charts-side-by-side {
+    width: var(--chart-native-size) !important;
+    height: var(--chart-native-size) !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform-origin: top center;
+    transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
+}
+
+/* ============================================================
+ * Mother input strip
+ *
+ * Four large tap targets, one per Mother, that sit between the
+ * chart toolbar and the chart stage inside the mobile drawer.
+ * Each cell hosts a child FigureContainer in interactive mode,
+ * so we use Blazor's ::deep combinator to scale up its line
+ * targets and tighten its padding without affecting the same
+ * FigureContainer's appearance inside the chart itself.
+ *
+ * Layout: a CSS grid with four equal columns. On the very
+ * narrowest phones the columns stay equal (auto sized down by
+ * the grid) rather than reflowing to two rows, because two
+ * 2x2 rows would steal vertical space from the chart.
+ * ============================================================ */
+.mobile-mother-inputs {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.35rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-mother-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    padding: 0.2rem 0.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 6px var(--shadow);
+    text-align: center;
+}
+
+/* Latin house name (e.g. Vita, Lucrum). Title-case rather than ALL CAPS
+   so a longer name like "Benefacta" or "Itineris" stays legible at the
+   compact font size. */
+.mobile-mother-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.05;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-mother-figure {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+/* Reach into FigureContainer (a child component, so Blazor's
+   per-component scope attribute lives on its own classes; we
+   need ::deep to bypass that). Goal: make the four tap rows
+   thumb-sized while keeping the cell compact enough that the
+   strip never pushes the chart off-screen. */
+.mobile-mother-figure .figure-container {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0.18rem;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.mobile-mother-figure .figure-container:hover {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
+.mobile-mother-figure .figure-lines {
+    gap: 2px;
+    flex: 1 1 auto;
+    justify-content: center;
+}
+
+/* 26px tap rows comfortably exceed the 24px adjacent-target floor while
+   shaving a few rem of strip height vs. the previous 32px lines. */
+.mobile-mother-figure .figure-line {
+    font-size: 0.9rem;
+    min-height: 26px;
+    height: 26px;
+    line-height: 1;
+}
+
+/* Scale-on-hover transforms fight touch interaction (the figure
+   visibly jumps just before regeneration), so suppress them on
+   the strip cells where the cell itself is the affordance. */
+.mobile-mother-figure .figure-line.interactive:hover,
+.mobile-mother-figure .figure-line.interactive:active {
+    transform: none;
+}
+
+.mobile-mother-figure .figure-name {
+    font-size: 0.62rem;
+    margin-top: 0.1rem;
+    line-height: 1.1;
+    word-break: break-word;
+    color: var(--text-secondary);
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Render the hosted ChartSurface at a fixed roomy native size, then
+   visually scale it to fit the stage. Layout-wise the inner element
+   stays 480x480 (overflowing the stage), which the parent's
+   overflow: hidden clips - but visually the scale() ensures it fits
+   exactly. ::deep is required because ChartSurface is a child component. */
+.mobile-chart-stage > .charts-side-by-side {
+    width: 480px !important;
+    height: 480px !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    transform: scale(calc(var(--chart-fit) / 480px));
+}
+.mobile-panel {
+    flex: 1 1 auto;
+    position: relative;
+    z-index: 12;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+/* Sticky "back" header that appears only when the panel is in detail mode
+   for one of the three list+detail tabs. Tappable and big enough to thumb. */
+.mobile-panel-back {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+}
+
+.mobile-panel-back:hover,
+.mobile-panel-back:focus-visible {
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+    outline: none;
+}
+
+.mobile-panel-back .back-chevron {
+    font-size: 1.6rem;
+    line-height: 0.8;
+    font-weight: 700;
+    margin-top: -2px;
+}
+
+.mobile-panel-back .back-label {
+    line-height: 1.2;
+}
+
+/* Inner scroll container so the back header stays pinned while the content
+   scrolls. The hosted list/detail components grow to 100% width naturally. */
+.mobile-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mothers setup: dot-caster pinned to top of panel; chart in drawer above. */
+.mobile-mothers-setup {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    height: 100%;
+}
+
+.mobile-mothers-setup .chart-casting-walkthrough.is-embedded-mobile-mothers {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+}
+
+.mobile-mothers-setup .chart-casting-info-pane {
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+}
+
+.mobile-mothers-setup .chart-casting-guidance-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mobile-mothers-setup .figure-dot-caster.is-mobile-actions-first {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-primary);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--bg-primary) 70%, transparent);
+}
+
+.mobile-mothers-setup .chart-casting-shield-hint--mobile,
+.mobile-mothers-setup .chart-casting-slot-target--mobile {
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.mobile-mothers-setup .chart-casting-summary-actions--mobile-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+}
+
+.mobile-mothers-setup .chart-casting-summary-actions--mobile-top .figure-dot-caster-btn {
+    width: 100%;
+}
+
+/* Full shield walkthrough chart in drawer (post-Mothers stages). */
+.mobile-chart-drawer.is-wiki-walkthrough.is-expanded .mobile-chart-stage--wiki-walkthrough {
+    --chart-native-size: 535px;
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 1.2rem),
+        70dvh
+    );
+}
+
+.mobile-chart-drawer.is-wiki-walkthrough .mobile-chart-stage--wiki-walkthrough > .charts-side-by-side {
+    width: var(--chart-native-size) !important;
+    height: var(--chart-native-size) !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform-origin: top center;
+    transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
+}
+
+/* Wiki interactive page: fill viewport under nav like /mobile. */
+.wiki-casting-mobile-shell--fullscreen {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+}
+
+.wiki-casting-mobile-shell--embedded {
+    min-height: min(72dvh, 640px);
+    margin: 0 -0.5rem;
+}
+
+.wiki-casting-mobile-panel {
+    min-height: 0;
+}
+
+/* Wiki mobile full walkthrough: dot caster scrolls with panel (not sticky). */
+.chart-casting-walkthrough.is-wiki-mobile-full .figure-dot-caster.is-mobile-actions-first {
+    position: static;
+    box-shadow: none;
+}
+
+/* Intro block below tabs in scrollable panel. */
+.wiki-mobile-walkthrough-intro {
+    flex: 0 0 auto;
+    padding: 0 0 0.5rem;
+    margin-bottom: 0.35rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.wiki-mobile-walkthrough-intro .wiki-interactive-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.wiki-mobile-walkthrough-intro .wiki-interactive-breadcrumbs a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.wiki-mobile-walkthrough-intro h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    line-height: 1.2;
+}
+
+.wiki-mobile-walkthrough-intro-lead {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+/* Generation phase: chart + step controls in drawer; no mother strip. */
+.mobile-chart-body--wiki-generation {
+    justify-content: flex-start;
+    padding-top: 0.35rem;
+    gap: 0.35rem;
+}
+
+.mobile-chart-drawer.is-wiki-generation.is-expanded .mobile-chart-stage--wiki-walkthrough,
+.mobile-chart-drawer.is-wiki-figure-reveal.is-expanded .mobile-chart-stage--wiki-walkthrough {
+    --chart-native-size: 535px;
+    --chart-fit: min(
+        calc(100dvw - 1rem),
+        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 14.25rem),
+        58dvh
+    );
+}
+
+.mobile-drawer-step-controls {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 0.25rem 0.35rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.mobile-drawer-step-controls .chart-casting-step-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.mobile-drawer-step-controls .chart-casting-step-indicator {
+    flex: 1 1 100%;
+    text-align: center;
+    font-size: 0.78rem;
+}
+
+.mobile-drawer-step-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.mobile-drawer-step-lead {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.mobile-drawer-step-callout {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.mobile-drawer-step-callout.is-figure-reveal {
+    border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-color) 6%, var(--bg-secondary));
+}
+
+/* Mothers drawer: status card + primary action below chart. */
+.mobile-drawer-mother-status {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 0.5rem 0.65rem 0.6rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.mobile-drawer-mother-status-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.mobile-drawer-mother-status-detail {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.mobile-drawer-mother-insight {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    text-align: left;
+    max-height: 5.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.35rem 0.15rem 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.mobile-drawer-mother-action {
+    width: 100%;
+    margin-top: 0.15rem;
+}
+
+/* Hide duplicate step UI in panel during generation / figure reveal (controls live in drawer). */
+.chart-casting-walkthrough.is-wiki-mobile-generation .chart-casting-stage-content > .chart-casting-step-nav,
+.chart-casting-walkthrough.is-wiki-mobile-generation .chart-casting-stage-content > .chart-casting-step-panel,
+.chart-casting-walkthrough.is-wiki-mobile-generation .chart-casting-stage-content > .chart-casting-stage-callout,
+.chart-casting-walkthrough.is-wiki-mobile-generation .chart-casting-stage-content > .chart-casting-finish.chart-casting-stage-actions--inline,
+.chart-casting-walkthrough.is-wiki-mobile-figure-reveal .chart-casting-stage-content > .chart-casting-step-nav,
+.chart-casting-walkthrough.is-wiki-mobile-figure-reveal .chart-casting-stage-content > .chart-casting-step-panel,
+.chart-casting-walkthrough.is-wiki-mobile-figure-reveal .chart-casting-stage-content > .chart-casting-stage-callout,
+.chart-casting-walkthrough.is-wiki-mobile-figure-reveal .chart-casting-stage-content > .chart-casting-finish.chart-casting-stage-actions--inline {
+    display: none !important;
+}
+
+/* One-time (dismissible) orientation card; storage key in MobileWorkspace.razor */
+.mobile-welcome-callout {
+    flex-shrink: 0;
+    margin: 0 0 0.65rem 0;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, var(--border-color));
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent-color) 7%, var(--bg-secondary));
+    box-shadow: 0 1px 5px var(--shadow);
+}
+
