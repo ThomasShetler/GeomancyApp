@@ -1,0 +1,73 @@
+.site-footer {
+    margin-top: auto;
+    padding: 1.5rem 1rem 2rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.site-footer-inner {
+    max-width: 42rem;
+    margin: 0 auto;
+}
+
+.site-footer-brand {
+    margin: 0 0 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+}
+
+.site-footer-brand-link {
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.site-footer-brand-link:hover {
+    color: var(--accent-color);
+}
+
+.site-footer-version {
+    font-feature-settings: "tnum";
+    color: var(--text-secondary);
+}
+
+.site-footer-sep {
+    color: var(--border-color);
+}
+
+.site-footer-live {
+    color: var(--accent-color);
+}
+
+.site-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.site-footer-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.site-footer-nav a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.site-footer-copy {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.8rem;
+}
+
+/* Full-bleed mobile/wiki shells: footer stays readable without stealing chart height */
+.page:has(.mobile-shell) .site-footer,
+.page:has(.wiki-interactive-shell--mobile) .site-footer {
+    display: none;
+}
