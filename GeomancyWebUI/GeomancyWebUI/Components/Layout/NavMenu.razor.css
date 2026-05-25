@@ -30,7 +30,35 @@
 }
 
 .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 1.1rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.navbar-brand:hover {
+    color: inherit;
+    opacity: 0.92;
+}
+
+.navbar-brand-logo {
+    width: 1.75rem;
+    height: 1.75rem;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 2px;
+}
+
+:root[data-theme="dark"] .navbar-brand-logo {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.2);
+}
+
+.navbar-brand-text {
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .bi {
