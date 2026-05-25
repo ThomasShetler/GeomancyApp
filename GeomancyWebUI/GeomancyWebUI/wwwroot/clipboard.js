@@ -86,7 +86,7 @@ window.geofancyScrollToId = (id) => {
 
     const scroller = el.closest('.figure-detail-panel');
     if (scroller) {
-        const sticky = scroller.querySelector('.detail-sticky-shell');
+        const sticky = scroller.querySelector('.detail-sticky-tabs');
         const stickyH = sticky ? sticky.getBoundingClientRect().height : 0;
         const scrollerRect = scroller.getBoundingClientRect();
         const elRect = el.getBoundingClientRect();

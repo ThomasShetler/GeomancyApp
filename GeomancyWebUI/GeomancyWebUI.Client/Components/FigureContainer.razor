@@ -14,25 +14,25 @@
         </div>
     }
     <div class="figure-lines">
-        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+        <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(1) @GetLineRevealClass(1)"
              @onclick="() => ToggleLine(1)"
              title="@GetLineTooltip(1)">
-            @GetLineDisplay(Figure?.HeadLine ?? 2)
+            @GetLineDisplay(GetDisplayedLineValue(1), ShouldRevealLine(1))
         </div>
-        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+        <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(2) @GetLineRevealClass(2)"
              @onclick="() => ToggleLine(2)"
              title="@GetLineTooltip(2)">
-            @GetLineDisplay(Figure?.NeckLine ?? 2)
+            @GetLineDisplay(GetDisplayedLineValue(2), ShouldRevealLine(2))
         </div>
-        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+        <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(3) @GetLineRevealClass(3)"
              @onclick="() => ToggleLine(3)"
              title="@GetLineTooltip(3)">
-            @GetLineDisplay(Figure?.BodyLine ?? 2)
+            @GetLineDisplay(GetDisplayedLineValue(3), ShouldRevealLine(3))
         </div>
-        <div class="figure-line @(IsInteractive ? "interactive" : "")" 
+        <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(4) @GetLineRevealClass(4)"
              @onclick="() => ToggleLine(4)"
              title="@GetLineTooltip(4)">
-            @GetLineDisplay(Figure?.FootLine ?? 2)
+            @GetLineDisplay(GetDisplayedLineValue(4), ShouldRevealLine(4))
         </div>
     </div>
     @if (ShowFigureName && !string.IsNullOrEmpty(Figure?.Name))
@@ -47,12 +47,61 @@
     [Parameter] public bool IsInteractive { get; set; } = true;
     [Parameter] public bool ShowFigureName { get; set; } = false;
     [Parameter] public bool ShowHouseStrength { get; set; } = true;  // Show house strength by default
+    [Parameter] public int? HighlightedLineNumber { get; set; }
+    [Parameter] public int? RevealLineCount { get; set; }
+    [Parameter] public string? HighlightTheme { get; set; }
     [Parameter] public EventCallback<FigureModel> OnFigureChanged { get; set; }
 
-    private string GetLineDisplay(int? lineValue)
+    private string GetLineDisplay(int lineValue, bool isRevealed)
     {
+        if (!isRevealed)
+        {
+            return "· ·";
+        }
+
         return lineValue == 1 ? "  ◆" : "◆ ◆";
     }
+
+    private int GetDisplayedLineValue(int lineNumber) => lineNumber switch
+    {
+        1 => Figure?.HeadLine ?? 2,
+        2 => Figure?.NeckLine ?? 2,
+        3 => Figure?.BodyLine ?? 2,
+        4 => Figure?.FootLine ?? 2,
+        _ => 2
+    };
+
+    private bool ShouldRevealLine(int lineNumber)
+    {
+        if (!RevealLineCount.HasValue)
+        {
+            return true;
+        }
+
+        return lineNumber <= RevealLineCount.Value;
+    }
+
+    private string GetLineHighlightClass(int lineNumber)
+    {
+        if (HighlightedLineNumber != lineNumber)
+        {
+            return string.Empty;
+        }
+
+        var themeClass = HighlightTheme?.ToLowerInvariant() switch
+        {
+            "fire" => "figure-line-highlight-fire",
+            "air" => "figure-line-highlight-air",
+            "water" => "figure-line-highlight-water",
+            "earth" => "figure-line-highlight-earth",
+            _ => "figure-line-highlight"
+        };
+
+        return $"figure-line-highlight {themeClass}";
+    }
+
+    private string GetLineRevealClass(int lineNumber) =>
+        ShouldRevealLine(lineNumber) ? "figure-line-revealed" : "figure-line-unrevealed";
 
     private string GetLineTooltip(int lineNumber)
     {

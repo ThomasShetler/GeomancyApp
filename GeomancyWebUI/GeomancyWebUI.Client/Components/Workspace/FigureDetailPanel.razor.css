@@ -6,7 +6,7 @@
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 0.85rem 1rem 1.25rem;
+    padding: 0 1rem 1.25rem;
     box-shadow: 0 4px 16px var(--shadow);
     flex: 1 1 auto;
     min-height: 0;
@@ -14,7 +14,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.55rem;
     overflow-y: auto;
     overscroll-behavior: contain;
     scroll-behavior: smooth;
@@ -33,19 +33,16 @@
 }
 
 /* ============================================================
- * Sticky summary shell
+ * Summary header (scrolls away) + sticky section tabs
  * ============================================================ */
-.detail-sticky-shell {
-    position: sticky;
-    top: -0.85rem;
-    z-index: 5;
-    background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+.detail-summary-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
     padding-top: 0.85rem;
-    margin-top: -0.85rem;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.45rem;
 }
 
 .detail-header {
@@ -275,7 +272,21 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.28rem;
-    margin-top: 0.45rem;
+}
+
+.section-jump-nav.detail-sticky-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: var(--bg-primary);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.45rem 0 0.5rem;
+    margin: 0 -1rem 0.4rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 0 var(--border-color);
 }
 
 .jump-chip {
@@ -316,7 +327,8 @@
 /* ============================================================
  * Cards
  * ============================================================ */
-.figure-detail-panel.is-ready .detail-sticky-shell,
+.figure-detail-panel.is-ready .detail-summary-block,
+.figure-detail-panel.is-ready .detail-sticky-tabs,
 .figure-detail-panel.is-ready .detail-card {
     animation: detail-fade-in 0.22s ease-out both;
 }
@@ -337,7 +349,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .figure-detail-panel.is-ready .detail-sticky-shell,
+    .figure-detail-panel.is-ready .detail-summary-block,
+    .figure-detail-panel.is-ready .detail-sticky-tabs,
     .figure-detail-panel.is-ready .detail-card {
         animation: none;
     }
@@ -351,7 +364,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.55rem;
-    scroll-margin-top: 7.5rem;
+    scroll-margin-top: 3.5rem;
 }
 
 .detail-card-primary {
@@ -1153,7 +1166,7 @@
     }
 
     .detail-card {
-        scroll-margin-top: 6.75rem;
+        scroll-margin-top: 3.25rem;
     }
 
     .elements-grid {

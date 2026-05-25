@@ -1,158 +1,471 @@
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Client.Components.Workspace
 @inject IGeomancyService GeomancyService
 
-<div class="chart-casting-walkthrough">
-    @if (_phase == WalkthroughPhase.Mothers)
-    {
-        <div class="chart-casting-progress" aria-label="Mother casting progress">
-            @foreach (var slot in _motherSlots)
+<div class="chart-casting-walkthrough @GetWalkthroughRootClass()">
+    <section class="chart-casting-info-pane">
+        @if (ShowStageTabs)
+        {
+        <nav class="chart-casting-tabs-nav" role="tablist" aria-label="Walkthrough stages">
+            @foreach (var tab in WalkthroughTabs)
             {
-                <div class="chart-casting-progress-item @(slot.IsComplete ? "is-done" : slot.IsCurrent ? "is-current" : "is-pending")">
-                    <span class="chart-casting-progress-house">@slot.HouseNumber</span>
-                    <span class="chart-casting-progress-name">@slot.ShortName</span>
-                    @if (slot.Figure != null)
-                    {
-                        <span class="chart-casting-progress-figure">@slot.Figure.Name</span>
-                    }
+                var isActive = tab.Stage == _activeStage;
+                var isUnlocked = IsStageUnlocked(tab.Stage);
+                var tabClass = $"chart-casting-tab-btn{(isActive ? " is-active" : string.Empty)}{(isUnlocked ? string.Empty : " is-locked")}";
+                <button type="button"
+                        role="tab"
+                        class="@tabClass"
+                        aria-selected="@isActive"
+                        disabled="@(!isUnlocked)"
+                        @onclick="() => SelectStage(tab.Stage)">
+                    <span class="chart-casting-tab-title">@tab.Title</span>
+                    <span class="chart-casting-tab-subtitle">
+                        @if (isUnlocked)
+                        {
+                            @tab.Subtitle
+                        }
+                        else
+                        {
+                            @:Locked
+                        }
+                    </span>
+                </button>
+            }
+        </nav>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(_chartError))
+        {
+            <p class="chart-casting-error" role="alert">@_chartError</p>
+        }
+
+        <section class="chart-casting-review-host @(ShouldShowStageInspector() ? "is-active" : string.Empty) @(ShouldShowStageCompletionSummary() ? "is-stage-summary" : string.Empty)">
+        <section class="chart-casting-guidance-column">
+            @if (_activeStage == WalkthroughStage.Mothers)
+            {
+                <p class="chart-casting-shield-hint">
+                    Cast each Mother into the shield slot with the <strong>matching house number</strong> (highlighted in the chart).
+                    The top row reads <strong>8, 7, 6, 5, 4, 3, 2, 1</strong> left to right, so start with
+                    <strong>Vita (House 1)</strong> in the rightmost slot.
+                </p>
+
+                @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
+                {
+                    var current = _motherSlots[_currentMotherIndex];
+                    <p class="chart-casting-slot-target" aria-live="polite">
+                        @GetMotherSlotTargetText(current.HouseNumber)
+                    </p>
+                    <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
+                                     @ref="_activeCaster"
+                                     MotherLabel="@current.Label"
+                                     Compact="true"
+                                     AutoReset="false"
+                                     ShowInstruction="false"
+                                     ShowRowCounts="false"
+                                     ShowRowUndo="false"
+                                     ShowMarkAgainButton="false"
+                                     OnFigureCompleted="OnMotherFigureCompleted" />
+                }
+                else if (_motherSlots.All(s => s.Figure != null))
+                {
+                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact">
+                        <p class="chart-casting-stage-complete-title">Four Mothers complete</p>
+                        <div class="chart-casting-finish chart-casting-stage-actions">
+                        <div class="chart-casting-summary-actions">
+                            @if (HostMode == ChartCastingHostMode.EmbeddedWorkspace)
+                            {
+                                <button type="button"
+                                        class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                        disabled="@_isContinuingToWorkspace"
+                                        @onclick="ContinueToWorkspaceAsync">
+                                    @(_isContinuingToWorkspace ? "Generating chart..." : "Generate the full chart")
+                                </button>
+                            }
+                            else if (Mode == ChartCastingMode.MothersOnly)
+                            {
+                                <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                                   href="@_workspaceSharePath">
+                                    Open in Workspace
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button"
+                                        class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                        disabled="@_isLoadingChart"
+                                        @onclick="BeginShieldTutorialAsync">
+                                    @(_isLoadingChart ? "Building chart..." : "Build shield and continue")
+                                </button>
+                            }
+                            <button type="button"
+                                    class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
+                                    @onclick="RestartMothers">
+                                Cast again
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (_activeStage == WalkthroughStage.Daughters)
+            {
+                <div class="chart-casting-stage-content">
+                <div class="chart-casting-step-nav">
+                    <button type="button"
+                            class="chart-casting-step-btn"
+                            disabled="@(_daughterMicroStepIndex <= 0)"
+                            @onclick="PreviousDaughterMicroStep">
+                        Previous
+                    </button>
+                    <span class="chart-casting-step-indicator">
+                        @GetDaughterMicroStepIndicator()
+                    </span>
+                    <button type="button"
+                            class="chart-casting-step-btn"
+                            disabled="@(_daughterMicroStepIndex >= TotalDaughterMicroSteps - 1)"
+                            @onclick="NextDaughterMicroStep">
+                        Next
+                    </button>
+                </div>
+
+                @if (!ShouldShowStageCompletionSummary())
+                {
+                <article class="chart-casting-step-panel detail-card">
+                    <h3 class="card-title">@GetDaughterBuildTitle()</h3>
+                    <p class="chart-casting-step-lead">@GetDaughterBuildLead()</p>
+                </article>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(_daughterCompletionNarrative) && !ShouldShowStageCompletionSummary())
+                {
+                    <div class="wiki-casting-callout chart-casting-stage-callout">
+                        @_daughterCompletionNarrative
+                    </div>
+                }
+
+                @if (ShouldShowStageCompletionSummary())
+                {
+                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact">
+                        <p class="chart-casting-stage-complete-title">Daughters complete</p>
+                        <div class="chart-casting-stage-complete-actions">
+                            <button type="button"
+                                    class="chart-casting-step-btn"
+                                    @onclick="ReviewActiveStageGenerationSteps">
+                                Back
+                            </button>
+                            <button type="button"
+                                    class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                    @onclick="UnlockAndMoveToNieces">
+                                Continue to Nieces
+                            </button>
+                        </div>
+                    </div>
+                }
+                else if (IsActiveStageGenerationComplete())
+                {
+                    <div class="chart-casting-finish chart-casting-stage-actions chart-casting-stage-actions--inline">
+                        <button type="button"
+                                class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                @onclick="UnlockAndMoveToNieces">
+                            Continue to Nieces
+                        </button>
+                    </div>
+                }
                 </div>
             }
-        </div>
+            else if (_activeStage == WalkthroughStage.Nieces)
+            {
+                <div class="chart-casting-stage-content">
+                <div class="chart-casting-step-nav">
+                    <button type="button"
+                            class="chart-casting-step-btn"
+                            disabled="@(_nieceMicroStepIndex <= 0)"
+                            @onclick="PreviousNieceMicroStep">
+                        Previous
+                    </button>
+                    <span class="chart-casting-step-indicator">
+                        @GetNieceMicroStepIndicator()
+                    </span>
+                    <button type="button"
+                            class="chart-casting-step-btn"
+                            disabled="@(_nieceMicroStepIndex >= TotalNieceMicroSteps - 1)"
+                            @onclick="NextNieceMicroStep">
+                        Next
+                    </button>
+                </div>
 
-        @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
-        {
-            var current = _motherSlots[_currentMotherIndex];
-            <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
-                             @ref="_activeCaster"
-                             MotherLabel="@current.Label"
-                             Compact="true"
-                             AutoReset="false"
-                             ShowInstruction="false"
-                             ShowMarkAgainButton="false"
-                             OnFigureCompleted="OnMotherFigureCompleted" />
-        }
-        else if (_motherSlots.All(s => s.Figure != null))
-        {
-            <div class="chart-casting-mothers-summary detail-card">
-                <h3 class="card-title">Four Mothers complete</h3>
-                <ul class="chart-casting-mother-list">
-                    @foreach (var slot in _motherSlots.OrderBy(s => s.HouseNumber))
+                @if (!ShouldShowStageCompletionSummary())
+                {
+                <article class="chart-casting-step-panel detail-card">
+                    <h3 class="card-title">@GetNieceBuildTitle()</h3>
+                    <p class="chart-casting-step-lead">@GetNieceBuildLead()</p>
+                </article>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(_nieceCompletionNarrative) && !ShouldShowStageCompletionSummary())
+                {
+                    <div class="wiki-casting-callout chart-casting-stage-callout">
+                        @_nieceCompletionNarrative
+                    </div>
+                }
+
+                @if (ShouldShowStageCompletionSummary())
+                {
+                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact">
+                        <p class="chart-casting-stage-complete-title">Nieces complete</p>
+                        <div class="chart-casting-stage-complete-actions">
+                            <button type="button"
+                                    class="chart-casting-step-btn"
+                                    @onclick="ReviewActiveStageGenerationSteps">
+                                Back
+                            </button>
+                            <button type="button"
+                                    class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                    @onclick="UnlockAndMoveToWitnesses">
+                                Continue to Witnesses
+                            </button>
+                        </div>
+                    </div>
+                }
+                else if (IsActiveStageGenerationComplete())
+                {
+                    <div class="chart-casting-finish chart-casting-stage-actions chart-casting-stage-actions--inline">
+                        <button type="button"
+                                class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                @onclick="UnlockAndMoveToWitnesses">
+                            Continue to Witnesses
+                        </button>
+                    </div>
+                }
+                </div>
+            }
+            else if (IsCourtMicroStepStage(_activeStage))
+            {
+                <div class="chart-casting-stage-content">
+                <div class="chart-casting-step-nav">
+                    <button type="button"
+                            class="chart-casting-step-btn"
+                            disabled="@(GetCourtMicroStepIndex() <= 0)"
+                            @onclick="PreviousCourtMicroStep">
+                        Previous
+                    </button>
+                    <span class="chart-casting-step-indicator">
+                        @GetCourtMicroStepIndicator()
+                    </span>
+                    <button type="button"
+                            class="chart-casting-step-btn"
+                            disabled="@(GetCourtMicroStepIndex() >= GetCourtMicroStepTotal() - 1)"
+                            @onclick="NextCourtMicroStep">
+                        Next
+                    </button>
+                </div>
+
+                @if (!ShouldShowStageCompletionSummary())
+                {
+                <article class="chart-casting-step-panel detail-card">
+                    <h3 class="card-title">@GetCourtBuildTitle()</h3>
+                    <p class="chart-casting-step-lead">@GetCourtBuildLead()</p>
+                </article>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(_courtCompletionNarrative) && !ShouldShowStageCompletionSummary())
+                {
+                    <div class="wiki-casting-callout chart-casting-stage-callout">
+                        @_courtCompletionNarrative
+                    </div>
+                }
+
+                @if (ShouldShowStageCompletionSummary())
+                {
+                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact">
+                        <p class="chart-casting-stage-complete-title">@GetCourtStageCompleteTitle()</p>
+                        <div class="chart-casting-stage-complete-actions">
+                            <button type="button"
+                                    class="chart-casting-step-btn"
+                                    @onclick="ReviewActiveStageGenerationSteps">
+                                Back
+                            </button>
+                            @if (_activeStage == WalkthroughStage.Witnesses)
+                            {
+                                <button type="button"
+                                        class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                        @onclick="UnlockAndMoveToJudge">
+                                    Continue to Judge
+                                </button>
+                            }
+                            else if (_activeStage == WalkthroughStage.Judge)
+                            {
+                                <button type="button"
+                                        class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                        @onclick="UnlockAndMoveToFallout">
+                                    Continue to Fallout
+                                </button>
+                            }
+                            else
+                            {
+                                <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                                   href="@_workspaceSharePath">
+                                    Open in Workspace
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (IsActiveStageGenerationComplete())
+                {
+                    <div class="chart-casting-finish chart-casting-stage-actions chart-casting-stage-actions--inline">
+                        @if (_activeStage == WalkthroughStage.Witnesses)
+                        {
+                            <button type="button"
+                                    class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                    @onclick="UnlockAndMoveToJudge">
+                                Continue to Judge
+                            </button>
+                        }
+                        else if (_activeStage == WalkthroughStage.Judge)
+                        {
+                            <button type="button"
+                                    class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                    @onclick="UnlockAndMoveToFallout">
+                                Continue to Fallout
+                            </button>
+                        }
+                        else
+                        {
+                            <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                               href="@_workspaceSharePath">
+                                Open in Workspace
+                            </a>
+                        }
+                    </div>
+                }
+                </div>
+            }
+            else
+            {
+                var step = GetStepForActiveStage();
+                <article class="chart-casting-step-panel detail-card">
+                    <h3 class="card-title">@step.Title</h3>
+                    <p class="chart-casting-step-lead">@step.Lead</p>
+                    @if (step.Bullets?.Count > 0)
                     {
-                        <li>
-                            <strong>House @slot.HouseNumber (@slot.ShortName):</strong> @slot.Figure!.Name
-                        </li>
+                        <ul class="chart-casting-step-bullets">
+                            @foreach (var bullet in step.Bullets!)
+                            {
+                                <li>@bullet</li>
+                            }
+                        </ul>
                     }
-                </ul>
+                </article>
+
                 <div class="chart-casting-summary-actions">
-                    @if (Mode == ChartCastingMode.MothersOnly)
-                    {
-                        <p class="chart-casting-next-hint">
-                            Continue to <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a> to see how the shield is built from these Mothers.
-                        </p>
-                        <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
-                           href="@_workspaceSharePath">
-                            Open in Workspace
-                        </a>
-                    }
-                    else
+                    @if (_activeStage != WalkthroughStage.Fallout)
                     {
                         <button type="button"
                                 class="figure-dot-caster-btn figure-dot-caster-btn-primary"
-                                disabled="@_isLoadingChart"
-                                @onclick="BeginShieldTutorialAsync">
-                            @(_isLoadingChart ? "Building chart…" : "Build the shield chart")
+                                @onclick="UnlockAndMoveToNextStage">
+                            Unlock the @GetNextStageTitle() tab
                         </button>
                     }
+                    else
+                    {
+                        <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                           href="@_workspaceSharePath">
+                            Open this chart in Workspace
+                        </a>
+                    }
+
                     <button type="button"
                             class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
                             @onclick="RestartMothers">
-                        Cast again
+                        Recast all four Mothers
                     </button>
                 </div>
+            }
+        </section>
+
+        @{
+            var stageSlots = GetCurrentStageSelectableSlots();
+        }
+        @if (ShouldShowStageInspector() && stageSlots.Count > 0)
+        {
+            <div class="chart-casting-review-workspace-layout court-houses-layout">
+                <section class="chart-casting-stage-table-shell court-houses-tables-col">
+                    @if (!ShouldShowStageCompletionSummary())
+                    {
+                        <p class="chart-casting-stage-table-note" role="note">
+                            Review the figure placements below by tapping on them.
+                        </p>
+                    }
+                    <StageScopedCourtAndHousesTable Slots="@stageSlots"
+                                                    Selected="@_selectedSlot"
+                                                    OnSelect="SelectStageSlot" />
+                </section>
+                <section class="chart-casting-stage-detail-shell court-houses-detail-col">
+                    <FigureDetailPanel Selection="@_selectedSlot"
+                                       Houses="@_housesDirectory"
+                                       Courts="@_courtsDirectory" />
+                </section>
             </div>
         }
-    }
-    else if (_phase == WalkthroughPhase.Shield)
+        </section>
+    </section>
+
+    @if (ShowChartColumn)
     {
-        <div class="chart-casting-shield-tutorial">
-            <div class="chart-casting-step-nav">
-                <button type="button"
-                        class="chart-casting-step-btn"
-                        disabled="@(_shieldStepIndex <= 0)"
-                        @onclick="PreviousShieldStep">
-                    Previous
-                </button>
-                <span class="chart-casting-step-indicator">
-                    Step @(_shieldStepIndex + 1) of @_shieldSteps.Length
-                </span>
-                <button type="button"
-                        class="chart-casting-step-btn"
-                        disabled="@(_shieldStepIndex >= _shieldSteps.Length - 1)"
-                        @onclick="NextShieldStep">
-                    Next
-                </button>
-            </div>
-            <button type="button" class="chart-casting-recast-link" @onclick="RestartMothers">
-                Recast the four Mothers
-            </button>
-
-            <article class="chart-casting-step-panel detail-card">
-                <h3 class="card-title">@_shieldSteps[_shieldStepIndex].Title</h3>
-                <p class="chart-casting-step-lead">@_shieldSteps[_shieldStepIndex].Lead</p>
-                @if (_shieldSteps[_shieldStepIndex].Bullets?.Count > 0)
-                {
-                    <ul class="chart-casting-step-bullets">
-                        @foreach (var bullet in _shieldSteps[_shieldStepIndex].Bullets!)
-                        {
-                            <li>@bullet</li>
-                        }
-                    </ul>
-                }
-            </article>
-
-            @if (!string.IsNullOrWhiteSpace(_chartError))
-            {
-                <p class="chart-casting-error" role="alert">@_chartError</p>
-            }
-
-            @if (_chart != null)
-            {
-                <div class="chart-casting-chart-preview">
-                    <ChartSurface Chart="@_chart"
-                                  View="ChartSurfaceView.Shield"
-                                  ShowSectionLabels="true"
-                                  House1Figure="@_motherByHouse[1]"
-                                  House2Figure="@_motherByHouse[2]"
-                                  House3Figure="@_motherByHouse[3]"
-                                  House4Figure="@_motherByHouse[4]"
-                                  HighlightedHouseNumbers="@_activeHouseHighlights"
-                                  HighlightedCourt="@_activeCourtHighlights" />
-                </div>
-            }
-
-            @if (_shieldStepIndex == _shieldSteps.Length - 1)
-            {
-                <div class="chart-casting-finish">
-                    <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
-                       href="@_workspaceSharePath">
-                        Open this chart in Workspace
-                    </a>
-                </div>
-            }
+    <section class="chart-casting-chart-pane">
+        <div class="chart-casting-chart-preview">
+            <ChartSurface Chart="@_chart"
+                          View="ChartSurfaceView.Shield"
+                          IsWikiLayout="true"
+                          ShieldRowVisibility="ShieldRowVisibility.All"
+                          ShowEmptyDerivedSlots="true"
+                          ShowCourtFigures="@ShouldShowCourtFigures()"
+                          InteractiveMothers="false"
+                          House1Figure="@GetMotherOrNull(1)"
+                          House2Figure="@GetMotherOrNull(2)"
+                          House3Figure="@GetMotherOrNull(3)"
+                          House4Figure="@GetMotherOrNull(4)"
+                          VisibleHouseNumbers="@GetVisibleHousesForActiveStage()"
+                          HighlightedHouseNumbers="@_activeHouseHighlights"
+                          HighlightedCourt="@_activeCourtHighlights"
+                          HouseHighlightedLines="@GetLineHighlightsForActiveStage()"
+                          HouseRevealLineCounts="@GetRevealCountsForActiveStage()"
+                          HouseLineHighlightThemes="@GetHighlightThemesForActiveStage()"
+                          CourtHighlightedLines="@GetCourtLineHighlightsForActiveStage()"
+                          CourtRevealLineCounts="@GetCourtRevealCountsForActiveStage()"
+                          CourtLineHighlightThemes="@GetCourtHighlightThemesForActiveStage()" />
         </div>
+    </section>
     }
 </div>
 
 @code {
-    private enum WalkthroughPhase { Mothers, Shield }
+    private enum WalkthroughStage
+    {
+        Mothers = 0,
+        Daughters = 1,
+        Nieces = 2,
+        Witnesses = 3,
+        Judge = 4,
+        Fallout = 5
+    }
+
+    private enum DaughterSourceLine { Head = 1, Neck = 2, Body = 3, Foot = 4 }
+
+    private sealed class WalkthroughTab
+    {
+        public WalkthroughStage Stage { get; init; }
+        public string Title { get; init; } = string.Empty;
+        public string Subtitle { get; init; } = string.Empty;
+    }
 
     private sealed class MotherSlot
     {
         public int HouseNumber { get; init; }
-        public string ShortName { get; init; } = string.Empty;
         public string Label { get; init; } = string.Empty;
         public FigureModel? Figure { get; set; }
-        public bool IsComplete => Figure != null;
         public bool IsCurrent { get; set; }
     }
 
@@ -165,12 +478,113 @@
         public IReadOnlySet<ChartHighlightCourt>? CourtHighlights { get; init; }
     }
 
-    private static readonly int[] MotherCastOrder = { 4, 3, 2, 1 };
+    private sealed class DaughterBuildTarget
+    {
+        public int HouseNumber { get; init; }
+        public DaughterSourceLine SourceLine { get; init; }
+        public string Theme { get; init; } = string.Empty;
+        public string SourceLabel { get; init; } = string.Empty;
+        public string Label { get; init; } = string.Empty;
+    }
+
+    private sealed class NieceBuildTarget
+    {
+        public int HouseNumber { get; init; }
+        public int SourceHouseA { get; init; }
+        public int SourceHouseB { get; init; }
+        public string Label { get; init; } = string.Empty;
+    }
+
+    private sealed class CourtBuildTarget
+    {
+        public ChartHighlightCourt TargetCourt { get; init; }
+        public string Label { get; init; } = string.Empty;
+        public int SourceHouseA { get; init; }
+        public int SourceHouseB { get; init; }
+        public ChartHighlightCourt SourceCourtA { get; init; }
+        public ChartHighlightCourt SourceCourtB { get; init; }
+        public bool UsesHouseSources { get; init; }
+    }
+
+    private const int TotalDaughterMicroSteps = 16;
+    private const int TotalNieceMicroSteps = 16;
+    private const int TotalWitnessMicroSteps = 8;
+    private const int TotalJudgeMicroSteps = 4;
+    private const int TotalFalloutMicroSteps = 4;
+    private static readonly int[] MotherCastOrder = { 1, 2, 3, 4 };
+    private static readonly HashSet<int> Houses1To4 = new() { 1, 2, 3, 4 };
+    private static readonly HashSet<int> Houses1To8 = new() { 1, 2, 3, 4, 5, 6, 7, 8 };
+    private static readonly HashSet<int> Houses1To12 = new() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+    private static readonly IReadOnlyDictionary<int, string> HouseLatinNames = new Dictionary<int, string>
+    {
+        [1] = "Vita",
+        [2] = "Lucrum",
+        [3] = "Fratres",
+        [4] = "Genitor",
+        [5] = "Nati",
+        [6] = "Valetudo",
+        [7] = "Uxor",
+        [8] = "Mors",
+        [9] = "Itineris",
+        [10] = "Regnum",
+        [11] = "Benefacta",
+        [12] = "Carcer"
+    };
+
+    private static readonly WalkthroughTab[] WalkthroughTabs =
+    {
+        new() { Stage = WalkthroughStage.Mothers, Title = "Mothers", Subtitle = "Houses 1-4" },
+        new() { Stage = WalkthroughStage.Daughters, Title = "Daughters", Subtitle = "Houses 5-8" },
+        new() { Stage = WalkthroughStage.Nieces, Title = "Nieces", Subtitle = "Houses 9-12" },
+        new() { Stage = WalkthroughStage.Witnesses, Title = "Witnesses", Subtitle = "Court pair" },
+        new() { Stage = WalkthroughStage.Judge, Title = "Judge", Subtitle = "Court verdict" },
+        new() { Stage = WalkthroughStage.Fallout, Title = "Fallout", Subtitle = "Reconciler" }
+    };
+
+    private static readonly DaughterBuildTarget[] DaughterBuildTargets =
+    {
+        new() { HouseNumber = 5, SourceLine = DaughterSourceLine.Head, Theme = "fire", SourceLabel = "Head / Fire", Label = "1st Daughter" },
+        new() { HouseNumber = 6, SourceLine = DaughterSourceLine.Neck, Theme = "air", SourceLabel = "Neck / Air", Label = "2nd Daughter" },
+        new() { HouseNumber = 7, SourceLine = DaughterSourceLine.Body, Theme = "water", SourceLabel = "Body / Water", Label = "3rd Daughter" },
+        new() { HouseNumber = 8, SourceLine = DaughterSourceLine.Foot, Theme = "earth", SourceLabel = "Foot / Earth", Label = "4th Daughter" }
+    };
+
+    private static readonly NieceBuildTarget[] NieceBuildTargets =
+    {
+        new() { HouseNumber = 9, SourceHouseA = 1, SourceHouseB = 2, Label = "1st Niece" },
+        new() { HouseNumber = 10, SourceHouseA = 3, SourceHouseB = 4, Label = "2nd Niece" },
+        new() { HouseNumber = 11, SourceHouseA = 5, SourceHouseB = 6, Label = "3rd Niece" },
+        new() { HouseNumber = 12, SourceHouseA = 7, SourceHouseB = 8, Label = "4th Niece" }
+    };
+
+    private static readonly CourtBuildTarget[] WitnessBuildTargets =
+    {
+        new() { TargetCourt = ChartHighlightCourt.RightWitness, Label = "Right Witness", SourceHouseA = 9, SourceHouseB = 10, UsesHouseSources = true },
+        new() { TargetCourt = ChartHighlightCourt.LeftWitness, Label = "Left Witness", SourceHouseA = 11, SourceHouseB = 12, UsesHouseSources = true }
+    };
+
+    private static readonly CourtBuildTarget JudgeBuildTarget = new()
+    {
+        TargetCourt = ChartHighlightCourt.Judge,
+        Label = "Judge",
+        SourceCourtA = ChartHighlightCourt.RightWitness,
+        SourceCourtB = ChartHighlightCourt.LeftWitness,
+        UsesHouseSources = false
+    };
+
+    private static readonly CourtBuildTarget FalloutBuildTarget = new()
+    {
+        TargetCourt = ChartHighlightCourt.Sentence,
+        Label = "Fallout",
+        SourceCourtA = ChartHighlightCourt.Judge,
+        SourceHouseA = 1,
+        UsesHouseSources = false
+    };
 
     private static readonly Dictionary<int, (string Short, string Full)> MotherNames = new()
     {
-        [1] = ("Vita", "Mother 1 — Vita (Querent)"),
-        [2] = ("Lucrum", "Mother 2 — Lucrum (Quesited)"),
+        [1] = ("Vita", "Mother 1 — Vita"),
+        [2] = ("Lucrum", "Mother 2 — Lucrum"),
         [3] = ("Fratres", "Mother 3 — Fratres"),
         [4] = ("Genitor", "Mother 4 — Genitor")
     };
@@ -179,33 +593,257 @@
     private int _currentMotherIndex;
     private FigureDotCaster? _activeCaster;
     private readonly Dictionary<int, FigureModel> _motherByHouse = new();
-    private WalkthroughPhase _phase = WalkthroughPhase.Mothers;
     private HouseChartModel? _chart;
     private string _workspaceSharePath = "/workspace";
-    private int _shieldStepIndex;
     private IReadOnlySet<int>? _activeHouseHighlights;
     private IReadOnlySet<ChartHighlightCourt>? _activeCourtHighlights;
     private ShieldTutorialStep[] _shieldSteps = Array.Empty<ShieldTutorialStep>();
     private bool _isLoadingChart;
     private string? _chartError;
+    private int _daughterMicroStepIndex;
+    private readonly Dictionary<int, int> _daughterRevealLineCounts = new();
+    private readonly Dictionary<int, int> _daughterHighlightedLines = new();
+    private readonly Dictionary<int, string> _daughterHighlightThemes = new();
+    private readonly HashSet<int> _daughterVisibleHouses = new();
+    private string? _daughterCompletionNarrative;
+    private int _nieceMicroStepIndex;
+    private readonly Dictionary<int, int> _nieceRevealLineCounts = new();
+    private readonly Dictionary<int, int> _nieceHighlightedLines = new();
+    private readonly Dictionary<int, string> _nieceHighlightThemes = new();
+    private readonly HashSet<int> _nieceVisibleHouses = new();
+    private string? _nieceCompletionNarrative;
+    private int _witnessMicroStepIndex;
+    private int _judgeMicroStepIndex;
+    private int _falloutMicroStepIndex;
+    private readonly Dictionary<ChartHighlightCourt, int> _courtHighlightedLines = new();
+    private readonly Dictionary<ChartHighlightCourt, int> _courtRevealLineCounts = new();
+    private readonly Dictionary<ChartHighlightCourt, string> _courtHighlightThemes = new();
+    private readonly Dictionary<int, int> _courtSourceHouseHighlightedLines = new();
+    private readonly Dictionary<int, string> _courtSourceHouseHighlightThemes = new();
+    private string? _courtCompletionNarrative;
+    private SlotSelection? _selectedSlot;
+    private IReadOnlyList<HouseDirectoryEntry> _housesDirectory = Array.Empty<HouseDirectoryEntry>();
+    private IReadOnlyList<CourtDirectoryEntry> _courtsDirectory = Array.Empty<CourtDirectoryEntry>();
+    private WalkthroughStage _activeStage = WalkthroughStage.Mothers;
+    private int _maxUnlockedStageIndex;
+    private readonly HashSet<WalkthroughStage> _stageGenerationCompleted = new();
+    private bool _showStageCompletionSummary;
+
     [Parameter] public ChartCastingMode Mode { get; set; } = ChartCastingMode.Full;
+    [Parameter] public bool ShowChartColumn { get; set; } = true;
+    [Parameter] public ChartCastingHostMode HostMode { get; set; } = ChartCastingHostMode.Standalone;
+    /// <summary>Base path for seed URLs when embedded in workspace or mobile (/workspace or /mobile).</summary>
+    [Parameter] public string WorkspaceBasePath { get; set; } = "/workspace";
+    [Parameter] public EventCallback<MothersCompletedEventArgs> OnMothersCompleted { get; set; }
 
-    protected override void OnInitialized()
+    private bool _isContinuingToWorkspace;
+
+    private bool ShowStageTabs => HostMode != ChartCastingHostMode.EmbeddedWorkspace && Mode == ChartCastingMode.Full;
+
+    private string GetWalkthroughRootClass()
     {
-        _motherSlots = MotherCastOrder
-            .Select(h => new MotherSlot
+        var classes = new List<string>();
+        if (!ShowChartColumn)
+        {
+            classes.Add("no-chart-column");
+        }
+
+        if (HostMode == ChartCastingHostMode.EmbeddedWorkspace)
+        {
+            classes.Add("is-embedded-workspace");
+            if (ShowChartColumn)
             {
-                HouseNumber = h,
-                ShortName = MotherNames[h].Short,
-                Label = $"Cast {MotherNames[h].Full}"
-            })
-            .ToArray();
+                classes.Add("is-embedded-workspace-with-chart");
+            }
+        }
 
-        _currentMotherIndex = 0;
-        _motherSlots[0].IsCurrent = true;
+        return string.Join(' ', classes);
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
+        InitializeMotherSlots();
         _shieldSteps = BuildShieldSteps();
-        ApplyShieldStepHighlights();
+        _activeStage = WalkthroughStage.Mothers;
+        _maxUnlockedStageIndex = (int)WalkthroughStage.Mothers;
+        try
+        {
+            _housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
+            _courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
+        }
+        catch
+        {
+            _housesDirectory = Array.Empty<HouseDirectoryEntry>();
+            _courtsDirectory = Array.Empty<CourtDirectoryEntry>();
+        }
+        ApplyActiveStageState();
+    }
+
+    private FigureModel? GetMotherOrNull(int houseNumber) =>
+        _motherByHouse.TryGetValue(houseNumber, out var figure) ? figure : null;
+
+    private static string GetMotherSlotTargetText(int houseNumber) => houseNumber switch
+    {
+        1 => "Cast Mother 1 (Vita) into the rightmost top-row slot, labeled 1.",
+        2 => "Cast Mother 2 (Lucrum) into the slot labeled 2.",
+        3 => "Cast Mother 3 (Fratres) into the slot labeled 3.",
+        4 => "Cast Mother 4 (Genitor) into the slot labeled 4.",
+        _ => string.Empty
+    };
+
+    private bool IsStageUnlocked(WalkthroughStage stage) => (int)stage <= _maxUnlockedStageIndex;
+
+    private void SelectStage(WalkthroughStage stage)
+    {
+        if (!IsStageUnlocked(stage))
+        {
+            return;
+        }
+
+        _activeStage = stage;
+        _showStageCompletionSummary = IsStageGenerationComplete(stage) && IsAtLastMicroStepForStage(stage);
+        ApplyActiveStageState();
+    }
+
+    private IReadOnlyList<SlotSelection> GetCurrentStageSelectableSlots()
+    {
+        if (_activeStage == WalkthroughStage.Mothers)
+        {
+            return Enumerable.Range(1, 4)
+                .Select(h => new SlotSelection(
+                    SlotKind.House,
+                    h,
+                    $"House {h} ({GetLatinHouseName(h)})",
+                    GetMotherOrNull(h)))
+                .ToList();
+        }
+
+        if (_activeStage == WalkthroughStage.Daughters)
+        {
+            return Enumerable.Range(5, 4)
+                .Select(h => new SlotSelection(
+                    SlotKind.House,
+                    h,
+                    $"House {h} ({GetLatinHouseName(h)})",
+                    GetFigureForHouse(h)))
+                .ToList();
+        }
+
+        if (_activeStage == WalkthroughStage.Nieces)
+        {
+            return Enumerable.Range(9, 4)
+                .Select(h => new SlotSelection(
+                    SlotKind.House,
+                    h,
+                    $"House {h} ({GetLatinHouseName(h)})",
+                    GetFigureForHouse(h)))
+                .ToList();
+        }
+
+        if (IsCourtMicroStepStage(_activeStage))
+        {
+            return new List<SlotSelection>
+            {
+                new(SlotKind.RightWitness, null, "Right Witness", GetFigureForCourt(ChartHighlightCourt.RightWitness)),
+                new(SlotKind.LeftWitness, null, "Left Witness", GetFigureForCourt(ChartHighlightCourt.LeftWitness)),
+                new(SlotKind.Judge, null, "Judge", GetFigureForCourt(ChartHighlightCourt.Judge)),
+                new(SlotKind.Sentence, null, "Sentence (Fallout)", GetFigureForCourt(ChartHighlightCourt.Sentence))
+            };
+        }
+
+        return Array.Empty<SlotSelection>();
+    }
+
+    private bool ShouldShowStageInspector() => _activeStage switch
+    {
+        WalkthroughStage.Mothers => _motherSlots.Length == 4 && _motherSlots.All(s => s.Figure != null),
+        WalkthroughStage.Daughters => _chart != null && IsStageGenerationComplete(WalkthroughStage.Daughters),
+        WalkthroughStage.Nieces => _chart != null && IsStageGenerationComplete(WalkthroughStage.Nieces),
+        WalkthroughStage.Witnesses => _chart != null && IsStageGenerationComplete(WalkthroughStage.Witnesses),
+        WalkthroughStage.Judge => _chart != null && IsStageGenerationComplete(WalkthroughStage.Judge),
+        WalkthroughStage.Fallout => _chart != null && IsStageGenerationComplete(WalkthroughStage.Fallout),
+        _ => false
+    };
+
+    private bool ShouldShowStageCompletionSummary() =>
+        ShouldShowStageInspector() && _showStageCompletionSummary && IsAtLastMicroStepForActiveStage();
+
+    private bool IsActiveStageGenerationComplete() => IsStageGenerationComplete(_activeStage);
+
+    private bool IsStageGenerationComplete(WalkthroughStage stage) => _stageGenerationCompleted.Contains(stage);
+
+    private bool IsAtLastMicroStepForActiveStage() => IsAtLastMicroStepForStage(_activeStage);
+
+    private bool IsAtLastMicroStepForStage(WalkthroughStage stage) => stage switch
+    {
+        WalkthroughStage.Daughters => _daughterMicroStepIndex >= TotalDaughterMicroSteps - 1,
+        WalkthroughStage.Nieces => _nieceMicroStepIndex >= TotalNieceMicroSteps - 1,
+        WalkthroughStage.Witnesses => _witnessMicroStepIndex >= TotalWitnessMicroSteps - 1,
+        WalkthroughStage.Judge => _judgeMicroStepIndex >= TotalJudgeMicroSteps - 1,
+        WalkthroughStage.Fallout => _falloutMicroStepIndex >= TotalFalloutMicroSteps - 1,
+        _ => true
+    };
+
+    private void MarkActiveStageGenerationComplete() => _stageGenerationCompleted.Add(_activeStage);
+
+    private void ReviewActiveStageGenerationSteps()
+    {
+        _showStageCompletionSummary = false;
+        ResetActiveStageMicroStepToStart();
+        ApplyActiveStageState();
+    }
+
+    private void ResetActiveStageMicroStepToStart()
+    {
+        switch (_activeStage)
+        {
+            case WalkthroughStage.Daughters:
+                _daughterMicroStepIndex = 0;
+                break;
+            case WalkthroughStage.Nieces:
+                _nieceMicroStepIndex = 0;
+                break;
+            case WalkthroughStage.Witnesses:
+                _witnessMicroStepIndex = 0;
+                break;
+            case WalkthroughStage.Judge:
+                _judgeMicroStepIndex = 0;
+                break;
+            case WalkthroughStage.Fallout:
+                _falloutMicroStepIndex = 0;
+                break;
+        }
+    }
+
+    private void OnActiveStageMicroStepChanged()
+    {
+        if (IsAtLastMicroStepForActiveStage())
+        {
+            MarkActiveStageGenerationComplete();
+            _showStageCompletionSummary = true;
+        }
+        else
+        {
+            _showStageCompletionSummary = false;
+        }
+    }
+
+    private string GetCourtStageCompleteTitle() => _activeStage switch
+    {
+        WalkthroughStage.Witnesses => "Witnesses complete",
+        WalkthroughStage.Judge => "Judge complete",
+        WalkthroughStage.Fallout => "Shield complete",
+        _ => "Stage complete"
+    };
+
+    private void SelectStageSlot(SlotSelection slot)
+    {
+        if (slot.Figure == null)
+        {
+            return;
+        }
+
+        _selectedSlot = slot;
     }
 
     private async Task OnMotherFigureCompleted(FigureModel figure)
@@ -228,15 +866,44 @@
         else
         {
             _workspaceSharePath = ChartSeedCodec.BuildSharePath(
-                "/workspace",
+                WorkspaceBasePath,
                 _motherByHouse[1],
                 _motherByHouse[2],
                 _motherByHouse[3],
                 _motherByHouse[4]);
         }
 
+        ApplyActiveStageState();
         StateHasChanged();
         await Task.CompletedTask;
+    }
+
+    private async Task ContinueToWorkspaceAsync()
+    {
+        if (!_motherSlots.All(s => s.Figure != null) || !OnMothersCompleted.HasDelegate)
+        {
+            return;
+        }
+
+        _isContinuingToWorkspace = true;
+        StateHasChanged();
+
+        try
+        {
+            var args = new MothersCompletedEventArgs
+            {
+                House1 = _motherByHouse[1],
+                House2 = _motherByHouse[2],
+                House3 = _motherByHouse[3],
+                House4 = _motherByHouse[4]
+            };
+            await OnMothersCompleted.InvokeAsync(args);
+        }
+        finally
+        {
+            _isContinuingToWorkspace = false;
+            StateHasChanged();
+        }
     }
 
     private async Task BeginShieldTutorialAsync()
@@ -249,9 +916,10 @@
         {
             var request = BuildChartRequest();
             _chart = await GeomancyService.GenerateChartAsync(request);
-            _phase = WalkthroughPhase.Shield;
-            _shieldStepIndex = 0;
-            ApplyShieldStepHighlights();
+            UnlockStage(WalkthroughStage.Daughters);
+            _activeStage = WalkthroughStage.Daughters;
+            _daughterMicroStepIndex = 0;
+            ApplyActiveStageState();
         }
         catch
         {
@@ -264,38 +932,109 @@
         }
     }
 
+    private void UnlockAndMoveToNieces()
+    {
+        UnlockStage(WalkthroughStage.Nieces);
+        _nieceMicroStepIndex = 0;
+        SelectStage(WalkthroughStage.Nieces);
+    }
+
+    private void UnlockAndMoveToWitnesses()
+    {
+        UnlockStage(WalkthroughStage.Witnesses);
+        _witnessMicroStepIndex = 0;
+        SelectStage(WalkthroughStage.Witnesses);
+    }
+
+    private void UnlockAndMoveToJudge()
+    {
+        UnlockStage(WalkthroughStage.Judge);
+        _judgeMicroStepIndex = 0;
+        SelectStage(WalkthroughStage.Judge);
+    }
+
+    private void UnlockAndMoveToFallout()
+    {
+        UnlockStage(WalkthroughStage.Fallout);
+        _falloutMicroStepIndex = 0;
+        SelectStage(WalkthroughStage.Fallout);
+    }
+
+    private void UnlockAndMoveToNextStage()
+    {
+        if (_activeStage == WalkthroughStage.Fallout)
+        {
+            return;
+        }
+
+        var nextStage = (WalkthroughStage)Math.Min((int)_activeStage + 1, (int)WalkthroughStage.Fallout);
+        UnlockStage(nextStage);
+        SelectStage(nextStage);
+    }
+
+    private void UnlockStage(WalkthroughStage stage)
+    {
+        _maxUnlockedStageIndex = Math.Max(_maxUnlockedStageIndex, (int)stage);
+    }
+
     private void RestartMothers()
     {
         _motherByHouse.Clear();
         _chart = null;
         _chartError = null;
-        _phase = WalkthroughPhase.Mothers;
         _currentMotherIndex = 0;
-        _shieldStepIndex = 0;
+        _daughterMicroStepIndex = 0;
+        _daughterCompletionNarrative = null;
+        _daughterRevealLineCounts.Clear();
+        _daughterHighlightedLines.Clear();
+        _daughterHighlightThemes.Clear();
+        _daughterVisibleHouses.Clear();
+        _nieceMicroStepIndex = 0;
+        _nieceCompletionNarrative = null;
+        _nieceRevealLineCounts.Clear();
+        _nieceHighlightedLines.Clear();
+        _nieceHighlightThemes.Clear();
+        _nieceVisibleHouses.Clear();
+        _witnessMicroStepIndex = 0;
+        _judgeMicroStepIndex = 0;
+        _falloutMicroStepIndex = 0;
+        _courtHighlightedLines.Clear();
+        _courtRevealLineCounts.Clear();
+        _courtHighlightThemes.Clear();
+        _courtSourceHouseHighlightedLines.Clear();
+        _courtSourceHouseHighlightThemes.Clear();
+        _courtCompletionNarrative = null;
+        _activeStage = WalkthroughStage.Mothers;
+        _maxUnlockedStageIndex = (int)WalkthroughStage.Mothers;
 
+        InitializeMotherSlots();
+        ApplyActiveStageState();
+    }
+
+    private void InitializeMotherSlots()
+    {
         _motherSlots = MotherCastOrder
             .Select(h => new MotherSlot
             {
                 HouseNumber = h,
-                ShortName = MotherNames[h].Short,
                 Label = $"Cast {MotherNames[h].Full}"
             })
             .ToArray();
 
-        _motherSlots[0].IsCurrent = true;
-        ApplyShieldStepHighlights();
+        _currentMotherIndex = 0;
+        if (_motherSlots.Length > 0)
+        {
+            _motherSlots[0].IsCurrent = true;
+        }
     }
 
-    private GenerateFourFiguresRequest BuildChartRequest()
+    private GenerateFourFiguresRequest BuildChartRequest() => new()
     {
-        return new GenerateFourFiguresRequest
-        {
-            House1 = ToRequest(_motherByHouse[1]),
-            House2 = ToRequest(_motherByHouse[2]),
-            House3 = ToRequest(_motherByHouse[3]),
-            House4 = ToRequest(_motherByHouse[4])
-        };
-    }
+        House1 = ToRequest(_motherByHouse[1]),
+        House2 = ToRequest(_motherByHouse[2]),
+        House3 = ToRequest(_motherByHouse[3]),
+        House4 = ToRequest(_motherByHouse[4])
+    };
 
     private static GenerateFigureRequest ToRequest(FigureModel figure) => new()
     {
@@ -305,34 +1044,885 @@
         FootLine = figure.FootLine
     };
 
-    private void PreviousShieldStep()
+    private void PreviousDaughterMicroStep()
     {
-        if (_shieldStepIndex > 0)
-        {
-            _shieldStepIndex--;
-            ApplyShieldStepHighlights();
-            StateHasChanged();
-        }
-    }
-
-    private void NextShieldStep()
-    {
-        if (_shieldStepIndex < _shieldSteps.Length - 1)
-        {
-            _shieldStepIndex++;
-            ApplyShieldStepHighlights();
-            StateHasChanged();
-        }
-    }
-
-    private void ApplyShieldStepHighlights()
-    {
-        if (_shieldSteps.Length == 0)
+        if (_daughterMicroStepIndex <= 0)
         {
             return;
         }
 
-        var step = _shieldSteps[_shieldStepIndex];
+        _daughterMicroStepIndex--;
+        ApplyDaughterMicroStepState();
+        OnActiveStageMicroStepChanged();
+    }
+
+    private void NextDaughterMicroStep()
+    {
+        if (_daughterMicroStepIndex >= TotalDaughterMicroSteps - 1)
+        {
+            return;
+        }
+
+        _daughterMicroStepIndex++;
+        ApplyDaughterMicroStepState();
+        OnActiveStageMicroStepChanged();
+    }
+
+    private string GetDaughterBuildTitle()
+    {
+        var buildIndex = GetActiveDaughterBuildIndex();
+        var target = DaughterBuildTargets[buildIndex];
+        return $"Building House {target.HouseNumber} ({target.Label}) from Mothers 1-4";
+    }
+
+    private string GetDaughterBuildLead()
+    {
+        var buildIndex = GetActiveDaughterBuildIndex();
+        var sourceOffset = GetActiveSourceOffset();
+        var target = DaughterBuildTargets[buildIndex];
+
+        return $"Read the {target.SourceLabel} line from Mother {sourceOffset + 1} and place it into line {sourceOffset + 1} of House {target.HouseNumber}.";
+    }
+
+    private string GetDaughterMicroStepIndicator()
+    {
+        var buildIndex = GetActiveDaughterBuildIndex();
+        var sourceOffset = GetActiveSourceOffset();
+        var target = DaughterBuildTargets[buildIndex];
+
+        return $"Daughter {buildIndex + 1}/4 (House {target.HouseNumber}) - line {sourceOffset + 1}/4";
+    }
+
+    private void PreviousNieceMicroStep()
+    {
+        if (_nieceMicroStepIndex <= 0)
+        {
+            return;
+        }
+
+        _nieceMicroStepIndex--;
+        ApplyNieceMicroStepState();
+        OnActiveStageMicroStepChanged();
+    }
+
+    private void NextNieceMicroStep()
+    {
+        if (_nieceMicroStepIndex >= TotalNieceMicroSteps - 1)
+        {
+            return;
+        }
+
+        _nieceMicroStepIndex++;
+        ApplyNieceMicroStepState();
+        OnActiveStageMicroStepChanged();
+    }
+
+    private string GetNieceBuildTitle()
+    {
+        var buildIndex = GetActiveNieceBuildIndex();
+        var target = NieceBuildTargets[buildIndex];
+        return $"Building House {target.HouseNumber} ({target.Label}) from Houses {target.SourceHouseA} + {target.SourceHouseB}";
+    }
+
+    private string GetNieceBuildLead()
+    {
+        var buildIndex = GetActiveNieceBuildIndex();
+        var sourceOffset = GetActiveNieceSourceOffset();
+        var target = NieceBuildTargets[buildIndex];
+        var activeLine = sourceOffset + 1;
+        var sourceAValue = GetHouseLineValue(target.SourceHouseA, activeLine);
+        var sourceBValue = GetHouseLineValue(target.SourceHouseB, activeLine);
+        var sum = sourceAValue + sourceBValue;
+        var parity = sum % 2 == 0 ? "even -> double dot" : "odd -> single dot";
+
+        return $"Combine line {activeLine} from House {target.SourceHouseA} and House {target.SourceHouseB} into line {activeLine} of House {target.HouseNumber}. {sourceAValue} + {sourceBValue} = {sum} ({parity}).";
+    }
+
+    private string GetNieceMicroStepIndicator()
+    {
+        var buildIndex = GetActiveNieceBuildIndex();
+        var sourceOffset = GetActiveNieceSourceOffset();
+        var target = NieceBuildTargets[buildIndex];
+
+        return $"Niece {buildIndex + 1}/4 (House {target.HouseNumber}) - line {sourceOffset + 1}/4";
+    }
+
+    private bool IsCourtMicroStepStage(WalkthroughStage stage) =>
+        stage is WalkthroughStage.Witnesses or WalkthroughStage.Judge or WalkthroughStage.Fallout;
+
+    private int GetCourtMicroStepIndex() => _activeStage switch
+    {
+        WalkthroughStage.Witnesses => _witnessMicroStepIndex,
+        WalkthroughStage.Judge => _judgeMicroStepIndex,
+        WalkthroughStage.Fallout => _falloutMicroStepIndex,
+        _ => 0
+    };
+
+    private int GetCourtMicroStepTotal() => _activeStage switch
+    {
+        WalkthroughStage.Witnesses => TotalWitnessMicroSteps,
+        WalkthroughStage.Judge => TotalJudgeMicroSteps,
+        WalkthroughStage.Fallout => TotalFalloutMicroSteps,
+        _ => 1
+    };
+
+    private void PreviousCourtMicroStep()
+    {
+        if (_activeStage == WalkthroughStage.Witnesses && _witnessMicroStepIndex > 0)
+        {
+            _witnessMicroStepIndex--;
+        }
+        else if (_activeStage == WalkthroughStage.Judge && _judgeMicroStepIndex > 0)
+        {
+            _judgeMicroStepIndex--;
+        }
+        else if (_activeStage == WalkthroughStage.Fallout && _falloutMicroStepIndex > 0)
+        {
+            _falloutMicroStepIndex--;
+        }
+        else
+        {
+            return;
+        }
+
+        ApplyActiveStageState();
+        OnActiveStageMicroStepChanged();
+    }
+
+    private void NextCourtMicroStep()
+    {
+        if (_activeStage == WalkthroughStage.Witnesses && _witnessMicroStepIndex < TotalWitnessMicroSteps - 1)
+        {
+            _witnessMicroStepIndex++;
+        }
+        else if (_activeStage == WalkthroughStage.Judge && _judgeMicroStepIndex < TotalJudgeMicroSteps - 1)
+        {
+            _judgeMicroStepIndex++;
+        }
+        else if (_activeStage == WalkthroughStage.Fallout && _falloutMicroStepIndex < TotalFalloutMicroSteps - 1)
+        {
+            _falloutMicroStepIndex++;
+        }
+        else
+        {
+            return;
+        }
+
+        ApplyActiveStageState();
+        OnActiveStageMicroStepChanged();
+    }
+
+    private string GetCourtMicroStepIndicator() => _activeStage switch
+    {
+        WalkthroughStage.Witnesses => $"Witness {(GetActiveWitnessBuildIndex() + 1)}/2 - line {GetActiveWitnessLine()}/4",
+        WalkthroughStage.Judge => $"Judge line step {GetActiveJudgeLine()}/4",
+        WalkthroughStage.Fallout => $"Fallout line step {GetActiveFalloutLine()}/4",
+        _ => string.Empty
+    };
+
+    private string GetCourtBuildTitle() => _activeStage switch
+    {
+        WalkthroughStage.Witnesses => $"Building {WitnessBuildTargets[GetActiveWitnessBuildIndex()].Label} from houses {WitnessBuildTargets[GetActiveWitnessBuildIndex()].SourceHouseA}+{WitnessBuildTargets[GetActiveWitnessBuildIndex()].SourceHouseB}",
+        WalkthroughStage.Judge => "Building the Judge from the two Witnesses",
+        WalkthroughStage.Fallout => "Building Fallout from the Judge and Mother 1",
+        _ => string.Empty
+    };
+
+    private string GetCourtBuildLead()
+    {
+        if (_activeStage == WalkthroughStage.Witnesses)
+        {
+            var build = WitnessBuildTargets[GetActiveWitnessBuildIndex()];
+            var line = GetActiveWitnessLine();
+            var a = GetHouseLineValue(build.SourceHouseA, line);
+            var b = GetHouseLineValue(build.SourceHouseB, line);
+            var sum = a + b;
+            var parity = sum % 2 == 0 ? "even -> double dot" : "odd -> single dot";
+            return $"Combine line {line} from House {build.SourceHouseA} and House {build.SourceHouseB} into the {build.Label}. {a} + {b} = {sum} ({parity}).";
+        }
+
+        if (_activeStage == WalkthroughStage.Judge)
+        {
+            var line = GetActiveJudgeLine();
+            var right = GetCourtLineValue(ChartHighlightCourt.RightWitness, line);
+            var left = GetCourtLineValue(ChartHighlightCourt.LeftWitness, line);
+            var sum = right + left;
+            var parity = sum % 2 == 0 ? "even -> double dot" : "odd -> single dot";
+            return $"Combine line {line} from Right Witness and Left Witness into the Judge. {right} + {left} = {sum} ({parity}).";
+        }
+
+        var falloutLine = GetActiveFalloutLine();
+        var judge = GetCourtLineValue(ChartHighlightCourt.Judge, falloutLine);
+        var motherOne = GetHouseLineValue(1, falloutLine);
+        var falloutSum = judge + motherOne;
+        var falloutParity = falloutSum % 2 == 0 ? "even -> double dot" : "odd -> single dot";
+        return $"Combine line {falloutLine} from the Judge and House 1 (Vita) into Fallout. {judge} + {motherOne} = {falloutSum} ({falloutParity}).";
+    }
+
+    private string GetNextStageTitle()
+    {
+        if (_activeStage == WalkthroughStage.Fallout)
+        {
+            return "Complete";
+        }
+
+        var nextStage = (WalkthroughStage)((int)_activeStage + 1);
+        return WalkthroughTabs.First(t => t.Stage == nextStage).Title;
+    }
+
+    private ShieldTutorialStep GetStepForActiveStage() => _shieldSteps[(int)_activeStage];
+
+    private bool ShouldShowCourtFigures() => IsCourtMicroStepStage(_activeStage);
+
+    private IReadOnlySet<int> GetVisibleHousesForActiveStage() => _activeStage switch
+    {
+        WalkthroughStage.Mothers => Houses1To4,
+        WalkthroughStage.Daughters => _daughterVisibleHouses,
+        WalkthroughStage.Nieces => _nieceVisibleHouses,
+        _ => Houses1To12
+    };
+
+    private IReadOnlyDictionary<int, int>? GetLineHighlightsForActiveStage() =>
+        _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterHighlightedLines,
+            WalkthroughStage.Nieces => _nieceHighlightedLines,
+            WalkthroughStage.Witnesses => _courtSourceHouseHighlightedLines,
+            WalkthroughStage.Fallout => _courtSourceHouseHighlightedLines,
+            _ => null
+        };
+
+    private IReadOnlyDictionary<int, int>? GetRevealCountsForActiveStage() =>
+        _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterRevealLineCounts,
+            WalkthroughStage.Nieces => _nieceRevealLineCounts,
+            _ => null
+        };
+
+    private IReadOnlyDictionary<int, string>? GetHighlightThemesForActiveStage() =>
+        _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterHighlightThemes,
+            WalkthroughStage.Nieces => _nieceHighlightThemes,
+            WalkthroughStage.Witnesses => _courtSourceHouseHighlightThemes,
+            WalkthroughStage.Fallout => _courtSourceHouseHighlightThemes,
+            _ => null
+        };
+
+    private IReadOnlyDictionary<ChartHighlightCourt, int>? GetCourtLineHighlightsForActiveStage() =>
+        IsCourtMicroStepStage(_activeStage) ? _courtHighlightedLines : null;
+
+    private IReadOnlyDictionary<ChartHighlightCourt, int>? GetCourtRevealCountsForActiveStage() =>
+        IsCourtMicroStepStage(_activeStage) ? _courtRevealLineCounts : null;
+
+    private IReadOnlyDictionary<ChartHighlightCourt, string>? GetCourtHighlightThemesForActiveStage() =>
+        IsCourtMicroStepStage(_activeStage) ? _courtHighlightThemes : null;
+
+    private void ApplyActiveStageState()
+    {
+        if (_activeStage == WalkthroughStage.Mothers)
+        {
+            ApplyMotherStageHighlights();
+            EnsureSelectedSlotForStage();
+            return;
+        }
+
+        if (_activeStage == WalkthroughStage.Daughters)
+        {
+            ApplyDaughterMicroStepState();
+            EnsureSelectedSlotForStage();
+            return;
+        }
+
+        if (_activeStage == WalkthroughStage.Nieces)
+        {
+            ApplyNieceMicroStepState();
+            EnsureSelectedSlotForStage();
+            return;
+        }
+
+        if (_activeStage == WalkthroughStage.Witnesses)
+        {
+            ApplyWitnessMicroStepState();
+            EnsureSelectedSlotForStage();
+            return;
+        }
+
+        if (_activeStage == WalkthroughStage.Judge)
+        {
+            ApplyJudgeMicroStepState();
+            EnsureSelectedSlotForStage();
+            return;
+        }
+
+        if (_activeStage == WalkthroughStage.Fallout)
+        {
+            ApplyFalloutMicroStepState();
+            EnsureSelectedSlotForStage();
+            return;
+        }
+
+        ApplyShieldStageHighlights(_activeStage);
+        EnsureSelectedSlotForStage();
+    }
+
+    private void ApplyDaughterMicroStepState()
+    {
+        _activeCourtHighlights = null;
+        _activeHouseHighlights = null;
+
+        _daughterRevealLineCounts.Clear();
+        _daughterHighlightedLines.Clear();
+        _daughterHighlightThemes.Clear();
+        _daughterVisibleHouses.Clear();
+
+        foreach (var house in Houses1To4)
+        {
+            _daughterVisibleHouses.Add(house);
+        }
+
+        var stepIndex = Math.Clamp(_daughterMicroStepIndex, 0, TotalDaughterMicroSteps - 1);
+        var activeBuildIndex = GetActiveDaughterBuildIndex();
+        var activeSourceOffset = GetActiveSourceOffset();
+        var activeTargetHouse = DaughterBuildTargets[activeBuildIndex].HouseNumber;
+        var activeSourceLine = (int)DaughterBuildTargets[activeBuildIndex].SourceLine;
+        var activeTheme = DaughterBuildTargets[activeBuildIndex].Theme;
+
+        for (var build = 0; build < DaughterBuildTargets.Length; build++)
+        {
+            var targetHouse = DaughterBuildTargets[build].HouseNumber;
+            var maxRevealForBuild = Math.Min(stepIndex - (build * 4), 3);
+
+            if (maxRevealForBuild < 0)
+            {
+                continue;
+            }
+
+            _daughterVisibleHouses.Add(targetHouse);
+            _daughterRevealLineCounts[targetHouse] = maxRevealForBuild + 1;
+        }
+
+        var activeSourceHouse = activeSourceOffset + 1;
+        var activeTargetLine = activeSourceOffset + 1;
+        _activeHouseHighlights = new HashSet<int> { activeTargetHouse };
+        _daughterHighlightedLines[activeTargetHouse] = activeTargetLine;
+        _daughterHighlightedLines[activeSourceHouse] = activeSourceLine;
+        _daughterHighlightThemes[activeTargetHouse] = activeTheme;
+        _daughterHighlightThemes[activeSourceHouse] = activeTheme;
+
+        _daughterCompletionNarrative = BuildLatestDaughterNarrative(stepIndex);
+    }
+
+    private void ApplyNieceMicroStepState()
+    {
+        _activeCourtHighlights = null;
+        _activeHouseHighlights = null;
+
+        _nieceRevealLineCounts.Clear();
+        _nieceHighlightedLines.Clear();
+        _nieceHighlightThemes.Clear();
+        _nieceVisibleHouses.Clear();
+
+        foreach (var house in Houses1To8)
+        {
+            _nieceVisibleHouses.Add(house);
+        }
+
+        var stepIndex = Math.Clamp(_nieceMicroStepIndex, 0, TotalNieceMicroSteps - 1);
+        var activeBuildIndex = GetActiveNieceBuildIndex();
+        var activeSourceOffset = GetActiveNieceSourceOffset();
+        var activeTarget = NieceBuildTargets[activeBuildIndex];
+        var activeTargetHouse = activeTarget.HouseNumber;
+        var activeLine = activeSourceOffset + 1;
+        var activeTheme = GetThemeForLine(activeLine);
+
+        for (var build = 0; build < NieceBuildTargets.Length; build++)
+        {
+            var targetHouse = NieceBuildTargets[build].HouseNumber;
+            var maxRevealForBuild = Math.Min(stepIndex - (build * 4), 3);
+            if (maxRevealForBuild < 0)
+            {
+                continue;
+            }
+
+            _nieceVisibleHouses.Add(targetHouse);
+            _nieceRevealLineCounts[targetHouse] = maxRevealForBuild + 1;
+        }
+
+        _activeHouseHighlights = new HashSet<int> { activeTargetHouse };
+        _nieceHighlightedLines[activeTargetHouse] = activeLine;
+        _nieceHighlightedLines[activeTarget.SourceHouseA] = activeLine;
+        _nieceHighlightedLines[activeTarget.SourceHouseB] = activeLine;
+        _nieceHighlightThemes[activeTargetHouse] = activeTheme;
+        _nieceHighlightThemes[activeTarget.SourceHouseA] = activeTheme;
+        _nieceHighlightThemes[activeTarget.SourceHouseB] = activeTheme;
+
+        _nieceCompletionNarrative = BuildLatestNieceNarrative(stepIndex);
+    }
+
+    private void ResetCourtStageVisualState()
+    {
+        _activeHouseHighlights = null;
+        _activeCourtHighlights = null;
+        _courtHighlightedLines.Clear();
+        _courtRevealLineCounts.Clear();
+        _courtHighlightThemes.Clear();
+        _courtSourceHouseHighlightedLines.Clear();
+        _courtSourceHouseHighlightThemes.Clear();
+    }
+
+    private void ApplyWitnessMicroStepState()
+    {
+        ResetCourtStageVisualState();
+        var stepIndex = Math.Clamp(_witnessMicroStepIndex, 0, TotalWitnessMicroSteps - 1);
+        var buildIndex = GetActiveWitnessBuildIndex();
+        var activeLine = GetActiveWitnessLine();
+        var target = WitnessBuildTargets[buildIndex];
+        var theme = GetThemeForLine(activeLine);
+
+        for (var build = 0; build < WitnessBuildTargets.Length; build++)
+        {
+            var targetCourt = WitnessBuildTargets[build].TargetCourt;
+            var maxRevealForBuild = Math.Min(stepIndex - (build * 4), 3);
+            if (maxRevealForBuild < 0)
+            {
+                continue;
+            }
+
+            _courtRevealLineCounts[targetCourt] = maxRevealForBuild + 1;
+        }
+
+        _activeCourtHighlights = new HashSet<ChartHighlightCourt> { target.TargetCourt };
+        _courtHighlightedLines[target.TargetCourt] = activeLine;
+        _courtHighlightThemes[target.TargetCourt] = theme;
+        _courtSourceHouseHighlightedLines[target.SourceHouseA] = activeLine;
+        _courtSourceHouseHighlightedLines[target.SourceHouseB] = activeLine;
+        _courtSourceHouseHighlightThemes[target.SourceHouseA] = theme;
+        _courtSourceHouseHighlightThemes[target.SourceHouseB] = theme;
+        _courtCompletionNarrative = BuildWitnessNarrative(stepIndex);
+    }
+
+    private void ApplyJudgeMicroStepState()
+    {
+        ResetCourtStageVisualState();
+        var stepIndex = Math.Clamp(_judgeMicroStepIndex, 0, TotalJudgeMicroSteps - 1);
+        var activeLine = GetActiveJudgeLine();
+        var theme = GetThemeForLine(activeLine);
+
+        _courtRevealLineCounts[ChartHighlightCourt.Judge] = Math.Clamp(stepIndex + 1, 1, 4);
+        _activeCourtHighlights = new HashSet<ChartHighlightCourt> { ChartHighlightCourt.Judge };
+        _courtHighlightedLines[ChartHighlightCourt.Judge] = activeLine;
+        _courtHighlightedLines[ChartHighlightCourt.RightWitness] = activeLine;
+        _courtHighlightedLines[ChartHighlightCourt.LeftWitness] = activeLine;
+        _courtHighlightThemes[ChartHighlightCourt.Judge] = theme;
+        _courtHighlightThemes[ChartHighlightCourt.RightWitness] = theme;
+        _courtHighlightThemes[ChartHighlightCourt.LeftWitness] = theme;
+        _courtCompletionNarrative = stepIndex >= TotalJudgeMicroSteps - 1 ? BuildCourtRoleNarrative(ChartHighlightCourt.Judge) : null;
+    }
+
+    private void ApplyFalloutMicroStepState()
+    {
+        ResetCourtStageVisualState();
+        var stepIndex = Math.Clamp(_falloutMicroStepIndex, 0, TotalFalloutMicroSteps - 1);
+        var activeLine = GetActiveFalloutLine();
+        var theme = GetThemeForLine(activeLine);
+
+        _courtRevealLineCounts[ChartHighlightCourt.Sentence] = Math.Clamp(stepIndex + 1, 1, 4);
+        _activeCourtHighlights = new HashSet<ChartHighlightCourt> { ChartHighlightCourt.Sentence };
+        _courtHighlightedLines[ChartHighlightCourt.Sentence] = activeLine;
+        _courtHighlightedLines[ChartHighlightCourt.Judge] = activeLine;
+        _courtHighlightThemes[ChartHighlightCourt.Sentence] = theme;
+        _courtHighlightThemes[ChartHighlightCourt.Judge] = theme;
+        _courtSourceHouseHighlightedLines[1] = activeLine;
+        _courtSourceHouseHighlightThemes[1] = theme;
+        _activeHouseHighlights = new HashSet<int> { 1 };
+        _courtCompletionNarrative = stepIndex >= TotalFalloutMicroSteps - 1 ? BuildCourtRoleNarrative(ChartHighlightCourt.Sentence) : null;
+    }
+
+    private int GetActiveDaughterBuildIndex() => Math.Clamp(_daughterMicroStepIndex / 4, 0, DaughterBuildTargets.Length - 1);
+
+    private int GetActiveSourceOffset() => Math.Clamp(_daughterMicroStepIndex % 4, 0, 3);
+
+    private int GetActiveNieceBuildIndex() => Math.Clamp(_nieceMicroStepIndex / 4, 0, NieceBuildTargets.Length - 1);
+
+    private int GetActiveNieceSourceOffset() => Math.Clamp(_nieceMicroStepIndex % 4, 0, 3);
+
+    private int GetActiveWitnessBuildIndex() => Math.Clamp(_witnessMicroStepIndex / 4, 0, WitnessBuildTargets.Length - 1);
+
+    private int GetActiveWitnessLine() => Math.Clamp((_witnessMicroStepIndex % 4) + 1, 1, 4);
+
+    private int GetActiveJudgeLine() => Math.Clamp(_judgeMicroStepIndex + 1, 1, 4);
+
+    private int GetActiveFalloutLine() => Math.Clamp(_falloutMicroStepIndex + 1, 1, 4);
+
+    private static string GetThemeForLine(int lineNumber) => lineNumber switch
+    {
+        1 => "fire",
+        2 => "air",
+        3 => "water",
+        _ => "earth"
+    };
+
+    private int GetHouseLineValue(int houseNumber, int lineNumber)
+    {
+        var figure = GetFigureForHouse(houseNumber);
+        if (figure == null)
+        {
+            return 2;
+        }
+
+        return lineNumber switch
+        {
+            1 => figure.HeadLine,
+            2 => figure.NeckLine,
+            3 => figure.BodyLine,
+            _ => figure.FootLine
+        };
+    }
+
+    private FigureModel? GetFigureForHouse(int houseNumber)
+    {
+        if (houseNumber <= 4)
+        {
+            return GetMotherOrNull(houseNumber);
+        }
+
+        return _chart?.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+    }
+
+    private static string GetLatinHouseName(int houseNumber) =>
+        HouseLatinNames.TryGetValue(houseNumber, out var name) ? name : $"House {houseNumber}";
+
+    private void EnsureSelectedSlotForStage()
+    {
+        if (!ShouldShowStageInspector())
+        {
+            _selectedSlot = null;
+            return;
+        }
+
+        var stageSlots = GetCurrentStageSelectableSlots();
+        if (stageSlots.Count == 0)
+        {
+            _selectedSlot = null;
+            return;
+        }
+
+        if (_selectedSlot != null)
+        {
+            var stillPresent = stageSlots.FirstOrDefault(s =>
+                s.Kind == _selectedSlot.Kind &&
+                s.HouseNumber == _selectedSlot.HouseNumber &&
+                s.SlotLabel == _selectedSlot.SlotLabel);
+
+            if (stillPresent != null)
+            {
+                _selectedSlot = stillPresent;
+                return;
+            }
+        }
+
+        _selectedSlot = stageSlots.FirstOrDefault(s => s.Figure != null) ?? stageSlots[0];
+    }
+
+    private FigureModel? GetFigureForCourt(ChartHighlightCourt court) => court switch
+    {
+        ChartHighlightCourt.RightWitness => _chart?.RightWitness,
+        ChartHighlightCourt.LeftWitness => _chart?.LeftWitness,
+        ChartHighlightCourt.Judge => _chart?.Judge,
+        ChartHighlightCourt.Sentence => _chart?.Sentence,
+        _ => null
+    };
+
+    private int GetCourtLineValue(ChartHighlightCourt court, int lineNumber)
+    {
+        var figure = GetFigureForCourt(court);
+        if (figure == null)
+        {
+            return 2;
+        }
+
+        return lineNumber switch
+        {
+            1 => figure.HeadLine,
+            2 => figure.NeckLine,
+            3 => figure.BodyLine,
+            _ => figure.FootLine
+        };
+    }
+
+    private string? BuildLatestDaughterNarrative(int microStep)
+    {
+        if (_chart == null)
+        {
+            return null;
+        }
+
+        var latestCompletedBuild = microStep / 4;
+        if (microStep % 4 != 3)
+        {
+            latestCompletedBuild--;
+        }
+
+        if (latestCompletedBuild < 0 || latestCompletedBuild >= DaughterBuildTargets.Length)
+        {
+            return null;
+        }
+
+        var houseNumber = DaughterBuildTargets[latestCompletedBuild].HouseNumber;
+        var figure = _chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+        if (figure == null)
+        {
+            return null;
+        }
+
+        figure.InHouses.TryGetValue(houseNumber.ToString(), out var houseMeaning);
+        var safeMeaning = string.IsNullOrWhiteSpace(houseMeaning)
+            ? "its in-house emphasis follows the same daughter-building logic."
+            : houseMeaning.Trim();
+        var nextHouse = houseNumber < 8 ? houseNumber + 1 : (int?)null;
+        var transition = nextHouse.HasValue
+            ? $"Continue with House {nextHouse.Value} by moving to the next source line."
+            : "All four Daughters are now generated line by line from the Mothers.";
+
+        return $"You got {figure.Name} in House {houseNumber}. It is sometimes thought to mean {safeMeaning} {transition}";
+    }
+
+    private string? BuildLatestNieceNarrative(int microStep)
+    {
+        if (_chart == null)
+        {
+            return null;
+        }
+
+        var latestCompletedBuild = microStep / 4;
+        if (microStep % 4 != 3)
+        {
+            latestCompletedBuild--;
+        }
+
+        if (latestCompletedBuild < 0 || latestCompletedBuild >= NieceBuildTargets.Length)
+        {
+            return null;
+        }
+
+        var target = NieceBuildTargets[latestCompletedBuild];
+        var houseNumber = target.HouseNumber;
+        var figure = _chart.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+        if (figure == null)
+        {
+            return null;
+        }
+
+        figure.InHouses.TryGetValue(houseNumber.ToString(), out var houseMeaning);
+        var safeMeaning = string.IsNullOrWhiteSpace(houseMeaning)
+            ? "its house emphasis follows from the paired-source parity build."
+            : houseMeaning.Trim();
+        var nextHouse = houseNumber < 12 ? houseNumber + 1 : (int?)null;
+        var transition = nextHouse.HasValue
+            ? $"Continue with House {nextHouse.Value} using the next adjacent source pair."
+            : "All four Nieces are now built and the Witnesses can be derived.";
+
+        return $"House {houseNumber} resolves as {figure.Name}. It is sometimes thought to mean {safeMeaning} {transition}";
+    }
+
+    private string? BuildWitnessNarrative(int microStep)
+    {
+        if (_chart == null)
+        {
+            return null;
+        }
+
+        var latestCompletedBuild = microStep / 4;
+        if (microStep % 4 != 3)
+        {
+            latestCompletedBuild--;
+        }
+
+        if (latestCompletedBuild < 0 || latestCompletedBuild >= WitnessBuildTargets.Length)
+        {
+            return null;
+        }
+
+        var targetCourt = WitnessBuildTargets[latestCompletedBuild].TargetCourt;
+        var figure = GetFigureForCourt(targetCourt);
+        if (figure == null)
+        {
+            return null;
+        }
+
+        var nextLabel = latestCompletedBuild == 0
+            ? "Next: Left Witness from houses 11 and 12."
+            : "Both Witnesses are set. Continue to the Judge.";
+        var meaning = GetCourtRoleMeaning(figure, targetCourt);
+        return $"{WitnessBuildTargets[latestCompletedBuild].Label} is {figure.Name}. {meaning} {nextLabel}";
+    }
+
+    private string BuildCourtRoleNarrative(ChartHighlightCourt court)
+    {
+        var figure = GetFigureForCourt(court);
+        if (figure == null)
+        {
+            return string.Empty;
+        }
+
+        var roleMeaning = GetCourtRoleMeaning(figure, court);
+        var stageTransition = court switch
+        {
+            ChartHighlightCourt.Judge => "Continue to Fallout (Judge + House 1).",
+            ChartHighlightCourt.Sentence => "The court sequence is complete.",
+            _ => string.Empty
+        };
+
+        return $"{GetCourtDisplayName(court)} is {figure.Name}. {roleMeaning} {stageTransition}".Trim();
+    }
+
+    private FigureModel? GetCurrentStageResultFigure()
+    {
+        if (_activeStage == WalkthroughStage.Daughters)
+        {
+            var target = DaughterBuildTargets[GetActiveDaughterBuildIndex()];
+            return GetFigureForHouse(target.HouseNumber);
+        }
+
+        if (_activeStage == WalkthroughStage.Nieces)
+        {
+            var target = NieceBuildTargets[GetActiveNieceBuildIndex()];
+            return GetFigureForHouse(target.HouseNumber);
+        }
+
+        if (_activeStage == WalkthroughStage.Witnesses)
+        {
+            var target = WitnessBuildTargets[GetActiveWitnessBuildIndex()];
+            return GetFigureForCourt(target.TargetCourt);
+        }
+
+        if (_activeStage == WalkthroughStage.Judge)
+        {
+            return GetFigureForCourt(ChartHighlightCourt.Judge);
+        }
+
+        if (_activeStage == WalkthroughStage.Fallout)
+        {
+            return GetFigureForCourt(ChartHighlightCourt.Sentence);
+        }
+
+        return null;
+    }
+
+    private string GetCurrentStageResultTitle() => _activeStage switch
+    {
+        WalkthroughStage.Daughters => $"Current Daughter Result - House {DaughterBuildTargets[GetActiveDaughterBuildIndex()].HouseNumber}",
+        WalkthroughStage.Nieces => $"Current Niece Result - House {NieceBuildTargets[GetActiveNieceBuildIndex()].HouseNumber}",
+        WalkthroughStage.Witnesses => $"Current Court Result - {WitnessBuildTargets[GetActiveWitnessBuildIndex()].Label}",
+        WalkthroughStage.Judge => "Current Court Result - Judge",
+        WalkthroughStage.Fallout => "Current Court Result - Fallout",
+        _ => "Current Result"
+    };
+
+    private string? GetCurrentStageResultMeaning()
+    {
+        var figure = GetCurrentStageResultFigure();
+        if (figure == null)
+        {
+            return null;
+        }
+
+        if (_activeStage == WalkthroughStage.Daughters)
+        {
+            var house = DaughterBuildTargets[GetActiveDaughterBuildIndex()].HouseNumber;
+            return GetHouseMeaning(figure, house);
+        }
+
+        if (_activeStage == WalkthroughStage.Nieces)
+        {
+            var house = NieceBuildTargets[GetActiveNieceBuildIndex()].HouseNumber;
+            return GetHouseMeaning(figure, house);
+        }
+
+        if (_activeStage == WalkthroughStage.Witnesses)
+        {
+            return GetCourtRoleMeaning(figure, WitnessBuildTargets[GetActiveWitnessBuildIndex()].TargetCourt);
+        }
+
+        if (_activeStage == WalkthroughStage.Judge)
+        {
+            return GetCourtRoleMeaning(figure, ChartHighlightCourt.Judge);
+        }
+
+        if (_activeStage == WalkthroughStage.Fallout)
+        {
+            return GetCourtRoleMeaning(figure, ChartHighlightCourt.Sentence);
+        }
+
+        return null;
+    }
+
+    private static string? GetHouseMeaning(FigureModel figure, int houseNumber)
+    {
+        figure.InHouses.TryGetValue(houseNumber.ToString(), out var meaning);
+        if (!string.IsNullOrWhiteSpace(meaning))
+        {
+            return meaning.Trim();
+        }
+
+        return null;
+    }
+
+    private string GetCourtRoleMeaning(FigureModel figure, ChartHighlightCourt court)
+    {
+        var roleKeys = court switch
+        {
+            ChartHighlightCourt.RightWitness => new[] { "rightWitness", "right_witness", "witness_right" },
+            ChartHighlightCourt.LeftWitness => new[] { "leftWitness", "left_witness", "witness_left" },
+            ChartHighlightCourt.Judge => new[] { "judge" },
+            ChartHighlightCourt.Sentence => new[] { "sentence", "fallout", "reconciler" },
+            _ => Array.Empty<string>()
+        };
+
+        foreach (var key in roleKeys)
+        {
+            if (figure.InCourtRoles.TryGetValue(key, out var meaning) && !string.IsNullOrWhiteSpace(meaning))
+            {
+                return meaning.Trim();
+            }
+        }
+
+        return $"Derived by the same parity rules as the houses.";
+    }
+
+    private static string GetCourtDisplayName(ChartHighlightCourt court) => court switch
+    {
+        ChartHighlightCourt.RightWitness => "Right Witness",
+        ChartHighlightCourt.LeftWitness => "Left Witness",
+        ChartHighlightCourt.Judge => "Judge",
+        ChartHighlightCourt.Sentence => "Fallout",
+        _ => "Court figure"
+    };
+
+    private void ApplyMotherStageHighlights()
+    {
+        _activeCourtHighlights = null;
+
+        if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
+        {
+            _activeHouseHighlights = new HashSet<int> { _motherSlots[_currentMotherIndex].HouseNumber };
+            return;
+        }
+
+        if (_motherSlots.Length > 0 && _motherSlots.All(s => s.Figure != null))
+        {
+            _activeHouseHighlights = new HashSet<int> { 1, 2, 3, 4 };
+            return;
+        }
+
+        _activeHouseHighlights = null;
+    }
+
+    private void ApplyShieldStageHighlights(WalkthroughStage stage)
+    {
+        var step = _shieldSteps[(int)stage];
         _activeHouseHighlights = step.HouseHighlights;
         _activeCourtHighlights = step.CourtHighlights;
     }
@@ -342,32 +1932,31 @@
         new ShieldTutorialStep
         {
             Title = "The four Mothers",
-            Lead = "Everything in the shield begins with four figures you mark by hand. In Geofancy these are Houses 1–4 (Vita, Lucrum, Fratres, Genitor). No other figure is entered manually.",
+            Lead = "Everything in the shield begins with four figures you mark by hand. In Geofancy these are Houses 1-4 (Vita, Lucrum, Fratres, Genitor) on the right side of the top row.",
             Bullets = new[]
             {
-                "House 1 (Vita) — the querent",
-                "House 2 (Lucrum) — the quesited / matter asked about",
-                "Houses 3 and 4 — supporting context in the reading"
+                "House 1 (Vita) - the First Mother; cast first into the rightmost slot",
+                "House 2 (Lucrum) and House 3 (Fratres) - the second and third Mothers",
+                "House 4 (Genitor) - the fourth Mother, slot 4 (between the 1st Daughter and 3rd Mother)"
             },
             HouseHighlights = new HashSet<int> { 1, 2, 3, 4 }
         },
         new ShieldTutorialStep
         {
             Title = "The four Daughters",
-            Lead = "Daughters are read down the columns of the Mothers. House 5 takes every Head line; House 6 every Neck line; House 7 Body; House 8 Foot.",
+            Lead = "Daughters fill the left half of the top row. Each is read down the columns of the Mothers: House 5 takes every Head line; House 6 every Neck line; House 7 Body; House 8 Foot.",
             Bullets = new[]
             {
-                "House 5 = Head lines of Mothers 1–4",
-                "House 6 = Neck lines of Mothers 1–4",
-                "House 7 = Body lines of Mothers 1–4",
-                "House 8 = Foot lines of Mothers 1–4"
+                "House 8 = Foot lines of Mothers 1-4 (leftmost Daughter)",
+                "House 5 = Head lines of Mothers 1-4 (rightmost Daughter)",
+                "Houses 6 and 7 = Neck and Body lines across the Mothers"
             },
             HouseHighlights = new HashSet<int> { 5, 6, 7, 8 }
         },
         new ShieldTutorialStep
         {
             Title = "The four Nieces",
-            Lead = "Each Niece combines two figures line by line using geomantic parity (odd sum → single dot, even sum → double dot).",
+            Lead = "Each Niece combines two figures line by line using geomantic parity (odd sum -> single dot, even sum -> double dot).",
             Bullets = new[]
             {
                 "House 9 = Mothers 1 + 2",
@@ -380,8 +1969,7 @@
         new ShieldTutorialStep
         {
             Title = "The Witnesses",
-            Lead = "The Right Witness sums Nieces 9 and 10; the Left Witness sums Nieces 11 and 12. They frame the judgment.",
-            HouseHighlights = new HashSet<int> { 9, 10, 11, 12 },
+            Lead = "The Right Witness sums Nieces 9 and 10; the Left Witness sums Nieces 11 and 12.",
             CourtHighlights = new HashSet<ChartHighlightCourt>
             {
                 ChartHighlightCourt.RightWitness,
@@ -391,13 +1979,13 @@
         new ShieldTutorialStep
         {
             Title = "The Judge",
-            Lead = "The Judge combines the two Witnesses line by line—the heart of the answer in many traditions.",
+            Lead = "The Judge combines the two Witnesses line by line - the center of the judgment.",
             CourtHighlights = new HashSet<ChartHighlightCourt> { ChartHighlightCourt.Judge }
         },
         new ShieldTutorialStep
         {
-            Title = "The Reconciler (Sentence)",
-            Lead = "The Reconciler (shown as Fallout in the app) combines the Judge with Mother 1 (Vita), describing how the matter settles or fallout from the judgment.",
+            Title = "The Reconciler (Sentence/Fallout)",
+            Lead = "The Reconciler (shown as Fallout in the app) combines the Judge with Mother 1 (Vita), describing how the matter settles.",
             CourtHighlights = new HashSet<ChartHighlightCourt>
             {
                 ChartHighlightCourt.Judge,

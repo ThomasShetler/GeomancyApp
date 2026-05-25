@@ -1,0 +1,41 @@
+@using GeomancyWebUI.Client.Models
+
+<div class="wiki-shield-structure-guide">
+    <p class="wiki-casting-section-lead">
+        The shield uses the same layout as the <a href="/chart">Chart</a> and
+        <a href="/workspace">Workspace</a> views. The top row reads
+        <strong>8, 7, 6, 5, 4, 3, 2, 1</strong> left to right — Daughters on the left, Mothers on the right.
+        You cast the First Mother, <strong>Vita (house 1)</strong>, into the rightmost slot first, then Lucrum,
+        Fratres, and Genitor (houses 2–4).
+    </p>
+
+    <ShieldChartSectionDemo Title="Mothers (houses 1–4)"
+                            Caption="marked by hand — only figures you cast yourself"
+                            HouseHighlights="@MothersHouses" />
+
+    <ShieldChartSectionDemo Title="Daughters (houses 5–8)"
+                            Caption="derived by reading across the Mother columns (transpose)"
+                            HouseHighlights="@DaughtersHouses" />
+
+    <ShieldChartSectionDemo Title="Nieces (houses 9–12)"
+                            Caption="each pair of neighbors combined line by line (parity rule)"
+                            HouseHighlights="@NiecesHouses" />
+
+    <ShieldChartSectionDemo Title="Court"
+                            Caption="Witnesses, Judge, and Fallout (Reconciler) at the bottom"
+                            CourtHighlights="@CourtSlots" />
+</div>
+
+@code {
+    private static readonly IReadOnlySet<int> MothersHouses = new HashSet<int> { 1, 2, 3, 4 };
+    private static readonly IReadOnlySet<int> DaughtersHouses = new HashSet<int> { 5, 6, 7, 8 };
+    private static readonly IReadOnlySet<int> NiecesHouses = new HashSet<int> { 9, 10, 11, 12 };
+
+    private static readonly IReadOnlySet<ChartHighlightCourt> CourtSlots = new HashSet<ChartHighlightCourt>
+    {
+        ChartHighlightCourt.LeftWitness,
+        ChartHighlightCourt.RightWitness,
+        ChartHighlightCourt.Judge,
+        ChartHighlightCourt.Sentence
+    };
+}

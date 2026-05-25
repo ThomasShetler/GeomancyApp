@@ -1098,76 +1098,393 @@
 
 /* Chart casting walkthrough (wiki how-to) */
 .chart-casting-walkthrough {
-    margin: 1.25rem 0;
-}
-
-.chart-casting-progress {
+    margin: 0;
+    min-height: 700px;
+    height: 700px;
+    max-height: 700px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    grid-template-columns: minmax(625px, 625fr) minmax(755px, 755fr);
+    align-items: stretch;
+    gap: 0;
+    overflow: hidden;
 }
 
-@media (min-width: 640px) {
-    .chart-casting-progress {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-.chart-casting-progress-item {
-    padding: 0.5rem 0.65rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-primary);
-    font-size: 0.8rem;
-    line-height: 1.35;
-}
-
-.chart-casting-progress-item.is-current {
-    border-color: var(--accent-color, #c9a227);
-    box-shadow: 0 0 0 1px var(--accent-color, #c9a227);
-}
-
-.chart-casting-progress-item.is-done {
-    background: var(--bg-secondary);
-}
-
-.chart-casting-progress-item.is-pending {
-    opacity: 0.72;
-}
-
-.chart-casting-progress-house {
+.chart-casting-walkthrough.no-chart-column {
     display: block;
+    min-height: 0;
+    height: 100%;
+    max-height: none;
+    overflow: hidden;
+}
+
+.chart-casting-walkthrough.no-chart-column .chart-casting-info-pane {
+    order: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.chart-casting-walkthrough.is-embedded-workspace .chart-casting-review-host {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.chart-casting-walkthrough.is-embedded-workspace .chart-casting-shield-hint {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 0.35rem;
+}
+
+.chart-casting-walkthrough.is-embedded-workspace-with-chart {
+    min-height: 0;
+    height: 100%;
+    max-height: none;
+}
+
+.chart-casting-info-pane {
+    order: 2;
+    min-width: 755px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 0.5rem 1rem 1rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.chart-casting-guidance-column {
+    width: 100%;
+    margin-left: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.chart-casting-stage-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-width: 0;
+}
+
+.chart-casting-stage-complete {
+    margin-top: 0.1rem;
+    padding: 0.72rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--accent-color, #c9a227) 28%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 6%, var(--bg-secondary));
+}
+
+.chart-casting-stage-complete-title {
+    margin: 0;
+    font-size: 0.95rem;
     font-weight: 700;
-    font-size: 0.75rem;
-}
-
-.chart-casting-progress-name {
-    display: block;
-    color: var(--text-muted);
-}
-
-.chart-casting-progress-figure {
-    display: block;
-    margin-top: 0.15rem;
-    font-weight: 600;
     color: var(--text-primary);
+}
+
+.chart-casting-stage-complete-lead {
+    margin: 0.32rem 0 0.5rem;
+    font-size: 0.84rem;
+    line-height: 1.48;
+    color: var(--text-secondary);
+}
+
+.chart-casting-stage-callout {
+    font-size: 0.86rem;
+    line-height: 1.48;
+    padding: 0.62rem 0.78rem;
+}
+
+.chart-casting-stage-actions.chart-casting-finish,
+.chart-casting-stage-complete .chart-casting-finish {
+    margin-top: 0;
+}
+
+.chart-casting-stage-complete .chart-casting-summary-actions {
+    margin-top: 0;
+    gap: 0.55rem;
+}
+
+.chart-casting-review-host {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-height: 0;
+    width: 100%;
+}
+
+.chart-casting-review-host.is-active {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 330fr) minmax(0, 390fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 37px;
+    row-gap: 0.5rem;
+    align-items: stretch;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Walkthrough controls live in the left column only (row 1) */
+.chart-casting-review-host.is-active .chart-casting-guidance-column {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Table + detail participate in the same 330/390 grid as workspace */
+.chart-casting-review-host.is-active .chart-casting-review-workspace-layout.court-houses-layout {
+    display: contents;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-table-shell.court-houses-tables-col {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    scrollbar-gutter: stable;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-detail-shell.court-houses-detail-col {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chart-casting-review-host.is-active .chart-casting-guidance-column .card-title {
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-content {
+    width: 100%;
+    max-width: 100%;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-complete {
+    margin: 0;
+}
+
+.chart-casting-review-host.is-stage-summary .chart-casting-stage-table-shell.court-houses-tables-col {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.chart-casting-review-host.is-stage-summary .chart-casting-guidance-column {
+    gap: 0.5rem;
+}
+
+.chart-casting-review-host.is-stage-summary .chart-casting-step-nav {
+    margin-bottom: 0.1rem;
+}
+
+.chart-casting-review-host.is-stage-summary .chart-casting-stage-complete--compact {
+    margin: 0;
+    padding: 0.75rem 0.85rem;
+}
+
+.chart-casting-review-host.is-stage-summary .chart-casting-stage-complete--compact .chart-casting-stage-complete-title {
+    margin-bottom: 0.6rem;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 1rem 1.25rem;
+    box-sizing: border-box;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel .detail-sticky-tabs {
+    top: 0;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel .detail-header {
+    gap: 0.75rem;
+}
+
+.chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel .detail-header-aside {
+    margin-right: 0;
+}
+
+.chart-casting-stage-complete--compact {
+    padding: 0.62rem 0.78rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.chart-casting-stage-complete--compact .chart-casting-stage-complete-title {
+    margin-bottom: 0.55rem;
+}
+
+.chart-casting-stage-complete-actions {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0.55rem;
+    width: 100%;
+}
+
+.chart-casting-stage-complete-actions .chart-casting-step-btn {
+    min-height: 40px;
+    width: 100%;
+}
+
+.chart-casting-stage-complete-actions .figure-dot-caster-btn-primary,
+.chart-casting-stage-complete-actions .chart-casting-workspace-link {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
+
+.chart-casting-stage-actions--inline {
+    margin-top: 0.15rem;
+}
+
+.chart-casting-stage-table-note {
+    margin: 0.2rem 0 0.45rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.chart-casting-chart-pane {
+    order: 1;
+    min-width: 625px;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 2.25rem 2.75rem;
+    box-sizing: border-box;
+}
+
+.chart-casting-tabs-nav {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+    margin-bottom: 0.45rem;
+    padding-bottom: 0.1rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    background: var(--bg-primary);
+    box-shadow: 0 1px 0 var(--border-color);
+}
+
+.chart-casting-tab-btn {
+    flex: 0 0 auto;
+    min-width: 5.25rem;
+    min-height: 56px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 0.55rem 0.9rem 0.5rem;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    transition: color 0.18s ease, background-color 0.18s ease, border-bottom-color 0.18s ease;
+}
+
+.chart-casting-tab-btn:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.chart-casting-tab-btn.is-active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 8%, transparent);
+}
+
+.chart-casting-tab-btn.is-locked {
+    opacity: 0.56;
+}
+
+.chart-casting-tab-btn:disabled {
+    cursor: not-allowed;
+}
+
+.chart-casting-tab-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.chart-casting-tab-subtitle {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.chart-casting-shield-hint {
+    margin: 0 0 0.35rem;
+    font-size: 0.92rem;
+    line-height: 1.56;
+    color: var(--text-secondary);
+}
+
+.chart-casting-slot-target {
+    margin: 0.42rem 0 0;
+    padding: 0.58rem 0.82rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 12%, var(--bg-secondary));
+    border-left: 3px solid var(--accent-color, #c9a227);
+    border-radius: 0 8px 8px 0;
 }
 
 .chart-casting-mothers-summary,
 .chart-casting-step-panel {
-    margin-top: 1rem;
-}
-
-.chart-casting-mother-list {
-    margin: 0.5rem 0 0;
-    padding-left: 1.25rem;
-    line-height: 1.6;
+    margin-top: 0.25rem;
+    padding: 0.8rem 0.95rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--bg-secondary) 78%, transparent);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .chart-casting-next-hint {
-    margin: 1rem 0 0.75rem;
-    line-height: 1.5;
+    margin: 0.25rem 0 0.7rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
 }
 
 .chart-casting-workspace-link {
@@ -1175,32 +1492,31 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    margin-top: 0.75rem;
-}
-
-.chart-casting-shield-tutorial {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
 
 .chart-casting-step-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
+    gap: 0.7rem;
     flex-wrap: wrap;
 }
 
 .chart-casting-step-btn {
-    min-height: 44px;
-    padding: 0.45rem 1rem;
+    min-height: 40px;
+    padding: 0.4rem 0.95rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     background: var(--bg-primary);
     color: var(--text-primary);
     font-weight: 600;
     cursor: pointer;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.chart-casting-step-btn:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--accent-color, #c9a227) 45%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 8%, var(--bg-primary));
 }
 
 .chart-casting-step-btn:disabled {
@@ -1209,58 +1525,115 @@
 }
 
 .chart-casting-step-indicator {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-.chart-casting-recast-link {
-    display: block;
-    margin: -0.35rem 0 0;
-    padding: 0;
-    border: none;
-    background: none;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-decoration: underline;
-    cursor: pointer;
-    min-height: 44px;
-    text-align: left;
-}
-
-.chart-casting-recast-link:hover {
-    color: var(--text-primary);
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
 .chart-casting-step-lead {
-    margin: 0.35rem 0 0.75rem;
-    line-height: 1.55;
+    margin: 0.42rem 0 0.82rem;
+    line-height: 1.58;
+    color: var(--text-primary);
+}
+
+.chart-casting-guidance-column .card-title {
+    margin: 0;
+    font-size: clamp(1.05rem, 1.65vw, 1.45rem);
+    line-height: 1.22;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0;
+    text-transform: none;
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.chart-casting-step-panel .chart-casting-step-lead {
+    margin-top: 0.62rem;
+    margin-bottom: 0;
+}
+
+.chart-casting-step-panel .chart-casting-step-bullets {
+    margin-top: 0.62rem;
+}
+
+.chart-casting-review-host.is-active .wiki-casting-callout {
+    margin-top: 0.2rem;
+    margin-bottom: 0.15rem;
 }
 
 .chart-casting-step-bullets {
     margin: 0;
     padding-left: 1.25rem;
-    line-height: 1.55;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.chart-casting-stage-inspector.court-houses-layout {
+    margin-top: 0.55rem;
+    display: grid;
+    grid-template-columns: minmax(330px, 330fr) minmax(390px, 390fr);
+    column-gap: 37px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 535px;
+    min-width: 0;
+    height: auto;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.chart-casting-stage-inspector .court-houses-tables-col {
+    min-width: 330px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chart-casting-stage-inspector .court-houses-detail-col {
+    min-width: 390px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+    .chart-casting-stage-inspector.court-houses-layout {
+        grid-template-columns: 1fr;
+        row-gap: 0.75rem;
+        min-height: 0;
+        height: auto;
+    }
+
+    .chart-casting-stage-inspector .court-houses-tables-col,
+    .chart-casting-stage-inspector .court-houses-detail-col {
+        min-width: 0;
+    }
 }
 
 .chart-casting-chart-preview {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: 0 -0.5rem;
-    padding: 0 0.5rem;
-}
-
-.chart-casting-chart-preview .shield-chart-container {
-    min-width: 300px;
-    min-height: 320px;
-    aspect-ratio: auto;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .wiki-page .chart-casting-chart-preview .charts-side-by-side {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
-.wiki-page .chart-casting-chart-preview .shield-chart-container {
-    max-width: 100%;
+.wiki-page .chart-casting-chart-preview .charts-side-by-side > .shield-chart-container:only-child {
+    grid-column: auto;
+    margin: 0;
+    max-width: none;
 }
 
 .chart-casting-summary-actions {
@@ -1268,7 +1641,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.65rem;
-    margin-top: 1rem;
+    margin-top: 1.1rem;
+}
+
+.chart-casting-stage-complete .chart-casting-summary-actions {
+    margin-top: 0;
 }
 
 .chart-casting-error {
@@ -1281,7 +1658,74 @@
 }
 
 .chart-casting-finish {
-    text-align: center;
+    text-align: left;
+    margin-top: 0.35rem;
+}
+
+@media (max-width: 1100px) {
+    .chart-casting-walkthrough {
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        overflow: visible;
+    }
+
+    .chart-casting-info-pane,
+    .chart-casting-chart-pane {
+        min-width: 0;
+        padding: 0;
+    }
+
+    .chart-casting-guidance-column {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .chart-casting-review-host.is-active {
+        display: flex;
+        gap: 0.9rem;
+    }
+
+    .chart-casting-review-host.is-active {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .chart-casting-review-host.is-active .chart-casting-guidance-column,
+    .chart-casting-review-host.is-active .chart-casting-stage-table-shell.court-houses-tables-col,
+    .chart-casting-review-host.is-active .chart-casting-stage-detail-shell.court-houses-detail-col {
+        grid-column: auto;
+        grid-row: auto;
+        overflow: visible;
+    }
+
+    .chart-casting-review-host.is-active .chart-casting-review-workspace-layout.court-houses-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .chart-casting-tabs-nav {
+        margin-bottom: 0.15rem;
+    }
+
+    .chart-casting-tab-btn {
+        min-height: 52px;
+        padding: 0.5rem 0.72rem 0.45rem;
+    }
+
+    .chart-casting-step-nav {
+        justify-content: flex-start;
+    }
+
+    .chart-casting-mothers-summary,
+    .chart-casting-step-panel {
+        padding: 0.72rem 0.8rem;
+    }
 }
 
 .wiki-casting-section {
@@ -1318,14 +1762,77 @@
     line-height: 1.5;
 }
 
-.wiki-shield-diagram {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    font-family: ui-monospace, monospace;
-    font-size: 0.75rem;
+.wiki-shield-structure-guide {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.wiki-shield-section-demo {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.wiki-shield-section-demo-caption {
+    margin: 0 0 0.65rem;
+    font-size: 0.9rem;
     line-height: 1.45;
-    overflow-x: auto;
-    white-space: pre;
+    color: var(--text-muted);
+}
+
+.wiki-shield-section-demo-chart {
+    margin: 0;
+}
+
+.wiki-shield-section-demo-chart .charts-side-by-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.wiki-shield-section-demo-chart .charts-side-by-side > .shield-chart-container:only-child {
+    grid-column: auto;
+    margin: 0;
+    max-width: none;
+}
+
+.wiki-daughter-visualizer {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.wiki-daughter-visualizer-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.wiki-daughter-controls {
+    margin-top: 0.25rem;
+}
+
+.wiki-daughter-controls .chart-casting-step-indicator {
+    flex: 1 1 auto;
+    min-width: 190px;
+}
+
+.wiki-daughter-visualizer .chart-casting-step-btn {
+    min-height: 40px;
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+}
+
+.wiki-daughter-visualizer .chart-casting-step-btn:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--accent-color, #c9a227) 55%, var(--border-color));
+}
+
+.wiki-daughter-visualizer .chart-casting-step-btn.is-active {
+    border-color: var(--accent-color, #c9a227);
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 18%, transparent);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color, #c9a227) 55%, transparent);
 }

@@ -1,0 +1,89 @@
+@using GeomancyWebUI.Client.Models
+
+<div class="court-houses-tables">
+    @if (IsHouseStage)
+    {
+        <h2 class="court-houses-section-title">Houses</h2>
+        <table class="court-houses-table houses-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>House</th>
+                    <th>Occupant</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var slot in Slots.Where(s => s.Kind == SlotKind.House).OrderBy(s => s.HouseNumber))
+                {
+                    var isSelected = Selected?.Kind == slot.Kind && Selected?.HouseNumber == slot.HouseNumber;
+                    <tr class="@(isSelected ? "is-selected" : string.Empty)"
+                        @onclick="@(() => OnSelect.InvokeAsync(slot))"
+                        title="@slot.SlotLabel">
+                        <td class="number-cell">@slot.HouseNumber</td>
+                        <td class="position-cell">@GetHouseDisplayName(slot.HouseNumber)</td>
+                        <td class="occupant-cell">@(slot.Figure?.Name ?? "N/A")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h2 class="court-houses-section-title">Court</h2>
+        <table class="court-houses-table court-table">
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Occupant</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var slot in Slots.Where(s => s.Kind != SlotKind.House))
+                {
+                    var isSelected = Selected?.Kind == slot.Kind;
+                    <tr class="@(isSelected ? "is-selected" : string.Empty)"
+                        @onclick="@(() => OnSelect.InvokeAsync(slot))">
+                        <td class="position-cell">@slot.SlotLabel</td>
+                        <td class="occupant-cell">@(slot.Figure?.Name ?? "N/A")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    [Parameter] public IReadOnlyList<SlotSelection> Slots { get; set; } = Array.Empty<SlotSelection>();
+    [Parameter] public SlotSelection? Selected { get; set; }
+    [Parameter] public EventCallback<SlotSelection> OnSelect { get; set; }
+
+    private static readonly Dictionary<int, string> LatinHouseNames = new()
+    {
+        { 1, "Vita" },
+        { 2, "Lucrum" },
+        { 3, "Fratres" },
+        { 4, "Genitor" },
+        { 5, "Nati" },
+        { 6, "Valetudo" },
+        { 7, "Uxor" },
+        { 8, "Mors" },
+        { 9, "Itineris" },
+        { 10, "Regnum" },
+        { 11, "Benefacta" },
+        { 12, "Carcer" }
+    };
+
+    private bool IsHouseStage => Slots.Any(slot => slot.Kind == SlotKind.House);
+
+    private static string GetHouseDisplayName(int? houseNumber)
+    {
+        if (!houseNumber.HasValue)
+        {
+            return "—";
+        }
+
+        return LatinHouseNames.TryGetValue(houseNumber.Value, out var latinName)
+            ? latinName
+            : $"House {houseNumber.Value}";
+    }
+}

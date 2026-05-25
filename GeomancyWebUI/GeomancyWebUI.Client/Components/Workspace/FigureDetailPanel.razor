@@ -31,7 +31,7 @@
         var hasContext = HasContextContent(fig, inSlot);
         var qualityChipClass = GetQualityChipClass(fig.Quality);
 
-        <div class="detail-sticky-shell">
+        <div class="detail-summary-block">
             <header class="detail-header">
                 <div class="detail-header-titles">
                     <p class="slot-eyebrow">@FormatSlotLabel(Selection)</p>
@@ -88,8 +88,9 @@
                     <span class="chip chip-humor" title="Traditional humor">@fig.Humor</span>
                 }
             </div>
+        </div>
 
-            <nav class="section-jump-nav" aria-label="Figure detail sections">
+        <nav class="section-jump-nav detail-sticky-tabs" aria-label="Figure detail sections">
                 <button type="button" class="jump-chip @JumpClass("section-context")" aria-current="@JumpAria("section-context")" @onclick='() => ScrollToSection("section-context")'>Context</button>
                 <button type="button" class="jump-chip @JumpClass("section-verdict")" aria-current="@JumpAria("section-verdict")" @onclick='() => ScrollToSection("section-verdict")'>Verdict</button>
                 @if (showInterpretation)
@@ -109,8 +110,7 @@
                 {
                     <button type="button" class="jump-chip @JumpClass("section-sources")" aria-current="@JumpAria("section-sources")" @onclick='() => ScrollToSection("section-sources")'>Sources</button>
                 }
-            </nav>
-        </div>
+        </nav>
 
         <section id="section-context" class="detail-card detail-card-primary">
             <h3 class="card-title">Immediate Context</h3>

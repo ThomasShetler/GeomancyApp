@@ -31,7 +31,7 @@
                     <div class="figure-dot-row-label">
                         <span class="figure-dot-row-name">@RowNames[row]</span>
                         <span class="figure-dot-row-element">@RowElements[row]</span>
-                        @if (_phase == CasterPhase.Marking)
+                        @if (ShowRowCounts && _phase == CasterPhase.Marking)
                         {
                             <span class="figure-dot-row-count @GetRowCountClass(marks.Count)"
                                   aria-label="@($"{marks.Count} dots marked, need at least {FigureMarking.MinDotsPerRow}")">
@@ -68,7 +68,7 @@
                             {
                                 <span class="figure-dot-placeholder">Tap to mark</span>
                             }
-                            @if (_phase == CasterPhase.Marking && marks.Count > 0 && !IsLocked)
+                            @if (ShowRowUndo && _phase == CasterPhase.Marking && marks.Count > 0 && !IsLocked)
                             {
                                 <button type="button"
                                         class="figure-dot-row-undo"
@@ -111,8 +111,6 @@
         }
     </div>
 
-    <div class="figure-dot-caster-status" aria-live="polite" aria-atomic="true">@_statusMessage</div>
-
     @if (_phase == CasterPhase.Confirm)
     {
         <div class="figure-dot-caster-confirm" role="dialog" aria-modal="true" aria-labelledby="@_confirmTitleId">
@@ -131,14 +129,6 @@
             <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
             <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
         </div>
-        @if (!CanGenerate)
-        {
-            <p class="figure-dot-caster-hint">@GetProgressHint()</p>
-        }
-    }
-    else if (_phase == CasterPhase.Pairing)
-    {
-        <p class="figure-dot-caster-hint figure-dot-caster-hint-active">Pairing marks and building figure…</p>
     }
     else if (_phase == CasterPhase.Complete && ShowMarkAgainButton)
     {
@@ -180,7 +170,6 @@
     private int?[]? _resolvedLines;
     private FigureModel? _resolvedFigure;
     private CancellationTokenSource? _animationCts;
-    private string _statusMessage = string.Empty;
     private bool _reducedMotion;
     private int _activePairingRow = -1;
     private int _revealedFigureLines;
@@ -195,6 +184,8 @@
     [Parameter] public bool ShowResultFigure { get; set; } = true;
     [Parameter] public bool ShowMarkAgainButton { get; set; } = true;
     [Parameter] public bool ShowInstruction { get; set; } = true;
+    [Parameter] public bool ShowRowCounts { get; set; } = true;
+    [Parameter] public bool ShowRowUndo { get; set; } = true;
     [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
 
     private bool IsLocked => Disabled || _phase == CasterPhase.Pairing;
@@ -325,7 +316,6 @@
         });
         _dropFlashMarkKey = MarkKey(rowIndex, markId);
 
-        _statusMessage = $"{RowNames[rowIndex]}: {_rows[rowIndex].Count} marks";
         StateHasChanged();
     }
 
@@ -366,16 +356,7 @@
         }
 
         _rows[rowIndex].RemoveAt(_rows[rowIndex].Count - 1);
-        _statusMessage = $"{RowNames[rowIndex]} row: {_rows[rowIndex].Count} marks.";
         StateHasChanged();
-    }
-
-    private string GetProgressHint()
-    {
-        var ready = _rows.Count(r => r.Count >= FigureMarking.MinDotsPerRow);
-        return ready == 0
-            ? $"Mark at least {FigureMarking.MinDotsPerRow} dots in each row (Head through Foot)."
-            : $"{ready} of 4 rows ready — keep marking until each row has at least {FigureMarking.MinDotsPerRow} dots.";
     }
 
     private void ShowConfirm()
@@ -386,13 +367,11 @@
         }
 
         _phase = CasterPhase.Confirm;
-        _statusMessage = "Confirm to pair marks and build the figure.";
     }
 
     private void CancelConfirm()
     {
         _phase = CasterPhase.Marking;
-        _statusMessage = string.Empty;
         StateHasChanged();
     }
 
@@ -413,7 +392,6 @@
         _animationCts?.Cancel();
         _animationCts = new CancellationTokenSource();
         var token = _animationCts.Token;
-        _statusMessage = "Pairing marks two at a time…";
         StateHasChanged();
 
         try
@@ -470,7 +448,6 @@
             _resolvedFigure.BodyLine = body;
             _resolvedFigure.FootLine = foot;
 
-            _statusMessage = "Building figure…";
             for (var line = 0; line < 4; line++)
             {
                 token.ThrowIfCancellationRequested();
@@ -481,7 +458,6 @@
 
             _figureNameRevealed = true;
             _phase = CasterPhase.Complete;
-            _statusMessage = $"Figure complete: {_resolvedFigure.Name}.";
             StateHasChanged();
 
             await OnFigureCompleted.InvokeAsync(_resolvedFigure);
@@ -515,7 +491,6 @@
         _revealedFigureLines = 0;
         _figureNameRevealed = false;
         _phase = CasterPhase.Marking;
-        _statusMessage = string.Empty;
         StateHasChanged();
     }
 

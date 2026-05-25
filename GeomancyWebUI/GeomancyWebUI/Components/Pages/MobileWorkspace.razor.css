@@ -605,6 +605,51 @@
     -webkit-overflow-scrolling: touch;
 }
 
+/* Mothers setup: wiki chart preview stacked above dot-caster in the panel. */
+.mobile-mothers-setup {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-walkthrough.is-embedded-workspace-with-chart {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    gap: 0.75rem;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-chart-pane {
+    order: 0;
+    flex: 0 0 auto;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-chart-preview {
+    max-height: min(52vh, 22rem);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-info-pane {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 12rem;
+    padding: 0;
+}
+
 /* One-time (dismissible) orientation card; storage key in MobileWorkspace.razor */
 .mobile-welcome-callout {
     flex-shrink: 0;
@@ -700,7 +745,7 @@
 }
 
 /* Figure detail: keep jump-nav usable and avoid clipping in mobile detail mode */
-.mobile-panel-body ::deep .figure-detail-panel .detail-sticky-shell {
+.mobile-panel-body ::deep .figure-detail-panel .detail-sticky-tabs {
     top: 0;
     z-index: 4;
 }
@@ -719,7 +764,7 @@
 }
 
 .mobile-panel-body ::deep .figure-detail-panel .detail-card {
-    scroll-margin-top: 5.75rem;
+    scroll-margin-top: 3.25rem;
 }
 
 .mobile-panel-body ::deep .figure-detail-panel details > summary {

@@ -1,0 +1,272 @@
+@using System.Threading
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
+@implements IAsyncDisposable
+
+<div class="wiki-daughter-visualizer">
+    <div class="wiki-daughter-visualizer-tabs">
+        @foreach (var tab in DaughterTabs)
+        {
+            var isActive = _activeTabHouse == tab.HouseNumber;
+            <button type="button"
+                    class="chart-casting-step-btn @(isActive ? "is-active" : string.Empty)"
+                    @onclick="() => SelectTab(tab.HouseNumber)">
+                House @tab.HouseNumber (@tab.Label)
+            </button>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(_loadError))
+    {
+        <p class="chart-casting-error" role="alert">@_loadError</p>
+    }
+    else if (_chart == null)
+    {
+        <p class="wiki-casting-section-lead">Loading daughter generation visualizer…</p>
+    }
+    else
+    {
+        var active = DaughterTabs.First(t => t.HouseNumber == _activeTabHouse);
+        <div class="chart-casting-step-nav wiki-daughter-controls">
+            <button type="button"
+                    class="chart-casting-step-btn"
+                    disabled="@(_microStepIndex <= 0)"
+                    @onclick="PreviousMicroStep">
+                Previous
+            </button>
+            <span class="chart-casting-step-indicator">
+                House @active.HouseNumber • step @(_microStepIndex + 1) of 4
+            </span>
+            <button type="button"
+                    class="chart-casting-step-btn"
+                    disabled="@(_microStepIndex >= 3)"
+                    @onclick="NextMicroStep">
+                Next
+            </button>
+            <button type="button"
+                    class="chart-casting-step-btn"
+                    @onclick="TogglePlayback">
+                @(_isPlaying ? "Pause" : "Play")
+            </button>
+        </div>
+
+        <p class="wiki-casting-section-lead">
+            House @active.HouseNumber uses the @active.SourceLabel line from Mothers 1-4.
+            At each step, one source mother row is highlighted and one destination row is revealed.
+        </p>
+
+        @if (!string.IsNullOrWhiteSpace(GetSelectedHouseMeaning()))
+        {
+            <div class="wiki-casting-callout">
+                @GetSelectedHouseMeaning()
+            </div>
+        }
+
+        <div class="chart-casting-chart-preview wiki-shield-section-demo-chart">
+            <ChartSurface Chart="@_chart"
+                          View="ChartSurfaceView.Shield"
+                          IsWikiLayout="true"
+                          ShieldRowVisibility="ShieldRowVisibility.All"
+                          ShowEmptyDerivedSlots="true"
+                          ShowCourtFigures="false"
+                          InteractiveMothers="false"
+                          VisibleHouseNumbers="@GetVisibleHouses()"
+                          HighlightedHouseNumbers="@GetActiveHouseHighlights()"
+                          HouseHighlightedLines="@GetActiveHighlightedLines()"
+                          HouseRevealLineCounts="@GetActiveRevealLineCounts()"
+                          HouseLineHighlightThemes="@GetActiveHighlightThemes()"
+                          House1Figure="@GetMother(1)"
+                          House2Figure="@GetMother(2)"
+                          House3Figure="@GetMother(3)"
+                          House4Figure="@GetMother(4)" />
+        </div>
+    }
+</div>
+
+@code {
+    private sealed class DaughterTab
+    {
+        public int HouseNumber { get; init; }
+        public int SourceLine { get; init; }
+        public string Theme { get; init; } = string.Empty;
+        public string SourceLabel { get; init; } = string.Empty;
+        public string Label { get; init; } = string.Empty;
+    }
+
+    private static readonly DaughterTab[] DaughterTabs =
+    {
+        new() { HouseNumber = 5, SourceLine = 1, Theme = "fire", SourceLabel = "Head / Fire", Label = "1st Daughter" },
+        new() { HouseNumber = 6, SourceLine = 2, Theme = "air", SourceLabel = "Neck / Air", Label = "2nd Daughter" },
+        new() { HouseNumber = 7, SourceLine = 3, Theme = "water", SourceLabel = "Body / Water", Label = "3rd Daughter" },
+        new() { HouseNumber = 8, SourceLine = 4, Theme = "earth", SourceLabel = "Foot / Earth", Label = "4th Daughter" }
+    };
+
+    private HouseChartModel? _chart;
+    private int _activeTabHouse = 5;
+    private int _microStepIndex;
+    private string? _loadError;
+    private CancellationTokenSource? _playbackCts;
+    private bool _isPlaying;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _chart = await GeomancyService.GenerateChartAsync(new GenerateFourFiguresRequest
+            {
+                House1 = new GenerateFigureRequest { HeadLine = 1, NeckLine = 2, BodyLine = 2, FootLine = 1 },
+                House2 = new GenerateFigureRequest { HeadLine = 2, NeckLine = 1, BodyLine = 2, FootLine = 2 },
+                House3 = new GenerateFigureRequest { HeadLine = 2, NeckLine = 2, BodyLine = 1, FootLine = 2 },
+                House4 = new GenerateFigureRequest { HeadLine = 1, NeckLine = 1, BodyLine = 2, FootLine = 2 }
+            });
+        }
+        catch
+        {
+            _loadError = "Could not load the daughter generation visualizer.";
+        }
+    }
+
+    private void SelectTab(int houseNumber)
+    {
+        _activeTabHouse = houseNumber;
+        _microStepIndex = 0;
+        StopPlayback();
+    }
+
+    private IReadOnlySet<int> GetVisibleHouses()
+    {
+        var visible = new HashSet<int> { 1, 2, 3, 4 };
+        for (var house = 5; house <= _activeTabHouse; house++)
+        {
+            visible.Add(house);
+        }
+
+        return visible;
+    }
+
+    private IReadOnlySet<int> GetActiveHouseHighlights() => new HashSet<int> { _activeTabHouse };
+
+    private IReadOnlyDictionary<int, int> GetActiveHighlightedLines()
+    {
+        var tab = DaughterTabs.First(t => t.HouseNumber == _activeTabHouse);
+        var sourceHouse = _microStepIndex + 1;
+        var targetLine = _microStepIndex + 1;
+
+        return new Dictionary<int, int>
+        {
+            [sourceHouse] = tab.SourceLine,
+            [_activeTabHouse] = targetLine
+        };
+    }
+
+    private IReadOnlyDictionary<int, string> GetActiveHighlightThemes()
+    {
+        var tab = DaughterTabs.First(t => t.HouseNumber == _activeTabHouse);
+        var sourceHouse = _microStepIndex + 1;
+        return new Dictionary<int, string>
+        {
+            [sourceHouse] = tab.Theme,
+            [_activeTabHouse] = tab.Theme
+        };
+    }
+
+    private IReadOnlyDictionary<int, int> GetActiveRevealLineCounts() =>
+        new Dictionary<int, int>
+        {
+            [_activeTabHouse] = _microStepIndex + 1
+        };
+
+    private FigureModel? GetMother(int houseNumber) =>
+        _chart?.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
+
+    private string? GetSelectedHouseMeaning()
+    {
+        var figure = _chart?.Houses?.FirstOrDefault(h => h.HouseNumber == _activeTabHouse)?.Figure;
+        if (figure == null)
+        {
+            return null;
+        }
+
+        figure.InHouses.TryGetValue(_activeTabHouse.ToString(), out var meaning);
+        if (string.IsNullOrWhiteSpace(meaning))
+        {
+            return $"House {_activeTabHouse} resolves as {figure.Name}.";
+        }
+
+        return $"House {_activeTabHouse} resolves as {figure.Name}. It is sometimes thought to mean {meaning.Trim()}";
+    }
+
+    private void PreviousMicroStep()
+    {
+        if (_microStepIndex <= 0)
+        {
+            return;
+        }
+
+        _microStepIndex--;
+    }
+
+    private void NextMicroStep()
+    {
+        if (_microStepIndex >= 3)
+        {
+            return;
+        }
+
+        _microStepIndex++;
+    }
+
+    private void TogglePlayback()
+    {
+        if (_isPlaying)
+        {
+            StopPlayback();
+            return;
+        }
+
+        _isPlaying = true;
+        _playbackCts?.Cancel();
+        _playbackCts = new CancellationTokenSource();
+        _ = RunPlaybackAsync(_playbackCts.Token);
+    }
+
+    private async Task RunPlaybackAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(700));
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested && await timer.WaitForNextTickAsync(cancellationToken))
+            {
+                if (_microStepIndex >= 3)
+                {
+                    _microStepIndex = 0;
+                }
+                else
+                {
+                    _microStepIndex++;
+                }
+
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when playback is stopped.
+        }
+    }
+
+    private void StopPlayback()
+    {
+        _isPlaying = false;
+        _playbackCts?.Cancel();
+        _playbackCts?.Dispose();
+        _playbackCts = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        StopPlayback();
+        await Task.CompletedTask;
+    }
+}

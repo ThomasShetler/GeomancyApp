@@ -1,0 +1,79 @@
+.wiki-interactive-shell {
+    width: 100%;
+    min-width: 1380px;
+    min-height: calc(100dvh - 9rem);
+    padding: 0.5rem 1rem 1rem;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.wiki-interactive-header {
+    max-width: 1380px;
+    margin: 0 auto 0.45rem;
+}
+
+.wiki-interactive-header h1 {
+    margin: 0.12rem 0 0.22rem;
+    font-size: 1.65rem;
+    line-height: 1.2;
+}
+
+.wiki-interactive-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+.wiki-interactive-breadcrumbs {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.wiki-interactive-breadcrumbs a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.wiki-interactive-breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.wiki-interactive-workspace-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+.wiki-interactive-workspace-host {
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+    min-height: 700px;
+    height: 700px;
+    max-height: 700px;
+    overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+    .wiki-interactive-shell {
+        min-width: 0;
+        min-height: auto;
+        padding: 0.5rem;
+        overflow: auto;
+    }
+
+    .wiki-interactive-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .wiki-interactive-workspace-host {
+        min-height: auto;
+        height: auto;
+        max-height: none;
+        overflow: auto;
+    }
+}

@@ -1,0 +1,26 @@
+@using GeomancyWebUI.Client.Models
+
+@*
+    Static shield-chart diagram for wiki: full chart layout with section highlighting, no figures.
+*@
+
+<figure class="wiki-shield-section-demo">
+    <figcaption class="wiki-shield-section-demo-caption">
+        <strong>@Title</strong> — @Caption
+    </figcaption>
+    <div class="chart-casting-chart-preview wiki-shield-section-demo-chart">
+        <ChartSurface View="ChartSurfaceView.Shield"
+                      LayoutOnly="true"
+                      IsWikiLayout="true"
+                      ShieldRowVisibility="ShieldRowVisibility.All"
+                      HighlightedHouseNumbers="@HouseHighlights"
+                      HighlightedCourt="@CourtHighlights" />
+    </div>
+</figure>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Caption { get; set; } = string.Empty;
+    [Parameter] public IReadOnlySet<int>? HouseHighlights { get; set; }
+    [Parameter] public IReadOnlySet<ChartHighlightCourt>? CourtHighlights { get; set; }
+}

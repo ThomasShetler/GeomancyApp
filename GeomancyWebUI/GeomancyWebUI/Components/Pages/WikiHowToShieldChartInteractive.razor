@@ -1,0 +1,31 @@
+@page "/wiki/how-to/shield-chart/interactive"
+
+@rendermode InteractiveServer
+
+@using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Models
+
+<PageTitle>Geofancy Wiki - Interactive Shield Walkthrough</PageTitle>
+
+<div class="wiki-interactive-shell">
+    <div class="wiki-interactive-header">
+        <div class="wiki-interactive-breadcrumbs">
+            <a href="/wiki">Wiki</a>
+            <span>/</span>
+            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a>
+            <span>/</span>
+            <span>Interactive</span>
+        </div>
+        <h1>Interactive Shield Walkthrough</h1>
+        <p>
+            A dedicated interactive space for casting Mothers and stepping through Daughter generation.
+        </p>
+    </div>
+
+    <section class="wiki-casting-section wiki-interactive-workspace-section">
+        <div class="wiki-interactive-workspace-host">
+            <ChartCastingWalkthrough Mode="ChartCastingMode.Full" />
+        </div>
+    </section>
+</div>
+

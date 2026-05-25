@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using GeomancyApp
+@using GeomancyWebUI.Components
+@using GeomancyWebUI.Client.Services
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
@@ -30,9 +32,13 @@
             Cast a chart!
         </button>
         <p class="landing-cta-hint">
-            Opens the workspace suited to your screen size (desktop workspace or mobile layout).
+            Choose how you want to start — workspace, mark the four Mothers, or the interactive walkthrough.
         </p>
     </section>
+
+    <CastChartEntryDialog Visible="_showCastDialog"
+                          OnClose="CloseCastDialog"
+                          OnChoice="OnCastEntryChoice" />
 
     <section class="landing-section" aria-labelledby="intro-heading">
         <h2 id="intro-heading" class="landing-h2">What is geomancy?</h2>
@@ -222,9 +228,36 @@
 </div>
 
 @code {
-    private async Task CastAChartAsync()
+    private bool _showCastDialog;
+
+    private Task CastAChartAsync()
     {
+        _showCastDialog = true;
+        return Task.CompletedTask;
+    }
+
+    private Task CloseCastDialog()
+    {
+        _showCastDialog = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task OnCastEntryChoice(CastChartEntryDialog.CastChartEntryChoice choice)
+    {
+        _showCastDialog = false;
         var isMobile = await JS.InvokeAsync<bool>("geofancyDeviceIsMobile");
-        Nav.NavigateTo(isMobile ? "/mobile" : "/workspace");
+
+        switch (choice)
+        {
+            case CastChartEntryDialog.CastChartEntryChoice.HasMothers:
+                Nav.NavigateTo(isMobile ? "/mobile" : "/workspace");
+                break;
+            case CastChartEntryDialog.CastChartEntryChoice.NeedMothers:
+                Nav.NavigateTo(WorkspaceEntryQuery.BuildMothersSetupPath(isMobile ? "/mobile" : "/workspace"));
+                break;
+            case CastChartEntryDialog.CastChartEntryChoice.LearnInteractive:
+                Nav.NavigateTo("/wiki/how-to/shield-chart/interactive");
+                break;
+        }
     }
 }
