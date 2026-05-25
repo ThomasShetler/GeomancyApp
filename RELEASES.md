@@ -1,5 +1,26 @@
 # Releases
 
+## v1.0.6 — Production deploy & detail panel styling
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Patch release after **v1.0.5** — fixes production parity with the tested `web-app` branch (detail panel styling and static asset delivery on Railway).
+
+### Highlights
+
+- **Client detail panel CSS on production.** `FigureDetailPanel`, chart surfaces, and the interactive casting walkthrough live in `GeomancyWebUI.Client`. Their scoped stylesheet is now linked explicitly in `App.razor` (`GeomancyWebUI.Client.bundle.scp.css`) instead of relying only on `@import` inside `GeomancyWebUI.styles.css`, which mobile browsers often skip.
+- **Stable Client bundle in Docker.** The publish step emits a fingerprinted `GeomancyWebUI.Client.*.bundle.scp.css`; the `Dockerfile` and MSBuild targets copy it to a stable filename so prod and `@import` both resolve.
+- **Static asset cache busting.** `theme.js`, `clipboard.js`, and main stylesheets use `?v={version}` via `Branding.AssetUrl`; production sends `Cache-Control: no-cache` on `.js` and `.css` so phones pick up deploys after merges.
+- **Deploy documentation.** `DEPLOY.md` adds test-vs-prod Railway checklist and troubleshooting for unstyled detail panels and stale caches.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.6.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production; `web-app` = integration / testing.
+
+---
+
 ## v1.0.5 — Production mobile stability
 
 **Released:** May 2026  
