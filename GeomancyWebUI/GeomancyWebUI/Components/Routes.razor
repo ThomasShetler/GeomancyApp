@@ -9,7 +9,9 @@
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <PageTitle>Geofancy - Not Found</PageTitle>
+        <PageSeo Title="Page Not Found"
+                  Description="The requested page does not exist on Geofancy. Try the home page, wiki, or chart workspace."
+                  NoIndex="true" />
         <LayoutView Layout="typeof(Layout.MainLayout)">
             <div class="not-found" role="alert">
                 <h1 class="not-found-title">Page not found</h1>

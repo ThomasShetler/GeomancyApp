@@ -3,9 +3,14 @@
 @using GeomancyWebUI.Client.Helpers
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Services
 @inject IGeomancyService GeomancyService
 
-<PageTitle>@(_figure?.Name ?? "Figure") - Geofancy Wiki</PageTitle>
+<PageSeo Title="@FigureSeoTitle"
+          Description="@FigureSeoDescription"
+          CanonicalPath="@FigureCanonicalPath"
+          Keywords="@FigureSeoKeywords"
+          OgType="article" />
 
 <WikiArticleShell Title="@(_figure?.Name ?? "Figure not found")"
                   Lead="@(_figure?.Tagline)"
@@ -36,6 +41,15 @@
 
     private FigureModel? _figure;
     private bool _loading = true;
+
+    private string FigureSeoTitle => _figure?.Name is { } name ? $"{name} · Geomantic Figure" : "Figure · Geomancy Wiki";
+    private string FigureSeoDescription => _figure is null
+        ? "Geomantic figure reference in the Geofancy wiki."
+        : SeoSite.Truncate($"{_figure.Name} ({_figure.EnglishName}): {_figure.Tagline}. Elements, verdicts, houses, and corpus notes for Western geomancy.");
+    private string FigureCanonicalPath => $"/wiki/glossary/figures/{Slug}";
+    private string FigureSeoKeywords => _figure?.Name is { } name
+        ? $"{name.ToLowerInvariant()} geomancy, geomantic figure {name.ToLowerInvariant()}, {_figure.Planet?.ToLowerInvariant()} figure"
+        : "geomantic figure, geomancy glossary";
 
     protected override async Task OnInitializedAsync()
     {
