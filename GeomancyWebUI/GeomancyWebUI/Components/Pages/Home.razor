@@ -173,23 +173,24 @@
             </header>
 
             <p class="landing-release-summary">
-                <strong>Geofancy @GeofancyVersion.Display</strong> updates the official brand mark: a square
-                caduceus-on-shield emblem on the home page, nav, footer, favicon, and home-screen icon.
+                <strong>Geofancy @GeofancyVersion.Display</strong> fixes the mobile workspace after recent layout
+                changes: restored tab and panel styling, stable full-height layout under the nav, and a cleaner
+                immersive chrome (no stray skip link or footer on chart flows).
             </p>
 
             <h4 class="landing-release-h4">Highlights</h4>
             <ul class="landing-notes">
                 <li>
-                    <strong>New emblem.</strong> Square caduceus-on-shield artwork with rounded app-icon styling on
-                    the landing hero, sidebar brand, and footer.
+                    <strong>Mobile workspace restored.</strong> Tab strip, chart drawer, and list/detail panel styling
+                    load reliably from global CSS on phones.
                 </li>
                 <li>
-                    <strong>Favicon &amp; PWA icon.</strong> Regenerated 32×32 favicon and 180×180 apple-touch icon
-                    from the new master asset.
+                    <strong>Layout under the nav.</strong> Viewport height chain keeps tabs and scroll regions aligned
+                    with the fixed chart handle.
                 </li>
                 <li>
-                    <strong>Faster first paint.</strong> Cache-busted logo URLs, preload, and prerender so the mark
-                    shows before the Blazor circuit connects.
+                    <strong>Immersive routes.</strong> Skip link hidden on mobile and workspace; site footer omitted
+                    on charting flows.
                 </li>
             </ul>
 

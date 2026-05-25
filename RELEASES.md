@@ -1,5 +1,25 @@
 # Releases
 
+## v1.0.3 — Mobile workspace layout fix
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Patch release after **v1.0.2** — restores the mobile workspace UI after footer/layout changes.
+
+### Highlights
+
+- **Mobile workspace styling.** Global `mobile-workspace.css` loads tab strip, panel, and detail styles so `/mobile` no longer depends on late scoped CSS.
+- **Viewport layout.** Tighter `100dvh` flex chain under the nav so tabs and panels stay below the chart handle and scroll correctly.
+- **Skip link.** Moved inside `<main>`, properly hidden until keyboard focus, and omitted on immersive routes (mobile, desktop workspace, interactive wiki).
+- **Footer on immersive flows.** Site footer is not rendered on `/mobile`, `/workspace`, or interactive wiki pages (not only hidden with CSS).
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.3.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+
+---
+
 ## v1.0.2 — Brand emblem & app icons
 
 **Released:** May 2026  
