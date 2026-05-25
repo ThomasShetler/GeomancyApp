@@ -17,7 +17,7 @@
 
 ### What's new since v0.2.2
 
-Production **`master`** shipped **v0.2.2** (workspace, share/export, WoP, mobile shell, theme fix). **v1.0.0** merges **29 commits** from **`web-app`** (~**133 files**, **+18,968 / −2,864** lines vs `master`). The bulk of the delta is new **wiki** and **interactive casting** UI, a **JSON-backed figure corpus**, and a redesigned **figure detail** / **perfections** experience—not a rewrite of chart math (still `Geomancy.Core` + in-process handlers).
+Production **`master`** shipped **v0.2.2** (workspace, share/export, WoP, mobile shell, theme fix). **v1.0.0** merges **30 commits** from **`web-app`** (~**133 files**, **+18,968 / −2,864** lines vs `master`). The bulk of the delta is new **wiki** and **interactive casting** UI, a **JSON-backed figure corpus**, and a redesigned **figure detail** / **perfections** experience—not a rewrite of chart math (still `Geomancy.Core` + in-process handlers).
 
 ### Technical changes (comprehensive)
 
