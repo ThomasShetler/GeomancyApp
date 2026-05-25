@@ -1,7 +1,9 @@
 @using System.Threading
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using Microsoft.JSInterop
 @inject IGeomancyService GeomancyService
+@inject IJSRuntime JS
 @implements IAsyncDisposable
 
 <div class="wiki-daughter-visualizer">
@@ -49,6 +51,17 @@
                     @onclick="TogglePlayback">
                 @(_isPlaying ? "Pause" : "Play")
             </button>
+            <button type="button"
+                    class="chart-casting-step-btn"
+                    @onclick="RestartMicroStep">
+                Restart
+            </button>
+            <button type="button"
+                    class="chart-casting-step-btn @(_animateLineHighlights ? "is-active" : string.Empty)"
+                    aria-pressed="@_animateLineHighlights.ToString().ToLower()"
+                    @onclick="ToggleAnimateHighlights">
+                @(_animateLineHighlights ? "Animate highlights on" : "Animate highlights off")
+            </button>
         </div>
 
         <p class="wiki-casting-section-lead">
@@ -63,7 +76,7 @@
             </div>
         }
 
-        <div class="chart-casting-chart-preview wiki-shield-section-demo-chart">
+        <div class="chart-casting-chart-preview wiki-shield-section-demo-chart wiki-daughter-chart-stage @GetChartStageClass()">
             <ChartSurface Chart="@_chart"
                           View="ChartSurfaceView.Shield"
                           IsWikiLayout="true"
@@ -108,9 +121,19 @@
     private string? _loadError;
     private CancellationTokenSource? _playbackCts;
     private bool _isPlaying;
+    private bool _animateLineHighlights = true;
 
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            _animateLineHighlights = !await JS.InvokeAsync<bool>("geofancyPrefersReducedMotion");
+        }
+        catch
+        {
+            _animateLineHighlights = true;
+        }
+
         try
         {
             _chart = await GeomancyService.GenerateChartAsync(new GenerateFourFiguresRequest
@@ -127,11 +150,13 @@
         }
     }
 
+    private string GetChartStageClass() =>
+        _animateLineHighlights ? string.Empty : "is-line-highlight-animation-off";
+
     private void SelectTab(int houseNumber)
     {
         _activeTabHouse = houseNumber;
-        _microStepIndex = 0;
-        StopPlayback();
+        RestartMicroStep();
     }
 
     private IReadOnlySet<int> GetVisibleHouses()
@@ -205,6 +230,7 @@
         }
 
         _microStepIndex--;
+        StopPlayback();
     }
 
     private void NextMicroStep()
@@ -215,6 +241,18 @@
         }
 
         _microStepIndex++;
+        StopPlayback();
+    }
+
+    private void RestartMicroStep()
+    {
+        _microStepIndex = 0;
+        StopPlayback();
+    }
+
+    private void ToggleAnimateHighlights()
+    {
+        _animateLineHighlights = !_animateLineHighlights;
     }
 
     private void TogglePlayback()
@@ -253,6 +291,10 @@
         catch (OperationCanceledException)
         {
             // Expected when playback is stopped.
+        }
+        finally
+        {
+            _isPlaying = false;
         }
     }
 

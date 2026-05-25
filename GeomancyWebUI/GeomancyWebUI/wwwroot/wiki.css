@@ -1798,32 +1798,40 @@
     max-width: none;
 }
 
-/* Mobile wiki chart examples: 535px native shield scaled to viewport (same as /mobile mothers drawer). */
-@media (max-width: 768px) {
-    .wiki-shield-section-demo-chart,
-    .wiki-daughter-visualizer .chart-casting-chart-preview {
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        overflow: hidden;
-        --chart-native-size: 535px;
-        --chart-fit: min(calc(100vw - 1.5rem), 70dvh, 420px);
-        height: var(--chart-fit);
-    }
+/* Wiki shield chart examples: 535px native, scale-to-fit at all viewport widths. */
+.wiki-shield-section-demo-chart,
+.wiki-daughter-visualizer .wiki-daughter-chart-stage {
+    position: relative;
+    width: 100%;
+    max-width: 535px;
+    margin: 0 auto;
+    height: auto;
+    overflow: visible;
+    --chart-native-size: 535px;
+    --chart-fit: min(100%, calc(100vw - 2rem), 535px);
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+}
 
-    .wiki-shield-section-demo-chart .charts-side-by-side,
-    .wiki-daughter-visualizer .chart-casting-chart-preview .charts-side-by-side {
-        width: var(--chart-native-size) !important;
-        height: var(--chart-native-size) !important;
-        max-width: none !important;
-        max-height: none !important;
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform-origin: top center;
-        transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
-    }
+.wiki-daughter-visualizer .wiki-daughter-chart-stage {
+    --chart-fit: min(100%, calc(100vw - 2rem), 72dvh, 480px);
+}
+
+.wiki-shield-section-demo-chart .charts-side-by-side,
+.wiki-daughter-visualizer .wiki-daughter-chart-stage .charts-side-by-side {
+    width: var(--chart-native-size) !important;
+    height: var(--chart-native-size) !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform-origin: top center;
+    transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
+}
+
+.is-line-highlight-animation-off .figure-line.figure-line-highlight {
+    animation: none;
 }
 
 .wiki-daughter-visualizer {
@@ -1841,11 +1849,37 @@
 
 .wiki-daughter-controls {
     margin-top: 0.25rem;
+    flex-wrap: wrap;
+    gap: 0.45rem;
 }
 
 .wiki-daughter-controls .chart-casting-step-indicator {
     flex: 1 1 auto;
-    min-width: 190px;
+    min-width: 0;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .wiki-daughter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .wiki-daughter-controls .chart-casting-step-btn {
+        width: 100%;
+    }
+
+    .wiki-daughter-controls .chart-casting-step-indicator {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}
+
+@media (min-width: 769px) {
+    .wiki-daughter-controls .chart-casting-step-indicator {
+        min-width: 12rem;
+        text-align: center;
+    }
 }
 
 .wiki-daughter-visualizer .chart-casting-step-btn {
