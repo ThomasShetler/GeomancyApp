@@ -3,7 +3,6 @@
 @using GeomancyWebUI.Components
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Services
-@rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 
@@ -19,15 +18,14 @@
             <span class="landing-eyebrow-sep" aria-hidden="true">·</span>
             <span class="landing-eyebrow-version">v@(GeofancyVersion.Display)</span>
         </p>
-        <img src="img/logo.png"
-             alt=""
-             aria-hidden="true"
+        <img src="@Branding.LogoUrl"
+             alt="Geofancy emblem — caduceus on a starry shield"
              class="landing-logo"
-             width="512"
-             height="512"
+             width="455"
+             height="540"
              decoding="async"
              fetchpriority="high" />
-        <h1 id="landing-title" class="landing-title sr-only">Geofancy</h1>
+        <h1 id="landing-title" class="landing-title">Geofancy</h1>
         <p class="landing-tagline">
             The most advanced geomancy software available — desktop and mobile workspaces,
             a live geomancy wiki, interactive shield walkthroughs, perfections, and the
