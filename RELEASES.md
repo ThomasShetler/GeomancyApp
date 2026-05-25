@@ -1,5 +1,42 @@
 # Releases
 
+## v1.0.5 — Production mobile stability
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Production release after **v1.0.4** — promotes the **phone-validated `web-app` line** (bisected from baseline `6733e19` through **v1.0.2**) and drops the **v1.0.3 / v1.0.4** layout experiments that were not needed on real devices.
+
+### Highlights
+
+- **Mobile verified.** Cherry-picked **1.0.0 → 1.0.2** changes tested on a physical phone; **prerender**, logo, SEO, and footer/workspace scroll fixes all passed. Skipped **v1.0.3** (`mobile-workspace.css`) and **v1.0.4** (footer/skip revert) commits — issues they targeted were not reproduced on the bisected branch.
+- **Figure detail navigation.** Sticky section chips on mobile now scroll the correct panel (`.mobile-panel-body`) via `geofancyScrollToId` in `clipboard.js`.
+- **Site chrome retained.** Global footer on content pages, `PageSeo` / sitemap / Search Console file, square caduceus branding, desktop workspace scroll chain, and **Cast a chart!** dialog outside the landing flex tree.
+- **No global mobile-workspace stylesheet.** Removed `mobile-workspace.css` link and file so `/mobile` uses the scoped layout that passed phone testing.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.5.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production; `web-app` = integration / testing.
+
+---
+
+## v1.0.4 — UI stability restore (pre-footer layout) — superseded
+
+**Released:** May 2026 (replaced by **v1.0.5** on production)
+
+Stability patch that attempted to revert footer/skip-link regressions while keeping branding and SEO. Superseded because the bisected **v1.0.2** line plus scroll fix already behaved correctly on phones without these changes.
+
+---
+
+## v1.0.3 — Mobile workspace layout fix — superseded
+
+**Released:** May 2026 (replaced by **v1.0.5** on production)
+
+Introduced global `mobile-workspace.css` and skip-link layout tweaks. Superseded — not shipped in **v1.0.5**.
+
+---
+
 ## v1.0.2 — Brand emblem & app icons
 
 **Released:** May 2026  
