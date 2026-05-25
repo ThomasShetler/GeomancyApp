@@ -47,31 +47,45 @@
         <div class="alert alert-danger mobile-alert">@errorMessage</div>
     }
 
-    <!--
-        1) Chart drawer (hidden during ?setup=mothers — preview lives in the walkthrough).
-    -->
-    @if (!showMothersSetup)
-    {
-    <div class="mobile-chart-drawer @(chartCollapsed ? "is-collapsed" : "is-expanded")">
+    <!-- 1) Chart drawer (workspace chart, or mothers-setup preview with same overlay behavior). -->
+    <div class="mobile-chart-drawer @(chartCollapsed ? "is-collapsed" : "is-expanded") @(showMothersSetup ? "is-mothers-setup" : "")">
         <button type="button"
                 class="mobile-chart-handle"
                 @onclick="ToggleChartCollapsed"
                 aria-expanded="@((!chartCollapsed).ToString().ToLower())"
-                title="@(chartCollapsed ? "Show chart" : "Hide chart and show details")">
+                title="@GetChartDrawerHandleTitle()">
             <span class="mobile-chart-handle-row">
                 <span class="handle-grip"></span>
-                <span class="handle-label">
-                    @(chartCollapsed ? "Show chart" : "Hide chart \u00B7 Show details")
-                </span>
+                <span class="handle-label">@GetChartDrawerHandleLabel()</span>
                 <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
             </span>
             @if (!chartCollapsed)
             {
-                <span class="mobile-chart-handle-hint">Collapse the chart to open tabs, readings, and data below.</span>
+                <span class="mobile-chart-handle-hint" aria-live="polite">@GetChartDrawerHandleHint()</span>
             }
         </button>
 
         <div class="mobile-chart-body" aria-hidden="@chartCollapsed.ToString().ToLower()">
+            @if (showMothersSetup)
+            {
+                <div class="mobile-chart-stage mobile-chart-stage--mothers-preview">
+                    <ChartSurface Chart="@null"
+                                  View="ChartSurfaceView.Shield"
+                                  IsWikiLayout="true"
+                                  ShieldRowVisibility="ShieldRowVisibility.All"
+                                  ShowEmptyDerivedSlots="true"
+                                  ShowCourtFigures="false"
+                                  InteractiveMothers="false"
+                                  House1Figure="@mothersPreviewHouse1"
+                                  House2Figure="@mothersPreviewHouse2"
+                                  House3Figure="@mothersPreviewHouse3"
+                                  House4Figure="@mothersPreviewHouse4"
+                                  VisibleHouseNumbers="@MothersPreviewVisibleHouses"
+                                  HighlightedHouseNumbers="@mothersPreviewHighlights" />
+                </div>
+            }
+            else
+            {
             <div class="mobile-chart-toolbar">
                 <button type="button"
                         class="mobile-pill-btn"
@@ -103,21 +117,6 @@
                               View="@chartView" />
             </div>
 
-            <!--
-                Four compact Mother input cells, displayed left -> right as
-                houses 4, 3, 2, 1 (the same right-to-left reading order
-                that the in-chart Mother row uses). Sits below the chart so
-                the chart stays the visual focus when the drawer opens and
-                the user's thumb naturally lands on the inputs. Each cell
-                hosts the same FigureContainer the chart uses, bound to the
-                same houseNFigure instance and the same OnHouseNChanged
-                handler - so taps here and taps on the chart mutate identical
-                state and trigger the same regeneration pipeline.
-
-                Labels are pulled from the houseNames dictionary in code
-                (Vita / Lucrum / Fratres / Genitor) so the strip stays in
-                sync with any future renames in one place.
-            -->
             <div class="mobile-mother-inputs"
                  role="group"
                  aria-label="Set the four Mothers">
@@ -170,9 +169,9 @@
                     </div>
                 </div>
             </div>
+            }
         </div>
     </div>
-    }
 
     <!-- 2) Tab strip + subtle flow hints (scroll cue + microcopy) -->
     @if (!showMothersSetup)
@@ -208,9 +207,10 @@
             {
                 <div class="mobile-mothers-setup" role="region" aria-label="Cast the four Mothers">
                     <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly"
-                                             ShowChartColumn="true"
+                                             ShowChartColumn="false"
                                              HostMode="ChartCastingHostMode.EmbeddedWorkspace"
                                              WorkspaceBasePath="/mobile"
+                                             OnMothersPreviewChanged="HandleMothersPreviewChangedAsync"
                                              OnMothersCompleted="HandleMothersCompletedAsync" />
                 </div>
             }
@@ -472,6 +472,15 @@
 
     private WorkspaceTab activeTab = WorkspaceTab.CourtAndHouses;
     private bool showMothersSetup;
+    private FigureModel? mothersPreviewHouse1;
+    private FigureModel? mothersPreviewHouse2;
+    private FigureModel? mothersPreviewHouse3;
+    private FigureModel? mothersPreviewHouse4;
+    private HashSet<int>? mothersPreviewHighlights;
+    private string mothersSetupDrawerHint =
+        "Mark dots below. The chart opens when you finish each Mother.";
+
+    private static readonly HashSet<int> MothersPreviewVisibleHouses = new() { 1, 2, 3, 4 };
 
     // ----- Mobile-only panel mode -----
     // List shows the tab's list/summary view; Detail shows the picked item
@@ -491,6 +500,38 @@
     private bool welcomeTipDismissed;
 
     private void ToggleChartCollapsed() => chartCollapsed = !chartCollapsed;
+
+    private string GetChartDrawerHandleLabel()
+    {
+        if (!showMothersSetup)
+        {
+            return chartCollapsed ? "Show chart" : "Hide chart \u00B7 Show details";
+        }
+
+        return chartCollapsed ? "Show Mother on chart" : "Hide chart \u00B7 Cast next Mother";
+    }
+
+    private string GetChartDrawerHandleTitle()
+    {
+        if (!showMothersSetup)
+        {
+            return chartCollapsed ? "Show chart" : "Hide chart and show details";
+        }
+
+        return chartCollapsed
+            ? "Show where this Mother sits on the shield"
+            : "Collapse the chart to mark the next Mother";
+    }
+
+    private string GetChartDrawerHandleHint()
+    {
+        if (showMothersSetup)
+        {
+            return mothersSetupDrawerHint;
+        }
+
+        return "Collapse the chart to open tabs, readings, and data below.";
+    }
 
     private string ActiveTabLabel
         => Tabs.FirstOrDefault(t => t.Id == activeTab)?.Label ?? string.Empty;
@@ -979,6 +1020,50 @@
         {
             return false;
         }
+    }
+
+    private Task HandleMothersPreviewChangedAsync(MothersPreviewChangedEventArgs args)
+    {
+        mothersPreviewHouse1 = CopyPreviewFigure(args.House1);
+        mothersPreviewHouse2 = CopyPreviewFigure(args.House2);
+        mothersPreviewHouse3 = CopyPreviewFigure(args.House3);
+        mothersPreviewHouse4 = CopyPreviewFigure(args.House4);
+        mothersPreviewHighlights = args.HighlightedHouseNumbers != null
+            ? new HashSet<int>(args.HighlightedHouseNumbers)
+            : null;
+
+        if (args.JustCompletedHouseNumber is int houseNumber)
+        {
+            chartCollapsed = false;
+            var houseLabel = houseNames.GetValueOrDefault(houseNumber, $"House {houseNumber}");
+            mothersSetupDrawerHint = args.AllMothersComplete
+                ? "Collapse the chart above to continue below, then tap Generate the full chart."
+                : $"Mother {houseNumber} ({houseLabel}) is on the chart. Collapse the chart to mark the next Mother below.";
+        }
+        else if (!args.AllMothersComplete
+                 && args.House1 == null
+                 && args.House2 == null
+                 && args.House3 == null
+                 && args.House4 == null)
+        {
+            chartCollapsed = true;
+            mothersSetupDrawerHint =
+                "Mark dots below. The chart opens when you finish each Mother.";
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private static FigureModel? CopyPreviewFigure(FigureModel? source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        var target = new FigureModel();
+        CopyMotherFigure(target, source);
+        return target;
     }
 
     private async Task HandleMothersCompletedAsync(MothersCompletedEventArgs args)

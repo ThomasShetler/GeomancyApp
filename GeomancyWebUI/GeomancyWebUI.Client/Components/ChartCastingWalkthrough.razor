@@ -635,6 +635,7 @@
     /// <summary>Base path for seed URLs when embedded in workspace or mobile (/workspace or /mobile).</summary>
     [Parameter] public string WorkspaceBasePath { get; set; } = "/workspace";
     [Parameter] public EventCallback<MothersCompletedEventArgs> OnMothersCompleted { get; set; }
+    [Parameter] public EventCallback<MothersPreviewChangedEventArgs> OnMothersPreviewChanged { get; set; }
 
     private bool _isContinuingToWorkspace;
 
@@ -874,8 +875,31 @@
         }
 
         ApplyActiveStageState();
+        await NotifyMothersPreviewAsync(slot.HouseNumber);
         StateHasChanged();
-        await Task.CompletedTask;
+    }
+
+    private async Task NotifyMothersPreviewAsync(int? justCompletedHouseNumber = null)
+    {
+        if (HostMode != ChartCastingHostMode.EmbeddedWorkspace
+            || ShowChartColumn
+            || Mode != ChartCastingMode.MothersOnly
+            || !OnMothersPreviewChanged.HasDelegate)
+        {
+            return;
+        }
+
+        var args = new MothersPreviewChangedEventArgs
+        {
+            House1 = GetMotherOrNull(1),
+            House2 = GetMotherOrNull(2),
+            House3 = GetMotherOrNull(3),
+            House4 = GetMotherOrNull(4),
+            HighlightedHouseNumbers = _activeHouseHighlights,
+            JustCompletedHouseNumber = justCompletedHouseNumber,
+            AllMothersComplete = _motherSlots.All(s => s.Figure != null)
+        };
+        await OnMothersPreviewChanged.InvokeAsync(args);
     }
 
     private async Task ContinueToWorkspaceAsync()
@@ -1009,6 +1033,7 @@
 
         InitializeMotherSlots();
         ApplyActiveStageState();
+        _ = NotifyMothersPreviewAsync();
     }
 
     private void InitializeMotherSlots()
