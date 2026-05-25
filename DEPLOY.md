@@ -56,6 +56,16 @@ Geofancy uses **two deploy targets** in the same GitHub repo:
 6. **Phone / browser cache**: Static JS and CSS were previously cached without a version query string. After **v1.0.5+**, assets use `?v={version}` and `Cache-Control: no-cache` on `.js`/`.css`. On the phone: Safari → clear website data for the prod host, or open prod in a **private** tab. Remove and re-add the home-screen shortcut if you use one.
 7. **Stuck Docker layer cache** (rare): Production service → **Settings → Build** → redeploy with cache cleared, or set env `NO_CACHE=1` for one build (Railway UI varies by plan).
 
+### Detail panels look unstyled on prod but fine on test
+
+The **WASM client** scoped stylesheet (`FigureDetailPanel`, chart components, walkthrough UI) is published as `GeomancyWebUI.Client.*.bundle.scp.css`. `App.razor` loads it **explicitly** (not only via `@import` inside `GeomancyWebUI.styles.css`, which mobile browsers often apply late or skip).
+
+If figure/perfection detail cards look like plain HTML on prod:
+
+1. Confirm `https://<prod-host>/GeomancyWebUI.Client.bundle.scp.css` returns **200** (not 404).
+2. Hard-refresh or clear site data so `GeomancyWebUI.styles.css?v=…` and the client bundle both reload.
+3. Rebuild the Docker image (the `Dockerfile` copies the fingerprinted client bundle to the stable filename).
+
 ### Quick “is prod actually updated?” test
 
 ```bash

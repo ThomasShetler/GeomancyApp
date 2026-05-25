@@ -29,6 +29,14 @@ RUN dotnet publish GeomancyWebUI/GeomancyWebUI/GeomancyWebUI.csproj \
     -o /app/publish \
     /p:UseAppHost=false
 
+# Publish emits a fingerprinted Client scoped-css bundle; styles.css @import and
+# App.razor expect a stable GeomancyWebUI.Client.bundle.scp.css filename.
+RUN set -e; cd /app/publish/wwwroot; \
+    bundle=$(ls GeomancyWebUI.Client.*.bundle.scp.css 2>/dev/null | head -n1); \
+    if [ -n "$bundle" ] && [ ! -f GeomancyWebUI.Client.bundle.scp.css ]; then \
+      cp "$bundle" GeomancyWebUI.Client.bundle.scp.css; \
+    fi
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .

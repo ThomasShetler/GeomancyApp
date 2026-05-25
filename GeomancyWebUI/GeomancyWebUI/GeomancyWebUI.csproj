@@ -39,4 +39,26 @@
     </Content>
   </ItemGroup>
 
+  <!-- Stable filename for WASM client scoped CSS (FigureDetailPanel, charts, walkthrough). -->
+  <Target Name="LinkClientScopedCssBundle" AfterTargets="Build">
+    <ItemGroup>
+      <_ClientScopedBundle Include="$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)\staticwebassets\GeomancyWebUI.Client.*.bundle.scp.css" />
+      <_ClientScopedBundle Include="$(MSBuildProjectDirectory)\..\GeomancyWebUI.Client\obj\$(Configuration)\$(TargetFramework)\scopedcss\projectbundle\GeomancyWebUI.Client.bundle.scp.css" />
+    </ItemGroup>
+    <Copy Condition="'@(_ClientScopedBundle)' != ''"
+          SourceFiles="@(_ClientScopedBundle)"
+          DestinationFiles="$(MSBuildProjectDirectory)\wwwroot\GeomancyWebUI.Client.bundle.scp.css"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="LinkClientScopedCssBundlePublish" AfterTargets="Publish">
+    <ItemGroup>
+      <_PubClientBundle Include="$(PublishDir)wwwroot\GeomancyWebUI.Client.*.bundle.scp.css" />
+    </ItemGroup>
+    <Copy Condition="'@(_PubClientBundle)' != ''"
+          SourceFiles="@(_PubClientBundle)"
+          DestinationFiles="$(PublishDir)wwwroot\GeomancyWebUI.Client.bundle.scp.css"
+          SkipUnchangedFiles="true" />
+  </Target>
+
 </Project>
