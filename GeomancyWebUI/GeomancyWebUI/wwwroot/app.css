@@ -51,6 +51,25 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+/* Skip link (also in MainLayout scoped CSS); global fallback if isolation bundle is late. */
+.skip-link {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+main:has(.mobile-shell) > .skip-link,
+main:has(.workspace-shell) > .skip-link,
+main:has(.wiki-interactive-shell) > .skip-link {
+    display: none;
+}
+
 /* When the /mobile route is active the .mobile-shell needs the full viewport
    to fit its 100dvh - nav math; the article wrapper's chrome padding (px-4 +
    the .content padding-top above) eats screen real estate that the

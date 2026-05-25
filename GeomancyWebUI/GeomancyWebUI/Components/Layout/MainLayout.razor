@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
-<a class="skip-link" href="#main-content">Skip to main content</a>
+@inject NavigationManager Navigation
 
 <div class="page">
     <div class="sidebar">
@@ -8,16 +7,36 @@
     </div>
 
     <main id="main-content">
-        <article class="content px-4">
+        <a class="skip-link" href="#content-start">Skip to main content</a>
+        <article id="content-start" class="content px-4">
             @Body
         </article>
-        <SiteFooter />
+        @if (!IsImmersiveRoute)
+        {
+            <SiteFooter />
+        }
     </main>
 </div>
 
 @code {
     // Theme: Scoped ThemeService is one per circuit because Routes.razor uses
     // @rendermode InteractiveServer for the whole Router subtree (nav + @Body).
+
+    /// <summary>Workspace, mobile, and interactive wiki flows are full-viewport; no global footer.</summary>
+    private bool IsImmersiveRoute
+    {
+        get
+        {
+            var path = new Uri(Navigation.Uri).AbsolutePath.TrimEnd('/').ToLowerInvariant();
+            if (string.IsNullOrEmpty(path))
+                return false;
+            if (path is "/mobile" or "/workspace" or "/chart")
+                return true;
+            return path.StartsWith("/wiki/how-to/", StringComparison.Ordinal)
+                   && path.Contains("interactive", StringComparison.Ordinal);
+        }
+    }
+
 }
 
 <div id="blazor-error-ui">
