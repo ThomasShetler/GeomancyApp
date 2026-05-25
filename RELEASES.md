@@ -1,5 +1,26 @@
 # Releases
 
+## v1.0.4 — UI stability restore (pre-footer layout)
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Stability patch after **v1.0.1–v1.0.3** layout work — restores pre–1.0.0 shell behavior while keeping branding and SEO.
+
+### Highlights
+
+- **Layout reverted.** Removed global site footer, skip link, and viewport `overflow` locks on desktop workspace that broke modals, taps, and mobile chrome.
+- **Cast a chart dialog.** Modal renders outside the landing flex tree and uses a higher z-index so it displays and responds on phones and desktop.
+- **Mobile workspace.** Keeps global `mobile-workspace.css` for tab/panel styling on top of the restored layout rules.
+- **Interactive mode.** Restored standard `InteractiveServer` render mode (no prerender) for reliable click/tap handlers.
+- **Preserved.** Square caduceus logo, favicon, `PageSeo` / Open Graph, `robots.txt`, `sitemap.xml`, About copy, and Google Search Console verification.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.4.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+
+---
+
 ## v1.0.3 — Mobile workspace layout fix
 
 **Released:** May 2026  
