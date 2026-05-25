@@ -84,7 +84,20 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseStaticFiles();
+// Non-fingerprinted wwwroot files (clipboard.js, theme.js, app.css) are easy for
+// phones and Railway edge caches to keep across deploys. Force revalidation.
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var path = ctx.Context.Request.Path.Value ?? string.Empty;
+        if (path is "/clipboard.js" or "/theme.js"
+            || path.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
+        {
+            ctx.Context.Response.Headers.CacheControl = "no-cache, must-revalidate";
+        }
+    }
+});
 app.UseAntiforgery();
 
 app.MapControllers();
