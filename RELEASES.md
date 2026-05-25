@@ -15,6 +15,150 @@
 - **Share & archive.** **Share Chart** copies a readable `?seed=` URL; phones opening `/workspace?seed=…` redirect to `/mobile?seed=…`. **Download JSON** and **Copy JSON** on **Lots & Other** export the full reading (`schemaVersion: 1`).
 - **Presentation.** Light and dark themes with per-circuit persistence; landing and footer surfaces show **Official** channel and **v1.0.0**.
 
+### What's new since v0.2.2
+
+Production **`master`** shipped **v0.2.2** (workspace, share/export, WoP, mobile shell, theme fix). **v1.0.0** merges **29 commits** from **`web-app`** (~**133 files**, **+18,968 / −2,864** lines vs `master`). The bulk of the delta is new **wiki** and **interactive casting** UI, a **JSON-backed figure corpus**, and a redesigned **figure detail** / **perfections** experience—not a rewrite of chart math (still `Geomancy.Core` + in-process handlers).
+
+### Technical changes (comprehensive)
+
+#### Data layer & `Geomancy.Core`
+
+| Change | Detail |
+|--------|--------|
+| **Corpus externalized** | Removed four `FigureCorpus.Part*.cs` compile-time blobs (~1,200 lines). Figure text now loads from **`databank/FigureCorpus/`** (`Figures.json`, `NewAndImprovedFigures.json`, `Figures.schema.json`). |
+| **`FigureCorpusLoader`** | New loader with validation; shared by Core, API handlers, and Blazor. |
+| **Reference JSON moved** | House, court, and Way of Points directory data relocated under **`databank/`** (`HouseData.json`, `CourtData.json`, `ElementData.json`, `PathTypeData.json`). Loaders updated in `HouseDirectoryLoader`, `WayOfPointsDirectoryLoader`. |
+| **Tests** | `FigureCorpusLoaderTests` in `GeomancyUnitTesting`. |
+| **Models** | `FigureData` / `TraditionalSourceEntry` extended for richer corpus fields; API contract models adjusted. |
+
+*Commits:* `243b828`, `1099fb4`, `8d96e5c`
+
+#### Workspace — figure detail & perfections
+
+| Change | Detail |
+|--------|--------|
+| **Figure detail panel** | Moved to **`GeomancyWebUI.Client`** (`FigureDetailPanel.razor` + scoped CSS). Card-based layout, circular figure emblem in header, restored **master house** and **court** reference stacks, pattern-based navigation, polished traditional sources block. |
+| **Perfections tab** | `CompactPerfectionListRow`, **`PerfectionIcon`** (SVG), subsection grouping; redundant “By Aspect” subgroup removed; aspects nested under Perfections / Denials. |
+| **Aspect UI** | `AspectDirectionHelper` — dexter/sinister direction arrows in list + detail; `PerfectionDetailPanel` styling refresh. |
+| **Stage-scoped court/houses** | `StageScopedCourtAndHousesTable` for walkthrough-aligned house tables. |
+| **Helpers** | `FigureDisplayHelper`, `FigureMarking`, `PerfectionIconHelper` centralized display logic. |
+| **Dead code removed** | Legacy server-side `Workspace/FigureDetailPanel.razor` deleted after client migration. |
+
+*Commits:* `21e11c0`, `d220f2d`, `a0228e8`, `1099fb4`, `3a5350a`, `9ccb5dc`, `b59c2e1`, `ef67f7d`, `3cfd0e1`, `8d96e5c`
+
+#### Geomancy Wiki (new site area)
+
+| Route | Status | Implementation |
+|-------|--------|----------------|
+| `/wiki` | Live | Hub with `WikiTopicCard` (Live / Coming soon badges) |
+| `/wiki/glossary/figures`, `/wiki/glossary/figures/{slug}` | Live | Filterable glossary, `WikiFigureSlug`, article + `WikiFigureCorpusSections` |
+| `/wiki/glossary/houses`, `/wiki/glossary/houses/{id}` | Live | House glossary + articles, `WikiHouseReferenceStack` |
+| `/wiki/how-to/generate-figures` | Live | Prose + **`WikiFigurePracticeSection`** + **`FigureDotCaster`** |
+| `/wiki/how-to/shield-chart` | Live | Structure guide + static walkthrough copy |
+| `/wiki/how-to/shield-chart/interactive` | Live | Full **`ChartCastingWalkthrough`** host |
+| `/wiki/how-to/generate-figures/interactive` | Redirect | Server redirect → shield interactive |
+| `/wiki/how-to/house-chart`, `/wiki/how-to/use-the-app` | Draft | `WikiPlaceholderBody` outlines only |
+| `/wiki/methods/perfections-and-aspects`, `/wiki/methods/way-of-points` | Draft | Outlines only |
+
+**New wiki components:** `WikiArticleShell`, `WikiFigureHeader` (Pattern mini-card), `WikiFigureDataPanel`, `ShieldChartStructureGuide`, `ShieldChartSectionDemo`, **`wiki.css`** (~2,400 lines).
+
+*Commits:* `d3556ec`, `6c3d8b6`, `2b3850b`, `16cfe3f`, `e67e310`
+
+#### Interactive casting & walkthrough
+
+| Component | Role |
+|-----------|------|
+| **`ChartCastingWalkthrough.razor`** | ~2,550 lines — tabbed stages (Mothers → Daughters → Nieces → Witnesses → Judge → Reconciler), slot targeting, mobile drawer phases, chart preview events. |
+| **`DaughterGenerationVisualizer.razor`** | Animated daughter derivation between shield rows. |
+| **`ChartSurface.razor`** | Extended highlights, empty cells, aria labels, walkthrough host modes (`ChartCastingHostMode`, `ShieldSectionFocus`, `ShieldRowVisibility`). |
+| **`FigureDotCaster.razor`** | Canvas dot marking, pairing animation, mobile tap targets; **`figure-dot-caster.css`**. |
+| **`CastChartEntryDialog`** | Home-page three-path entry (workspace / mothers setup / learn). |
+| **`WorkspaceEntryQuery`** | Shared `?setup=mothers` path builder for workspace + mobile. |
+
+*Commits:* `2e2bdab`, `4698471`, `ad99d29`, `436c0a0`, `560b931`, `6733e19`
+
+#### Mobile workspace & `CastingMobileShell`
+
+| Change | Detail |
+|--------|--------|
+| **`CastingMobileShell.razor`** | Shared mobile casting chrome (drawer, chart scaling, mothers strip) used by wiki interactive host and **`/mobile`** mothers setup. |
+| **Mothers setup on phone** | `/mobile` mothers flow uses same shell as wiki; chart drawer preview during dot casting; drawer scaling + Mother strip fixes. |
+| **CSS** | `casting-mobile-shell.css`, mobile workspace drawer rules in `MobileWorkspace.razor.css`. |
+| **Wiki mobile** | `wiki-interactive-shell--mobile` layout locks in `MainLayout` (100dvh, footer hidden on mobile shell pages). |
+
+*Commits:* `4cdc2aa`, `9a2c643`, `41772b9`, `0bd7a58`, `3cc7a8a`, `60dda05`, `560b931`
+
+#### Chart surface, clipboard & deploy
+
+- **`chart-surface.css`** — layout tokens for shield grid and walkthrough overlays.
+- **`clipboard.js`** — `downloadTextFile` + clipboard fallback (share/export from 0.2.x, still used).
+- **`Dockerfile` / `.csproj`** — copy `databank/` into publish output so corpus JSON is available in the Railway container.
+- **`InProcessGeomancyService` / `GeomancyApiService`** — wiki and workspace call same handlers; glossary pages use directory + figure APIs.
+
+#### Site shell, landing & v1.0.0 polish (`cb01cc7`)
+
+- **`GeofancyVersion`:** `1.0.0`, channel **Official**; `Directory.Build.props` + three `AssemblyInfo.cs` aligned.
+- **Landing (`Home.razor`):** Wiki + interactive CTAs, 1.0.0 release copy, feature cards updated.
+- **`SiteFooter`:** Global footer (version, changelog, quick links); hidden on full-screen mobile shell routes.
+- **`NavMenu`:** Home → Wiki → smart **Workspace** button (`geofancyDeviceIsMobile`) → Mobile workspace → About.
+- **404 / Error pages**, skip-link, default meta description, **`DEPLOY.md`** documents **`master`** = prod / **`web-app`** = testing.
+- **`ShieldChartStructureGuide`:** Links to workspace + interactive walkthrough (not legacy `/chart`).
+
+### New & renamed projects paths (reference)
+
+```
+databank/FigureCorpus/          # JSON corpus + schema
+databank/HouseAndCourtDirectory/
+databank/WayOfPointsDirectory/
+GeomancyWebUI.Client/Components/
+  ChartCastingWalkthrough.razor
+  DaughterGenerationVisualizer.razor
+  FigureDotCaster.razor
+  CastingMobileShell.razor
+  FigureDetailPanel.razor       # authoritative detail UI
+GeomancyWebUI/Components/
+  Wiki/                         # article shell, corpus sections, topic cards
+  Pages/Wiki*.razor             # routes listed above
+  CastChartEntryDialog.razor
+  Layout/SiteFooter.razor
+GeomancyWebUI/wwwroot/
+  wiki.css, casting-mobile-shell.css, figure-dot-caster.css
+```
+
+### Full commit log (v0.2.2 → v1.0.0)
+
+| Commit | Summary |
+|--------|---------|
+| `243b828` | Move static corpus and reference data into `databank/` JSON |
+| `21e11c0` | Aspect UI: dexter/sinister arrows, detail panel polish |
+| `d220f2d` | Fix perfections list house labels; tighter rows |
+| `a0228e8` | Compact perfections panel with SVG icons and subsections |
+| `1099fb4` | Merge improved figure corpus; redesign figure detail panel |
+| `3a5350a` | Figure detail navigation + visual styling |
+| `9ccb5dc` | Restore house/court reference UI in figure detail |
+| `b59c2e1` | Remove redundant “By Aspect” subgroup |
+| `8d96e5c` | Traditional sources styling in figure detail |
+| `ef67f7d` | Nest aspects under Perfections and Denials |
+| `3cfd0e1` | Circular figure emblem in detail panel header |
+| `d3556ec` | Mobile-friendly wiki; live figure & house glossaries |
+| `6c3d8b6` | Figure wiki pages; pattern-based selector |
+| `2b3850b` | Pattern mini-card on wiki figure header |
+| `16cfe3f` | Fix clipped dots in Pattern mini-card |
+| `e67e310` | Enlarge Pattern mini-card emblem |
+| `2e2bdab` | Interactive figure casting + shield walkthrough |
+| `ad99d29` | Figure dot caster: canvas marking, pairing animation |
+| `436c0a0` | Dot caster mobile tap accuracy and layout |
+| `4698471` | Cast-chart entry dialog + interactive walkthrough route |
+| `4cdc2aa` | Mobile chart drawer for mothers setup preview |
+| `9a2c643` | Mobile mothers drawer scaling + Mother strip |
+| `41772b9` | Mobile mothers casting UX in drawer |
+| `0bd7a58` | Mobile wiki casting shell; mothers drawer QoL |
+| `3cc7a8a` | `/mobile` mothers setup uses `CastingMobileShell` |
+| `60dda05` | Wiki shield chart scaling on narrow viewports |
+| `560b931` | Shield derivation visualizer: court animations, mobile scaling |
+| `6733e19` | Generate-figures wiki: practice caster + corpus panel |
+| `cb01cc7` | **v1.0.0** — version bump, landing, footer, nav, copy polish |
+
 ### Stability (carried from v0.2.1–0.2.2)
 
 - **Theme state** scoped per Blazor Server circuit so nav toggle and workspace stay in sync.
