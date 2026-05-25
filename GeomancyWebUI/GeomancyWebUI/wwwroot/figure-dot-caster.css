@@ -571,6 +571,28 @@
 }
 
 
+/* Mobile mothers setup: progressive row unlock + actions above rows */
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-actions--top {
+    margin-bottom: 0.65rem;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked {
+    opacity: 0.45;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked .figure-dot-canvas {
+    cursor: not-allowed;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-focused {
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 8%, var(--bg-primary, #fff));
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-focused .figure-dot-canvas.is-row-focused {
+    outline: 2px solid color-mix(in srgb, var(--accent-color, #c9a227) 55%, transparent);
+    outline-offset: 1px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .figure-dot-pair-line.is-drawing,
     .canvas-mark.is-paired-animate,

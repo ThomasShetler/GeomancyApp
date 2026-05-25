@@ -21,6 +21,14 @@
         </p>
     }
 
+    @if (MobileActionsFirst && _phase == CasterPhase.Marking && !HideActions)
+    {
+        <div class="figure-dot-caster-actions figure-dot-caster-actions--top">
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
+            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
+        </div>
+    }
+
     <div class="figure-dot-caster-body">
         <div class="figure-dot-caster-rows" aria-label="Mark dots in four horizontal rows">
             @for (var row = 0; row < 4; row++)
@@ -41,13 +49,13 @@
                     </div>
                     <div class="figure-dot-row-track-wrap">
                         <div @ref="_canvasRefs[rowIndex]"
-                             class="figure-dot-canvas @(IsLocked ? "is-locked" : "")"
+                             class="figure-dot-canvas @GetCanvasClass(rowIndex)"
                              @onpointerdown="(e) => OnCanvasPointerDown(e, rowIndex)"
                              @onpointerdown:preventDefault="true"
                              @onpointerdown:stopPropagation="true"
                              role="button"
-                             tabindex="@(_phase == CasterPhase.Marking && !IsLocked ? 0 : -1)"
-                             aria-label="@($"{RowNames[row]} row — tap to add a mark, {marks.Count} marked")">
+                             tabindex="@(_phase == CasterPhase.Marking && !IsRowInputLocked(rowIndex) ? 0 : -1)"
+                             aria-label="@GetRowAriaLabel(rowIndex, marks.Count)">
                             <svg class="figure-dot-canvas-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                                 @foreach (var line in GetPairConnectorLines(rowIndex))
                                 {
@@ -64,11 +72,11 @@
                                       style="@GetMarkStyle(mark)"
                                       aria-hidden="true">×</span>
                             }
-                            @if (marks.Count == 0 && _phase == CasterPhase.Marking)
+                            @if (marks.Count == 0 && _phase == CasterPhase.Marking && !IsRowInputLocked(rowIndex))
                             {
-                                <span class="figure-dot-placeholder">Tap to mark</span>
+                                <span class="figure-dot-placeholder">@GetRowPlaceholder(rowIndex)</span>
                             }
-                            @if (ShowRowUndo && _phase == CasterPhase.Marking && marks.Count > 0 && !IsLocked)
+                            @if (ShowRowUndo && _phase == CasterPhase.Marking && marks.Count > 0 && !IsRowInputLocked(rowIndex))
                             {
                                 <button type="button"
                                         class="figure-dot-row-undo"
@@ -123,7 +131,7 @@
             </div>
         </div>
     }
-    else if (_phase == CasterPhase.Marking && !HideActions)
+    else if (_phase == CasterPhase.Marking && !HideActions && !MobileActionsFirst)
     {
         <div class="figure-dot-caster-actions">
             <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
@@ -187,6 +195,13 @@
     [Parameter] public bool ShowRowCounts { get; set; } = true;
     [Parameter] public bool ShowRowUndo { get; set; } = true;
     [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
+    [Parameter] public bool MobileProgressiveRows { get; set; }
+    [Parameter] public bool MobileActionsFirst { get; set; }
+
+    private int _activeRowIndex;
+    private int? _editUnlockedRow;
+    private DateTime _lastRowTapUtc;
+    private int _lastRowTapIndex = -1;
 
     private bool IsLocked => Disabled || _phase == CasterPhase.Pairing;
     private bool CanGenerate => !IsLocked && _phase == CasterPhase.Marking
@@ -228,7 +243,138 @@
         if (IsLocked) classes.Add("is-locked");
         if (_phase == CasterPhase.Pairing) classes.Add("is-pairing");
         if (_phase == CasterPhase.Complete) classes.Add("is-complete");
+        if (MobileProgressiveRows) classes.Add("is-mobile-progressive");
+        if (MobileActionsFirst) classes.Add("is-mobile-actions-first");
         return string.Join(" ", classes);
+    }
+
+    private bool IsRowInputLocked(int rowIndex)
+    {
+        if (IsLocked)
+        {
+            return true;
+        }
+
+        if (!MobileProgressiveRows || _phase != CasterPhase.Marking)
+        {
+            return false;
+        }
+
+        if (rowIndex > _activeRowIndex)
+        {
+            return true;
+        }
+
+        if (rowIndex < _activeRowIndex)
+        {
+            return _editUnlockedRow != rowIndex;
+        }
+
+        return false;
+    }
+
+    private string GetCanvasClass(int rowIndex)
+    {
+        var classes = new List<string>();
+        if (IsLocked || IsRowInputLocked(rowIndex))
+        {
+            classes.Add("is-locked");
+        }
+
+        if (MobileProgressiveRows && _phase == CasterPhase.Marking && rowIndex == _activeRowIndex)
+        {
+            classes.Add("is-row-focused");
+        }
+
+        return string.Join(' ', classes);
+    }
+
+    private string GetRowAriaLabel(int rowIndex, int markCount)
+    {
+        if (IsRowInputLocked(rowIndex))
+        {
+            if (rowIndex > _activeRowIndex)
+            {
+                return $"{RowNames[rowIndex]} row — finish {RowNames[_activeRowIndex]} first";
+            }
+
+            return $"{RowNames[rowIndex]} row — double-tap to edit";
+        }
+
+        return $"{RowNames[rowIndex]} row — tap to add a mark, {markCount} marked";
+    }
+
+    private string GetRowPlaceholder(int rowIndex)
+    {
+        if (MobileProgressiveRows && rowIndex > _activeRowIndex)
+        {
+            return $"Finish {RowNames[_activeRowIndex]} first";
+        }
+
+        if (MobileProgressiveRows && rowIndex < _activeRowIndex)
+        {
+            return "Double-tap to edit";
+        }
+
+        return "Tap to mark";
+    }
+
+    private void SyncActiveRowIndex()
+    {
+        if (!MobileProgressiveRows)
+        {
+            return;
+        }
+
+        for (var i = 0; i < 4; i++)
+        {
+            if (_rows[i].Count < FigureMarking.MinDotsPerRow)
+            {
+                _activeRowIndex = i;
+                return;
+            }
+        }
+
+        _activeRowIndex = 3;
+    }
+
+    private bool TryUnlockRowForEdit(int rowIndex)
+    {
+        if (!MobileProgressiveRows || rowIndex >= _activeRowIndex)
+        {
+            return false;
+        }
+
+        var now = DateTime.UtcNow;
+        if (_lastRowTapIndex == rowIndex && (now - _lastRowTapUtc).TotalMilliseconds < 450)
+        {
+            _editUnlockedRow = rowIndex;
+            _lastRowTapIndex = -1;
+            return true;
+        }
+
+        _lastRowTapIndex = rowIndex;
+        _lastRowTapUtc = now;
+        return false;
+    }
+
+    private void AdvanceActiveRowAfterMark(int rowIndex)
+    {
+        if (!MobileProgressiveRows || rowIndex != _activeRowIndex)
+        {
+            return;
+        }
+
+        if (_rows[rowIndex].Count < FigureMarking.MinDotsPerRow)
+        {
+            return;
+        }
+
+        _editUnlockedRow = null;
+        if (_activeRowIndex < 3)
+        {
+            _activeRowIndex++;
+        }
     }
 
     private static string GetRowCountClass(int count) =>
@@ -244,6 +390,19 @@
         if (_phase >= CasterPhase.Complete && _resolvedLines != null)
         {
             return "is-resolved";
+        }
+
+        if (MobileProgressiveRows && _phase == CasterPhase.Marking)
+        {
+            if (IsRowInputLocked(rowIndex))
+            {
+                return rowIndex == _activeRowIndex ? string.Empty : "is-row-locked";
+            }
+
+            if (rowIndex == _activeRowIndex)
+            {
+                return "is-row-focused";
+            }
         }
 
         return string.Empty;
@@ -278,8 +437,18 @@
 
     private async Task OnCanvasPointerDown(PointerEventArgs e, int rowIndex)
     {
-        if (Disabled || _phase != CasterPhase.Marking || IsLocked)
+        if (Disabled || _phase != CasterPhase.Marking)
         {
+            return;
+        }
+
+        if (IsRowInputLocked(rowIndex))
+        {
+            if (TryUnlockRowForEdit(rowIndex))
+            {
+                StateHasChanged();
+            }
+
             return;
         }
 
@@ -315,6 +484,7 @@
             YPercent = pos.Y
         });
         _dropFlashMarkKey = MarkKey(rowIndex, markId);
+        AdvanceActiveRowAfterMark(rowIndex);
 
         StateHasChanged();
     }
@@ -350,12 +520,13 @@
 
     private void RemoveLastMark(int rowIndex)
     {
-        if (Disabled || _phase != CasterPhase.Marking || IsLocked || _rows[rowIndex].Count == 0)
+        if (Disabled || _phase != CasterPhase.Marking || IsRowInputLocked(rowIndex) || _rows[rowIndex].Count == 0)
         {
             return;
         }
 
         _rows[rowIndex].RemoveAt(_rows[rowIndex].Count - 1);
+        SyncActiveRowIndex();
         StateHasChanged();
     }
 
@@ -491,6 +662,9 @@
         _revealedFigureLines = 0;
         _figureNameRevealed = false;
         _phase = CasterPhase.Marking;
+        _activeRowIndex = 0;
+        _editUnlockedRow = null;
+        _lastRowTapIndex = -1;
         StateHasChanged();
     }
 

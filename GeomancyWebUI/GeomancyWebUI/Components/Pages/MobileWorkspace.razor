@@ -65,25 +65,10 @@
             }
         </button>
 
-        <div class="mobile-chart-body" aria-hidden="@chartCollapsed.ToString().ToLower()">
+        <div class="mobile-chart-body @(showMothersSetup ? "mobile-chart-body--mothers-setup" : "")"
+             aria-hidden="@chartCollapsed.ToString().ToLower()">
             @if (showMothersSetup)
             {
-                <div class="mobile-chart-stage">
-                    <ChartSurface Chart="@null"
-                                  View="ChartSurfaceView.Shield"
-                                  IsWikiLayout="true"
-                                  ShieldRowVisibility="ShieldRowVisibility.All"
-                                  ShowEmptyDerivedSlots="true"
-                                  ShowCourtFigures="false"
-                                  InteractiveMothers="false"
-                                  House1Figure="@mothersPreviewHouse1"
-                                  House2Figure="@mothersPreviewHouse2"
-                                  House3Figure="@mothersPreviewHouse3"
-                                  House4Figure="@mothersPreviewHouse4"
-                                  VisibleHouseNumbers="@MothersPreviewVisibleHouses"
-                                  HighlightedHouseNumbers="@mothersPreviewHighlights" />
-                </div>
-
                 <div class="mobile-mother-inputs"
                      role="group"
                      aria-label="Mothers cast so far">
@@ -131,6 +116,22 @@
                                              ShowHouseStrength="false" />
                         </div>
                     </div>
+                </div>
+
+                <div class="mobile-chart-stage mobile-chart-stage--mothers-preview">
+                    <ChartSurface Chart="@null"
+                                  View="ChartSurfaceView.Shield"
+                                  IsWikiLayout="true"
+                                  ShieldRowVisibility="ShieldRowVisibility.All"
+                                  ShowEmptyDerivedSlots="true"
+                                  ShowCourtFigures="false"
+                                  InteractiveMothers="false"
+                                  House1Figure="@mothersPreviewHouse1"
+                                  House2Figure="@mothersPreviewHouse2"
+                                  House3Figure="@mothersPreviewHouse3"
+                                  House4Figure="@mothersPreviewHouse4"
+                                  VisibleHouseNumbers="@MothersPreviewVisibleHouses"
+                                  HighlightedHouseNumbers="@mothersPreviewHighlights" />
                 </div>
             }
             else
@@ -258,6 +259,7 @@
                     <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly"
                                              ShowChartColumn="false"
                                              HostMode="ChartCastingHostMode.EmbeddedWorkspace"
+                                             EmbeddedMobileMothers="true"
                                              WorkspaceBasePath="/mobile"
                                              OnMothersPreviewChanged="HandleMothersPreviewChangedAsync"
                                              OnMothersCompleted="HandleMothersCompletedAsync" />

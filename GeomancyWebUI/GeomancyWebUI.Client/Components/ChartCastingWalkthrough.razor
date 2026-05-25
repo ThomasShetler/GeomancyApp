@@ -44,33 +44,71 @@
         <section class="chart-casting-guidance-column">
             @if (_activeStage == WalkthroughStage.Mothers)
             {
-                <p class="chart-casting-shield-hint">
-                    Cast each Mother into the shield slot with the <strong>matching house number</strong> (highlighted in the chart).
-                    The top row reads <strong>8, 7, 6, 5, 4, 3, 2, 1</strong> left to right, so start with
-                    <strong>Vita (House 1)</strong> in the rightmost slot.
-                </p>
+                @if (!EmbeddedMobileMothers)
+                {
+                    <p class="chart-casting-shield-hint">
+                        Cast each Mother into the shield slot with the <strong>matching house number</strong> (highlighted in the chart).
+                        The top row reads <strong>8, 7, 6, 5, 4, 3, 2, 1</strong> left to right, so start with
+                        <strong>Vita (House 1)</strong> in the rightmost slot.
+                    </p>
+                }
 
                 @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
                 {
                     var current = _motherSlots[_currentMotherIndex];
-                    <p class="chart-casting-slot-target" aria-live="polite">
-                        @GetMotherSlotTargetText(current.HouseNumber)
-                    </p>
+                    @if (!EmbeddedMobileMothers)
+                    {
+                        <p class="chart-casting-slot-target" aria-live="polite">
+                            @GetMotherSlotTargetText(current.HouseNumber)
+                        </p>
+                    }
                     <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                                      @ref="_activeCaster"
                                      MotherLabel="@current.Label"
                                      Compact="true"
                                      AutoReset="false"
                                      ShowInstruction="false"
-                                     ShowRowCounts="false"
-                                     ShowRowUndo="false"
+                                     ShowRowCounts="@(!EmbeddedMobileMothers)"
+                                     ShowRowUndo="@(!EmbeddedMobileMothers)"
                                      ShowMarkAgainButton="false"
+                                     MobileProgressiveRows="@EmbeddedMobileMothers"
+                                     MobileActionsFirst="@EmbeddedMobileMothers"
                                      OnFigureCompleted="OnMotherFigureCompleted" />
+                    @if (EmbeddedMobileMothers)
+                    {
+                        <p class="chart-casting-slot-target chart-casting-slot-target--mobile" aria-live="polite">
+                            @GetMotherSlotTargetText(current.HouseNumber)
+                        </p>
+                        <p class="chart-casting-shield-hint chart-casting-shield-hint--mobile">
+                            Open the chart above to see this Mother on the shield. Collapse the chart when you are ready for the next row.
+                        </p>
+                    }
                 }
                 else if (_motherSlots.All(s => s.Figure != null))
                 {
-                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact">
+                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact @(EmbeddedMobileMothers ? "is-mobile-embedded" : "")">
+                        @if (EmbeddedMobileMothers)
+                        {
+                            <div class="chart-casting-summary-actions chart-casting-summary-actions--mobile-top">
+                            @if (HostMode == ChartCastingHostMode.EmbeddedWorkspace)
+                            {
+                                <button type="button"
+                                        class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                        disabled="@_isContinuingToWorkspace"
+                                        @onclick="ContinueToWorkspaceAsync">
+                                    @(_isContinuingToWorkspace ? "Generating chart..." : "Generate the full chart")
+                                </button>
+                            }
+                            <button type="button"
+                                    class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
+                                    @onclick="RestartMothers">
+                                Cast again
+                            </button>
+                            </div>
+                        }
                         <p class="chart-casting-stage-complete-title">Four Mothers complete</p>
+                        @if (!EmbeddedMobileMothers)
+                        {
                         <div class="chart-casting-finish chart-casting-stage-actions">
                         <div class="chart-casting-summary-actions">
                             @if (HostMode == ChartCastingHostMode.EmbeddedWorkspace)
@@ -105,6 +143,7 @@
                             </button>
                         </div>
                         </div>
+                        }
                     </div>
                 }
             }
@@ -636,6 +675,7 @@
     [Parameter] public string WorkspaceBasePath { get; set; } = "/workspace";
     [Parameter] public EventCallback<MothersCompletedEventArgs> OnMothersCompleted { get; set; }
     [Parameter] public EventCallback<MothersPreviewChangedEventArgs> OnMothersPreviewChanged { get; set; }
+    [Parameter] public bool EmbeddedMobileMothers { get; set; }
 
     private bool _isContinuingToWorkspace;
 
@@ -655,6 +695,11 @@
             if (ShowChartColumn)
             {
                 classes.Add("is-embedded-workspace-with-chart");
+            }
+
+            if (EmbeddedMobileMothers)
+            {
+                classes.Add("is-embedded-mobile-mothers");
             }
         }
 

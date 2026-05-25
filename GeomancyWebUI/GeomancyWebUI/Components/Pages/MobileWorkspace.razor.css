@@ -313,13 +313,32 @@
     );
 }
 
-/* Mothers setup: same chart + Mother strip layout as workspace drawer (no toolbar). */
-.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage {
+/* Mothers setup: Mother strip on top, wiki shield below (535px native size). */
+.mobile-chart-body--mothers-setup {
+    justify-content: flex-start;
+    padding-top: 0.35rem;
+}
+
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage,
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage--mothers-preview {
+    --chart-native-size: 535px;
     --chart-fit: min(
         calc(100dvw - 1rem),
         calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 8.6rem),
         70dvh
     );
+}
+
+.mobile-chart-drawer.is-mothers-setup .mobile-chart-stage--mothers-preview ::deep > .charts-side-by-side {
+    width: var(--chart-native-size) !important;
+    height: var(--chart-native-size) !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform-origin: top center;
+    transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
 }
 
 /* ============================================================
@@ -614,7 +633,7 @@
     -webkit-overflow-scrolling: touch;
 }
 
-/* Mothers setup: dot-caster only in panel; chart uses the drawer overlay above. */
+/* Mothers setup: dot-caster pinned to top of panel; chart in drawer above. */
 .mobile-mothers-setup {
     display: flex;
     flex-direction: column;
@@ -623,7 +642,7 @@
     height: 100%;
 }
 
-.mobile-mothers-setup ::deep .chart-casting-walkthrough.no-chart-column {
+.mobile-mothers-setup ::deep .chart-casting-walkthrough.is-embedded-mobile-mothers {
     min-width: 0;
     width: 100%;
     max-width: 100%;
@@ -634,6 +653,38 @@
     min-width: 0;
     max-width: 100%;
     padding: 0;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-guidance-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mobile-mothers-setup ::deep .figure-dot-caster.is-mobile-actions-first {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-primary);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--bg-primary) 70%, transparent);
+}
+
+.mobile-mothers-setup ::deep .chart-casting-shield-hint--mobile,
+.mobile-mothers-setup ::deep .chart-casting-slot-target--mobile {
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-summary-actions--mobile-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+}
+
+.mobile-mothers-setup ::deep .chart-casting-summary-actions--mobile-top .figure-dot-caster-btn {
+    width: 100%;
 }
 
 /* One-time (dismissible) orientation card; storage key in MobileWorkspace.razor */
