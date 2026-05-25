@@ -29,9 +29,21 @@
 }
 
 .site-footer-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     font-weight: 700;
     color: var(--text-primary);
     text-decoration: none;
+}
+
+.site-footer-logo {
+    width: 1.4rem;
+    height: 1.4rem;
+    object-fit: contain;
+    border-radius: 18%;
+    opacity: 0.95;
+    box-shadow: 0 1px 3px var(--shadow);
 }
 
 .site-footer-brand-link:hover {

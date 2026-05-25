@@ -11,7 +11,7 @@
 
 **Live app:** <https://geofancy.up.railway.app>
 
-> **Official release (v1.0.1).** Geofancy is a production-ready web workspace with a live geomancy wiki, interactive casting walkthroughs, and the full perfections and Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
+> **Official release (v1.0.2).** Geofancy is a production-ready web workspace with a live geomancy wiki, interactive casting walkthroughs, and the full perfections and Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
 
 ---
 

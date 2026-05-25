@@ -3,7 +3,6 @@
 @using GeomancyWebUI.Components
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Services
-@rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 
@@ -19,15 +18,14 @@
             <span class="landing-eyebrow-sep" aria-hidden="true">·</span>
             <span class="landing-eyebrow-version">v@(GeofancyVersion.Display)</span>
         </p>
-        <img src="img/logo.png"
-             alt=""
-             aria-hidden="true"
+        <img src="@Branding.LogoUrl"
+             alt="Geofancy emblem — caduceus on a starry shield"
              class="landing-logo"
              width="512"
              height="512"
              decoding="async"
              fetchpriority="high" />
-        <h1 id="landing-title" class="landing-title sr-only">Geofancy</h1>
+        <h1 id="landing-title" class="landing-title">Geofancy</h1>
         <p class="landing-tagline">
             The most advanced geomancy software available — desktop and mobile workspaces,
             a live geomancy wiki, interactive shield walkthroughs, perfections, and the
@@ -175,28 +173,23 @@
             </header>
 
             <p class="landing-release-summary">
-                <strong>Geofancy 1.0.1</strong> is a patch on the official 1.0 line: better search discoverability,
-                a refreshed About page, smarter site footer placement, and a fix restoring scroll in desktop
-                workspace tab panels.
+                <strong>Geofancy @GeofancyVersion.Display</strong> updates the official brand mark: a square
+                caduceus-on-shield emblem on the home page, nav, footer, favicon, and home-screen icon.
             </p>
 
             <h4 class="landing-release-h4">Highlights</h4>
             <ul class="landing-notes">
                 <li>
-                    <strong>SEO.</strong> Per-page titles and descriptions, Open Graph and Twitter cards,
-                    <code>robots.txt</code>, <code>sitemap.xml</code>, and Google Search Console verification.
+                    <strong>New emblem.</strong> Square caduceus-on-shield artwork with rounded app-icon styling on
+                    the landing hero, sidebar brand, and footer.
                 </li>
                 <li>
-                    <strong>About page.</strong> Updated for the wiki, interactive walkthrough, and official 1.0
-                    feature set — aligned with the landing page voice.
+                    <strong>Favicon &amp; PWA icon.</strong> Regenerated 32×32 favicon and 180×180 apple-touch icon
+                    from the new master asset.
                 </li>
                 <li>
-                    <strong>Site footer.</strong> Quick links on home, wiki, and about; omitted from workspace and
-                    mobile so charting stays immersive.
-                </li>
-                <li>
-                    <strong>Workspace scroll fix.</strong> Perfections, Court &amp; Houses, and Way of Points list and
-                    detail columns scroll correctly inside tabs again.
+                    <strong>Faster first paint.</strong> Cache-busted logo URLs, preload, and prerender so the mark
+                    shows before the Blazor circuit connects.
                 </li>
             </ul>
 
