@@ -50,19 +50,13 @@
 
 .landing-logo {
     display: block;
-    margin: 0 auto 0.75rem;
-    width: clamp(8rem, 40vw, 12rem);
+    margin: 0 auto 1.25rem;
+    width: clamp(10rem, 48vw, 16rem);
     height: auto;
+    aspect-ratio: 1;
     object-fit: contain;
-    filter: drop-shadow(0 8px 24px var(--shadow));
-}
-
-/* Emblem has a black field; on dark theme give a subtle frame so it reads as loaded. */
-:root[data-theme="dark"] .landing-logo {
-    padding: 0.35rem;
-    border-radius: 0.35rem;
-    background: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.18);
+    border-radius: 18%;
+    box-shadow: 0 10px 30px var(--shadow), 0 2px 8px var(--shadow);
 }
 
 .landing-tagline {

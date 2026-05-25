@@ -48,12 +48,8 @@
     height: 1.75rem;
     object-fit: contain;
     flex-shrink: 0;
-    border-radius: 2px;
-}
-
-:root[data-theme="dark"] .navbar-brand-logo {
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.2);
+    border-radius: 18%;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 .navbar-brand-text {
