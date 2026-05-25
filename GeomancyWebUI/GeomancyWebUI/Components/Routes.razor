@@ -11,7 +11,18 @@
     <NotFound>
         <PageTitle>Geofancy - Not Found</PageTitle>
         <LayoutView Layout="typeof(Layout.MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <div class="not-found" role="alert">
+                <h1 class="not-found-title">Page not found</h1>
+                <p class="not-found-lead">
+                    There is no page at this address. Try the home page, the wiki, or cast a chart to open the workspace.
+                </p>
+                <ul class="not-found-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/wiki">Geomancy Wiki</a></li>
+                    <li><a href="/workspace">Desktop workspace</a></li>
+                    <li><a href="/mobile">Mobile workspace</a></li>
+                </ul>
+            </div>
         </LayoutView>
     </NotFound>
 </Router>

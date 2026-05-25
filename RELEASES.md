@@ -1,5 +1,41 @@
 # Releases
 
+## v1.0.0 — Official Release
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+**Geofancy 1.0.0** is the first **official** public release of the web app: a complete geomancy workspace with a live reference wiki, interactive casting walkthroughs, polished mobile and desktop layouts, and the full interpretation stack practitioners have been using through the 0.1.x–0.2.x stable line.
+
+### Highlights
+
+- **Geomancy Wiki.** Live **Figure** and **House** glossaries backed by the same corpus as the workspace detail panels; how-tos for **generating figures** and **casting a shield chart**; an **interactive shield walkthrough** with step-by-step derivation animations; a **figure dot practice caster** on the generate-figures page.
+- **Casting entry & onboarding.** **Cast a chart!** on the home page opens a three-way dialog: open the workspace with Mothers ready, mark the four Mothers in-app, or start the interactive shield walkthrough. Mobile and desktop paths share one device-detection rule.
+- **Desktop & mobile workspaces.** Wide desktop layout with tabbed perfections, Way of Points (including **Classic Way of Points / Way of the Light**), court & houses, share links, and JSON export. Thumb-friendly **mobile workspace** with mothers drawer, chart overlay, and casting-shell parity with the wiki.
+- **Share & archive.** **Share Chart** copies a readable `?seed=` URL; phones opening `/workspace?seed=…` redirect to `/mobile?seed=…`. **Download JSON** and **Copy JSON** on **Lots & Other** export the full reading (`schemaVersion: 1`).
+- **Presentation.** Light and dark themes with per-circuit persistence; landing and footer surfaces show **Official** channel and **v1.0.0**.
+
+### Stability (carried from v0.2.1–0.2.2)
+
+- **Theme state** scoped per Blazor Server circuit so nav toggle and workspace stay in sync.
+- **Interactive render boundary** fixed: `@rendermode InteractiveServer` on the `Router` subtree only (no illegal `RenderFragment` across wrappers).
+- **Mobile routing** uses a **768px** breakpoint so modest desktop widths are not forced to `/mobile`.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.0.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production (Railway deploy); `web-app` = integration / testing.
+
+### Known limitations
+
+- No server-side saved charts yet — use **share links** and **JSON export** to keep readings.
+- Legacy WinForms desktop does not reflect the full web corpus layout; the web app is the recommended surface.
+- **Aspect analysis** under **Lots & Other** remains **experimental** (superseded by the Perfections tab for primary reading).
+- Desktop workspace enforces a minimum width (~1380px); very narrow viewports use the mobile layout or chart drawer scaling.
+- Some wiki topics (house-chart how-to, app guide, perfections & WoP method articles) remain **Coming soon** outlines.
+
+---
+
 ## v0.2.2 — Blazor render boundary & theme circuit
 
 **Released:** May 2026  

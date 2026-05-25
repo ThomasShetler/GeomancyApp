@@ -79,6 +79,33 @@
     color: var(--text-secondary);
 }
 
+.landing-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    text-decoration: none;
+    padding: 0.5rem 0.25rem;
+}
+
+.landing-cta-secondary:hover {
+    text-decoration: underline;
+}
+
+.landing-feature-links {
+    margin: 1rem 0 0;
+    text-align: center;
+}
+
 .landing-cta {
     appearance: none;
     border: 1px solid var(--border-color);

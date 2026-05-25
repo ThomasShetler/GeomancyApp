@@ -11,7 +11,7 @@
 
 **Live app:** <https://geofancy.up.railway.app>
 
-> **Beta release.** Geofancy is in active development. Charts, interpretations, perfections, and the Way of Points engine are stable and tested, but the app continues to evolve. Bug reports and feedback are welcome.
+> **Official release (v1.0.0).** Geofancy is a production-ready web workspace with a live geomancy wiki, interactive casting walkthroughs, and the full perfections and Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
 
 ---
 
@@ -38,7 +38,7 @@ It is meant for both the working practitioner and the serious student.
 
 ## Try it
 
-Open <https://geofancy.up.railway.app> on any device. Cast a chart and the workspace will load.
+Open <https://geofancy.up.railway.app> on any device. **Cast a chart!** opens the workspace (or an interactive shield walkthrough). Browse the **[geomancy wiki](https://geofancy.up.railway.app/wiki)** for glossaries and how-tos.
 
 ## Geomancy in one paragraph
 

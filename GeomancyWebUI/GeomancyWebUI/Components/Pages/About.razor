@@ -1,4 +1,5 @@
 @page "/about"
+@using GeomancyApp
 @rendermode InteractiveServer
 
 <PageTitle>Geofancy - About</PageTitle>
@@ -13,7 +14,8 @@
             friction and support study — <strong>not</strong> to replace careful human interpretation.
         </p>
         <p class="about-link-line">
-            <a href="https://geofancy.up.railway.app" target="_blank" rel="noopener noreferrer">Geofancy Beta</a>
+            <a href="https://geofancy.up.railway.app" target="_blank" rel="noopener noreferrer">Geofancy</a>
+            <span class="about-live-badge">Official release · v@(GeofancyVersion.Display)</span>
         </p>
     </header>
 
@@ -206,7 +208,8 @@
         </ul>
         <p class="about-footer-links">
             <strong>App:</strong>
-            <a href="https://geofancy.up.railway.app" target="_blank" rel="noopener noreferrer">Geofancy Beta</a>
+            <a href="https://geofancy.up.railway.app" target="_blank" rel="noopener noreferrer">Geofancy</a>
+            <span class="about-live-badge">Official release · v@(GeofancyVersion.Display)</span>
             <span class="about-footer-sep" aria-hidden="true">·</span>
             <strong>Source / issues:</strong>
             <a href="https://github.com/ThomasShetler/GeomancyApp" target="_blank" rel="noopener noreferrer">Geofancy on GitHub</a>

@@ -35,6 +35,23 @@
     font-weight: 600;
 }
 
+.about-live-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+}
+
+.about-footer-links .about-live-badge {
+    margin-left: 0.35rem;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.85rem;
+}
+
 .about-section {
     margin-top: 2rem;
     padding-top: 1.75rem;
