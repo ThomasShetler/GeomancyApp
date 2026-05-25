@@ -46,10 +46,6 @@
         </p>
     </section>
 
-    <CastChartEntryDialog Visible="_showCastDialog"
-                          OnClose="CloseCastDialog"
-                          OnChoice="OnCastEntryChoice" />
-
     <section class="landing-section" aria-labelledby="intro-heading">
         <h2 id="intro-heading" class="landing-h2">What is geomancy?</h2>
         <div class="landing-prose">
@@ -173,24 +169,24 @@
             </header>
 
             <p class="landing-release-summary">
-                <strong>Geofancy @GeofancyVersion.Display</strong> fixes the mobile workspace after recent layout
-                changes: restored tab and panel styling, stable full-height layout under the nav, and a cleaner
-                immersive chrome (no stray skip link or footer on chart flows).
+                <strong>Geofancy @GeofancyVersion.Display</strong> restores stable charting UI: the Cast a chart dialog,
+                mobile taps, and workspace layout work again after footer/layout experiments. Logo, SEO, and wiki
+                enhancements from 1.0.x are kept.
             </p>
 
             <h4 class="landing-release-h4">Highlights</h4>
             <ul class="landing-notes">
                 <li>
-                    <strong>Mobile workspace restored.</strong> Tab strip, chart drawer, and list/detail panel styling
-                    load reliably from global CSS on phones.
+                    <strong>Cast a chart dialog fixed.</strong> Modal displays above the nav and responds to taps on
+                    mobile and desktop.
                 </li>
                 <li>
-                    <strong>Layout under the nav.</strong> Viewport height chain keeps tabs and scroll regions aligned
-                    with the fixed chart handle.
+                    <strong>Pre-footer layout restored.</strong> Global footer and skip link removed; desktop workspace
+                    height rules reverted to the stable 1.0 line.
                 </li>
                 <li>
-                    <strong>Immersive routes.</strong> Skip link hidden on mobile and workspace; site footer omitted
-                    on charting flows.
+                    <strong>Mobile styling kept.</strong> Tab strip and panel CSS still load from global
+                    <code>mobile-workspace.css</code>.
                 </li>
             </ul>
 
@@ -226,6 +222,11 @@
         </article>
     </section>
 </div>
+
+@* Render outside .landing so flex/overflow layout never clips the modal backdrop. *@
+<CastChartEntryDialog Visible="_showCastDialog"
+                      OnClose="CloseCastDialog"
+                      OnChoice="OnCastEntryChoice" />
 
 @code {
     private static readonly object HomeJsonLd = new Dictionary<string, object>

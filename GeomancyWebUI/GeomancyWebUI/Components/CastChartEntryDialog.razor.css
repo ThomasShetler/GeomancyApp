@@ -1,7 +1,8 @@
 .cast-entry-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 2000;
+    z-index: 10000;
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: center;
