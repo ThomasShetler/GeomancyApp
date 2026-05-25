@@ -72,6 +72,65 @@ window.geofancyWriteStorage = (key, value) => {
     }
 };
 
+/** Open any collapsed <details> ancestors so the target section is visible. */
+function geofancyOpenDetailsAncestors(el) {
+    let node = el.parentElement;
+    while (node) {
+        if (node.tagName === 'DETAILS' && !node.open) {
+            node.open = true;
+        }
+        node = node.parentElement;
+    }
+    const nested = el.querySelector('details:not([open])');
+    if (nested) {
+        nested.open = true;
+    }
+}
+
+/**
+ * Find the element that actually scrolls for figure detail (desktop: .figure-detail-panel,
+ * mobile: .mobile-panel-body when panel CSS moves overflow to the parent).
+ */
+function geofancyFindFigureDetailScroller(targetEl) {
+    const panel = targetEl.closest('.figure-detail-panel');
+    let node = targetEl.parentElement;
+
+    while (node) {
+        const style = window.getComputedStyle(node);
+        const overflowY = style.overflowY;
+        const scrollable =
+            (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
+            node.scrollHeight > node.clientHeight + 2;
+
+        if (scrollable) {
+            const sticky =
+                panel?.querySelector('.detail-sticky-tabs') ||
+                node.querySelector('.detail-sticky-tabs');
+            const backBar = targetEl.closest('.mobile-panel')?.querySelector('.mobile-panel-back');
+            return { scroller: node, sticky, backBar };
+        }
+
+        node = node.parentElement;
+    }
+
+    if (panel) {
+        const style = window.getComputedStyle(panel);
+        const overflowY = style.overflowY;
+        const scrollable =
+            (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
+            panel.scrollHeight > panel.clientHeight + 2;
+        if (scrollable) {
+            return {
+                scroller: panel,
+                sticky: panel.querySelector('.detail-sticky-tabs'),
+                backBar: null
+            };
+        }
+    }
+
+    return null;
+}
+
 /** Scroll a panel section into view without triggering Blazor router navigation. */
 window.geofancyScrollToId = (id) => {
     const el = document.getElementById(id);
@@ -79,18 +138,19 @@ window.geofancyScrollToId = (id) => {
         return false;
     }
 
-    const details = el.querySelector('details:not([open])');
-    if (details) {
-        details.open = true;
-    }
+    geofancyOpenDetailsAncestors(el);
 
-    const scroller = el.closest('.figure-detail-panel');
-    if (scroller) {
-        const sticky = scroller.querySelector('.detail-sticky-tabs');
+    const scrollTarget = geofancyFindFigureDetailScroller(el);
+    if (scrollTarget?.scroller) {
+        const { scroller, sticky, backBar } = scrollTarget;
         const stickyH = sticky ? sticky.getBoundingClientRect().height : 0;
+        const backH =
+            backBar && scroller.closest('.mobile-panel-body')
+                ? backBar.getBoundingClientRect().height
+                : 0;
         const scrollerRect = scroller.getBoundingClientRect();
         const elRect = el.getBoundingClientRect();
-        const delta = elRect.top - scrollerRect.top + scroller.scrollTop - stickyH - 8;
+        const delta = elRect.top - scrollerRect.top + scroller.scrollTop - stickyH - backH - 8;
         scroller.scrollTo({ top: Math.max(0, delta), behavior: 'smooth' });
     } else {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -101,9 +161,15 @@ window.geofancyScrollToId = (id) => {
 
 /** Reset scroll position on a scrollable panel element. */
 window.geofancyScrollElementToTop = (el) => {
-    if (el) {
-        el.scrollTop = 0;
-        return true;
+    if (!el) {
+        return false;
     }
-    return false;
+
+    el.scrollTop = 0;
+    const mobileBody = el.closest('.mobile-panel-body');
+    if (mobileBody) {
+        mobileBody.scrollTop = 0;
+    }
+
+    return true;
 };

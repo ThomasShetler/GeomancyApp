@@ -1,46 +1,5 @@
 # Releases
 
-## v1.0.4 — UI stability restore (pre-footer layout)
-
-**Released:** May 2026  
-**Live app:** <https://geofancy.up.railway.app>
-
-Stability patch after **v1.0.1–v1.0.3** layout work — restores pre–1.0.0 shell behavior while keeping branding and SEO.
-
-### Highlights
-
-- **Layout reverted.** Removed global site footer, skip link, and viewport `overflow` locks on desktop workspace that broke modals, taps, and mobile chrome.
-- **Cast a chart dialog.** Modal renders outside the landing flex tree and uses a higher z-index so it displays and responds on phones and desktop.
-- **Mobile workspace.** Keeps global `mobile-workspace.css` for tab/panel styling on top of the restored layout rules.
-- **Interactive mode.** Restored standard `InteractiveServer` render mode (no prerender) for reliable click/tap handlers.
-- **Preserved.** Square caduceus logo, favicon, `PageSeo` / Open Graph, `robots.txt`, `sitemap.xml`, About copy, and Google Search Console verification.
-
-### Implementation notes
-
-- **Assemblies aligned to v1.0.4.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
-
----
-
-## v1.0.3 — Mobile workspace layout fix
-
-**Released:** May 2026  
-**Live app:** <https://geofancy.up.railway.app>
-
-Patch release after **v1.0.2** — restores the mobile workspace UI after footer/layout changes.
-
-### Highlights
-
-- **Mobile workspace styling.** Global `mobile-workspace.css` loads tab strip, panel, and detail styles so `/mobile` no longer depends on late scoped CSS.
-- **Viewport layout.** Tighter `100dvh` flex chain under the nav so tabs and panels stay below the chart handle and scroll correctly.
-- **Skip link.** Moved inside `<main>`, properly hidden until keyboard focus, and omitted on immersive routes (mobile, desktop workspace, interactive wiki).
-- **Footer on immersive flows.** Site footer is not rendered on `/mobile`, `/workspace`, or interactive wiki pages (not only hidden with CSS).
-
-### Implementation notes
-
-- **Assemblies aligned to v1.0.3.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
-
----
-
 ## v1.0.2 — Brand emblem & app icons
 
 **Released:** May 2026  
@@ -99,7 +58,7 @@ Patch release after **v1.0.0** — polish and discoverability, no chart-engine c
 
 ### What's new since v0.2.2
 
-Production **`master`** shipped **v0.2.2** (workspace, share/export, WoP, mobile shell, theme fix). **v1.0.0** merges **30 commits** from **`web-app`** (~**133 files**, **+18,968 / −2,864** lines vs `master`). The bulk of the delta is new **wiki** and **interactive casting** UI, a **JSON-backed figure corpus**, and a redesigned **figure detail** / **perfections** experience—not a rewrite of chart math (still `Geomancy.Core` + in-process handlers).
+Production **`master`** shipped **v0.2.2** (workspace, share/export, WoP, mobile shell, theme fix). **v1.0.0** merges **29 commits** from **`web-app`** (~**133 files**, **+18,968 / −2,864** lines vs `master`). The bulk of the delta is new **wiki** and **interactive casting** UI, a **JSON-backed figure corpus**, and a redesigned **figure detail** / **perfections** experience—not a rewrite of chart math (still `Geomancy.Core` + in-process handlers).
 
 ### Technical changes (comprehensive)
 
