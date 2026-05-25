@@ -181,6 +181,11 @@
     min-height: 0 !important;
     height: auto !important;
     font-size: clamp(14px, 2.5cqw, 24px) !important;
+    overflow: visible;
+}
+
+.shield-chart-container .figure-line-glyphs--pair {
+    min-width: 2.4em;
 }
 
 .shield-chart-container .figure-lines {
@@ -421,6 +426,7 @@
 .shield-chart-container .figure-line.figure-line-highlight {
     border-radius: 6px;
     padding: 0 0.35rem;
+    overflow: visible;
     animation: line-highlight-pulse 900ms ease-in-out infinite;
 }
 

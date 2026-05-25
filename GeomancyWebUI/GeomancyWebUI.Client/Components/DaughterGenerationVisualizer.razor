@@ -6,17 +6,19 @@
 @inject IJSRuntime JS
 @implements IAsyncDisposable
 
-<div class="wiki-daughter-visualizer">
-    <div class="wiki-daughter-visualizer-tabs">
-        @foreach (var tab in DaughterTabs)
-        {
-            var isActive = _activeTabHouse == tab.HouseNumber;
-            <button type="button"
-                    class="chart-casting-step-btn @(isActive ? "is-active" : string.Empty)"
-                    @onclick="() => SelectTab(tab.HouseNumber)">
-                House @tab.HouseNumber (@tab.Label)
-            </button>
-        }
+<div class="wiki-daughter-visualizer @GetVisualizerRootClass()">
+    <div class="wiki-daughter-visualizer-tabs-scroll wiki-daughter-visualizer-section-tabs-scroll" role="region" aria-label="Shield derivation sections">
+        <div class="wiki-daughter-visualizer-tabs wiki-daughter-visualizer-section-tabs">
+            @foreach (var sectionTab in SectionTabs)
+            {
+                var isActive = _activeSection == sectionTab.Section;
+                <button type="button"
+                        class="chart-casting-step-btn @(isActive ? "is-active" : string.Empty)"
+                        @onclick="() => SelectSection(sectionTab.Section)">
+                    @sectionTab.Label
+                </button>
+            }
+        </div>
     </div>
 
     @if (!string.IsNullOrWhiteSpace(_loadError))
@@ -25,79 +27,165 @@
     }
     else if (_chart == null)
     {
-        <p class="wiki-casting-section-lead">Loading daughter generation visualizer…</p>
+        <p class="wiki-casting-section-lead">Loading shield derivation visualizer…</p>
     }
     else
     {
-        var active = DaughterTabs.First(t => t.HouseNumber == _activeTabHouse);
-        <div class="chart-casting-step-nav wiki-daughter-controls">
-            <button type="button"
-                    class="chart-casting-step-btn"
-                    disabled="@(_microStepIndex <= 0)"
-                    @onclick="PreviousMicroStep">
-                Previous
-            </button>
-            <span class="chart-casting-step-indicator">
-                House @active.HouseNumber • step @(_microStepIndex + 1) of 4
-            </span>
-            <button type="button"
-                    class="chart-casting-step-btn"
-                    disabled="@(_microStepIndex >= 3)"
-                    @onclick="NextMicroStep">
-                Next
-            </button>
-            <button type="button"
-                    class="chart-casting-step-btn"
-                    @onclick="TogglePlayback">
-                @(_isPlaying ? "Pause" : "Play")
-            </button>
-            <button type="button"
-                    class="chart-casting-step-btn"
-                    @onclick="RestartMicroStep">
-                Restart
-            </button>
-            <button type="button"
-                    class="chart-casting-step-btn @(_animateLineHighlights ? "is-active" : string.Empty)"
-                    aria-pressed="@_animateLineHighlights.ToString().ToLower()"
-                    @onclick="ToggleAnimateHighlights">
-                @(_animateLineHighlights ? "Animate highlights on" : "Animate highlights off")
-            </button>
-        </div>
-
-        <p class="wiki-casting-section-lead">
-            House @active.HouseNumber uses the @active.SourceLabel line from Mothers 1-4.
-            At each step, one source mother row is highlighted and one destination row is revealed.
-        </p>
-
-        @if (!string.IsNullOrWhiteSpace(GetSelectedHouseMeaning()))
+        @if (ShowsSubTabs())
         {
-            <div class="wiki-casting-callout">
-                @GetSelectedHouseMeaning()
+            <div class="wiki-daughter-visualizer-tabs-scroll" role="region" aria-label="@GetSubTabsAriaLabel()">
+                <div class="wiki-daughter-visualizer-tabs">
+                    @if (_activeSection == DerivationSection.Daughters)
+                    {
+                        @foreach (var tab in DaughterTabs)
+                        {
+                            var isActive = _activeTabHouse == tab.HouseNumber;
+                            <button type="button"
+                                    class="chart-casting-step-btn @(isActive ? "is-active" : string.Empty)"
+                                    @onclick="() => SelectHouseTab(tab.HouseNumber)">
+                                House @tab.HouseNumber (@tab.Label)
+                            </button>
+                        }
+                    }
+                    else if (_activeSection == DerivationSection.Nieces)
+                    {
+                        @foreach (var tab in NieceTabs)
+                        {
+                            var isActive = _activeTabHouse == tab.HouseNumber;
+                            <button type="button"
+                                    class="chart-casting-step-btn @(isActive ? "is-active" : string.Empty)"
+                                    @onclick="() => SelectHouseTab(tab.HouseNumber)">
+                                House @tab.HouseNumber (@tab.Label)
+                            </button>
+                        }
+                    }
+                    else if (_activeSection == DerivationSection.Witnesses)
+                    {
+                        @foreach (var tab in WitnessTabs)
+                        {
+                            var isActive = _activeWitnessCourt == tab.TargetCourt;
+                            <button type="button"
+                                    class="chart-casting-step-btn @(isActive ? "is-active" : string.Empty)"
+                                    @onclick="() => SelectWitnessTab(tab.TargetCourt)">
+                                @tab.Label
+                            </button>
+                        }
+                    }
+                </div>
             </div>
         }
 
-        <div class="chart-casting-chart-preview wiki-shield-section-demo-chart wiki-daughter-chart-stage @GetChartStageClass()">
-            <ChartSurface Chart="@_chart"
-                          View="ChartSurfaceView.Shield"
-                          IsWikiLayout="true"
-                          ShieldRowVisibility="ShieldRowVisibility.All"
-                          ShowEmptyDerivedSlots="true"
-                          ShowCourtFigures="false"
-                          InteractiveMothers="false"
-                          VisibleHouseNumbers="@GetVisibleHouses()"
-                          HighlightedHouseNumbers="@GetActiveHouseHighlights()"
-                          HouseHighlightedLines="@GetActiveHighlightedLines()"
-                          HouseRevealLineCounts="@GetActiveRevealLineCounts()"
-                          HouseLineHighlightThemes="@GetActiveHighlightThemes()"
-                          House1Figure="@GetMother(1)"
-                          House2Figure="@GetMother(2)"
-                          House3Figure="@GetMother(3)"
-                          House4Figure="@GetMother(4)" />
+        <div class="wiki-daughter-chart-panel">
+            <div class="wiki-chart-stage @GetChartStageClass()">
+                <ChartSurface Chart="@_chart"
+                              View="ChartSurfaceView.Shield"
+                              IsWikiLayout="true"
+                              ShieldRowVisibility="ShieldRowVisibility.All"
+                              ShowEmptyDerivedSlots="true"
+                              ShowCourtFigures="@ShowsCourtFigures()"
+                              InteractiveMothers="false"
+                              VisibleHouseNumbers="@_visibleHouses"
+                              HighlightedHouseNumbers="@_activeHouseHighlights"
+                              HouseHighlightedLines="@GetHouseHighlightedLinesForChart()"
+                              HouseRevealLineCounts="@_houseRevealLineCounts"
+                              HouseLineHighlightThemes="@GetHouseHighlightThemesForChart()"
+                              HighlightedCourt="@_activeCourtHighlights"
+                              CourtHighlightedLines="@_courtHighlightedLines"
+                              CourtRevealLineCounts="@_courtRevealLineCounts"
+                              CourtLineHighlightThemes="@_courtHighlightThemes"
+                              House1Figure="@GetMother(1)"
+                              House2Figure="@GetMother(2)"
+                              House3Figure="@GetMother(3)"
+                              House4Figure="@GetMother(4)" />
+            </div>
+
+            <div class="wiki-daughter-micro-steps-scroll" role="region" aria-label="Generation steps">
+                <div class="wiki-daughter-micro-steps">
+                    @for (var step = 0; step < MicroStepsPerTarget; step++)
+                    {
+                        var stepIndex = step;
+                        var isStepActive = _microStepIndex == stepIndex;
+                        <button type="button"
+                                class="wiki-daughter-micro-step @(isStepActive ? "is-active" : string.Empty)"
+                                aria-current="@(isStepActive ? "step" : null)"
+                                @onclick="() => GoToMicroStep(stepIndex)">
+                            <span class="wiki-daughter-micro-step-label">@GetMicroStepLabel(stepIndex)</span>
+                            <span class="wiki-daughter-micro-step-detail">@GetMicroStepDetail(stepIndex)</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="wiki-daughter-transport" aria-label="Animation controls">
+                <p class="wiki-daughter-transport-indicator">
+                    @GetTransportIndicator()
+                </p>
+                <div class="wiki-daughter-transport-primary">
+                    <button type="button"
+                            class="chart-casting-step-btn wiki-daughter-transport-btn"
+                            disabled="@(_microStepIndex <= 0)"
+                            aria-label="Previous step"
+                            @onclick="PreviousMicroStep">
+                        Previous
+                    </button>
+                    <button type="button"
+                            class="chart-casting-step-btn wiki-daughter-transport-btn"
+                            disabled="@(_microStepIndex >= MaxMicroStepIndex)"
+                            aria-label="Next step"
+                            @onclick="NextMicroStep">
+                        Next
+                    </button>
+                    <button type="button"
+                            class="chart-casting-step-btn wiki-daughter-transport-btn wiki-daughter-transport-btn--play"
+                            aria-label="@(_isPlaying ? "Pause animation" : "Play animation")"
+                            @onclick="TogglePlayback">
+                        @(_isPlaying ? "Pause" : "Play")
+                    </button>
+                    <button type="button"
+                            class="chart-casting-step-btn wiki-daughter-transport-btn"
+                            aria-label="Stop and restart step"
+                            @onclick="StopAndRestart">
+                        Stop
+                    </button>
+                </div>
+                <button type="button"
+                        class="chart-casting-step-btn wiki-daughter-transport-toggle @(_animateLineHighlights ? "is-active" : string.Empty)"
+                        aria-pressed="@_animateLineHighlights.ToString().ToLower()"
+                        @onclick="ToggleAnimateHighlights">
+                    @(_animateLineHighlights ? "Animate highlights on" : "Animate highlights off")
+                </button>
+            </div>
         </div>
+
+        <p class="wiki-casting-section-lead">
+            @GetSectionLead()
+        </p>
+
+        @if (!string.IsNullOrWhiteSpace(GetSectionCallout()))
+        {
+            <div class="wiki-casting-callout">
+                @GetSectionCallout()
+            </div>
+        }
     }
 </div>
 
 @code {
+    private enum DerivationSection
+    {
+        Daughters,
+        Nieces,
+        Witnesses,
+        Judge,
+        Fallout
+    }
+
+    private sealed class SectionTab
+    {
+        public DerivationSection Section { get; init; }
+        public string Label { get; init; } = string.Empty;
+    }
+
     private sealed class DaughterTab
     {
         public int HouseNumber { get; init; }
@@ -107,6 +195,34 @@
         public string Label { get; init; } = string.Empty;
     }
 
+    private sealed class NieceTab
+    {
+        public int HouseNumber { get; init; }
+        public int SourceHouseA { get; init; }
+        public int SourceHouseB { get; init; }
+        public string Label { get; init; } = string.Empty;
+    }
+
+    private sealed class WitnessTab
+    {
+        public ChartHighlightCourt TargetCourt { get; init; }
+        public int SourceHouseA { get; init; }
+        public int SourceHouseB { get; init; }
+        public string Label { get; init; } = string.Empty;
+    }
+
+    private const int MicroStepsPerTarget = 4;
+    private const int MaxMicroStepIndex = MicroStepsPerTarget - 1;
+
+    private static readonly SectionTab[] SectionTabs =
+    {
+        new() { Section = DerivationSection.Daughters, Label = "Daughters" },
+        new() { Section = DerivationSection.Nieces, Label = "Nieces" },
+        new() { Section = DerivationSection.Witnesses, Label = "Witnesses" },
+        new() { Section = DerivationSection.Judge, Label = "Judge" },
+        new() { Section = DerivationSection.Fallout, Label = "Fallout" }
+    };
+
     private static readonly DaughterTab[] DaughterTabs =
     {
         new() { HouseNumber = 5, SourceLine = 1, Theme = "fire", SourceLabel = "Head / Fire", Label = "1st Daughter" },
@@ -115,13 +231,44 @@
         new() { HouseNumber = 8, SourceLine = 4, Theme = "earth", SourceLabel = "Foot / Earth", Label = "4th Daughter" }
     };
 
+    private static readonly NieceTab[] NieceTabs =
+    {
+        new() { HouseNumber = 9, SourceHouseA = 1, SourceHouseB = 2, Label = "1st Niece" },
+        new() { HouseNumber = 10, SourceHouseA = 3, SourceHouseB = 4, Label = "2nd Niece" },
+        new() { HouseNumber = 11, SourceHouseA = 5, SourceHouseB = 6, Label = "3rd Niece" },
+        new() { HouseNumber = 12, SourceHouseA = 7, SourceHouseB = 8, Label = "4th Niece" }
+    };
+
+    private static readonly WitnessTab[] WitnessTabs =
+    {
+        new() { TargetCourt = ChartHighlightCourt.RightWitness, SourceHouseA = 9, SourceHouseB = 10, Label = "Right Witness" },
+        new() { TargetCourt = ChartHighlightCourt.LeftWitness, SourceHouseA = 11, SourceHouseB = 12, Label = "Left Witness" }
+    };
+
+    private static readonly string[] LineNames = { "Head", "Neck", "Body", "Foot" };
+
     private HouseChartModel? _chart;
+    private DerivationSection _activeSection = DerivationSection.Daughters;
     private int _activeTabHouse = 5;
+    private ChartHighlightCourt _activeWitnessCourt = ChartHighlightCourt.RightWitness;
     private int _microStepIndex;
     private string? _loadError;
     private CancellationTokenSource? _playbackCts;
     private bool _isPlaying;
     private bool _animateLineHighlights = true;
+
+    private readonly HashSet<int> _visibleHouses = new();
+    private IReadOnlySet<int>? _activeHouseHighlights;
+    private readonly Dictionary<int, int> _houseHighlightedLines = new();
+    private readonly Dictionary<int, int> _houseRevealLineCounts = new();
+    private readonly Dictionary<int, string> _houseHighlightThemes = new();
+    private readonly Dictionary<int, int> _courtSourceHouseHighlightedLines = new();
+    private readonly Dictionary<int, string> _courtSourceHouseHighlightThemes = new();
+
+    private IReadOnlySet<ChartHighlightCourt>? _activeCourtHighlights;
+    private readonly Dictionary<ChartHighlightCourt, int> _courtHighlightedLines = new();
+    private readonly Dictionary<ChartHighlightCourt, int> _courtRevealLineCounts = new();
+    private readonly Dictionary<ChartHighlightCourt, string> _courtHighlightThemes = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,83 +290,442 @@
                 House3 = new GenerateFigureRequest { HeadLine = 2, NeckLine = 2, BodyLine = 1, FootLine = 2 },
                 House4 = new GenerateFigureRequest { HeadLine = 1, NeckLine = 1, BodyLine = 2, FootLine = 2 }
             });
+            ApplyVisualizationState();
         }
         catch
         {
-            _loadError = "Could not load the daughter generation visualizer.";
+            _loadError = "Could not load the shield derivation visualizer.";
         }
     }
 
     private string GetChartStageClass() =>
         _animateLineHighlights ? string.Empty : "is-line-highlight-animation-off";
 
-    private void SelectTab(int houseNumber)
+    private string GetVisualizerRootClass() =>
+        ShowsSubTabs() ? "wiki-daughter-visualizer--has-sub-tabs" : string.Empty;
+
+    private bool ShowsSubTabs() =>
+        _activeSection is DerivationSection.Daughters or DerivationSection.Nieces or DerivationSection.Witnesses;
+
+    private bool ShowsCourtFigures() =>
+        _activeSection is DerivationSection.Witnesses or DerivationSection.Judge or DerivationSection.Fallout;
+
+    private string GetSubTabsAriaLabel() => _activeSection switch
+    {
+        DerivationSection.Daughters => "Daughter houses",
+        DerivationSection.Nieces => "Niece houses",
+        DerivationSection.Witnesses => "Witnesses",
+        _ => "Targets"
+    };
+
+    private void SelectSection(DerivationSection section)
+    {
+        _activeSection = section;
+        switch (section)
+        {
+            case DerivationSection.Daughters:
+                _activeTabHouse = 5;
+                break;
+            case DerivationSection.Nieces:
+                _activeTabHouse = 9;
+                break;
+            case DerivationSection.Witnesses:
+                _activeWitnessCourt = ChartHighlightCourt.RightWitness;
+                break;
+        }
+
+        RestartMicroStep();
+    }
+
+    private void SelectHouseTab(int houseNumber)
     {
         _activeTabHouse = houseNumber;
         RestartMicroStep();
     }
 
-    private IReadOnlySet<int> GetVisibleHouses()
+    private void SelectWitnessTab(ChartHighlightCourt court)
     {
-        var visible = new HashSet<int> { 1, 2, 3, 4 };
-        for (var house = 5; house <= _activeTabHouse; house++)
-        {
-            visible.Add(house);
-        }
-
-        return visible;
+        _activeWitnessCourt = court;
+        RestartMicroStep();
     }
 
-    private IReadOnlySet<int> GetActiveHouseHighlights() => new HashSet<int> { _activeTabHouse };
-
-    private IReadOnlyDictionary<int, int> GetActiveHighlightedLines()
+    private void GoToMicroStep(int stepIndex)
     {
+        if (stepIndex < 0 || stepIndex > MaxMicroStepIndex)
+        {
+            return;
+        }
+
+        _microStepIndex = stepIndex;
+        StopPlayback();
+        ApplyVisualizationState();
+    }
+
+    private void ApplyVisualizationState()
+    {
+        ClearVisualizationState();
+
+        switch (_activeSection)
+        {
+            case DerivationSection.Daughters:
+                ApplyDaughterState();
+                break;
+            case DerivationSection.Nieces:
+                ApplyNieceState();
+                break;
+            case DerivationSection.Witnesses:
+                ApplyWitnessState();
+                break;
+            case DerivationSection.Judge:
+                ApplyJudgeState();
+                break;
+            case DerivationSection.Fallout:
+                ApplyFalloutState();
+                break;
+        }
+    }
+
+    private void ClearVisualizationState()
+    {
+        _visibleHouses.Clear();
+        _activeHouseHighlights = null;
+        _activeCourtHighlights = null;
+        _houseHighlightedLines.Clear();
+        _houseRevealLineCounts.Clear();
+        _houseHighlightThemes.Clear();
+        _courtSourceHouseHighlightedLines.Clear();
+        _courtSourceHouseHighlightThemes.Clear();
+        _courtHighlightedLines.Clear();
+        _courtRevealLineCounts.Clear();
+        _courtHighlightThemes.Clear();
+    }
+
+    private void ApplyDaughterState()
+    {
+        for (var house = 1; house <= 4; house++)
+        {
+            _visibleHouses.Add(house);
+        }
+
+        for (var house = 5; house <= _activeTabHouse; house++)
+        {
+            _visibleHouses.Add(house);
+        }
+
+        for (var house = 5; house < _activeTabHouse; house++)
+        {
+            _houseRevealLineCounts[house] = MicroStepsPerTarget;
+        }
+
         var tab = DaughterTabs.First(t => t.HouseNumber == _activeTabHouse);
         var sourceHouse = _microStepIndex + 1;
         var targetLine = _microStepIndex + 1;
+        var theme = tab.Theme;
 
-        return new Dictionary<int, int>
-        {
-            [sourceHouse] = tab.SourceLine,
-            [_activeTabHouse] = targetLine
-        };
+        _houseRevealLineCounts[_activeTabHouse] = targetLine;
+        _activeHouseHighlights = new HashSet<int> { _activeTabHouse };
+        _houseHighlightedLines[_activeTabHouse] = targetLine;
+        _houseHighlightedLines[sourceHouse] = tab.SourceLine;
+        _houseHighlightThemes[_activeTabHouse] = theme;
+        _houseHighlightThemes[sourceHouse] = theme;
     }
 
-    private IReadOnlyDictionary<int, string> GetActiveHighlightThemes()
+    private void ApplyNieceState()
     {
-        var tab = DaughterTabs.First(t => t.HouseNumber == _activeTabHouse);
-        var sourceHouse = _microStepIndex + 1;
-        return new Dictionary<int, string>
+        for (var house = 1; house <= 8; house++)
         {
-            [sourceHouse] = tab.Theme,
-            [_activeTabHouse] = tab.Theme
-        };
+            _visibleHouses.Add(house);
+        }
+
+        for (var house = 9; house <= _activeTabHouse; house++)
+        {
+            _visibleHouses.Add(house);
+        }
+
+        for (var house = 9; house < _activeTabHouse; house++)
+        {
+            _houseRevealLineCounts[house] = MicroStepsPerTarget;
+        }
+
+        var tab = NieceTabs.First(t => t.HouseNumber == _activeTabHouse);
+        var activeLine = _microStepIndex + 1;
+        var theme = GetThemeForLine(activeLine);
+
+        _houseRevealLineCounts[_activeTabHouse] = activeLine;
+        _activeHouseHighlights = new HashSet<int> { _activeTabHouse };
+        _houseHighlightedLines[_activeTabHouse] = activeLine;
+        _houseHighlightedLines[tab.SourceHouseA] = activeLine;
+        _houseHighlightedLines[tab.SourceHouseB] = activeLine;
+        _houseHighlightThemes[_activeTabHouse] = theme;
+        _houseHighlightThemes[tab.SourceHouseA] = theme;
+        _houseHighlightThemes[tab.SourceHouseB] = theme;
     }
 
-    private IReadOnlyDictionary<int, int> GetActiveRevealLineCounts() =>
-        new Dictionary<int, int>
+    private void ApplyWitnessState()
+    {
+        for (var house = 1; house <= 12; house++)
         {
-            [_activeTabHouse] = _microStepIndex + 1
-        };
+            _visibleHouses.Add(house);
+        }
+
+        var tab = WitnessTabs.First(t => t.TargetCourt == _activeWitnessCourt);
+        var activeLine = _microStepIndex + 1;
+        var theme = GetThemeForLine(activeLine);
+
+        foreach (var witness in WitnessTabs)
+        {
+            if (witness.TargetCourt == _activeWitnessCourt)
+            {
+                _courtRevealLineCounts[witness.TargetCourt] = activeLine;
+            }
+            else
+            {
+                _courtRevealLineCounts[witness.TargetCourt] = MicroStepsPerTarget;
+            }
+        }
+
+        _activeCourtHighlights = new HashSet<ChartHighlightCourt> { tab.TargetCourt };
+        _courtHighlightedLines[tab.TargetCourt] = activeLine;
+        _courtHighlightThemes[tab.TargetCourt] = theme;
+        _courtSourceHouseHighlightedLines[tab.SourceHouseA] = activeLine;
+        _courtSourceHouseHighlightedLines[tab.SourceHouseB] = activeLine;
+        _courtSourceHouseHighlightThemes[tab.SourceHouseA] = theme;
+        _courtSourceHouseHighlightThemes[tab.SourceHouseB] = theme;
+    }
+
+    private void ApplyJudgeState()
+    {
+        for (var house = 1; house <= 12; house++)
+        {
+            _visibleHouses.Add(house);
+        }
+
+        var activeLine = _microStepIndex + 1;
+        var theme = GetThemeForLine(activeLine);
+
+        _courtRevealLineCounts[ChartHighlightCourt.RightWitness] = MicroStepsPerTarget;
+        _courtRevealLineCounts[ChartHighlightCourt.LeftWitness] = MicroStepsPerTarget;
+        _courtRevealLineCounts[ChartHighlightCourt.Judge] = activeLine;
+
+        _activeCourtHighlights = new HashSet<ChartHighlightCourt> { ChartHighlightCourt.Judge };
+        _courtHighlightedLines[ChartHighlightCourt.Judge] = activeLine;
+        _courtHighlightedLines[ChartHighlightCourt.RightWitness] = activeLine;
+        _courtHighlightedLines[ChartHighlightCourt.LeftWitness] = activeLine;
+        _courtHighlightThemes[ChartHighlightCourt.Judge] = theme;
+        _courtHighlightThemes[ChartHighlightCourt.RightWitness] = theme;
+        _courtHighlightThemes[ChartHighlightCourt.LeftWitness] = theme;
+    }
+
+    private void ApplyFalloutState()
+    {
+        for (var house = 1; house <= 12; house++)
+        {
+            _visibleHouses.Add(house);
+        }
+
+        var activeLine = _microStepIndex + 1;
+        var theme = GetThemeForLine(activeLine);
+
+        _courtRevealLineCounts[ChartHighlightCourt.RightWitness] = MicroStepsPerTarget;
+        _courtRevealLineCounts[ChartHighlightCourt.LeftWitness] = MicroStepsPerTarget;
+        _courtRevealLineCounts[ChartHighlightCourt.Judge] = MicroStepsPerTarget;
+        _courtRevealLineCounts[ChartHighlightCourt.Sentence] = activeLine;
+
+        _activeCourtHighlights = new HashSet<ChartHighlightCourt> { ChartHighlightCourt.Sentence };
+        _courtHighlightedLines[ChartHighlightCourt.Sentence] = activeLine;
+        _courtHighlightedLines[ChartHighlightCourt.Judge] = activeLine;
+        _courtHighlightThemes[ChartHighlightCourt.Sentence] = theme;
+        _courtHighlightThemes[ChartHighlightCourt.Judge] = theme;
+        _courtSourceHouseHighlightedLines[1] = activeLine;
+        _courtSourceHouseHighlightThemes[1] = theme;
+        _activeHouseHighlights = new HashSet<int> { 1 };
+    }
+
+    private IReadOnlyDictionary<int, int>? GetHouseHighlightedLinesForChart()
+    {
+        if (_houseHighlightedLines.Count == 0 && _courtSourceHouseHighlightedLines.Count == 0)
+        {
+            return null;
+        }
+
+        if (_courtSourceHouseHighlightedLines.Count == 0)
+        {
+            return _houseHighlightedLines;
+        }
+
+        var merged = new Dictionary<int, int>(_houseHighlightedLines);
+        foreach (var pair in _courtSourceHouseHighlightedLines)
+        {
+            merged[pair.Key] = pair.Value;
+        }
+
+        return merged;
+    }
+
+    private IReadOnlyDictionary<int, string>? GetHouseHighlightThemesForChart()
+    {
+        if (_houseHighlightThemes.Count == 0 && _courtSourceHouseHighlightThemes.Count == 0)
+        {
+            return null;
+        }
+
+        if (_courtSourceHouseHighlightThemes.Count == 0)
+        {
+            return _houseHighlightThemes;
+        }
+
+        var merged = new Dictionary<int, string>(_houseHighlightThemes);
+        foreach (var pair in _courtSourceHouseHighlightThemes)
+        {
+            merged[pair.Key] = pair.Value;
+        }
+
+        return merged;
+    }
+
+    private static string GetThemeForLine(int lineNumber) => lineNumber switch
+    {
+        1 => "fire",
+        2 => "air",
+        3 => "water",
+        _ => "earth"
+    };
+
+    private static string GetLineName(int lineNumber) =>
+        lineNumber >= 1 && lineNumber <= 4 ? LineNames[lineNumber - 1] : $"line {lineNumber}";
 
     private FigureModel? GetMother(int houseNumber) =>
         _chart?.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
 
-    private string? GetSelectedHouseMeaning()
+    private string GetMicroStepLabel(int stepIndex) => $"Step {stepIndex + 1}";
+
+    private string GetMicroStepDetail(int stepIndex)
     {
-        var figure = _chart?.Houses?.FirstOrDefault(h => h.HouseNumber == _activeTabHouse)?.Figure;
+        var line = stepIndex + 1;
+        var lineName = GetLineName(line);
+
+        return _activeSection switch
+        {
+            DerivationSection.Daughters => $"Mother {line} → {lineName}",
+            DerivationSection.Nieces => GetNieceMicroStepDetail(line, lineName),
+            DerivationSection.Witnesses => GetWitnessMicroStepDetail(line, lineName),
+            DerivationSection.Judge => $"Witnesses → {lineName}",
+            DerivationSection.Fallout => $"Judge + Vita → {lineName}",
+            _ => string.Empty
+        };
+    }
+
+    private string GetNieceMicroStepDetail(int line, string lineName)
+    {
+        var tab = NieceTabs.First(t => t.HouseNumber == _activeTabHouse);
+        return $"Houses {tab.SourceHouseA}+{tab.SourceHouseB} → {lineName}";
+    }
+
+    private string GetWitnessMicroStepDetail(int line, string lineName)
+    {
+        var tab = WitnessTabs.First(t => t.TargetCourt == _activeWitnessCourt);
+        return $"Nieces {tab.SourceHouseA}+{tab.SourceHouseB} → {lineName}";
+    }
+
+    private string GetTransportIndicator()
+    {
+        var step = _microStepIndex + 1;
+        var target = _activeSection switch
+        {
+            DerivationSection.Daughters => $"House {_activeTabHouse}",
+            DerivationSection.Nieces => $"House {_activeTabHouse}",
+            DerivationSection.Witnesses => WitnessTabs.First(t => t.TargetCourt == _activeWitnessCourt).Label,
+            DerivationSection.Judge => "Judge",
+            DerivationSection.Fallout => "Fallout",
+            _ => "Shield"
+        };
+
+        return $"{target} • step {step} of {MicroStepsPerTarget}";
+    }
+
+    private string GetSectionLead() => _activeSection switch
+    {
+        DerivationSection.Daughters =>
+            $"House {_activeTabHouse} uses the {DaughterTabs.First(t => t.HouseNumber == _activeTabHouse).SourceLabel} line from Mothers 1–4. At each step, one source mother row is highlighted and one destination row is revealed.",
+        DerivationSection.Nieces =>
+            $"House {_activeTabHouse} combines two neighbors line by line (parity rule). At each step, the matching line on both source houses is highlighted and one row is revealed on the niece.",
+        DerivationSection.Witnesses =>
+            $"{WitnessTabs.First(t => t.TargetCourt == _activeWitnessCourt).Label} combines its two niece figures line by line. At each step, the source niece lines and one witness row are highlighted.",
+        DerivationSection.Judge =>
+            "The Judge combines the Right and Left Witnesses line by line. At each step, both witnesses and the Judge row being built are highlighted.",
+        DerivationSection.Fallout =>
+            "Fallout (Reconciler / Sentence) combines the Judge with Mother 1 (Vita) line by line. At each step, the Judge, Vita, and the Fallout row are highlighted.",
+        _ => string.Empty
+    };
+
+    private string? GetSectionCallout()
+    {
+        if (_activeSection is DerivationSection.Daughters or DerivationSection.Nieces)
+        {
+            return GetHouseMeaning(_activeTabHouse);
+        }
+
+        if (_activeSection == DerivationSection.Judge)
+        {
+            return GetCourtMeaning(ChartHighlightCourt.Judge);
+        }
+
+        if (_activeSection == DerivationSection.Fallout)
+        {
+            return GetCourtMeaning(ChartHighlightCourt.Sentence);
+        }
+
+        if (_activeSection == DerivationSection.Witnesses)
+        {
+            return GetCourtMeaning(_activeWitnessCourt);
+        }
+
+        return null;
+    }
+
+    private string? GetHouseMeaning(int houseNumber)
+    {
+        var figure = _chart?.Houses?.FirstOrDefault(h => h.HouseNumber == houseNumber)?.Figure;
         if (figure == null)
         {
             return null;
         }
 
-        figure.InHouses.TryGetValue(_activeTabHouse.ToString(), out var meaning);
+        figure.InHouses.TryGetValue(houseNumber.ToString(), out var meaning);
         if (string.IsNullOrWhiteSpace(meaning))
         {
-            return $"House {_activeTabHouse} resolves as {figure.Name}.";
+            return $"House {houseNumber} resolves as {figure.Name}.";
         }
 
-        return $"House {_activeTabHouse} resolves as {figure.Name}. It is sometimes thought to mean {meaning.Trim()}";
+        return $"House {houseNumber} resolves as {figure.Name}. It is sometimes thought to mean {meaning.Trim()}";
+    }
+
+    private string? GetCourtMeaning(ChartHighlightCourt court)
+    {
+        var figure = court switch
+        {
+            ChartHighlightCourt.RightWitness => _chart?.RightWitness,
+            ChartHighlightCourt.LeftWitness => _chart?.LeftWitness,
+            ChartHighlightCourt.Judge => _chart?.Judge,
+            ChartHighlightCourt.Sentence => _chart?.Sentence,
+            _ => null
+        };
+
+        if (figure == null)
+        {
+            return null;
+        }
+
+        var roleName = court switch
+        {
+            ChartHighlightCourt.RightWitness => "Right Witness",
+            ChartHighlightCourt.LeftWitness => "Left Witness",
+            ChartHighlightCourt.Judge => "Judge",
+            ChartHighlightCourt.Sentence => "Fallout (Reconciler)",
+            _ => "Court figure"
+        };
+
+        return $"{roleName} resolves as {figure.Name}.";
     }
 
     private void PreviousMicroStep()
@@ -231,23 +737,32 @@
 
         _microStepIndex--;
         StopPlayback();
+        ApplyVisualizationState();
     }
 
     private void NextMicroStep()
     {
-        if (_microStepIndex >= 3)
+        if (_microStepIndex >= MaxMicroStepIndex)
         {
             return;
         }
 
         _microStepIndex++;
         StopPlayback();
+        ApplyVisualizationState();
     }
 
     private void RestartMicroStep()
     {
         _microStepIndex = 0;
         StopPlayback();
+        ApplyVisualizationState();
+    }
+
+    private void StopAndRestart()
+    {
+        StopPlayback();
+        RestartMicroStep();
     }
 
     private void ToggleAnimateHighlights()
@@ -276,7 +791,7 @@
         {
             while (!cancellationToken.IsCancellationRequested && await timer.WaitForNextTickAsync(cancellationToken))
             {
-                if (_microStepIndex >= 3)
+                if (_microStepIndex >= MaxMicroStepIndex)
                 {
                     _microStepIndex = 0;
                 }
@@ -285,6 +800,7 @@
                     _microStepIndex++;
                 }
 
+                ApplyVisualizationState();
                 await InvokeAsync(StateHasChanged);
             }
         }

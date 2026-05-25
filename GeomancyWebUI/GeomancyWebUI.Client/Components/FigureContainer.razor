@@ -17,22 +17,22 @@
         <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(1) @GetLineRevealClass(1)"
              @onclick="() => ToggleLine(1)"
              title="@GetLineTooltip(1)">
-            @GetLineDisplay(GetDisplayedLineValue(1), ShouldRevealLine(1))
+            @RenderLineGlyphs(GetDisplayedLineValue(1), ShouldRevealLine(1))
         </div>
         <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(2) @GetLineRevealClass(2)"
              @onclick="() => ToggleLine(2)"
              title="@GetLineTooltip(2)">
-            @GetLineDisplay(GetDisplayedLineValue(2), ShouldRevealLine(2))
+            @RenderLineGlyphs(GetDisplayedLineValue(2), ShouldRevealLine(2))
         </div>
         <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(3) @GetLineRevealClass(3)"
              @onclick="() => ToggleLine(3)"
              title="@GetLineTooltip(3)">
-            @GetLineDisplay(GetDisplayedLineValue(3), ShouldRevealLine(3))
+            @RenderLineGlyphs(GetDisplayedLineValue(3), ShouldRevealLine(3))
         </div>
         <div class="figure-line @(IsInteractive ? "interactive" : "") @GetLineHighlightClass(4) @GetLineRevealClass(4)"
              @onclick="() => ToggleLine(4)"
              title="@GetLineTooltip(4)">
-            @GetLineDisplay(GetDisplayedLineValue(4), ShouldRevealLine(4))
+            @RenderLineGlyphs(GetDisplayedLineValue(4), ShouldRevealLine(4))
         </div>
     </div>
     @if (ShowFigureName && !string.IsNullOrEmpty(Figure?.Name))
@@ -52,15 +52,42 @@
     [Parameter] public string? HighlightTheme { get; set; }
     [Parameter] public EventCallback<FigureModel> OnFigureChanged { get; set; }
 
-    private string GetLineDisplay(int lineValue, bool isRevealed)
+    private RenderFragment RenderLineGlyphs(int lineValue, bool isRevealed) => builder =>
     {
         if (!isRevealed)
         {
-            return "· ·";
+            builder.OpenElement(0, "span");
+            builder.AddAttribute(1, "class", "figure-line-glyphs figure-line-glyphs--placeholder");
+            builder.AddAttribute(2, "aria-hidden", "true");
+            builder.OpenElement(3, "span");
+            builder.AddAttribute(4, "class", "figure-glyph");
+            builder.AddContent(5, "·");
+            builder.CloseElement();
+            builder.OpenElement(6, "span");
+            builder.AddAttribute(7, "class", "figure-glyph");
+            builder.AddContent(8, "·");
+            builder.CloseElement();
+            builder.CloseElement();
+            return;
         }
 
-        return lineValue == 1 ? "  ◆" : "◆ ◆";
-    }
+        var pairClass = lineValue == 1 ? "figure-line-glyphs" : "figure-line-glyphs figure-line-glyphs--pair";
+        builder.OpenElement(10, "span");
+        builder.AddAttribute(11, "class", pairClass);
+        builder.OpenElement(12, "span");
+        builder.AddAttribute(13, "class", "figure-glyph");
+        builder.AddContent(14, "◆");
+        builder.CloseElement();
+        if (lineValue != 1)
+        {
+            builder.OpenElement(15, "span");
+            builder.AddAttribute(16, "class", "figure-glyph");
+            builder.AddContent(17, "◆");
+            builder.CloseElement();
+        }
+
+        builder.CloseElement();
+    };
 
     private int GetDisplayedLineValue(int lineNumber) => lineNumber switch
     {
