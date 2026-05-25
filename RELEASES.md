@@ -1,5 +1,26 @@
 # Releases
 
+## v1.0.1 — SEO, About polish & workspace UX
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Patch release after **v1.0.0** — polish and discoverability, no chart-engine changes.
+
+### Highlights
+
+- **Search & sharing.** Per-page SEO via `PageSeo` (titles, descriptions, canonical URLs, Open Graph, Twitter cards); **`robots.txt`** and **`sitemap.xml`**; JSON-LD on the home page. **Google Search Console** verification file at `/googleaad6cadf84b5b2c5.html`.
+- **About page.** Refreshed copy for the wiki, interactive walkthrough, and 1.0 feature set; trust bullets aligned with the landing page; explore links and clearer corpus/AI sections.
+- **Site chrome.** Global footer on content pages (home, wiki, about); **hidden on workspace, mobile, and interactive wiki** so chart flows stay full-screen.
+- **Desktop workspace fix.** Restored viewport height chain so Perfections, Court & Houses, and Way of Points **list and detail panels scroll** again inside tabs (regression from footer layout work).
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.1.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production; `web-app` = integration / testing.
+
+---
+
 ## v1.0.0 — Official Release
 
 **Released:** May 2026  

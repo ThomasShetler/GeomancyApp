@@ -2,9 +2,14 @@
 @rendermode InteractiveServer
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Services
 @inject IGeomancyService GeomancyService
 
-<PageTitle>@(_house != null ? $"House {_house.Id}" : "House") - Geofancy Wiki</PageTitle>
+<PageSeo Title="@HouseSeoTitle"
+          Description="@HouseSeoDescription"
+          CanonicalPath="@HouseCanonicalPath"
+          Keywords="@HouseSeoKeywords"
+          OgType="article" />
 
 <WikiArticleShell Title="@(_house != null ? $"House {_house.Id} · {_house.House}" : "House not found")"
                   Lead="@(_house?.TraditionalName)"
@@ -34,6 +39,15 @@
 
     private HouseDirectoryEntry? _house;
     private bool _loading = true;
+
+    private string HouseSeoTitle => _house is null ? "House · Geomancy Wiki" : $"House {_house.Id} · {_house.House}";
+    private string HouseSeoDescription => _house is null
+        ? "Geomantic house reference in the Geofancy wiki."
+        : SeoSite.Truncate($"House {_house.Id} ({_house.House}): {_house.TraditionalName}. Topics, example questions, and reading notes for geomancy.");
+    private string HouseCanonicalPath => $"/wiki/glossary/houses/{HouseId}";
+    private string HouseSeoKeywords => _house is null
+        ? "geomancy houses, house glossary"
+        : $"geomancy house {_house.Id}, {_house.House?.ToLowerInvariant()}, astrological house geomancy";
 
     protected override async Task OnInitializedAsync()
     {

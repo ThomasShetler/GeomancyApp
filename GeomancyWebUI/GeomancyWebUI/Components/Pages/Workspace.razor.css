@@ -15,18 +15,23 @@
     padding: 0;
     width: 100%;
     box-sizing: border-box;
+    /* Explicit height under sticky nav — required for tab column scroll (see .perf-lists, .figure-detail-panel). */
     height: calc(100dvh - 9rem);
+    max-height: calc(100dvh - 9rem);
     min-height: 700px;
     min-width: 1380px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1 1 auto;
 }
 
 .workspace-grid {
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
     display: grid;
     /* Same 625:755 proportion as the mockup */
     grid-template-columns: minmax(625px, 625fr) minmax(755px, 755fr);
@@ -128,6 +133,8 @@
     gap: 0;
     min-width: 755px;
     min-height: 0;
+    height: 100%;
+    max-height: 100%;
     background: transparent;
     box-shadow: none;
     border: none;
@@ -187,6 +194,8 @@
     flex: 1 1 auto;
     min-height: 0;
     min-width: 0;
+    height: 100%;
+    max-height: 100%;
     padding: 0;
     /* Inner tab bodies own their own scroll containers so nothing leaks
        to the tab strip. */
@@ -195,11 +204,23 @@
     flex-direction: column;
 }
 
+/* Tab layouts must fill the tab body so list/detail panes get a scroll height. */
+.workspace-tab-body > .court-houses-layout,
+.workspace-tab-body > .perfections-layout,
+.workspace-tab-body > .way-of-points-layout {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+}
+
 /* Mothers setup: full wiki walkthrough (chart + dot-caster) in workspace proportions. */
 .workspace-mothers-setup-grid {
     flex: 1 1 auto;
     min-height: 0;
     min-width: 0;
+    height: 100%;
+    max-height: 100%;
     overflow: hidden;
 }
 
@@ -248,6 +269,7 @@
 .court-houses-tables-col {
     min-width: 330px;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -256,6 +278,7 @@
 .court-houses-detail-col {
     min-width: 390px;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -280,6 +303,7 @@
 .perfections-list-col {
     min-width: 330px;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -288,6 +312,7 @@
 .perfections-detail-col {
     min-width: 390px;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -314,6 +339,7 @@
 .way-of-points-list-col {
     min-width: 330px;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -322,6 +348,7 @@
 .way-of-points-detail-col {
     min-width: 390px;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;

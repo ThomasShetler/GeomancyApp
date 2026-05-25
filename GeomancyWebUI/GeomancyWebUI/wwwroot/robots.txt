@@ -1,0 +1,7 @@
+# Geofancy — https://geofancy.up.railway.app
+User-agent: *
+Allow: /
+
+Disallow: /Error
+
+Sitemap: https://geofancy.up.railway.app/sitemap.xml

@@ -11,6 +11,54 @@
     margin-bottom: 1.5rem;
 }
 
+.about-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.75rem;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-secondary);
+}
+
+.about-eyebrow-sep {
+    color: var(--border-color);
+    font-weight: 400;
+}
+
+.about-eyebrow-version {
+    color: var(--text-secondary);
+    font-feature-settings: "tnum";
+    letter-spacing: 0.08em;
+    text-transform: none;
+}
+
+.about-trust-points {
+    margin: 1.25rem 0 0;
+    padding-left: 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+.about-trust-points li {
+    margin-bottom: 0.5rem;
+}
+
+.about-trust-points li:last-child {
+    margin-bottom: 0;
+}
+
+.about-trust-points strong {
+    color: var(--text-primary);
+}
+
 .about-h1 {
     margin: 0 0 1rem;
     font-size: clamp(1.65rem, 5vw, 2rem);
@@ -33,23 +81,46 @@
 
 .about-link-line a {
     font-weight: 600;
-}
-
-.about-live-badge {
-    display: inline-block;
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
     color: var(--accent-color);
+    text-decoration: none;
 }
 
-.about-footer-links .about-live-badge {
-    margin-left: 0.35rem;
-    text-transform: none;
-    letter-spacing: normal;
-    font-size: 0.85rem;
+.about-link-line a:hover {
+    text-decoration: underline;
+}
+
+.about-prose-note {
+    margin-top: 1rem;
+    font-size: 0.92rem;
+}
+
+.about-list a {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.about-list a:hover {
+    text-decoration: underline;
+}
+
+.about-explore-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-size: 0.98rem;
+}
+
+.about-explore-links a {
+    color: var(--accent-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.about-explore-links a:hover {
+    text-decoration: underline;
 }
 
 .about-section {
@@ -119,7 +190,11 @@
     margin: 1.25rem 0 0;
     font-size: 0.98rem;
     line-height: 1.6;
-    color: var(--text-secondary);
+}
+
+.about-footer-links a {
+    color: var(--accent-color);
+    font-weight: 600;
 }
 
 .about-footer-sep {

@@ -2,11 +2,15 @@
 @using GeomancyApp
 @using GeomancyWebUI.Components
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Services
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 
-<PageTitle>Geofancy</PageTitle>
+<PageSeo Title="Free Geomancy Software"
+          Description="Cast shield and house charts, study perfections and the Way of Points, browse the geomancy wiki, and learn with interactive walkthroughs. Free, no account, no AI in readings."
+          CanonicalPath="/"
+          JsonLd="@HomeJsonLd" />
 
 <div class="landing">
     <section class="landing-hero" aria-labelledby="landing-title">
@@ -171,39 +175,28 @@
             </header>
 
             <p class="landing-release-summary">
-                <strong>Geofancy 1.0.0</strong> is the first official public release of the web app: a complete
-                geomancy workspace with a live wiki, interactive casting walkthroughs, polished mobile and desktop
-                layouts, and the full interpretation stack from the stable 0.2 line.
+                <strong>Geofancy 1.0.1</strong> is a patch on the official 1.0 line: better search discoverability,
+                a refreshed About page, smarter site footer placement, and a fix restoring scroll in desktop
+                workspace tab panels.
             </p>
 
             <h4 class="landing-release-h4">Highlights</h4>
             <ul class="landing-notes">
                 <li>
-                    <strong>Geomancy Wiki.</strong> Live figure and house glossaries, how-tos for generating
-                    figures and casting a shield chart, plus an interactive shield walkthrough and figure-dot
-                    practice caster.
+                    <strong>SEO.</strong> Per-page titles and descriptions, Open Graph and Twitter cards,
+                    <code>robots.txt</code>, <code>sitemap.xml</code>, and Google Search Console verification.
                 </li>
                 <li>
-                    <strong>Casting entry.</strong> <em>Cast a chart!</em> opens a dialog: workspace with Mothers
-                    ready, in-app Mothers marking, or the interactive shield walkthrough — with one mobile/desktop
-                    routing rule.
+                    <strong>About page.</strong> Updated for the wiki, interactive walkthrough, and official 1.0
+                    feature set — aligned with the landing page voice.
                 </li>
                 <li>
-                    <strong>Mobile workspace.</strong> Mothers drawer, chart overlay, and casting-shell parity with
-                    the wiki on phones; share links opened on desktop redirect to mobile while preserving the seed.
+                    <strong>Site footer.</strong> Quick links on home, wiki, and about; omitted from workspace and
+                    mobile so charting stays immersive.
                 </li>
                 <li>
-                    <strong>Perfections &amp; Way of Points.</strong> Full perfection engine, denials, Classic Way of
-                    Points / Way of the Light on Via Ignis, and structured corpus in the detail panels.
-                </li>
-                <li>
-                    <strong>Share &amp; export.</strong> Readable <code>?seed=</code> share links and timestamped JSON
-                    export from <em>Lots &amp; Other</em> (<code>schemaVersion: 1</code>).
-                </li>
-                <li>
-                    <strong>Stability.</strong> Theme persistence per browser session, fixed interactive render
-                    boundary, and a <strong>768px</strong> mobile breakpoint so modest desktop widths stay on the
-                    desktop workspace.
+                    <strong>Workspace scroll fix.</strong> Perfections, Court &amp; Houses, and Way of Points list and
+                    detail columns scroll correctly inside tabs again.
                 </li>
             </ul>
 
@@ -241,6 +234,42 @@
 </div>
 
 @code {
+    private static readonly object HomeJsonLd = new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@graph"] = new object[]
+        {
+            new Dictionary<string, object>
+            {
+                ["@type"] = "WebSite",
+                ["name"] = SeoSite.SiteName,
+                ["url"] = SeoSite.SiteUrl,
+                ["description"] = SeoSite.DefaultDescription,
+                ["inLanguage"] = "en"
+            },
+            new Dictionary<string, object>
+            {
+                ["@type"] = "SoftwareApplication",
+                ["name"] = SeoSite.SiteName,
+                ["applicationCategory"] = "EducationalApplication",
+                ["operatingSystem"] = "Web",
+                ["url"] = SeoSite.SiteUrl,
+                ["description"] = SeoSite.DefaultDescription,
+                ["offers"] = new Dictionary<string, object>
+                {
+                    ["@type"] = "Offer",
+                    ["price"] = "0",
+                    ["priceCurrency"] = "USD"
+                },
+                ["author"] = new Dictionary<string, object>
+                {
+                    ["@type"] = "Person",
+                    ["name"] = SeoSite.Author
+                }
+            }
+        }
+    };
+
     private bool _showCastDialog;
 
     private Task CastAChartAsync()
