@@ -1,5 +1,25 @@
 # Releases
 
+## v1.0.2 — Brand emblem & app icons
+
+**Released:** May 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Patch release after **v1.0.1** — new square caduceus-on-shield branding across the web app.
+
+### Highlights
+
+- **New logo.** Square **1024×1024** emblem (caduceus on a starry heraldic shield) replaces the previous wordmark asset on the home page, nav brand, and footer.
+- **App icons.** Regenerated **favicon** (32×32) and **apple-touch-icon** (180×180); cache-busted static URLs via `Branding` helpers.
+- **Icon styling.** Restored rounded app-icon treatment (18% radius, shadow) on hero, sidebar, and footer marks.
+- **Load reliability.** Root-relative logo URLs, asset preload, and interactive **prerender** so the emblem appears before the Blazor circuit connects.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.2.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+
+---
+
 ## v1.0.1 — SEO, About polish & workspace UX
 
 **Released:** May 2026  
