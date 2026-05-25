@@ -313,17 +313,11 @@
     );
 }
 
-/* Mothers setup: preview only in drawer (no Mother toggle strip below chart). */
-.mobile-chart-drawer.is-mothers-setup .mobile-chart-body {
-    justify-content: center;
-    padding-top: 0.35rem;
-    padding-bottom: 0.65rem;
-}
-
-.mobile-chart-drawer.is-mothers-setup .mobile-chart-stage--mothers-preview {
+/* Mothers setup: same chart + Mother strip layout as workspace drawer (no toolbar). */
+.mobile-chart-drawer.is-mothers-setup.is-expanded .mobile-chart-stage {
     --chart-fit: min(
         calc(100dvw - 1rem),
-        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 2.5rem),
+        calc(100dvh - 3.5rem - var(--mobile-chart-handle-stack) - 8.6rem),
         70dvh
     );
 }

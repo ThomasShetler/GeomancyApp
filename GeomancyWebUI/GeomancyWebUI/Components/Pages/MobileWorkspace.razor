@@ -68,7 +68,7 @@
         <div class="mobile-chart-body" aria-hidden="@chartCollapsed.ToString().ToLower()">
             @if (showMothersSetup)
             {
-                <div class="mobile-chart-stage mobile-chart-stage--mothers-preview">
+                <div class="mobile-chart-stage">
                     <ChartSurface Chart="@null"
                                   View="ChartSurfaceView.Shield"
                                   IsWikiLayout="true"
@@ -82,6 +82,55 @@
                                   House4Figure="@mothersPreviewHouse4"
                                   VisibleHouseNumbers="@MothersPreviewVisibleHouses"
                                   HighlightedHouseNumbers="@mothersPreviewHighlights" />
+                </div>
+
+                <div class="mobile-mother-inputs"
+                     role="group"
+                     aria-label="Mothers cast so far">
+                    <div class="mobile-mother-cell">
+                        <div class="mobile-mother-label" title="House 4 - @houseNames[4]">
+                            4. @houseNames[4]
+                        </div>
+                        <div class="mobile-mother-figure">
+                            <FigureContainer Figure="@(mothersPreviewHouse4 ?? EmptyMotherDisplay)"
+                                             IsInteractive="false"
+                                             ShowFigureName="true"
+                                             ShowHouseStrength="false" />
+                        </div>
+                    </div>
+                    <div class="mobile-mother-cell">
+                        <div class="mobile-mother-label" title="House 3 - @houseNames[3]">
+                            3. @houseNames[3]
+                        </div>
+                        <div class="mobile-mother-figure">
+                            <FigureContainer Figure="@(mothersPreviewHouse3 ?? EmptyMotherDisplay)"
+                                             IsInteractive="false"
+                                             ShowFigureName="true"
+                                             ShowHouseStrength="false" />
+                        </div>
+                    </div>
+                    <div class="mobile-mother-cell">
+                        <div class="mobile-mother-label" title="House 2 - @houseNames[2]">
+                            2. @houseNames[2]
+                        </div>
+                        <div class="mobile-mother-figure">
+                            <FigureContainer Figure="@(mothersPreviewHouse2 ?? EmptyMotherDisplay)"
+                                             IsInteractive="false"
+                                             ShowFigureName="true"
+                                             ShowHouseStrength="false" />
+                        </div>
+                    </div>
+                    <div class="mobile-mother-cell">
+                        <div class="mobile-mother-label" title="House 1 - @houseNames[1]">
+                            1. @houseNames[1]
+                        </div>
+                        <div class="mobile-mother-figure">
+                            <FigureContainer Figure="@(mothersPreviewHouse1 ?? EmptyMotherDisplay)"
+                                             IsInteractive="false"
+                                             ShowFigureName="true"
+                                             ShowHouseStrength="false" />
+                        </div>
+                    </div>
                 </div>
             }
             else
@@ -481,6 +530,8 @@
         "Mark dots below. The chart opens when you finish each Mother.";
 
     private static readonly HashSet<int> MothersPreviewVisibleHouses = new() { 1, 2, 3, 4 };
+
+    private static readonly FigureModel EmptyMotherDisplay = new();
 
     // ----- Mobile-only panel mode -----
     // List shows the tab's list/summary view; Detail shows the picked item
