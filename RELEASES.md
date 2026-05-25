@@ -158,6 +158,7 @@ GeomancyWebUI/wwwroot/
 | `560b931` | Shield derivation visualizer: court animations, mobile scaling |
 | `6733e19` | Generate-figures wiki: practice caster + corpus panel |
 | `cb01cc7` | **v1.0.0** — version bump, landing, footer, nav, copy polish |
+| `1f1a424` | Expand v1.0.0 release notes (technical changelog) |
 
 ### Stability (carried from v0.2.1–0.2.2)
 
