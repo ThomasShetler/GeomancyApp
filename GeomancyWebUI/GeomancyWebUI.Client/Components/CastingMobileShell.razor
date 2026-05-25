@@ -1,0 +1,449 @@
+@using GeomancyWebUI.Client.Models
+
+@*
+    Mobile chart drawer + scrollable panel for wiki casting walkthroughs.
+    Mothers: chart + status card + action. Generation / FigureReveal: chart + step controls.
+*@
+
+<div class="wiki-casting-mobile-shell mobile-shell @GetRootClass()">
+    <div class="mobile-chart-drawer @(chartCollapsed ? "is-collapsed" : "is-expanded") @GetDrawerClass()">
+        <button type="button"
+                class="mobile-chart-handle"
+                @onclick="ToggleChartCollapsed"
+                aria-expanded="@((!chartCollapsed).ToString().ToLower())"
+                title="@GetChartDrawerHandleTitle()">
+            <span class="mobile-chart-handle-row">
+                <span class="handle-grip"></span>
+                <span class="handle-label">@GetChartDrawerHandleLabel()</span>
+                <span class="handle-chevron">@(chartCollapsed ? "v" : "^")</span>
+            </span>
+            @if (!chartCollapsed)
+            {
+                <span class="mobile-chart-handle-hint" aria-live="polite">@drawerHint</span>
+            }
+        </button>
+
+        <div class="mobile-chart-body @GetChartBodyClass()"
+             aria-hidden="@chartCollapsed.ToString().ToLower()">
+            <div class="mobile-chart-stage @GetChartStageClass()">
+                <ChartSurface Chart="@walkthroughChart"
+                              View="ChartSurfaceView.Shield"
+                              IsWikiLayout="true"
+                              ShieldRowVisibility="ShieldRowVisibility.All"
+                              ShowEmptyDerivedSlots="@(walkthroughChart == null)"
+                              ShowCourtFigures="@showCourtFigures"
+                              InteractiveMothers="false"
+                              House1Figure="@previewHouse1"
+                              House2Figure="@previewHouse2"
+                              House3Figure="@previewHouse3"
+                              House4Figure="@previewHouse4"
+                              VisibleHouseNumbers="@visibleHouseNumbers"
+                              HighlightedHouseNumbers="@highlightedHouseNumbers"
+                              HighlightedCourt="@highlightedCourt"
+                              HouseHighlightedLines="@houseHighlightedLines"
+                              HouseRevealLineCounts="@houseRevealLineCounts"
+                              HouseLineHighlightThemes="@houseLineHighlightThemes"
+                              CourtHighlightedLines="@courtHighlightedLines"
+                              CourtRevealLineCounts="@courtRevealLineCounts"
+                              CourtLineHighlightThemes="@courtLineHighlightThemes" />
+            </div>
+
+            @if (drawerPhase == WalkthroughMobileDrawerPhase.Mothers)
+            {
+                <div class="mobile-drawer-mother-status" aria-live="polite">
+                    @if (!string.IsNullOrWhiteSpace(motherStatusTitle))
+                    {
+                        <h3 class="mobile-drawer-mother-status-title">@motherStatusTitle</h3>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(motherStatusDetail))
+                    {
+                        <p class="mobile-drawer-mother-status-detail">@motherStatusDetail</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(motherFigureInsight))
+                    {
+                        <p class="mobile-drawer-mother-insight">@motherFigureInsight</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(motherActionLabel))
+                    {
+                        <button type="button"
+                                class="figure-dot-caster-btn figure-dot-caster-btn-primary mobile-drawer-mother-action"
+                                @onclick="OnMotherActionClick">
+                            @motherActionLabel
+                        </button>
+                    }
+                </div>
+            }
+            else if (drawerPhase is WalkthroughMobileDrawerPhase.Generation or WalkthroughMobileDrawerPhase.FigureReveal)
+            {
+                <div class="mobile-drawer-step-controls" aria-label="Step through figure generation">
+                    <div class="chart-casting-step-nav">
+                        <button type="button"
+                                class="chart-casting-step-btn"
+                                disabled="@(!canStepPrevious)"
+                                @onclick="StepPreviousAsync">
+                            Previous
+                        </button>
+                        @if (!string.IsNullOrWhiteSpace(stepIndicator))
+                        {
+                            <span class="chart-casting-step-indicator">@stepIndicator</span>
+                        }
+                        <button type="button"
+                                class="chart-casting-step-btn"
+                                disabled="@(!canStepNext)"
+                                @onclick="StepNextAsync">
+                            @(string.IsNullOrWhiteSpace(nextButtonLabel) ? "Next" : nextButtonLabel)
+                        </button>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(stepTitle))
+                    {
+                        <h3 class="mobile-drawer-step-title">@stepTitle</h3>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(stepLead))
+                    {
+                        <p class="mobile-drawer-step-lead">@stepLead</p>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(stepCallout))
+                    {
+                        <div class="wiki-casting-callout chart-casting-stage-callout mobile-drawer-step-callout @(drawerPhase == WalkthroughMobileDrawerPhase.FigureReveal ? "is-figure-reveal" : "")">
+                            @stepCallout
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <section class="mobile-panel wiki-casting-mobile-panel" role="region">
+        <div class="mobile-panel-body">
+            <div class="mobile-mothers-setup">
+                @ChildContent
+            </div>
+        </div>
+    </section>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public ChartCastingWalkthrough? Walkthrough { get; set; }
+    [Parameter] public bool FullViewport { get; set; }
+    [Parameter] public bool MothersOnlyPreview { get; set; }
+
+    private bool chartCollapsed = true;
+    private string drawerHint = "Mark dots below. The chart opens when you finish each Mother.";
+    private WalkthroughMobileDrawerPhase drawerPhase = WalkthroughMobileDrawerPhase.Mothers;
+
+    private FigureModel? previewHouse1;
+    private FigureModel? previewHouse2;
+    private FigureModel? previewHouse3;
+    private FigureModel? previewHouse4;
+    private HouseChartModel? walkthroughChart;
+    private bool showCourtFigures;
+    private HashSet<int>? visibleHouseNumbers;
+    private HashSet<int>? highlightedHouseNumbers;
+    private HashSet<ChartHighlightCourt>? highlightedCourt;
+    private Dictionary<int, int>? houseHighlightedLines;
+    private Dictionary<int, int>? houseRevealLineCounts;
+    private Dictionary<int, string>? houseLineHighlightThemes;
+    private Dictionary<ChartHighlightCourt, int>? courtHighlightedLines;
+    private Dictionary<ChartHighlightCourt, int>? courtRevealLineCounts;
+    private Dictionary<ChartHighlightCourt, string>? courtLineHighlightThemes;
+
+    private string? motherStatusTitle;
+    private string? motherStatusDetail;
+    private string? motherFigureInsight;
+    private string? motherActionLabel;
+    private string? stepIndicator;
+    private string? stepTitle;
+    private string? stepLead;
+    private string? stepCallout;
+    private string? nextButtonLabel;
+    private bool canStepPrevious;
+    private bool canStepNext;
+
+    private static readonly HashSet<int> MothersPreviewVisibleHouses = new() { 1, 2, 3, 4 };
+
+    private static readonly IReadOnlyDictionary<int, string> HouseLatinNames = new Dictionary<int, string>
+    {
+        [1] = "Vita",
+        [2] = "Lucrum",
+        [3] = "Fratres",
+        [4] = "Genitor"
+    };
+
+    private string GetRootClass() =>
+        FullViewport ? "wiki-casting-mobile-shell--fullscreen" : "wiki-casting-mobile-shell--embedded";
+
+    private string GetDrawerClass()
+    {
+        var classes = new List<string>();
+        if (drawerPhase == WalkthroughMobileDrawerPhase.Mothers || MothersOnlyPreview)
+        {
+            classes.Add("is-mothers-setup");
+        }
+
+        if (!MothersOnlyPreview)
+        {
+            classes.Add("is-wiki-walkthrough");
+        }
+
+        if (drawerPhase == WalkthroughMobileDrawerPhase.Generation)
+        {
+            classes.Add("is-wiki-generation");
+        }
+
+        if (drawerPhase == WalkthroughMobileDrawerPhase.FigureReveal)
+        {
+            classes.Add("is-wiki-generation");
+            classes.Add("is-wiki-figure-reveal");
+        }
+
+        return string.Join(' ', classes);
+    }
+
+    private string GetChartBodyClass()
+    {
+        if (drawerPhase == WalkthroughMobileDrawerPhase.Mothers)
+        {
+            return "mobile-chart-body--mothers-setup";
+        }
+
+        if (drawerPhase is WalkthroughMobileDrawerPhase.Generation or WalkthroughMobileDrawerPhase.FigureReveal)
+        {
+            return "mobile-chart-body--wiki-generation";
+        }
+
+        return string.Empty;
+    }
+
+    private string GetChartStageClass() =>
+        drawerPhase == WalkthroughMobileDrawerPhase.Mothers
+            ? "mobile-chart-stage--mothers-preview"
+            : "mobile-chart-stage--wiki-walkthrough";
+
+    private void ToggleChartCollapsed() => chartCollapsed = !chartCollapsed;
+
+    private async Task OnMotherActionClick()
+    {
+        if (string.IsNullOrWhiteSpace(motherActionLabel))
+        {
+            return;
+        }
+
+        var expanding = motherActionLabel.StartsWith("Show", StringComparison.OrdinalIgnoreCase);
+        chartCollapsed = !expanding;
+        if (!expanding && Walkthrough != null)
+        {
+            await Walkthrough.OnMobileMotherDrawerCollapsedAsync();
+        }
+
+        StateHasChanged();
+    }
+
+    private string GetChartDrawerHandleLabel()
+    {
+        if (drawerPhase is WalkthroughMobileDrawerPhase.Generation or WalkthroughMobileDrawerPhase.FigureReveal)
+        {
+            return chartCollapsed ? "Show chart" : "Hide chart \u00B7 Show steps";
+        }
+
+        return chartCollapsed ? "Show Mother on chart" : "Hide chart \u00B7 Cast next Mother";
+    }
+
+    private string GetChartDrawerHandleTitle()
+    {
+        if (drawerPhase is WalkthroughMobileDrawerPhase.Generation or WalkthroughMobileDrawerPhase.FigureReveal)
+        {
+            return chartCollapsed
+                ? "Show the shield chart and step controls"
+                : "Collapse the chart and show the walkthrough steps";
+        }
+
+        return chartCollapsed
+            ? "Show where this Mother sits on the shield"
+            : "Collapse the chart to mark the next Mother";
+    }
+
+    public Task ApplyMothersPreviewAsync(MothersPreviewChangedEventArgs args)
+    {
+        drawerPhase = WalkthroughMobileDrawerPhase.Mothers;
+        ApplyChartStateFromMothers(args.House1, args.House2, args.House3, args.House4, args.HighlightedHouseNumbers);
+        walkthroughChart = null;
+        showCourtFigures = false;
+        houseHighlightedLines = null;
+        houseRevealLineCounts = null;
+        houseLineHighlightThemes = null;
+        highlightedCourt = null;
+        courtHighlightedLines = null;
+        courtRevealLineCounts = null;
+        courtLineHighlightThemes = null;
+        visibleHouseNumbers = MothersPreviewVisibleHouses;
+        motherStatusTitle = args.MotherStatusTitle;
+        motherStatusDetail = args.MotherStatusDetail;
+        motherFigureInsight = args.MotherFigureInsight;
+        motherActionLabel = args.MotherActionLabel;
+        ClearStepControls();
+        UpdateDrawerFromMothersEvent(args.JustCompletedHouseNumber, args.AllMothersComplete, args.MotherStatusTitle);
+        return InvokeAsync(StateHasChanged);
+    }
+
+    public Task ApplyWalkthroughPreviewAsync(WalkthroughChartPreviewChangedEventArgs args)
+    {
+        drawerPhase = args.DrawerPhase;
+        ApplyChartStateFromMothers(args.House1, args.House2, args.House3, args.House4, args.HighlightedHouseNumbers);
+        walkthroughChart = args.Chart;
+        showCourtFigures = args.ShowCourtFigures;
+        visibleHouseNumbers = args.VisibleHouseNumbers != null
+            ? new HashSet<int>(args.VisibleHouseNumbers)
+            : null;
+        highlightedHouseNumbers = args.HighlightedHouseNumbers != null
+            ? new HashSet<int>(args.HighlightedHouseNumbers)
+            : null;
+        highlightedCourt = args.HighlightedCourt != null
+            ? new HashSet<ChartHighlightCourt>(args.HighlightedCourt)
+            : null;
+        houseHighlightedLines = CopyDictionary(args.HouseHighlightedLines);
+        houseRevealLineCounts = CopyDictionary(args.HouseRevealLineCounts);
+        houseLineHighlightThemes = CopyStringDictionary(args.HouseLineHighlightThemes);
+        courtHighlightedLines = CopyDictionary(args.CourtHighlightedLines);
+        courtRevealLineCounts = CopyDictionary(args.CourtRevealLineCounts);
+        courtLineHighlightThemes = CopyDictionary(args.CourtLineHighlightThemes);
+
+        motherStatusTitle = args.MotherStatusTitle;
+        motherStatusDetail = args.MotherStatusDetail;
+        motherFigureInsight = args.MotherFigureInsight;
+        motherActionLabel = args.MotherActionLabel;
+        stepIndicator = args.StepIndicator;
+        stepTitle = args.StepTitle;
+        stepLead = args.StepLead;
+        stepCallout = args.StepCallout;
+        nextButtonLabel = args.NextButtonLabel;
+        canStepPrevious = args.CanStepPrevious;
+        canStepNext = args.CanStepNext;
+
+        if (args.DrawerPhase == WalkthroughMobileDrawerPhase.Mothers)
+        {
+            ClearStepControls();
+            UpdateDrawerFromMothersEvent(args.JustCompletedHouseNumber, args.AllMothersComplete, args.MotherStatusTitle);
+        }
+        else if (args.DrawerPhase is WalkthroughMobileDrawerPhase.Generation or WalkthroughMobileDrawerPhase.FigureReveal)
+        {
+            chartCollapsed = false;
+            drawerHint = args.DrawerPhase == WalkthroughMobileDrawerPhase.FigureReveal
+                ? "Review the completed figure on the chart, then tap View summary."
+                : "Step through each line in the chart. Collapse when you want to read the summary below.";
+        }
+        else if (args.CollapseDrawer)
+        {
+            chartCollapsed = true;
+            drawerHint = "Generation complete. Expand the chart to review, or read the summary below.";
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private void ApplyChartStateFromMothers(
+        FigureModel? house1,
+        FigureModel? house2,
+        FigureModel? house3,
+        FigureModel? house4,
+        IReadOnlySet<int>? highlights)
+    {
+        previewHouse1 = CopyPreviewFigure(house1);
+        previewHouse2 = CopyPreviewFigure(house2);
+        previewHouse3 = CopyPreviewFigure(house3);
+        previewHouse4 = CopyPreviewFigure(house4);
+        highlightedHouseNumbers = highlights != null
+            ? new HashSet<int>(highlights)
+            : null;
+    }
+
+    private void ClearStepControls()
+    {
+        stepIndicator = null;
+        stepTitle = null;
+        stepLead = null;
+        stepCallout = null;
+        nextButtonLabel = null;
+        canStepPrevious = false;
+        canStepNext = false;
+    }
+
+    private void UpdateDrawerFromMothersEvent(int? justCompletedHouseNumber, bool allMothersComplete, string? statusTitle = null)
+    {
+        if (justCompletedHouseNumber is int houseNumber)
+        {
+            chartCollapsed = false;
+            drawerHint = allMothersComplete
+                ? "Collapse the chart above to continue below."
+                : string.IsNullOrWhiteSpace(statusTitle)
+                    ? "Review your Mother on the chart above, then collapse to cast the next."
+                    : $"{statusTitle} Review the highlighted slot above, then collapse to generate the next Mother.";
+        }
+        else if (!allMothersComplete
+                 && previewHouse1 == null
+                 && previewHouse2 == null
+                 && previewHouse3 == null
+                 && previewHouse4 == null)
+        {
+            chartCollapsed = true;
+            drawerHint = "Mark dots below. The chart opens when you finish each Mother.";
+        }
+    }
+
+    private async Task StepPreviousAsync()
+    {
+        if (Walkthrough != null)
+        {
+            await Walkthrough.MobileStepPreviousAsync();
+        }
+    }
+
+    private async Task StepNextAsync()
+    {
+        if (Walkthrough != null)
+        {
+            await Walkthrough.MobileStepNextAsync();
+        }
+    }
+
+    private static FigureModel? CopyPreviewFigure(FigureModel? source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        var target = new FigureModel();
+        CopyMotherFigure(target, source);
+        return target;
+    }
+
+    private static void CopyMotherFigure(FigureModel target, FigureModel source)
+    {
+        target.HeadLine = source.HeadLine;
+        target.NeckLine = source.NeckLine;
+        target.BodyLine = source.BodyLine;
+        target.FootLine = source.FootLine;
+        if (!string.IsNullOrWhiteSpace(source.Name))
+        {
+            target.Name = source.Name;
+        }
+
+        if (!string.IsNullOrWhiteSpace(source.EnglishName))
+        {
+            target.EnglishName = source.EnglishName;
+        }
+    }
+
+    private static Dictionary<TKey, TValue>? CopyDictionary<TKey, TValue>(IReadOnlyDictionary<TKey, TValue>? source)
+        where TKey : notnull
+    {
+        return source == null ? null : new Dictionary<TKey, TValue>(source);
+    }
+
+    private static Dictionary<int, string>? CopyStringDictionary(IReadOnlyDictionary<int, string>? source) =>
+        CopyDictionary(source);
+}

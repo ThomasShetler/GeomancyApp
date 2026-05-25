@@ -9,5 +9,9 @@ namespace GeomancyWebUI.Client.Models
         public IReadOnlySet<int>? HighlightedHouseNumbers { get; init; }
         public int? JustCompletedHouseNumber { get; init; }
         public bool AllMothersComplete { get; init; }
+        public string? MotherStatusTitle { get; init; }
+        public string? MotherStatusDetail { get; init; }
+        public string? MotherFigureInsight { get; init; }
+        public string? MotherActionLabel { get; init; }
     }
 }

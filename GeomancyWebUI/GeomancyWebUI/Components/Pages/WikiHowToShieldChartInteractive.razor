@@ -4,28 +4,94 @@
 
 @using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Models
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Geofancy Wiki - Interactive Shield Walkthrough</PageTitle>
 
-<div class="wiki-interactive-shell">
-    <div class="wiki-interactive-header">
-        <div class="wiki-interactive-breadcrumbs">
-            <a href="/wiki">Wiki</a>
-            <span>/</span>
-            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a>
-            <span>/</span>
-            <span>Interactive</span>
-        </div>
-        <h1>Interactive Shield Walkthrough</h1>
-        <p>
-            A dedicated interactive space for casting Mothers and stepping through Daughter generation.
-        </p>
+@if (_useMobileWikiCasting == true)
+{
+    <div class="wiki-interactive-shell wiki-interactive-shell--mobile">
+        <section class="wiki-casting-section wiki-interactive-workspace-section">
+            <CastingMobileShell @ref="mobileShell"
+                                Walkthrough="@walkthrough"
+                                FullViewport="true">
+                <ChartCastingWalkthrough @ref="walkthrough"
+                                         Mode="ChartCastingMode.Full"
+                                         ShowChartColumn="false"
+                                         HostMode="ChartCastingHostMode.WikiMobile"
+                                         OnMothersPreviewChanged="HandleMothersPreviewChangedAsync"
+                                         OnWalkthroughChartPreviewChanged="HandleWalkthroughPreviewChangedAsync">
+                    <WikiMobileIntro>
+                        <div class="wiki-interactive-breadcrumbs">
+                            <a href="/wiki">Wiki</a>
+                            <span>/</span>
+                            <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a>
+                            <span>/</span>
+                            <span>Interactive</span>
+                        </div>
+                        <h1>Interactive Shield Walkthrough</h1>
+                        <p class="wiki-mobile-walkthrough-intro-lead">
+                            Cast the four Mothers, then step through Daughter generation. Use the chart drawer above
+                            for the live shield; collapse it to work through each step below.
+                        </p>
+                    </WikiMobileIntro>
+                </ChartCastingWalkthrough>
+            </CastingMobileShell>
+        </section>
     </div>
-
-    <section class="wiki-casting-section wiki-interactive-workspace-section">
-        <div class="wiki-interactive-workspace-host">
-            <ChartCastingWalkthrough Mode="ChartCastingMode.Full" />
+}
+else if (_useMobileWikiCasting == false)
+{
+    <div class="wiki-interactive-shell">
+        <div class="wiki-interactive-header">
+            <div class="wiki-interactive-breadcrumbs">
+                <a href="/wiki">Wiki</a>
+                <span>/</span>
+                <a href="/wiki/how-to/shield-chart">How to Cast a Shield Chart</a>
+                <span>/</span>
+                <span>Interactive</span>
+            </div>
+            <h1>Interactive Shield Walkthrough</h1>
+            <p>
+                A dedicated interactive space for casting Mothers and stepping through Daughter generation.
+            </p>
         </div>
-    </section>
-</div>
 
+        <section class="wiki-casting-section wiki-interactive-workspace-section">
+            <div class="wiki-interactive-workspace-host">
+                <ChartCastingWalkthrough Mode="ChartCastingMode.Full" />
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    private bool? _useMobileWikiCasting;
+    private CastingMobileShell? mobileShell;
+    private ChartCastingWalkthrough? walkthrough;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _useMobileWikiCasting.HasValue)
+        {
+            return;
+        }
+
+        try
+        {
+            _useMobileWikiCasting = await JSRuntime.InvokeAsync<bool>("geofancyDeviceIsMobile");
+        }
+        catch
+        {
+            _useMobileWikiCasting = false;
+        }
+
+        StateHasChanged();
+    }
+
+    private Task HandleMothersPreviewChangedAsync(MothersPreviewChangedEventArgs args) =>
+        mobileShell?.ApplyMothersPreviewAsync(args) ?? Task.CompletedTask;
+
+    private Task HandleWalkthroughPreviewChangedAsync(WalkthroughChartPreviewChangedEventArgs args) =>
+        mobileShell?.ApplyWalkthroughPreviewAsync(args) ?? Task.CompletedTask;
+}

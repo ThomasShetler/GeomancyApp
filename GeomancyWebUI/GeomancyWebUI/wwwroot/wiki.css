@@ -1798,6 +1798,34 @@
     max-width: none;
 }
 
+/* Mobile wiki chart examples: 535px native shield scaled to viewport (same as /mobile mothers drawer). */
+@media (max-width: 768px) {
+    .wiki-shield-section-demo-chart,
+    .wiki-daughter-visualizer .chart-casting-chart-preview {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        overflow: hidden;
+        --chart-native-size: 535px;
+        --chart-fit: min(calc(100vw - 1.5rem), 70dvh, 420px);
+        height: var(--chart-fit);
+    }
+
+    .wiki-shield-section-demo-chart .charts-side-by-side,
+    .wiki-daughter-visualizer .chart-casting-chart-preview .charts-side-by-side {
+        width: var(--chart-native-size) !important;
+        height: var(--chart-native-size) !important;
+        max-width: none !important;
+        max-height: none !important;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform-origin: top center;
+        transform: translateX(-50%) scale(calc(var(--chart-fit) / var(--chart-native-size)));
+    }
+}
+
 .wiki-daughter-visualizer {
     margin-top: 1rem;
     display: flex;

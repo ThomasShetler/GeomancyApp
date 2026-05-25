@@ -571,17 +571,85 @@
 }
 
 
-/* Mobile mothers setup: progressive row unlock + actions above rows */
-.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-actions--top {
-    margin-bottom: 0.65rem;
+/* Mobile mothers setup: figure preview, then actions, then dot rows */
+.figure-dot-caster.is-mobile-actions-first {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
 }
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-result--mobile-top {
+    flex: 0 0 auto;
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #ddd);
+    background: var(--bg-primary, #fff);
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-actions--top {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-body--mobile {
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.figure-dot-caster.is-mobile-actions-first .figure-dot-caster-rows {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
 
 .figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked {
     opacity: 0.45;
 }
 
-.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked .figure-dot-canvas {
+.figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked .figure-dot-canvas.is-locked {
     cursor: not-allowed;
+}
+
+/* Locked rows above the active row stay tappable for refocus (double-tap). */
+.figure-dot-caster.is-mobile-progressive .figure-dot-canvas.is-refocus-eligible {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.figure-dot-caster.is-mobile-progressive .figure-dot-canvas.is-refocus-prompt {
+    outline: 2px solid color-mix(in srgb, var(--accent-color, #c9a227) 70%, transparent);
+    outline-offset: 1px;
+}
+
+.figure-dot-refocus-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    box-sizing: border-box;
+    background: color-mix(in srgb, var(--bg-primary, #1a1a1a) 55%, transparent);
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+.figure-dot-refocus-mask-text {
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--accent-color, #c9a227);
+}
+
+.figure-dot-placeholder--refocus {
+    color: var(--accent-color, #c9a227);
+    font-weight: 600;
 }
 
 .figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-focused {

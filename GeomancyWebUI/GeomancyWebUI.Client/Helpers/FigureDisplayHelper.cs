@@ -164,6 +164,35 @@ namespace GeomancyWebUI.Client.Helpers
             };
         }
 
+        public static string? GetFigureInHouseText(FigureModel figure, int houseNumber)
+        {
+            if (figure.InHouses != null
+                && figure.InHouses.TryGetValue(houseNumber.ToString(), out var inHouse)
+                && !string.IsNullOrWhiteSpace(inHouse))
+            {
+                return inHouse.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(figure.Tagline))
+            {
+                return figure.Tagline.Trim();
+            }
+
+            var core = figure.CoreMeaning?.FirstOrDefault(s => !string.IsNullOrWhiteSpace(s));
+            if (!string.IsNullOrWhiteSpace(core))
+            {
+                return core!.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(figure.DivinatoryMeaning))
+            {
+                var text = figure.DivinatoryMeaning.Trim();
+                return text.Length <= 220 ? text : text[..217] + "...";
+            }
+
+            return null;
+        }
+
         public static string GetHouseName(int houseNumber) => houseNumber switch
         {
             1 => "First",

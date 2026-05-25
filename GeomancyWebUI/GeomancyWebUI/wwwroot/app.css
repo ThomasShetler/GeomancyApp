@@ -55,7 +55,8 @@ a, .btn-link {
    to fit its 100dvh - nav math; the article wrapper's chrome padding (px-4 +
    the .content padding-top above) eats screen real estate that the
    chart overlay then has to scroll around. Drop all of it on /mobile. */
-article.content:has(.mobile-shell) {
+article.content:has(.mobile-shell),
+article.content:has(.wiki-interactive-shell--mobile) {
     padding: 0 !important;
 }
 

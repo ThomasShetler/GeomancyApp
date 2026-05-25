@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Models
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Geofancy Wiki - Generate Figures</PageTitle>
 
@@ -33,10 +34,12 @@
             line is active (single); if zero or two remain, the line is passive (double). Reading the four
             finished rows top to bottom gives you one figure.
         </p>
-        <FigureDotCaster MotherLabel="Practice figure" />
+        <FigureDotCaster MotherLabel="Practice figure"
+                         MobileProgressiveRows="@(_useMobileWikiCasting == true)"
+                         MobileActionsFirst="@(_useMobileWikiCasting == true)" />
     </section>
 
-    <section class="wiki-casting-section">
+    <section class="wiki-casting-section wiki-casting-section--mothers-walkthrough">
         <h2 class="wiki-casting-section-title">Form the four Mothers</h2>
         <p class="wiki-casting-section-lead">
             A full chart requires four Mother figures. Cast the <strong>First Mother</strong>,
@@ -44,7 +47,22 @@
             Genitor (4). The top row reads <strong>8, 7, 6, 5, 4, 3, 2, 1</strong> left to right — each Mother
             goes into the slot with the <strong>same house number</strong>.
         </p>
-        <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly" />
+        @if (_useMobileWikiCasting == true)
+        {
+            <CastingMobileShell @ref="mobileShell"
+                                Walkthrough="@mothersWalkthrough"
+                                MothersOnlyPreview="true">
+                <ChartCastingWalkthrough @ref="mothersWalkthrough"
+                                         Mode="ChartCastingMode.MothersOnly"
+                                         ShowChartColumn="false"
+                                         HostMode="ChartCastingHostMode.WikiMobile"
+                                         OnMothersPreviewChanged="HandleMothersPreviewChangedAsync" />
+            </CastingMobileShell>
+        }
+        else if (_useMobileWikiCasting == false)
+        {
+            <ChartCastingWalkthrough Mode="ChartCastingMode.MothersOnly" />
+        }
     </section>
 
     <section class="wiki-casting-section">
@@ -62,3 +80,31 @@
     </section>
 
 </WikiArticleShell>
+
+@code {
+    private bool? _useMobileWikiCasting;
+    private CastingMobileShell? mobileShell;
+    private ChartCastingWalkthrough? mothersWalkthrough;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _useMobileWikiCasting.HasValue)
+        {
+            return;
+        }
+
+        try
+        {
+            _useMobileWikiCasting = await JSRuntime.InvokeAsync<bool>("geofancyDeviceIsMobile");
+        }
+        catch
+        {
+            _useMobileWikiCasting = false;
+        }
+
+        StateHasChanged();
+    }
+
+    private Task HandleMothersPreviewChangedAsync(MothersPreviewChangedEventArgs args) =>
+        mobileShell?.ApplyMothersPreviewAsync(args) ?? Task.CompletedTask;
+}

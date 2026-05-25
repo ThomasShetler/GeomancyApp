@@ -23,13 +23,15 @@ main {
  * Lock the page column height and hide overflow only when the mobile
  * workspace is the active body content.
  */
-.page:has(.mobile-shell) {
+.page:has(.mobile-shell),
+.page:has(.wiki-interactive-shell--mobile) {
     min-height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
 }
 
-main:has(.mobile-shell) {
+main:has(.mobile-shell),
+main:has(.wiki-interactive-shell--mobile) {
     flex: 1;
     min-height: 0;
     overflow: hidden;
@@ -37,7 +39,8 @@ main:has(.mobile-shell) {
     flex-direction: column;
 }
 
-article.content:has(.mobile-shell) {
+article.content:has(.mobile-shell),
+article.content:has(.wiki-interactive-shell--mobile) {
     flex: 1;
     min-height: 0;
     overflow: hidden;

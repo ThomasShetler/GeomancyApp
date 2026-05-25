@@ -1,6 +1,7 @@
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Client.Components.Workspace
+@using GeomancyWebUI.Client.Helpers
 @inject IGeomancyService GeomancyService
 
 <div class="chart-casting-walkthrough @GetWalkthroughRootClass()">
@@ -35,6 +36,13 @@
         </nav>
         }
 
+        @if (ShowWikiMobileIntro)
+        {
+            <div class="wiki-mobile-walkthrough-intro">
+                @WikiMobileIntro
+            </div>
+        }
+
         @if (!string.IsNullOrWhiteSpace(_chartError))
         {
             <p class="chart-casting-error" role="alert">@_chartError</p>
@@ -44,7 +52,7 @@
         <section class="chart-casting-guidance-column">
             @if (_activeStage == WalkthroughStage.Mothers)
             {
-                @if (!EmbeddedMobileMothers)
+                @if (!UseEmbeddedMobileMothers)
                 {
                     <p class="chart-casting-shield-hint">
                         Cast each Mother into the shield slot with the <strong>matching house number</strong> (highlighted in the chart).
@@ -56,7 +64,7 @@
                 @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
                 {
                     var current = _motherSlots[_currentMotherIndex];
-                    @if (!EmbeddedMobileMothers)
+                    @if (!UseEmbeddedMobileMothers)
                     {
                         <p class="chart-casting-slot-target" aria-live="polite">
                             @GetMotherSlotTargetText(current.HouseNumber)
@@ -68,13 +76,13 @@
                                      Compact="true"
                                      AutoReset="false"
                                      ShowInstruction="false"
-                                     ShowRowCounts="@(!EmbeddedMobileMothers)"
-                                     ShowRowUndo="@(!EmbeddedMobileMothers)"
+                                     ShowRowCounts="@(!UseEmbeddedMobileMothers)"
+                                     ShowRowUndo="@(!UseEmbeddedMobileMothers)"
                                      ShowMarkAgainButton="false"
-                                     MobileProgressiveRows="@EmbeddedMobileMothers"
-                                     MobileActionsFirst="@EmbeddedMobileMothers"
+                                     MobileProgressiveRows="@UseEmbeddedMobileMothers"
+                                     MobileActionsFirst="@UseEmbeddedMobileMothers"
                                      OnFigureCompleted="OnMotherFigureCompleted" />
-                    @if (EmbeddedMobileMothers)
+                    @if (UseEmbeddedMobileMothers && HostMode != ChartCastingHostMode.WikiMobile)
                     {
                         <p class="chart-casting-slot-target chart-casting-slot-target--mobile" aria-live="polite">
                             @GetMotherSlotTargetText(current.HouseNumber)
@@ -86,8 +94,8 @@
                 }
                 else if (_motherSlots.All(s => s.Figure != null))
                 {
-                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact @(EmbeddedMobileMothers ? "is-mobile-embedded" : "")">
-                        @if (EmbeddedMobileMothers)
+                    <div class="chart-casting-stage-complete chart-casting-stage-complete--compact @(UseEmbeddedMobileMothers ? "is-mobile-embedded" : "")">
+                        @if (UseEmbeddedMobileMothers)
                         {
                             <div class="chart-casting-summary-actions chart-casting-summary-actions--mobile-top">
                             @if (HostMode == ChartCastingHostMode.EmbeddedWorkspace)
@@ -99,6 +107,22 @@
                                     @(_isContinuingToWorkspace ? "Generating chart..." : "Generate the full chart")
                                 </button>
                             }
+                            else if (HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.Full)
+                            {
+                                <button type="button"
+                                        class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                        disabled="@_isLoadingChart"
+                                        @onclick="BeginShieldTutorialAsync">
+                                    @(_isLoadingChart ? "Building chart..." : "Build shield and continue")
+                                </button>
+                            }
+                            else if (HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.MothersOnly)
+                            {
+                                <a class="figure-dot-caster-btn figure-dot-caster-btn-primary chart-casting-workspace-link"
+                                   href="@_workspaceSharePath">
+                                    Open in Workspace
+                                </a>
+                            }
                             <button type="button"
                                     class="figure-dot-caster-btn figure-dot-caster-btn-secondary"
                                     @onclick="RestartMothers">
@@ -107,7 +131,7 @@
                             </div>
                         }
                         <p class="chart-casting-stage-complete-title">Four Mothers complete</p>
-                        @if (!EmbeddedMobileMothers)
+                        @if (!UseEmbeddedMobileMothers)
                         {
                         <div class="chart-casting-finish chart-casting-stage-actions">
                         <div class="chart-casting-summary-actions">
@@ -667,6 +691,7 @@
     private int _maxUnlockedStageIndex;
     private readonly HashSet<WalkthroughStage> _stageGenerationCompleted = new();
     private bool _showStageCompletionSummary;
+    private bool _mobileAwaitingSummaryAck;
 
     [Parameter] public ChartCastingMode Mode { get; set; } = ChartCastingMode.Full;
     [Parameter] public bool ShowChartColumn { get; set; } = true;
@@ -675,9 +700,17 @@
     [Parameter] public string WorkspaceBasePath { get; set; } = "/workspace";
     [Parameter] public EventCallback<MothersCompletedEventArgs> OnMothersCompleted { get; set; }
     [Parameter] public EventCallback<MothersPreviewChangedEventArgs> OnMothersPreviewChanged { get; set; }
+    [Parameter] public EventCallback<WalkthroughChartPreviewChangedEventArgs> OnWalkthroughChartPreviewChanged { get; set; }
     [Parameter] public bool EmbeddedMobileMothers { get; set; }
+    [Parameter] public RenderFragment? WikiMobileIntro { get; set; }
 
     private bool _isContinuingToWorkspace;
+
+    private bool UseEmbeddedMobileMothers =>
+        EmbeddedMobileMothers || HostMode == ChartCastingHostMode.WikiMobile;
+
+    private bool ShowWikiMobileIntro =>
+        HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.Full && WikiMobileIntro != null;
 
     private bool ShowStageTabs => HostMode != ChartCastingHostMode.EmbeddedWorkspace && Mode == ChartCastingMode.Full;
 
@@ -703,6 +736,27 @@
             }
         }
 
+        if (HostMode == ChartCastingHostMode.WikiMobile)
+        {
+            classes.Add("is-embedded-workspace");
+            classes.Add("is-embedded-mobile-mothers");
+            if (Mode == ChartCastingMode.Full)
+            {
+                classes.Add("is-wiki-mobile-full");
+            }
+
+            if (GetMobileDrawerPhase() == WalkthroughMobileDrawerPhase.Generation)
+            {
+                classes.Add("is-wiki-mobile-generation");
+            }
+
+            if (GetMobileDrawerPhase() == WalkthroughMobileDrawerPhase.FigureReveal)
+            {
+                classes.Add("is-wiki-mobile-generation");
+                classes.Add("is-wiki-mobile-figure-reveal");
+            }
+        }
+
         return string.Join(' ', classes);
     }
 
@@ -723,6 +777,7 @@
             _courtsDirectory = Array.Empty<CourtDirectoryEntry>();
         }
         ApplyActiveStageState();
+        _ = NotifyMobileChartPreviewAsync();
     }
 
     private FigureModel? GetMotherOrNull(int houseNumber) =>
@@ -747,8 +802,10 @@
         }
 
         _activeStage = stage;
+        _mobileAwaitingSummaryAck = false;
         _showStageCompletionSummary = IsStageGenerationComplete(stage) && IsAtLastMicroStepForStage(stage);
         ApplyActiveStageState();
+        _ = NotifyWalkthroughChartPreviewAsync();
     }
 
     private IReadOnlyList<SlotSelection> GetCurrentStageSelectableSlots()
@@ -835,8 +892,11 @@
     private void ReviewActiveStageGenerationSteps()
     {
         _showStageCompletionSummary = false;
+        _mobileAwaitingSummaryAck = false;
         ResetActiveStageMicroStepToStart();
         ApplyActiveStageState();
+        _ = NotifyWalkthroughChartPreviewAsync();
+        StateHasChanged();
     }
 
     private void ResetActiveStageMicroStepToStart()
@@ -866,12 +926,24 @@
         if (IsAtLastMicroStepForActiveStage())
         {
             MarkActiveStageGenerationComplete();
-            _showStageCompletionSummary = true;
+            if (HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.Full)
+            {
+                _mobileAwaitingSummaryAck = true;
+                _showStageCompletionSummary = false;
+            }
+            else
+            {
+                _showStageCompletionSummary = true;
+            }
         }
         else
         {
             _showStageCompletionSummary = false;
+            _mobileAwaitingSummaryAck = false;
         }
+
+        _ = NotifyWalkthroughChartPreviewAsync();
+        StateHasChanged();
     }
 
     private string GetCourtStageCompleteTitle() => _activeStage switch
@@ -920,31 +992,433 @@
         }
 
         ApplyActiveStageState();
-        await NotifyMothersPreviewAsync(slot.HouseNumber);
+        await NotifyMobileChartPreviewAsync(slot.HouseNumber);
         StateHasChanged();
     }
 
-    private async Task NotifyMothersPreviewAsync(int? justCompletedHouseNumber = null)
+    private async Task NotifyMobileChartPreviewAsync(int? justCompletedHouseNumber = null)
     {
-        if (HostMode != ChartCastingHostMode.EmbeddedWorkspace
-            || ShowChartColumn
-            || Mode != ChartCastingMode.MothersOnly
-            || !OnMothersPreviewChanged.HasDelegate)
+        if (ShowChartColumn || !IsMobileChartHost())
         {
             return;
         }
 
-        var args = new MothersPreviewChangedEventArgs
+        if (Mode == ChartCastingMode.MothersOnly)
         {
+            var motherStatus = BuildMotherDrawerStatus(justCompletedHouseNumber);
+            var mothersArgs = new MothersPreviewChangedEventArgs
+            {
+                House1 = GetMotherOrNull(1),
+                House2 = GetMotherOrNull(2),
+                House3 = GetMotherOrNull(3),
+                House4 = GetMotherOrNull(4),
+                HighlightedHouseNumbers = GetMotherDrawerHighlights(justCompletedHouseNumber),
+                JustCompletedHouseNumber = justCompletedHouseNumber,
+                AllMothersComplete = _motherSlots.All(s => s.Figure != null),
+                MotherStatusTitle = motherStatus.Title,
+                MotherStatusDetail = motherStatus.Detail,
+                MotherFigureInsight = motherStatus.Insight,
+                MotherActionLabel = motherStatus.ActionLabel
+            };
+
+            if (OnMothersPreviewChanged.HasDelegate)
+            {
+                await OnMothersPreviewChanged.InvokeAsync(mothersArgs);
+            }
+        }
+
+        await NotifyWalkthroughChartPreviewAsync(justCompletedHouseNumber);
+    }
+
+    private async Task NotifyMothersPreviewAsync(int? justCompletedHouseNumber = null) =>
+        await NotifyMobileChartPreviewAsync(justCompletedHouseNumber);
+
+    private bool IsMobileChartHost() =>
+        HostMode is ChartCastingHostMode.EmbeddedWorkspace or ChartCastingHostMode.WikiMobile;
+
+    private async Task NotifyWalkthroughChartPreviewAsync(int? justCompletedHouseNumber = null)
+    {
+        if (ShowChartColumn
+            || Mode != ChartCastingMode.Full
+            || HostMode != ChartCastingHostMode.WikiMobile
+            || !OnWalkthroughChartPreviewChanged.HasDelegate)
+        {
+            return;
+        }
+
+        var drawerPhase = GetMobileDrawerPhase();
+        var motherStatus = BuildMotherDrawerStatus(justCompletedHouseNumber);
+        var args = new WalkthroughChartPreviewChangedEventArgs
+        {
+            DrawerPhase = drawerPhase,
+            IsMothersStage = _activeStage == WalkthroughStage.Mothers,
             House1 = GetMotherOrNull(1),
             House2 = GetMotherOrNull(2),
             House3 = GetMotherOrNull(3),
             House4 = GetMotherOrNull(4),
-            HighlightedHouseNumbers = _activeHouseHighlights,
+            Chart = _chart,
+            ShowCourtFigures = ShouldShowCourtFigures(),
+            VisibleHouseNumbers = GetVisibleHousesForActiveStage(),
+            HighlightedHouseNumbers = _activeStage == WalkthroughStage.Mothers
+                ? GetMotherDrawerHighlights(justCompletedHouseNumber)
+                : _activeHouseHighlights,
+            HighlightedCourt = _activeCourtHighlights,
+            HouseHighlightedLines = GetLineHighlightsForActiveStage(),
+            HouseRevealLineCounts = GetRevealCountsForActiveStage(),
+            HouseLineHighlightThemes = GetHighlightThemesForActiveStage(),
+            CourtHighlightedLines = GetCourtLineHighlightsForActiveStage(),
+            CourtRevealLineCounts = GetCourtRevealCountsForActiveStage(),
+            CourtLineHighlightThemes = GetCourtHighlightThemesForActiveStage(),
             JustCompletedHouseNumber = justCompletedHouseNumber,
-            AllMothersComplete = _motherSlots.All(s => s.Figure != null)
+            AllMothersComplete = _motherSlots.All(s => s.Figure != null),
+            StepIndicator = GetMobileStepIndicator(),
+            StepTitle = GetMobileStepTitle(),
+            StepLead = GetMobileStepLead(),
+            StepCallout = GetMobileStepCallout(),
+            CanStepPrevious = GetMobileCanStepPrevious(),
+            CanStepNext = GetMobileCanStepNext(),
+            CollapseDrawer = drawerPhase == WalkthroughMobileDrawerPhase.StageSummary,
+            AwaitingSummaryAck = _mobileAwaitingSummaryAck,
+            NextButtonLabel = GetMobileNextButtonLabel(),
+            MotherStatusTitle = motherStatus.Title,
+            MotherStatusDetail = motherStatus.Detail,
+            MotherFigureInsight = motherStatus.Insight,
+            MotherActionLabel = motherStatus.ActionLabel
         };
-        await OnMothersPreviewChanged.InvokeAsync(args);
+        await OnWalkthroughChartPreviewChanged.InvokeAsync(args);
+    }
+
+    public Task OnMobileMotherDrawerCollapsedAsync() =>
+        NotifyMobileChartPreviewAsync();
+
+    private IReadOnlySet<int>? GetMotherDrawerHighlights(int? justCompletedHouseNumber)
+    {
+        if (_activeStage != WalkthroughStage.Mothers)
+        {
+            return _activeHouseHighlights;
+        }
+
+        if (justCompletedHouseNumber is int completedHouse)
+        {
+            return new HashSet<int> { completedHouse };
+        }
+
+        if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
+        {
+            return new HashSet<int> { _motherSlots[_currentMotherIndex].HouseNumber };
+        }
+
+        if (_motherSlots.Length > 0 && _motherSlots.All(s => s.Figure != null))
+        {
+            return new HashSet<int> { 1, 2, 3, 4 };
+        }
+
+        return null;
+    }
+
+    private (string? Title, string? Detail, string? Insight, string? ActionLabel) BuildMotherDrawerStatus(int? justCompletedHouseNumber)
+    {
+        var allComplete = _motherSlots.All(s => s.Figure != null);
+        if (allComplete)
+        {
+            return (
+                "Four Mothers on the shield",
+                "All four Mothers are placed in houses 1–4.",
+                null,
+                "Collapse chart to continue below");
+        }
+
+        if (justCompletedHouseNumber is int completedHouse)
+        {
+            var figure = GetMotherOrNull(completedHouse);
+            var latin = MotherNames.GetValueOrDefault(completedHouse).Short;
+            var figureName = string.IsNullOrWhiteSpace(figure?.Name) ? "Figure" : figure!.Name;
+            var houseName = FigureDisplayHelper.GetHouseName(completedHouse);
+            var inHouseText = figure != null ? FigureDisplayHelper.GetFigureInHouseText(figure, completedHouse) : null;
+            string? insight = null;
+            if (!string.IsNullOrWhiteSpace(inHouseText))
+            {
+                insight =
+                    $"It is said that when {figureName} is in the {houseName} House, it traditionally indicates {inHouseText}";
+            }
+
+            string? actionLabel = null;
+            if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
+            {
+                var nextHouse = _motherSlots[_currentMotherIndex].HouseNumber;
+                var nextLatin = MotherNames.GetValueOrDefault(nextHouse).Short;
+                actionLabel = $"Collapse chart and generate Mother {nextHouse} / {nextLatin} ({nextHouse})";
+            }
+
+            return (
+                $"You got {figureName} in {latin} (House {completedHouse})",
+                "Highlighted on the chart above.",
+                insight,
+                actionLabel);
+        }
+
+        if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
+        {
+            var house = _motherSlots[_currentMotherIndex].HouseNumber;
+            var latin = MotherNames.GetValueOrDefault(house).Short;
+            return (
+                $"Cast Mother {house} ({latin})",
+                GetMotherSlotTargetText(house),
+                null,
+                "Show Mother on chart");
+        }
+
+        return (
+            "Cast the four Mothers",
+            "Mark dots below. The chart opens when you finish each Mother.",
+            null,
+            "Show chart");
+    }
+
+    private WalkthroughMobileDrawerPhase GetMobileDrawerPhase()
+    {
+        if (_activeStage == WalkthroughStage.Mothers)
+        {
+            return WalkthroughMobileDrawerPhase.Mothers;
+        }
+
+        if (_chart == null)
+        {
+            return WalkthroughMobileDrawerPhase.Mothers;
+        }
+
+        if (ShouldShowStageCompletionSummary())
+        {
+            return WalkthroughMobileDrawerPhase.StageSummary;
+        }
+
+        if (_mobileAwaitingSummaryAck)
+        {
+            return WalkthroughMobileDrawerPhase.FigureReveal;
+        }
+
+        return WalkthroughMobileDrawerPhase.Generation;
+    }
+
+    private string? GetMobileStepIndicator()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            return "Figure complete";
+        }
+
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => GetDaughterMicroStepIndicator(),
+            WalkthroughStage.Nieces => GetNieceMicroStepIndicator(),
+            WalkthroughStage.Witnesses or WalkthroughStage.Judge or WalkthroughStage.Fallout => GetCourtMicroStepIndicator(),
+            _ => null
+        };
+    }
+
+    private string? GetMobileStepTitle()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            return GetMobileFigureRevealTitle();
+        }
+
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => GetDaughterBuildTitle(),
+            WalkthroughStage.Nieces => GetNieceBuildTitle(),
+            WalkthroughStage.Witnesses or WalkthroughStage.Judge or WalkthroughStage.Fallout => GetCourtBuildTitle(),
+            _ => null
+        };
+    }
+
+    private string? GetMobileStepLead()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            return "Review the completed figure on the chart, then continue to the stage summary.";
+        }
+
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => GetDaughterBuildLead(),
+            WalkthroughStage.Nieces => GetNieceBuildLead(),
+            WalkthroughStage.Witnesses or WalkthroughStage.Judge or WalkthroughStage.Fallout => GetCourtBuildLead(),
+            _ => null
+        };
+    }
+
+    private string? GetMobileStepCallout()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            return GetMobileFigureRevealCallout();
+        }
+
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterCompletionNarrative,
+            WalkthroughStage.Nieces => _nieceCompletionNarrative,
+            WalkthroughStage.Witnesses or WalkthroughStage.Judge or WalkthroughStage.Fallout => _courtCompletionNarrative,
+            _ => null
+        };
+    }
+
+    private string? GetMobileFigureRevealTitle() => _activeStage switch
+    {
+        WalkthroughStage.Daughters => "Daughter generation complete",
+        WalkthroughStage.Nieces => "Niece generation complete",
+        WalkthroughStage.Witnesses => "Witnesses complete",
+        WalkthroughStage.Judge => "Judge complete",
+        WalkthroughStage.Fallout => "Fallout complete",
+        _ => "Figure complete"
+    };
+
+    private string? GetMobileFigureRevealCallout()
+    {
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterCompletionNarrative ?? GetMobileFigureRevealTitle(),
+            WalkthroughStage.Nieces => _nieceCompletionNarrative ?? GetMobileFigureRevealTitle(),
+            WalkthroughStage.Witnesses or WalkthroughStage.Judge or WalkthroughStage.Fallout =>
+                _courtCompletionNarrative ?? GetMobileFigureRevealTitle(),
+            _ => GetMobileFigureRevealTitle()
+        };
+    }
+
+    private string GetMobileNextButtonLabel() =>
+        _mobileAwaitingSummaryAck ? "View summary" : "Next";
+
+    private bool GetMobileCanStepPrevious()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            return true;
+        }
+
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterMicroStepIndex > 0,
+            WalkthroughStage.Nieces => _nieceMicroStepIndex > 0,
+            WalkthroughStage.Witnesses => _witnessMicroStepIndex > 0,
+            WalkthroughStage.Judge => _judgeMicroStepIndex > 0,
+            WalkthroughStage.Fallout => _falloutMicroStepIndex > 0,
+            _ => false
+        };
+    }
+
+    private bool GetMobileCanStepNext()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            return true;
+        }
+
+        return _activeStage switch
+        {
+            WalkthroughStage.Daughters => _daughterMicroStepIndex < TotalDaughterMicroSteps - 1,
+            WalkthroughStage.Nieces => _nieceMicroStepIndex < TotalNieceMicroSteps - 1,
+            WalkthroughStage.Witnesses => _witnessMicroStepIndex < TotalWitnessMicroSteps - 1,
+            WalkthroughStage.Judge => _judgeMicroStepIndex < TotalJudgeMicroSteps - 1,
+            WalkthroughStage.Fallout => _falloutMicroStepIndex < TotalFalloutMicroSteps - 1,
+            _ => false
+        };
+    }
+
+    public Task MobileStepPreviousAsync()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            _mobileAwaitingSummaryAck = false;
+            StepBackOneMicroStepForActiveStage();
+            ApplyActiveStageState();
+            _ = NotifyWalkthroughChartPreviewAsync();
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+
+        switch (_activeStage)
+        {
+            case WalkthroughStage.Daughters:
+                PreviousDaughterMicroStep();
+                break;
+            case WalkthroughStage.Nieces:
+                PreviousNieceMicroStep();
+                break;
+            case WalkthroughStage.Witnesses:
+            case WalkthroughStage.Judge:
+            case WalkthroughStage.Fallout:
+                PreviousCourtMicroStep();
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task MobileStepNextAsync()
+    {
+        if (_mobileAwaitingSummaryAck)
+        {
+            _mobileAwaitingSummaryAck = false;
+            _showStageCompletionSummary = true;
+            _ = NotifyWalkthroughChartPreviewAsync();
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+
+        switch (_activeStage)
+        {
+            case WalkthroughStage.Daughters:
+                NextDaughterMicroStep();
+                break;
+            case WalkthroughStage.Nieces:
+                NextNieceMicroStep();
+                break;
+            case WalkthroughStage.Witnesses:
+            case WalkthroughStage.Judge:
+            case WalkthroughStage.Fallout:
+                NextCourtMicroStep();
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void StepBackOneMicroStepForActiveStage()
+    {
+        switch (_activeStage)
+        {
+            case WalkthroughStage.Daughters:
+                if (_daughterMicroStepIndex > 0)
+                {
+                    _daughterMicroStepIndex--;
+                }
+                break;
+            case WalkthroughStage.Nieces:
+                if (_nieceMicroStepIndex > 0)
+                {
+                    _nieceMicroStepIndex--;
+                }
+                break;
+            case WalkthroughStage.Witnesses:
+                if (_witnessMicroStepIndex > 0)
+                {
+                    _witnessMicroStepIndex--;
+                }
+                break;
+            case WalkthroughStage.Judge:
+                if (_judgeMicroStepIndex > 0)
+                {
+                    _judgeMicroStepIndex--;
+                }
+                break;
+            case WalkthroughStage.Fallout:
+                if (_falloutMicroStepIndex > 0)
+                {
+                    _falloutMicroStepIndex--;
+                }
+                break;
+        }
     }
 
     private async Task ContinueToWorkspaceAsync()
@@ -988,7 +1462,10 @@
             UnlockStage(WalkthroughStage.Daughters);
             _activeStage = WalkthroughStage.Daughters;
             _daughterMicroStepIndex = 0;
+            _showStageCompletionSummary = false;
+            _mobileAwaitingSummaryAck = false;
             ApplyActiveStageState();
+            await NotifyWalkthroughChartPreviewAsync();
         }
         catch
         {
@@ -1075,10 +1552,12 @@
         _courtCompletionNarrative = null;
         _activeStage = WalkthroughStage.Mothers;
         _maxUnlockedStageIndex = (int)WalkthroughStage.Mothers;
+        _showStageCompletionSummary = false;
+        _mobileAwaitingSummaryAck = false;
 
         InitializeMotherSlots();
         ApplyActiveStageState();
-        _ = NotifyMothersPreviewAsync();
+        _ = NotifyMobileChartPreviewAsync();
     }
 
     private void InitializeMotherSlots()
@@ -1122,7 +1601,7 @@
         }
 
         _daughterMicroStepIndex--;
-        ApplyDaughterMicroStepState();
+        ApplyActiveStageState();
         OnActiveStageMicroStepChanged();
     }
 
@@ -1134,7 +1613,7 @@
         }
 
         _daughterMicroStepIndex++;
-        ApplyDaughterMicroStepState();
+        ApplyActiveStageState();
         OnActiveStageMicroStepChanged();
     }
 
@@ -1171,7 +1650,7 @@
         }
 
         _nieceMicroStepIndex--;
-        ApplyNieceMicroStepState();
+        ApplyActiveStageState();
         OnActiveStageMicroStepChanged();
     }
 
@@ -1183,7 +1662,7 @@
         }
 
         _nieceMicroStepIndex++;
-        ApplyNieceMicroStepState();
+        ApplyActiveStageState();
         OnActiveStageMicroStepChanged();
     }
 
