@@ -18,7 +18,7 @@
         var greerFig = ResolveGreerFigure(baseFig);
         var figureBundle = GreerReferenceMergeHelper.MergeFigure(baseFig, greerFig, GreerReferenceMode);
         var fig = figureBundle.DisplayFigure;
-        var greerOverlay = figureBundle.GreerOverlay;
+        var greerRef = figureBundle.GreerFigure ?? greerFig;
         var showGreerAlongside = figureBundle.ShowGreerAlongside;
         var hideGeofancyOnly = figureBundle.HideGeofancyOnlySections;
         var showGreerAttribution = figureBundle.ShowGreerAttribution;
@@ -31,8 +31,8 @@
         var houseBundle = GreerReferenceMergeHelper.MergeHouse(houseEntry, greerHouse, GreerReferenceMode);
         var courtEntry = ResolveCourtEntry();
         var showInterpretation = hideGeofancyOnly
-            ? HasGreerInterpretationContent(greerOverlay)
-            : HasInterpretationContent(fig) || showGreerAlongside;
+            ? HasInterpretationContent(fig)
+            : HasInterpretationContent(fig) || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerInterpretationContent(greerRef));
         var showHouse = houseEntry != null || greerHouse != null;
         var showGreerHousePrimary = houseBundle.UseGreerPrimary && greerHouse != null;
         var showCourt = courtEntry != null && !hideGeofancyOnly;
@@ -44,7 +44,13 @@
         var openHouse = IsHouseOpenByDefault(houseEntry) || showGreerHousePrimary;
         var openCourt = IsCourtOpenByDefault(courtEntry);
         var openCorrespondences = IsCorrespondencesOpenByDefault(inSlot);
-        var hasContext = HasContextContent(fig, inSlot) || showGreerAlongside;
+        var hasContext = HasContextContent(fig, inSlot)
+            || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerContextContent(greerRef));
+        var showPerson = HasPersonContent(fig)
+            || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerPersonContent(greerRef));
+        var showHouseAffinity = !string.IsNullOrWhiteSpace(fig.StrongHouse) || !string.IsNullOrWhiteSpace(fig.WeakHouse)
+            || (showGreerAlongside && greerRef != null && (
+                !string.IsNullOrWhiteSpace(greerRef.StrongHouse) || !string.IsNullOrWhiteSpace(greerRef.WeakHouse)));
         var qualityChipClass = GetQualityChipClass(fig.Quality);
         var showVerdict = !hideGeofancyOnly;
         var showTagline = !hideGeofancyOnly && !string.IsNullOrWhiteSpace(fig.Tagline);
@@ -146,13 +152,13 @@
                     <h4 class="prose-heading">Divinatory Meaning</h4>
                     <p class="prose-text divinatory-text">@fig.DivinatoryMeaning</p>
                 </div>
-                @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerOverlay?.DivinatoryMeaning))
-                {
-                    <div class="greer-reference-block">
-                        <p class="greer-reference-eyebrow">Greer (2009)</p>
-                        <p class="prose-text">@greerOverlay!.DivinatoryMeaning</p>
-                    </div>
-                }
+            }
+            @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.DivinatoryMeaning))
+            {
+                <div class="greer-reference-block">
+                    <p class="greer-reference-eyebrow">Greer (2009) · Divinatory Meaning</p>
+                    <p class="prose-text">@greerRef!.DivinatoryMeaning</p>
+                </div>
             }
             @if (!hideGeofancyOnly && fig.CoreMeaning?.Any() == true)
             {
@@ -229,6 +235,13 @@
                                 }
                             </div>
                         }
+                        @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.Imagery))
+                        {
+                            <div class="greer-reference-block">
+                                <p class="greer-reference-eyebrow">Greer (2009) · Imagery</p>
+                                <p class="prose-text">@greerRef!.Imagery</p>
+                            </div>
+                        }
                         @if (!string.IsNullOrWhiteSpace(fig.ElementalSynthesis))
                         {
                             <div class="context-block prose-card">
@@ -252,13 +265,13 @@
                                 <h4 class="prose-heading">Commentary</h4>
                                 <p class="prose-text">@fig.Commentary</p>
                             </div>
-                            @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerOverlay?.Commentary))
-                            {
-                                <div class="greer-reference-block">
-                                    <p class="greer-reference-eyebrow">Greer (2009)</p>
-                                    <p class="prose-text">@greerOverlay!.Commentary</p>
-                                </div>
-                            }
+                        }
+                        @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.Commentary))
+                        {
+                            <div class="greer-reference-block">
+                                <p class="greer-reference-eyebrow">Greer (2009) · Commentary</p>
+                                <p class="prose-text">@greerRef!.Commentary</p>
+                            </div>
                         }
                         @if (fig.ModernExamples?.Any() == true)
                         {
@@ -318,9 +331,34 @@
                                 }
                             </div>
                         }
+                        @if (showGreerAlongside && greerRef != null
+                             && (!string.IsNullOrWhiteSpace(greerRef.InnerEl) || !string.IsNullOrWhiteSpace(greerRef.OuterEl)))
+                        {
+                            <div class="greer-reference-block">
+                                <p class="greer-reference-eyebrow">Greer (2009) · Inner / Outer</p>
+                                <div class="inner-outer-row">
+                                    @if (!string.IsNullOrWhiteSpace(greerRef.InnerEl))
+                                    {
+                                        <span class="io-pill">
+                                            <span class="io-label">Inner</span>
+                                            <span class="io-glyph @GetElementCssClass(greerRef.InnerEl)">@GetElementSymbol(greerRef.InnerEl)</span>
+                                            <span class="io-value">@greerRef.InnerEl</span>
+                                        </span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(greerRef.OuterEl))
+                                    {
+                                        <span class="io-pill">
+                                            <span class="io-label">Outer</span>
+                                            <span class="io-glyph @GetElementCssClass(greerRef.OuterEl)">@GetElementSymbol(greerRef.OuterEl)</span>
+                                            <span class="io-value">@greerRef.OuterEl</span>
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
                     </div>
 
-                    @if (HasPersonContent(fig))
+                    @if (showPerson)
                     {
                         <div class="person-card">
                             <h4 class="prose-heading">Person &amp; Body</h4>
@@ -329,6 +367,13 @@
                                 <div class="person-row">
                                     <p class="person-label">Body</p>
                                     <p class="prose-text person-body">@fig.BodyType</p>
+                                </div>
+                            }
+                            @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.BodyType))
+                            {
+                                <div class="greer-reference-block">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Body</p>
+                                    <p class="prose-text">@greerRef!.BodyType</p>
                                 </div>
                             }
                             @if (!string.IsNullOrWhiteSpace(fig.TraditionalBodyType))
@@ -343,6 +388,13 @@
                                 <div class="person-row">
                                     <p class="person-label">Character</p>
                                     <p class="prose-text person-body">@fig.CharacterType</p>
+                                </div>
+                            }
+                            @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.CharacterType))
+                            {
+                                <div class="greer-reference-block">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Character</p>
+                                    <p class="prose-text">@greerRef!.CharacterType</p>
                                 </div>
                             }
                             @if (!string.IsNullOrWhiteSpace(fig.TraditionalCharacterType))
@@ -371,10 +423,32 @@
                                     }
                                 </div>
                             }
+                            @if (showGreerAlongside && (!string.IsNullOrWhiteSpace(greerRef?.Anatomy) || !string.IsNullOrWhiteSpace(greerRef?.Colors)))
+                            {
+                                <div class="greer-reference-block">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Person Details</p>
+                                    <div class="person-meta-row">
+                                        @if (!string.IsNullOrWhiteSpace(greerRef!.Anatomy))
+                                        {
+                                            <span class="person-meta">
+                                                <span class="person-meta-label">Anatomy</span>
+                                                <span class="person-meta-value">@greerRef.Anatomy</span>
+                                            </span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(greerRef.Colors))
+                                        {
+                                            <span class="person-meta">
+                                                <span class="person-meta-label">Colors</span>
+                                                <span class="person-meta-value">@greerRef.Colors</span>
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
 
-                    @if (!string.IsNullOrWhiteSpace(fig.StrongHouse) || !string.IsNullOrWhiteSpace(fig.WeakHouse))
+                    @if (showHouseAffinity)
                     {
                         <div class="house-affinity-card">
                             <h4 class="prose-heading">House Affinity</h4>
@@ -400,6 +474,35 @@
                                     </div>
                                 }
                             </div>
+                            @if (showGreerAlongside && greerRef != null
+                                 && (!string.IsNullOrWhiteSpace(greerRef.StrongHouse) || !string.IsNullOrWhiteSpace(greerRef.WeakHouse)))
+                            {
+                                <div class="greer-reference-block">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · House Affinity</p>
+                                    <div class="affinity-row">
+                                        @if (!string.IsNullOrWhiteSpace(greerRef.StrongHouse))
+                                        {
+                                            <div class="affinity-pill affinity-strong">
+                                                <span class="affinity-glyph">▲</span>
+                                                <span class="affinity-label">Strong</span>
+                                                <span class="affinity-value">@greerRef.StrongHouse</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(greerRef.StrongHouse) && !string.IsNullOrWhiteSpace(greerRef.WeakHouse))
+                                        {
+                                            <span class="affinity-vs">vs.</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(greerRef.WeakHouse))
+                                        {
+                                            <div class="affinity-pill affinity-weak">
+                                                <span class="affinity-glyph">▼</span>
+                                                <span class="affinity-label">Weak</span>
+                                                <span class="affinity-value">@greerRef.WeakHouse</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
 
@@ -586,6 +689,25 @@
                                 </div>
                             }
                         }
+                        }
+                        else if (houseBundle.ShowGreerAlongside && greerHouse != null)
+                        {
+                            @if (!string.IsNullOrWhiteSpace(greerHouse.Description))
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card prose-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Description</p>
+                                    <p class="prose-text">@greerHouse.Description</p>
+                                </div>
+                            }
+                            @if (greerHouse.ExampleQuestions?.Any() == true)
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card example-questions-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Example Questions</p>
+                                    <ul class="bullet-list">
+                                        @foreach (var q in greerHouse.ExampleQuestions) { <li>@q</li> }
+                                    </ul>
+                                </div>
+                            }
                         }
                     </div>
                 </details>
@@ -818,12 +940,6 @@
 
     private static bool IsCourtOpenByDefault(CourtDirectoryEntry? courtEntry) =>
         courtEntry != null;
-
-    private static bool HasGreerInterpretationContent(GreerFigureModel? greer) =>
-        greer != null && (
-            !string.IsNullOrWhiteSpace(greer.Imagery)
-            || !string.IsNullOrWhiteSpace(greer.Commentary)
-            || !string.IsNullOrWhiteSpace(greer.DivinatoryMeaning));
 
     private GreerFigureModel? ResolveGreerFigure(FigureModel? figure)
     {

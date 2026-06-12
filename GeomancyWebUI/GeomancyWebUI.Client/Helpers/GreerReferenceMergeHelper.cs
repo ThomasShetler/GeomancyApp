@@ -7,7 +7,7 @@ namespace GeomancyWebUI.Client.Helpers
     public sealed class FigureReferenceBundle
     {
         public FigureModel DisplayFigure { get; init; } = new FigureModel();
-        public GreerFigureModel? GreerOverlay { get; init; }
+        public GreerFigureModel? GreerFigure { get; init; }
         public bool ShowGreerAlongside { get; init; }
         public bool ShowGreerAttribution { get; init; }
         public bool HideGeofancyOnlySections { get; init; }
@@ -17,7 +17,7 @@ namespace GeomancyWebUI.Client.Helpers
     {
         public string Description { get; init; } = string.Empty;
         public List<string> ExampleQuestions { get; init; } = new List<string>();
-        public GreerHouseEntry? GreerOverlay { get; init; }
+        public GreerHouseEntry? GreerHouse { get; init; }
         public bool ShowGreerAlongside { get; init; }
         public bool ShowGreerAttribution { get; init; }
         public bool UseGreerPrimary { get; init; }
@@ -48,7 +48,7 @@ namespace GeomancyWebUI.Client.Helpers
                 GreerReferenceMode.Alongside => new FigureReferenceBundle
                 {
                     DisplayFigure = baseFigure,
-                    GreerOverlay = greer,
+                    GreerFigure = greer,
                     ShowGreerAlongside = true,
                     ShowGreerAttribution = true,
                     HideGeofancyOnlySections = false
@@ -56,12 +56,14 @@ namespace GeomancyWebUI.Client.Helpers
                 GreerReferenceMode.Override => new FigureReferenceBundle
                 {
                     DisplayFigure = ApplyGreerOverrides(baseFigure, greer),
+                    GreerFigure = greer,
                     ShowGreerAttribution = true,
                     HideGeofancyOnlySections = false
                 },
                 GreerReferenceMode.GreerOnly => new FigureReferenceBundle
                 {
                     DisplayFigure = BuildGreerOnlyFigure(baseFigure, greer),
+                    GreerFigure = greer,
                     ShowGreerAttribution = true,
                     HideGeofancyOnlySections = true
                 },
@@ -90,7 +92,7 @@ namespace GeomancyWebUI.Client.Helpers
                 {
                     Description = baseHouse?.InterpretiveEssence ?? string.Empty,
                     ExampleQuestions = baseHouse?.ExampleQuestions ?? new List<string>(),
-                    GreerOverlay = greer,
+                    GreerHouse = greer,
                     ShowGreerAlongside = true,
                     ShowGreerAttribution = true
                 },
@@ -100,6 +102,7 @@ namespace GeomancyWebUI.Client.Helpers
                     ExampleQuestions = greer.ExampleQuestions?.Count > 0
                         ? greer.ExampleQuestions
                         : baseHouse?.ExampleQuestions ?? new List<string>(),
+                    GreerHouse = greer,
                     ShowGreerAttribution = true,
                     UseGreerPrimary = true
                 },
@@ -107,6 +110,7 @@ namespace GeomancyWebUI.Client.Helpers
                 {
                     Description = greer.Description ?? string.Empty,
                     ExampleQuestions = greer.ExampleQuestions ?? new List<string>(),
+                    GreerHouse = greer,
                     ShowGreerAttribution = true,
                     UseGreerPrimary = true
                 },
@@ -117,6 +121,34 @@ namespace GeomancyWebUI.Client.Helpers
                 }
             };
         }
+
+        public static bool HasGreerInterpretationContent(GreerFigureModel? greer) =>
+            greer != null && (
+                !string.IsNullOrWhiteSpace(greer.Imagery)
+                || !string.IsNullOrWhiteSpace(greer.Commentary)
+                || !string.IsNullOrWhiteSpace(greer.DivinatoryMeaning));
+
+        public static bool HasGreerPersonContent(GreerFigureModel? greer) =>
+            greer != null && (
+                !string.IsNullOrWhiteSpace(greer.BodyType)
+                || !string.IsNullOrWhiteSpace(greer.CharacterType)
+                || !string.IsNullOrWhiteSpace(greer.Anatomy)
+                || !string.IsNullOrWhiteSpace(greer.Colors));
+
+        public static bool HasGreerCorrespondenceContent(GreerFigureModel? greer) =>
+            greer != null && (
+                HasGreerPersonContent(greer)
+                || !string.IsNullOrWhiteSpace(greer.StrongHouse)
+                || !string.IsNullOrWhiteSpace(greer.WeakHouse)
+                || !string.IsNullOrWhiteSpace(greer.FireElement)
+                || !string.IsNullOrWhiteSpace(greer.OuterEl));
+
+        public static bool HasGreerContextContent(GreerFigureModel? greer) =>
+            greer != null && !string.IsNullOrWhiteSpace(greer.DivinatoryMeaning);
+
+        public static bool GreerFieldDiffers(string? geofancy, string? greer) =>
+            !string.IsNullOrWhiteSpace(greer)
+            && !string.Equals(NormalizeText(geofancy), NormalizeText(greer), StringComparison.Ordinal);
 
         public static string NormalizeFigureKey(string? figureName)
         {
@@ -130,6 +162,9 @@ namespace GeomancyWebUI.Client.Helpers
 
             return trimmed.ToLowerInvariant();
         }
+
+        private static string NormalizeText(string? value) =>
+            string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
 
         private static FigureModel ApplyGreerOverrides(FigureModel baseFigure, GreerFigureModel greer)
         {
@@ -155,12 +190,17 @@ namespace GeomancyWebUI.Client.Helpers
             copy.Colors = FirstNonEmpty(greer.Colors, copy.Colors);
             copy.Commentary = FirstNonEmpty(greer.Commentary, copy.Commentary);
             copy.DivinatoryMeaning = FirstNonEmpty(greer.DivinatoryMeaning, copy.DivinatoryMeaning);
+
+            if (!string.IsNullOrWhiteSpace(greer.BodyType))
+                copy.TraditionalBodyType = string.Empty;
+            if (!string.IsNullOrWhiteSpace(greer.CharacterType))
+                copy.TraditionalCharacterType = string.Empty;
+
             return copy;
         }
 
-        private static FigureModel BuildGreerOnlyFigure(FigureModel baseFigure, GreerFigureModel greer)
-        {
-            return new FigureModel
+        private static FigureModel BuildGreerOnlyFigure(FigureModel baseFigure, GreerFigureModel greer) =>
+            new FigureModel
             {
                 Name = FirstNonEmpty(greer.Name, baseFigure.Name),
                 EnglishName = greer.EnglishName ?? string.Empty,
@@ -188,10 +228,8 @@ namespace GeomancyWebUI.Client.Helpers
                 NeckLine = baseFigure.NeckLine,
                 BodyLine = baseFigure.BodyLine,
                 FootLine = baseFigure.FootLine,
-                HouseStrength = baseFigure.HouseStrength,
-                ElementalPattern = baseFigure.ElementalPattern
+                HouseStrength = baseFigure.HouseStrength
             };
-        }
 
         private static FigureModel CloneFigure(FigureModel source) =>
             new FigureModel
