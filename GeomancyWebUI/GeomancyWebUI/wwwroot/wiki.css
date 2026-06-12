@@ -1460,6 +1460,73 @@
     color: var(--text-secondary);
 }
 
+.chart-casting-shield-hint--intro {
+    margin: 0 0 0.5rem;
+    font-size: 0.84rem;
+    line-height: 1.48;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-guidance-column {
+    gap: 0.45rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-slot-target {
+    margin: 0 0 0.4rem;
+    padding: 0.48rem 0.72rem;
+    font-size: 0.85rem;
+    line-height: 1.42;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-info-pane {
+    gap: 0.55rem;
+    padding-top: 0.35rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough {
+    padding: 0.6rem 0.7rem;
+    --canvas-height: 2.6rem;
+    --row-label-width: 3.1rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row {
+    padding: 0.32rem 0.48rem;
+    gap: 0.4rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row-label {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.35rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row-name {
+    font-size: 0.76rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row-element {
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-body {
+    gap: 0.75rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result {
+    min-width: 6.25rem;
+    padding: 0.5rem 0.6rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result-caption {
+    font-size: 0.68rem;
+    margin-bottom: 0.3rem;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-actions {
+    margin-top: 0.25rem;
+}
+
 .chart-casting-slot-target {
     margin: 0.42rem 0 0;
     padding: 0.58rem 0.82rem;
