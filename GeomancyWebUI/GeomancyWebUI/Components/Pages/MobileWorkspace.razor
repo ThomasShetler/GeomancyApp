@@ -71,6 +71,11 @@ else
         <div class="alert alert-danger mobile-alert">@errorMessage</div>
     }
 
+    <ChartSeedRestoreBanner Visible="showSeedRestorePrompt"
+                            Seed="pendingRestoreSeed"
+                            OnRestore="RestoreSavedSeedAsync"
+                            OnDismiss="DismissSeedRestoreAsync" />
+
     <!-- 1) Chart drawer (workspace chart overlay). -->
     <div class="mobile-chart-drawer @(chartCollapsed ? "is-collapsed" : "is-expanded")">
         <button type="button"
@@ -465,6 +470,10 @@ else
 
     private WorkspaceTab activeTab = WorkspaceTab.CourtAndHouses;
     private bool showMothersSetup;
+    private bool showSeedRestorePrompt;
+    private string? pendingRestoreSeed;
+    private bool _allowSeedPersistence;
+    private bool _appliedSeedFromUrl;
     private CastingMobileShell? mothersMobileShell;
     private ChartCastingWalkthrough? mothersWalkthrough;
 
@@ -576,6 +585,7 @@ else
         // before the first chart generation so the page renders the shared
         // reading on first paint.
         var hasSeed = TryApplySeedFromUrl();
+        _appliedSeedFromUrl = hasSeed;
         showMothersSetup = !hasSeed && TryGetMothersSetupFromUrl();
         if (showMothersSetup)
         {
@@ -636,6 +646,35 @@ else
         }
 
         mobileWelcomeHydrated = true;
+
+        if (!showMothersSetup && !_appliedSeedFromUrl)
+        {
+            try
+            {
+                var snapshot = await ChartSeedStorage.ReadAsync(JSRuntime);
+                if (snapshot != null)
+                {
+                    var current = ChartSeedStorage.Encode(house1Figure, house2Figure, house3Figure, house4Figure);
+                    if (!ChartSeedStorage.SeedsMatch(current, snapshot.Seed))
+                    {
+                        pendingRestoreSeed = snapshot.Seed;
+                        showSeedRestorePrompt = true;
+                        StateHasChanged();
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                // Blocked storage — skip restore offer.
+            }
+        }
+
+        if (!showMothersSetup)
+        {
+            _allowSeedPersistence = _appliedSeedFromUrl || !showSeedRestorePrompt;
+        }
+
         StateHasChanged();
     }
 
@@ -824,6 +863,24 @@ else
         {
             errorMessage = $"Error generating chart: {ex.Message}";
         }
+
+        if (_allowSeedPersistence)
+        {
+            try
+            {
+                await ChartSeedStorage.SaveAsync(
+                    JSRuntime,
+                    house1Figure,
+                    house2Figure,
+                    house3Figure,
+                    house4Figure,
+                    "mobile");
+            }
+            catch
+            {
+                // Non-fatal if localStorage is unavailable.
+            }
+        }
     }
 
     private GenerateFourFiguresRequest BuildFourFiguresRequest() => new()
@@ -1009,6 +1066,7 @@ else
                 "/mobile", house1Figure, house2Figure, house3Figure, house4Figure);
             NavigationManager.NavigateTo(path, replace: true);
             showMothersSetup = false;
+            _allowSeedPersistence = true;
         }
         catch (Exception ex)
         {
@@ -1040,6 +1098,44 @@ else
         target.NeckLine = lines.Neck;
         target.BodyLine = lines.Body;
         target.FootLine = lines.Foot;
+    }
+
+    private async Task RestoreSavedSeedAsync()
+    {
+        if (string.IsNullOrWhiteSpace(pendingRestoreSeed))
+        {
+            return;
+        }
+
+        if (!ChartSeedCodec.TryDecode(pendingRestoreSeed, out var mothers))
+        {
+            showSeedRestorePrompt = false;
+            pendingRestoreSeed = null;
+            _allowSeedPersistence = true;
+            return;
+        }
+
+        ApplyMother(house1Figure, mothers[0]);
+        ApplyMother(house2Figure, mothers[1]);
+        ApplyMother(house3Figure, mothers[2]);
+        ApplyMother(house4Figure, mothers[3]);
+        showSeedRestorePrompt = false;
+        pendingRestoreSeed = null;
+        _allowSeedPersistence = true;
+
+        await GenerateChartAsync();
+        var path = ChartSeedCodec.BuildSharePath(
+            "/mobile", house1Figure, house2Figure, house3Figure, house4Figure);
+        NavigationManager.NavigateTo(path, replace: true);
+    }
+
+    private async Task DismissSeedRestoreAsync()
+    {
+        showSeedRestorePrompt = false;
+        pendingRestoreSeed = null;
+        _allowSeedPersistence = true;
+        await ChartSeedStorage.ClearAsync(JSRuntime);
+        await GenerateChartAsync();
     }
 
     /// <summary>

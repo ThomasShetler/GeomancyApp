@@ -1,0 +1,98 @@
+.chart-seed-restore-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.85rem 1.25rem;
+    margin: 0 0 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--accent-color, #c9a227) 45%, var(--border-color, #ddd));
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--accent-color, #c9a227) 8%, var(--bg-primary, #fff));
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.chart-seed-restore-copy {
+    flex: 1 1 16rem;
+    min-width: 0;
+}
+
+.chart-seed-restore-eyebrow {
+    margin: 0 0 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-color, #c9a227);
+}
+
+.chart-seed-restore-title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.chart-seed-restore-body {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--text-secondary, var(--text-muted));
+}
+
+.chart-seed-restore-seed {
+    margin: 0.55rem 0 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    word-break: break-all;
+}
+
+.chart-seed-restore-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 0 0 auto;
+    min-width: 9.5rem;
+}
+
+.chart-seed-restore-btn {
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border-color, #ccc);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.chart-seed-restore-btn-primary {
+    background: var(--accent-color, #c9a227);
+    border-color: var(--accent-color, #c9a227);
+    color: var(--bg-primary, #1a1a1a);
+}
+
+.chart-seed-restore-btn-primary:hover {
+    filter: brightness(1.05);
+}
+
+.chart-seed-restore-btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.chart-seed-restore-btn-secondary:hover {
+    border-color: var(--accent-color, #c9a227);
+    color: var(--accent-color, #c9a227);
+}
+
+@media (max-width: 639px) {
+    .chart-seed-restore-actions {
+        width: 100%;
+    }
+
+    .chart-seed-restore-btn {
+        width: 100%;
+    }
+}

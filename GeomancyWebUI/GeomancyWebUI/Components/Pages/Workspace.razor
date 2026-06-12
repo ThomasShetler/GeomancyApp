@@ -27,6 +27,11 @@
         <div class="alert alert-danger">@errorMessage</div>
     }
 
+    <ChartSeedRestoreBanner Visible="showSeedRestorePrompt"
+                            Seed="pendingRestoreSeed"
+                            OnRestore="RestoreSavedSeedAsync"
+                            OnDismiss="DismissSeedRestoreAsync" />
+
     @if (showMothersSetup)
     {
         <div class="workspace-mothers-setup-grid" role="region" aria-label="Cast the four Mothers">
@@ -337,6 +342,10 @@
 
     private WorkspaceTab activeTab = WorkspaceTab.CourtAndHouses;
     private bool showMothersSetup;
+    private bool showSeedRestorePrompt;
+    private string? pendingRestoreSeed;
+    private bool _allowSeedPersistence;
+    private bool _appliedSeedFromUrl;
 
     // ----- Selection state shared between tab and detail panel -----
     private SlotSelection? selectedSlot;
@@ -375,6 +384,7 @@
         // line values from the URL BEFORE building the chart so the page renders
         // the shared reading on first paint instead of the default chart.
         var hasSeed = TryApplySeedFromUrl();
+        _appliedSeedFromUrl = hasSeed;
         showMothersSetup = !hasSeed && TryGetMothersSetupFromUrl();
 
         try
@@ -415,6 +425,47 @@
                 ? $"Way of Points directory unavailable: {ex.Message}"
                 : errorMessage;
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        if (showMothersSetup)
+        {
+            return;
+        }
+
+        if (_appliedSeedFromUrl)
+        {
+            _allowSeedPersistence = true;
+            return;
+        }
+
+        try
+        {
+            var snapshot = await ChartSeedStorage.ReadAsync(JSRuntime);
+            if (snapshot != null)
+            {
+                var current = ChartSeedStorage.Encode(house1Figure, house2Figure, house3Figure, house4Figure);
+                if (!ChartSeedStorage.SeedsMatch(current, snapshot.Seed))
+                {
+                    pendingRestoreSeed = snapshot.Seed;
+                    showSeedRestorePrompt = true;
+                    StateHasChanged();
+                    return;
+                }
+            }
+        }
+        catch
+        {
+            // Blocked storage — skip restore offer.
+        }
+
+        _allowSeedPersistence = true;
     }
 
     private void ToggleChartType()
@@ -590,6 +641,24 @@
         catch (Exception ex)
         {
             errorMessage = $"Error generating chart: {ex.Message}";
+        }
+
+        if (_allowSeedPersistence)
+        {
+            try
+            {
+                await ChartSeedStorage.SaveAsync(
+                    JSRuntime,
+                    house1Figure,
+                    house2Figure,
+                    house3Figure,
+                    house4Figure,
+                    "workspace");
+            }
+            catch
+            {
+                // Non-fatal if localStorage is unavailable.
+            }
         }
     }
 
@@ -784,6 +853,7 @@
                 "/workspace", house1Figure, house2Figure, house3Figure, house4Figure);
             NavigationManager.NavigateTo(path, replace: true);
             showMothersSetup = false;
+            _allowSeedPersistence = true;
         }
         catch (Exception ex)
         {
@@ -815,6 +885,44 @@
         target.NeckLine = lines.Neck;
         target.BodyLine = lines.Body;
         target.FootLine = lines.Foot;
+    }
+
+    private async Task RestoreSavedSeedAsync()
+    {
+        if (string.IsNullOrWhiteSpace(pendingRestoreSeed))
+        {
+            return;
+        }
+
+        if (!ChartSeedCodec.TryDecode(pendingRestoreSeed, out var mothers))
+        {
+            showSeedRestorePrompt = false;
+            pendingRestoreSeed = null;
+            _allowSeedPersistence = true;
+            return;
+        }
+
+        ApplyMother(house1Figure, mothers[0]);
+        ApplyMother(house2Figure, mothers[1]);
+        ApplyMother(house3Figure, mothers[2]);
+        ApplyMother(house4Figure, mothers[3]);
+        showSeedRestorePrompt = false;
+        pendingRestoreSeed = null;
+        _allowSeedPersistence = true;
+
+        await GenerateChartAsync();
+        var path = ChartSeedCodec.BuildSharePath(
+            "/workspace", house1Figure, house2Figure, house3Figure, house4Figure);
+        NavigationManager.NavigateTo(path, replace: true);
+    }
+
+    private async Task DismissSeedRestoreAsync()
+    {
+        showSeedRestorePrompt = false;
+        pendingRestoreSeed = null;
+        _allowSeedPersistence = true;
+        await ChartSeedStorage.ClearAsync(JSRuntime);
+        await GenerateChartAsync();
     }
 
     /// <summary>

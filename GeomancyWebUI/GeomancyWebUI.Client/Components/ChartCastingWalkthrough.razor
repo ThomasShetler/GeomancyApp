@@ -2,7 +2,9 @@
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Client.Components.Workspace
 @using GeomancyWebUI.Client.Helpers
+@using Microsoft.JSInterop
 @inject IGeomancyService GeomancyService
+@inject IJSRuntime JSRuntime
 
 <div class="chart-casting-walkthrough @GetWalkthroughRootClass()">
     <section class="chart-casting-info-pane">
@@ -74,13 +76,13 @@
                                      @ref="_activeCaster"
                                      MotherLabel="@current.Label"
                                      Compact="true"
+                                     WalkthroughLayout="true"
                                      AutoReset="false"
                                      ShowInstruction="false"
                                      ShowRowCounts="false"
                                      ShowRowUndo="false"
                                      ShowMarkAgainButton="false"
                                      StretchRows="true"
-                                     FastPairing="true"
                                      MobileProgressiveRows="@UseEmbeddedMobileMothers"
                                      MobileActionsFirst="@UseEmbeddedMobileMothers"
                                      OnFigureCompleted="OnMotherFigureCompleted" />
@@ -1015,6 +1017,7 @@
                 _motherByHouse[2],
                 _motherByHouse[3],
                 _motherByHouse[4]);
+            await PersistCompletedMothersSeedAsync();
         }
 
         ApplyActiveStageState();
@@ -1492,6 +1495,7 @@
             _mobileAwaitingSummaryAck = false;
             ApplyActiveStageState();
             await NotifyWalkthroughChartPreviewAsync();
+            await PersistCompletedMothersSeedAsync();
         }
         catch
         {
@@ -1617,6 +1621,84 @@
         NeckLine = figure.NeckLine,
         BodyLine = figure.BodyLine,
         FootLine = figure.FootLine
+    };
+
+    public async Task<bool> TryRestoreMothersFromSeedAsync(string seed)
+    {
+        if (!ChartSeedCodec.TryDecode(seed, out var mothers))
+        {
+            return false;
+        }
+
+        _motherByHouse.Clear();
+        for (var house = 1; house <= 4; house++)
+        {
+            var lines = mothers[house - 1];
+            var figure = await GeomancyService.GetFigureAsync(lines.Head, lines.Neck, lines.Body, lines.Foot);
+            _motherByHouse[house] = figure;
+        }
+
+        foreach (var slot in _motherSlots)
+        {
+            slot.Figure = _motherByHouse[slot.HouseNumber];
+            slot.IsCurrent = false;
+        }
+
+        _currentMotherIndex = _motherSlots.Length;
+        _workspaceSharePath = ChartSeedCodec.BuildSharePath(
+            WorkspaceBasePath,
+            _motherByHouse[1],
+            _motherByHouse[2],
+            _motherByHouse[3],
+            _motherByHouse[4]);
+
+        if (Mode == ChartCastingMode.Full && _chart == null)
+        {
+            await BeginShieldTutorialAsync();
+        }
+        else
+        {
+            ApplyActiveStageState();
+            await NotifyMobileChartPreviewAsync();
+            StateHasChanged();
+        }
+
+        return true;
+    }
+
+    private async Task PersistCompletedMothersSeedAsync()
+    {
+        if (_motherByHouse.Count < 4
+            || !_motherByHouse.ContainsKey(1)
+            || !_motherByHouse.ContainsKey(2)
+            || !_motherByHouse.ContainsKey(3)
+            || !_motherByHouse.ContainsKey(4))
+        {
+            return;
+        }
+
+        try
+        {
+            await ChartSeedStorage.SaveAsync(
+                JSRuntime,
+                _motherByHouse[1],
+                _motherByHouse[2],
+                _motherByHouse[3],
+                _motherByHouse[4],
+                ResolveSeedStorageSource());
+        }
+        catch
+        {
+            // Non-fatal if localStorage is unavailable.
+        }
+    }
+
+    private string ResolveSeedStorageSource() => HostMode switch
+    {
+        ChartCastingHostMode.EmbeddedWorkspace when WorkspaceBasePath.Contains("mobile", StringComparison.OrdinalIgnoreCase) => "mobile-mothers",
+        ChartCastingHostMode.EmbeddedWorkspace => "workspace-mothers",
+        ChartCastingHostMode.WikiMobile => "wiki-mobile",
+        _ => "wiki"
     };
 
     private void PreviousDaughterMicroStep()

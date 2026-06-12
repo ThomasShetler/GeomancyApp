@@ -4,6 +4,7 @@
 
 @using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
 @inject IJSRuntime JSRuntime
 
 <PageSeo Title="Interactive Shield Walkthrough"
@@ -14,6 +15,10 @@
 @if (_useMobileWikiCasting == true)
 {
     <div class="wiki-interactive-shell wiki-interactive-shell--mobile">
+        <ChartSeedRestoreBanner Visible="showSeedRestorePrompt"
+                                Seed="pendingRestoreSeed"
+                                OnRestore="RestoreSavedSeedAsync"
+                                OnDismiss="DismissSeedRestoreAsync" />
         <section class="wiki-casting-section wiki-interactive-workspace-section">
             <CastingMobileShell @ref="mobileShell"
                                 Walkthrough="@walkthrough"
@@ -61,8 +66,12 @@ else if (_useMobileWikiCasting == false)
         </div>
 
         <section class="wiki-casting-section wiki-interactive-workspace-section">
+            <ChartSeedRestoreBanner Visible="showSeedRestorePrompt"
+                                    Seed="pendingRestoreSeed"
+                                    OnRestore="RestoreSavedSeedAsync"
+                                    OnDismiss="DismissSeedRestoreAsync" />
             <div class="wiki-interactive-workspace-host">
-                <ChartCastingWalkthrough Mode="ChartCastingMode.Full" />
+                <ChartCastingWalkthrough @ref="walkthrough" Mode="ChartCastingMode.Full" />
             </div>
         </section>
     </div>
@@ -72,24 +81,68 @@ else if (_useMobileWikiCasting == false)
     private bool? _useMobileWikiCasting;
     private CastingMobileShell? mobileShell;
     private ChartCastingWalkthrough? walkthrough;
+    private bool showSeedRestorePrompt;
+    private string? pendingRestoreSeed;
+    private bool _seedRestoreChecked;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender || _useMobileWikiCasting.HasValue)
+        if (!_useMobileWikiCasting.HasValue)
+        {
+            try
+            {
+                _useMobileWikiCasting = await JSRuntime.InvokeAsync<bool>("geofancyDeviceIsMobile");
+            }
+            catch
+            {
+                _useMobileWikiCasting = false;
+            }
+
+            StateHasChanged();
+            return;
+        }
+
+        if (_seedRestoreChecked || walkthrough == null)
         {
             return;
         }
 
+        _seedRestoreChecked = true;
+
         try
         {
-            _useMobileWikiCasting = await JSRuntime.InvokeAsync<bool>("geofancyDeviceIsMobile");
+            var snapshot = await ChartSeedStorage.ReadAsync(JSRuntime);
+            if (snapshot != null && !string.IsNullOrWhiteSpace(snapshot.Seed))
+            {
+                pendingRestoreSeed = snapshot.Seed;
+                showSeedRestorePrompt = true;
+                StateHasChanged();
+            }
         }
         catch
         {
-            _useMobileWikiCasting = false;
+            // Blocked storage — skip restore offer.
+        }
+    }
+
+    private async Task RestoreSavedSeedAsync()
+    {
+        if (walkthrough == null || string.IsNullOrWhiteSpace(pendingRestoreSeed))
+        {
+            return;
         }
 
-        StateHasChanged();
+        showSeedRestorePrompt = false;
+        var seed = pendingRestoreSeed;
+        pendingRestoreSeed = null;
+        await walkthrough.TryRestoreMothersFromSeedAsync(seed);
+    }
+
+    private async Task DismissSeedRestoreAsync()
+    {
+        showSeedRestorePrompt = false;
+        pendingRestoreSeed = null;
+        await ChartSeedStorage.ClearAsync(JSRuntime);
     }
 
     private Task HandleMothersPreviewChangedAsync(MothersPreviewChangedEventArgs args) =>

@@ -1,0 +1,34 @@
+@if (Visible)
+{
+    <div class="chart-seed-restore-banner" role="dialog" aria-labelledby="@_titleId" aria-describedby="@_bodyId">
+        <div class="chart-seed-restore-copy">
+            <p class="chart-seed-restore-eyebrow">Saved on this device</p>
+            <p class="chart-seed-restore-title" id="@_titleId">Restore your previous chart?</p>
+            <p class="chart-seed-restore-body" id="@_bodyId">
+                We found the last Mothers seed from a prior session. Restore it to continue where you left off, or start fresh.
+            </p>
+            @if (!string.IsNullOrWhiteSpace(Seed))
+            {
+                <p class="chart-seed-restore-seed" aria-label="Saved seed">@Seed</p>
+            }
+        </div>
+        <div class="chart-seed-restore-actions">
+            <button type="button" class="chart-seed-restore-btn chart-seed-restore-btn-primary" @onclick="OnRestore">
+                Restore chart
+            </button>
+            <button type="button" class="chart-seed-restore-btn chart-seed-restore-btn-secondary" @onclick="OnDismiss">
+                Start fresh
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public string? Seed { get; set; }
+    [Parameter] public EventCallback OnRestore { get; set; }
+    [Parameter] public EventCallback OnDismiss { get; set; }
+
+    private readonly string _titleId = $"chart-seed-restore-title-{Guid.NewGuid():N}";
+    private readonly string _bodyId = $"chart-seed-restore-body-{Guid.NewGuid():N}";
+}

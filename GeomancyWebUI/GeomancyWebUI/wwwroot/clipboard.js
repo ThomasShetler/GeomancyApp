@@ -72,6 +72,15 @@ window.geofancyWriteStorage = (key, value) => {
     }
 };
 
+window.geofancyRemoveStorage = (key) => {
+    try {
+        localStorage.removeItem(key);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
 /** Open any collapsed <details> ancestors so the target section is visible. */
 function geofancyOpenDetailsAncestors(el) {
     let node = el.parentElement;

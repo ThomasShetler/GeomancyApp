@@ -240,6 +240,7 @@
     [Parameter] public bool FastPairing { get; set; }
     /// <summary>Narrow wiki article column: smaller canvases and marks, stacked row labels.</summary>
     [Parameter] public bool WikiArticleLayout { get; set; }
+    [Parameter] public bool WalkthroughLayout { get; set; }
 
     private int _activeRowIndex;
     private int? _editUnlockedRow;
@@ -292,6 +293,7 @@
         if (StretchRows) classes.Add("is-stretch-rows");
         if (FastPairing) classes.Add("is-fast-pairing");
         if (WikiArticleLayout) classes.Add("is-wiki-article");
+        if (WalkthroughLayout) classes.Add("is-walkthrough");
         return string.Join(" ", classes);
     }
 
@@ -396,7 +398,7 @@
             return "Double-tap to edit";
         }
 
-        return "Tap to mark";
+        return "Tap anywhere in this row";
     }
 
     private void ClampActiveRowIndex()
