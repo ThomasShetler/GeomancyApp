@@ -1,0 +1,51 @@
+@using GeomancyWebUI.Client.Models
+@inject IJSRuntime JSRuntime
+
+<div class="greer-reference-bar" role="group" aria-label="Reference source">
+    <span class="greer-reference-label">Reference source</span>
+    <div class="greer-reference-options">
+        @foreach (var option in Options)
+        {
+            <button type="button"
+                    class="greer-reference-option @(Mode == option.Mode ? "is-active" : "")"
+                    aria-pressed="@(Mode == option.Mode ? "true" : "false")"
+                    @onclick="() => SetModeAsync(option.Mode)">
+                @option.Label
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public GreerReferenceMode Mode { get; set; } = GreerReferenceMode.Off;
+    [Parameter] public EventCallback<GreerReferenceMode> ModeChanged { get; set; }
+
+    private static readonly (GreerReferenceMode Mode, string Label)[] Options =
+    {
+        (GreerReferenceMode.Off, "Off"),
+        (GreerReferenceMode.Alongside, "Alongside"),
+        (GreerReferenceMode.Override, "Override"),
+        (GreerReferenceMode.GreerOnly, "Greer only")
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var stored = await JSRuntime.InvokeAsync<string>("geofancyGreerReferenceModeGet");
+        if (Enum.TryParse<GreerReferenceMode>(stored, ignoreCase: true, out var parsed) && parsed != Mode)
+        {
+            await ModeChanged.InvokeAsync(parsed);
+        }
+    }
+
+    private async Task SetModeAsync(GreerReferenceMode mode)
+    {
+        if (mode == Mode)
+            return;
+
+        await JSRuntime.InvokeVoidAsync("geofancyGreerReferenceModeSet", mode.ToString());
+        await ModeChanged.InvokeAsync(mode);
+    }
+}

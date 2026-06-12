@@ -76,9 +76,11 @@
                                      Compact="true"
                                      AutoReset="false"
                                      ShowInstruction="false"
-                                     ShowRowCounts="@(!UseEmbeddedMobileMothers)"
-                                     ShowRowUndo="@(!UseEmbeddedMobileMothers)"
+                                     ShowRowCounts="false"
+                                     ShowRowUndo="false"
                                      ShowMarkAgainButton="false"
+                                     StretchRows="true"
+                                     FastPairing="true"
                                      MobileProgressiveRows="@UseEmbeddedMobileMothers"
                                      MobileActionsFirst="@UseEmbeddedMobileMothers"
                                      OnFigureCompleted="OnMotherFigureCompleted" />
@@ -466,9 +468,14 @@
                                                     OnSelect="SelectStageSlot" />
                 </section>
                 <section class="chart-casting-stage-detail-shell court-houses-detail-col">
+                    <GreerReferenceModeBar Mode="@_greerReferenceMode"
+                                           ModeChanged="OnGreerReferenceModeChanged" />
                     <FigureDetailPanel Selection="@_selectedSlot"
                                        Houses="@_housesDirectory"
-                                       Courts="@_courtsDirectory" />
+                                       Courts="@_courtsDirectory"
+                                       GreerReferenceMode="@_greerReferenceMode"
+                                       GreerFigures="@_greerFigures"
+                                       GreerHouses="@_greerHousesDirectory" />
                 </section>
             </div>
         }
@@ -687,6 +694,9 @@
     private SlotSelection? _selectedSlot;
     private IReadOnlyList<HouseDirectoryEntry> _housesDirectory = Array.Empty<HouseDirectoryEntry>();
     private IReadOnlyList<CourtDirectoryEntry> _courtsDirectory = Array.Empty<CourtDirectoryEntry>();
+    private IReadOnlyList<GreerFigureModel> _greerFigures = Array.Empty<GreerFigureModel>();
+    private GreerHouseDirectory _greerHousesDirectory = new();
+    private GreerReferenceMode _greerReferenceMode = GreerReferenceMode.Off;
     private WalkthroughStage _activeStage = WalkthroughStage.Mothers;
     private int _maxUnlockedStageIndex;
     private readonly HashSet<WalkthroughStage> _stageGenerationCompleted = new();
@@ -780,11 +790,15 @@
         {
             _housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
             _courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
+            _greerFigures = await GeomancyService.GetGreerFiguresDirectoryAsync();
+            _greerHousesDirectory = await GeomancyService.GetGreerHousesDirectoryAsync();
         }
         catch
         {
             _housesDirectory = Array.Empty<HouseDirectoryEntry>();
             _courtsDirectory = Array.Empty<CourtDirectoryEntry>();
+            _greerFigures = Array.Empty<GreerFigureModel>();
+            _greerHousesDirectory = new GreerHouseDirectory();
         }
         ApplyActiveStageState();
         _ = NotifyMobileChartPreviewAsync();
@@ -973,6 +987,8 @@
 
         _selectedSlot = slot;
     }
+
+    private void OnGreerReferenceModeChanged(GreerReferenceMode mode) => _greerReferenceMode = mode;
 
     private async Task OnMotherFigureCompleted(FigureModel figure)
     {

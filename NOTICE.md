@@ -20,7 +20,9 @@ This separation exists so that other geomancy practitioners and educators may fr
 
 ## Public-domain materials
 
-The traditional sources cited in `TraditionalSources` blocks throughout the corpus (Agrippa, Cattan, Heydon, Fludd, Hartmann) are themselves in the public domain and are referenced for scholarly attribution. No third-party copyrighted material is reproduced in this repository.
+The traditional sources cited in `TraditionalSources` blocks throughout the corpus (Agrippa, Cattan, Heydon, Fludd, Hartmann) are themselves in the public domain and are referenced for scholarly attribution.
+
+Licensed excerpts from John Michael Greer's *The Art and Practice of Geomancy* are distributed separately under permission from Red Wheel/Weiser LLC. See LICENSE-GREER.md.
 
 ## Contact
 

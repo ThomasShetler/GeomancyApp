@@ -1,0 +1,48 @@
+.greer-reference-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.55rem 0.75rem;
+    margin-bottom: 0.65rem;
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+    border-radius: 0.5rem;
+    background: var(--surface-raised, rgba(255, 255, 255, 0.03));
+}
+
+.greer-reference-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted, #9aa0a6);
+    white-space: nowrap;
+}
+
+.greer-reference-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.greer-reference-option {
+    appearance: none;
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    padding: 0.28rem 0.65rem;
+    cursor: pointer;
+}
+
+.greer-reference-option.is-active {
+    border-color: var(--accent, #c9a227);
+    background: color-mix(in srgb, var(--accent, #c9a227) 18%, transparent);
+}
+
+.greer-reference-option:focus-visible {
+    outline: 2px solid var(--accent, #c9a227);
+    outline-offset: 2px;
+}

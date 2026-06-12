@@ -234,9 +234,14 @@ else
                     }
                     else
                     {
+                        <GreerReferenceModeBar Mode="@greerReferenceMode"
+                                               ModeChanged="OnGreerReferenceModeChanged" />
                         <FigureDetailPanel Selection="@selectedSlot"
                                            Houses="@housesDirectory"
-                                           Courts="@courtsDirectory" />
+                                           Courts="@courtsDirectory"
+                                           GreerReferenceMode="@greerReferenceMode"
+                                           GreerFigures="@greerFigures"
+                                           GreerHouses="@greerHousesDirectory" />
                     }
                     break;
 
@@ -540,6 +545,9 @@ else
     // ----- Reference directories -----
     private List<HouseDirectoryEntry> housesDirectory = new();
     private List<CourtDirectoryEntry> courtsDirectory = new();
+    private List<GreerFigureModel> greerFigures = new();
+    private GreerHouseDirectory greerHousesDirectory = new();
+    private GreerReferenceMode greerReferenceMode = GreerReferenceMode.Off;
     private List<WayOfPointsElementEntry>? wayOfPointsElements;
     private List<WayOfPointsPathTypeEntry>? wayOfPointsPathTypes;
 
@@ -587,6 +595,8 @@ else
         {
             housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
             courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
+            greerFigures = await GeomancyService.GetGreerFiguresDirectoryAsync();
+            greerHousesDirectory = await GeomancyService.GetGreerHousesDirectoryAsync();
         }
         catch (Exception ex)
         {
@@ -657,6 +667,8 @@ else
         selectedSlot = selection;
         panelMode = MobilePanelMode.Detail;
     }
+
+    private void OnGreerReferenceModeChanged(GreerReferenceMode mode) => greerReferenceMode = mode;
 
     private void OnPerfectionSelected(PerfectionSelection selection)
     {

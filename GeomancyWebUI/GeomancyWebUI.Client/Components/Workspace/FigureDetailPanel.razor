@@ -1,5 +1,6 @@
 ﻿@using System.Linq
 @using GeomancyWebUI.Client.Components
+@using GeomancyWebUI.Client.Helpers
 @using GeomancyWebUI.Client.Models
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
@@ -13,23 +14,40 @@
     }
     else
     {
-        var fig = Selection.Figure;
+        var baseFig = Selection.Figure;
+        var greerFig = ResolveGreerFigure(baseFig);
+        var figureBundle = GreerReferenceMergeHelper.MergeFigure(baseFig, greerFig, GreerReferenceMode);
+        var fig = figureBundle.DisplayFigure;
+        var greerOverlay = figureBundle.GreerOverlay;
+        var showGreerAlongside = figureBundle.ShowGreerAlongside;
+        var hideGeofancyOnly = figureBundle.HideGeofancyOnlySections;
+        var showGreerAttribution = figureBundle.ShowGreerAttribution;
         var planetSymbol = GetPlanetSymbol(fig.Planet);
         var zodiacSymbol = GetZodiacSymbol(fig.Sign);
         var strengthLabel = GetStrengthLabel(fig.HouseStrength);
-        var inSlot = ResolveInSlotText(fig);
+        var inSlot = hideGeofancyOnly ? null : ResolveInSlotText(baseFig);
         var houseEntry = ResolveHouseEntry();
+        var greerHouse = ResolveGreerHouseEntry();
+        var houseBundle = GreerReferenceMergeHelper.MergeHouse(houseEntry, greerHouse, GreerReferenceMode);
         var courtEntry = ResolveCourtEntry();
-        var showInterpretation = HasInterpretationContent(fig);
-        var showHouse = houseEntry != null;
-        var showCourt = courtEntry != null;
-        var showSources = fig.TraditionalSources?.Any() == true;
+        var showInterpretation = hideGeofancyOnly
+            ? HasGreerInterpretationContent(greerOverlay)
+            : HasInterpretationContent(fig) || showGreerAlongside;
+        var showHouse = houseEntry != null || greerHouse != null;
+        var showGreerHousePrimary = houseBundle.UseGreerPrimary && greerHouse != null;
+        var showCourt = courtEntry != null && !hideGeofancyOnly;
+        var showSources = !hideGeofancyOnly && fig.TraditionalSources?.Any() == true;
+        var showChartCautions = showGreerAttribution
+            && !string.IsNullOrWhiteSpace(GreerHouses?.ChartCautions)
+            && Selection.Kind == SlotKind.House;
         var openInterpretation = IsInterpretationOpenByDefault(inSlot);
-        var openHouse = IsHouseOpenByDefault(houseEntry);
+        var openHouse = IsHouseOpenByDefault(houseEntry) || showGreerHousePrimary;
         var openCourt = IsCourtOpenByDefault(courtEntry);
         var openCorrespondences = IsCorrespondencesOpenByDefault(inSlot);
-        var hasContext = HasContextContent(fig, inSlot);
+        var hasContext = HasContextContent(fig, inSlot) || showGreerAlongside;
         var qualityChipClass = GetQualityChipClass(fig.Quality);
+        var showVerdict = !hideGeofancyOnly;
+        var showTagline = !hideGeofancyOnly && !string.IsNullOrWhiteSpace(fig.Tagline);
 
         <div class="detail-summary-block">
             <header class="detail-header">
@@ -44,7 +62,7 @@
                     {
                         <p class="other-names">a.k.a. @fig.OtherNames</p>
                     }
-                    @if (!string.IsNullOrWhiteSpace(fig.Tagline))
+                    @if (!string.IsNullOrWhiteSpace(fig.Tagline) && showTagline)
                     {
                         <p class="figure-tagline">@fig.Tagline</p>
                     }
@@ -128,8 +146,15 @@
                     <h4 class="prose-heading">Divinatory Meaning</h4>
                     <p class="prose-text divinatory-text">@fig.DivinatoryMeaning</p>
                 </div>
+                @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerOverlay?.DivinatoryMeaning))
+                {
+                    <div class="greer-reference-block">
+                        <p class="greer-reference-eyebrow">Greer (2009)</p>
+                        <p class="prose-text">@greerOverlay!.DivinatoryMeaning</p>
+                    </div>
+                }
             }
-            @if (fig.CoreMeaning?.Any() == true)
+            @if (!hideGeofancyOnly && fig.CoreMeaning?.Any() == true)
             {
                 <div class="context-block">
                     <h4 class="prose-heading">Core Meaning</h4>
@@ -147,6 +172,8 @@
             }
         </section>
 
+        @if (showVerdict)
+        {
         <section id="section-verdict" class="detail-card">
             <h3 class="card-title">Reading Verdict</h3>
             <div class="verdict-grid">
@@ -178,6 +205,7 @@
                 </div>
             </div>
         </section>
+        }
 
         @if (showInterpretation)
         {
@@ -224,6 +252,13 @@
                                 <h4 class="prose-heading">Commentary</h4>
                                 <p class="prose-text">@fig.Commentary</p>
                             </div>
+                            @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerOverlay?.Commentary))
+                            {
+                                <div class="greer-reference-block">
+                                    <p class="greer-reference-eyebrow">Greer (2009)</p>
+                                    <p class="prose-text">@greerOverlay!.Commentary</p>
+                                </div>
+                            }
                         }
                         @if (fig.ModernExamples?.Any() == true)
                         {
@@ -406,8 +441,38 @@
         {
             <section id="section-house" class="detail-card reference-section">
                 <details open="@openHouse">
-                    <summary class="details-summary">House · @houseEntry!.House</summary>
+                    <summary class="details-summary">House · @(houseEntry?.House ?? greerHouse?.Ordinal ?? "Reference")</summary>
                     <div class="details-body reference-stack">
+                        @if (showChartCautions)
+                        {
+                            <div class="reference-subcard detail-card prose-card greer-cautions-card">
+                                <h3 class="card-title">Chart Cautions</h3>
+                                <p class="prose-text">@GreerHouses!.ChartCautions</p>
+                            </div>
+                        }
+
+                        @if (showGreerHousePrimary)
+                        {
+                            <p class="reference-section-eyebrow">Greer House Reference · @greerHouse!.Ordinal</p>
+                            @if (!string.IsNullOrWhiteSpace(houseBundle.Description))
+                            {
+                                <div class="reference-subcard detail-card prose-card essence-card">
+                                    <h3 class="card-title">Description</h3>
+                                    <p class="prose-text">@houseBundle.Description</p>
+                                </div>
+                            }
+                            @if (houseBundle.ExampleQuestions?.Any() == true)
+                            {
+                                <div class="reference-subcard detail-card example-questions-card">
+                                    <h3 class="card-title">Example Questions</h3>
+                                    <ul class="bullet-list">
+                                        @foreach (var q in houseBundle.ExampleQuestions) { <li>@q</li> }
+                                    </ul>
+                                </div>
+                            }
+                        }
+                        else if (houseEntry != null)
+                        {
                         <p class="reference-section-eyebrow">House Reference · @houseEntry.House</p>
 
                         @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName)
@@ -500,6 +565,27 @@
                                     @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
                                 </ul>
                             </div>
+                        }
+
+                        @if (houseBundle.ShowGreerAlongside && greerHouse != null)
+                        {
+                            @if (!string.IsNullOrWhiteSpace(greerHouse.Description))
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card prose-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Description</p>
+                                    <p class="prose-text">@greerHouse.Description</p>
+                                </div>
+                            }
+                            @if (greerHouse.ExampleQuestions?.Any() == true)
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card example-questions-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Example Questions</p>
+                                    <ul class="bullet-list">
+                                        @foreach (var q in greerHouse.ExampleQuestions) { <li>@q</li> }
+                                    </ul>
+                                </div>
+                            }
+                        }
                         }
                     </div>
                 </details>
@@ -632,6 +718,13 @@
                 </details>
             </section>
         }
+
+        @if (showGreerAttribution)
+        {
+            <footer class="greer-attribution">
+                <p>@GreerLicenseConstants.Attribution</p>
+            </footer>
+        }
     }
 </div>
 
@@ -639,6 +732,9 @@
     [Parameter] public SlotSelection? Selection { get; set; }
     [Parameter] public IReadOnlyList<HouseDirectoryEntry> Houses { get; set; } = Array.Empty<HouseDirectoryEntry>();
     [Parameter] public IReadOnlyList<CourtDirectoryEntry> Courts { get; set; } = Array.Empty<CourtDirectoryEntry>();
+    [Parameter] public GreerReferenceMode GreerReferenceMode { get; set; } = GreerReferenceMode.Off;
+    [Parameter] public IReadOnlyList<GreerFigureModel> GreerFigures { get; set; } = Array.Empty<GreerFigureModel>();
+    [Parameter] public GreerHouseDirectory? GreerHouses { get; set; }
 
     private ElementReference _panelRef;
     private string? _lastSelectionKey;
@@ -722,6 +818,35 @@
 
     private static bool IsCourtOpenByDefault(CourtDirectoryEntry? courtEntry) =>
         courtEntry != null;
+
+    private static bool HasGreerInterpretationContent(GreerFigureModel? greer) =>
+        greer != null && (
+            !string.IsNullOrWhiteSpace(greer.Imagery)
+            || !string.IsNullOrWhiteSpace(greer.Commentary)
+            || !string.IsNullOrWhiteSpace(greer.DivinatoryMeaning));
+
+    private GreerFigureModel? ResolveGreerFigure(FigureModel? figure)
+    {
+        if (figure == null || GreerReferenceMode == GreerReferenceMode.Off)
+            return null;
+
+        var key = GreerReferenceMergeHelper.NormalizeFigureKey(figure.Name);
+        return GreerFigures.FirstOrDefault(f =>
+            string.Equals(GreerReferenceMergeHelper.NormalizeFigureKey(f.Name), key, StringComparison.Ordinal));
+    }
+
+    private GreerHouseEntry? ResolveGreerHouseEntry()
+    {
+        if (GreerReferenceMode == GreerReferenceMode.Off
+            || Selection?.Kind != SlotKind.House
+            || !Selection.HouseNumber.HasValue
+            || GreerHouses?.Houses == null)
+        {
+            return null;
+        }
+
+        return GreerHouses.Houses.FirstOrDefault(h => h.Id == Selection.HouseNumber.Value);
+    }
 
     private static bool HasReadingCraftContent(HouseDirectoryEntry houseEntry) =>
         houseEntry.KeySignificators?.Any() == true

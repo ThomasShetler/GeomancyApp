@@ -748,5 +748,105 @@ namespace GeomancyAPI.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        [Route("references/greer/figures")]
+        [ResponseType(typeof(List<GreerFigureResponse>))]
+        public HttpResponseMessage GetGreerFiguresDirectory()
+        {
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, GeomancyHandlers.GetGreerFiguresDirectory());
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer figure references: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("references/greer/figures/{figureName}")]
+        [ResponseType(typeof(GreerFigureResponse))]
+        public HttpResponseMessage GetGreerFigureDirectoryEntry(string figureName)
+        {
+            try
+            {
+                var entry = GeomancyHandlers.GetGreerFigureDirectoryEntry(figureName);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No Greer figure reference for '{figureName}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer figure reference: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("references/greer/houses")]
+        [ResponseType(typeof(GreerHouseDirectoryResponse))]
+        public HttpResponseMessage GetGreerHousesDirectory()
+        {
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, GeomancyHandlers.GetGreerHousesDirectory());
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer house references: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("references/greer/houses/{id:int}")]
+        [ResponseType(typeof(GreerHouseEntryResponse))]
+        public HttpResponseMessage GetGreerHouseDirectoryEntry(int id)
+        {
+            try
+            {
+                var entry = GeomancyHandlers.GetGreerHouseDirectoryEntry(id);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No Greer house reference with id {id}",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer house reference: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
     }
 }

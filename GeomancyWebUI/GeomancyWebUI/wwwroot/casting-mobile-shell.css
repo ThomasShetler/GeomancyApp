@@ -532,27 +532,43 @@
     width: 100%;
     max-width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .mobile-mothers-setup .chart-casting-info-pane {
     min-width: 0;
     max-width: 100%;
     padding: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-mothers-setup .chart-casting-review-host {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .mobile-mothers-setup .chart-casting-guidance-column {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
 }
 
 .mobile-mothers-setup .figure-dot-caster.is-mobile-actions-first {
-    flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: var(--bg-primary);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--bg-primary) 70%, transparent);
+    flex: 1 1 auto;
+    min-height: 0;
+    position: static;
+    z-index: auto;
+    background: transparent;
+    box-shadow: none;
 }
 
 .mobile-mothers-setup .chart-casting-shield-hint--mobile,
@@ -570,6 +586,10 @@
 
 .mobile-mothers-setup .chart-casting-summary-actions--mobile-top .figure-dot-caster-btn {
     width: 100%;
+}
+
+.wiki-casting-mobile-shell--fullscreen .mobile-panel-body:has(.mobile-mothers-setup) {
+    overflow: hidden;
 }
 
 /* Full shield walkthrough chart in drawer (post-Mothers stages). */

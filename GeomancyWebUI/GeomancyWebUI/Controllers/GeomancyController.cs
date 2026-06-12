@@ -663,5 +663,97 @@ namespace GeomancyWebUI.Controllers
                 });
             }
         }
+
+        [HttpGet("references/greer/figures")]
+        public IActionResult GetGreerFiguresDirectory()
+        {
+            try
+            {
+                return Ok(GeomancyHandlers.GetGreerFiguresDirectory());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer figure references: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet("references/greer/figures/{figureName}")]
+        public IActionResult GetGreerFigureDirectoryEntry(string figureName)
+        {
+            try
+            {
+                var entry = GeomancyHandlers.GetGreerFigureDirectoryEntry(figureName);
+                if (entry == null)
+                {
+                    return NotFound(new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No Greer figure reference for '{figureName}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Ok(entry);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer figure reference: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet("references/greer/houses")]
+        public IActionResult GetGreerHousesDirectory()
+        {
+            try
+            {
+                return Ok(GeomancyHandlers.GetGreerHousesDirectory());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer house references: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet("references/greer/houses/{id:int}")]
+        public IActionResult GetGreerHouseDirectoryEntry(int id)
+        {
+            try
+            {
+                var entry = GeomancyHandlers.GetGreerHouseDirectoryEntry(id);
+                if (entry == null)
+                {
+                    return NotFound(new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No Greer house reference with id {id}",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Ok(entry);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading Greer house reference: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
     }
 }

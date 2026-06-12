@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geofancy.local/databank/FigureCorpus/GreersFigures.schema.json",
+  "title": "Greer Figure Reference Corpus",
+  "type": "object",
+  "required": ["GreerFigureCorpus"],
+  "properties": {
+    "GreerFigureCorpus": {
+      "type": "object",
+      "required": ["schema_version", "license", "figures"],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "license": { "$ref": "#/$defs/license" },
+        "figures": {
+          "type": "array",
+          "minItems": 16,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/greer_figure" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "license": {
+      "type": "object",
+      "required": ["work", "author", "publisher", "permission_date", "attribution", "approved_pages"],
+      "properties": {
+        "work": { "type": "string" },
+        "author": { "type": "string" },
+        "publisher": { "type": "string" },
+        "permission_date": { "type": "string" },
+        "attribution": { "type": "string" },
+        "approved_pages": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": ["work", "chapter", "pages", "attribution"],
+      "properties": {
+        "work": { "type": "string" },
+        "chapter": { "type": "string" },
+        "pages": { "type": "string" },
+        "attribution": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "greer_figure": {
+      "type": "object",
+      "required": [
+        "figure_id", "name", "english_name", "other_names", "keyword", "quality",
+        "planet", "sign", "imagery", "strong_house", "strong_house_id", "weak_house",
+        "weak_house_id", "outer_el", "inner_el", "fire_element", "air_element",
+        "water_element", "earth_element", "anatomy", "body_type", "character_type",
+        "colors", "commentary", "divinatory_meaning", "source"
+      ],
+      "properties": {
+        "figure_id": { "type": "string", "pattern": "^(1[0-6]|[1-9])$" },
+        "name": { "type": "string", "minLength": 1 },
+        "english_name": { "type": "string" },
+        "other_names": { "type": "string" },
+        "keyword": { "type": "string" },
+        "quality": { "type": "string", "enum": ["Mobile", "Stable"] },
+        "planet": { "type": "string" },
+        "sign": { "type": "string" },
+        "imagery": { "type": "string" },
+        "strong_house": { "type": "string" },
+        "strong_house_id": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "weak_house": { "type": "string" },
+        "weak_house_id": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "outer_el": { "type": "string" },
+        "inner_el": { "type": "string" },
+        "fire_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "air_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "water_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "earth_element": { "type": "string", "enum": ["Active", "Passive"] },
+        "anatomy": { "type": "string" },
+        "body_type": { "type": "string" },
+        "character_type": { "type": "string" },
+        "colors": { "type": "string" },
+        "commentary": { "type": "string" },
+        "divinatory_meaning": { "type": "string" },
+        "source": { "$ref": "#/$defs/source" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

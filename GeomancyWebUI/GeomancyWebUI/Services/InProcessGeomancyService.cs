@@ -20,6 +20,8 @@ namespace GeomancyWebUI.Services
         private List<CourtDirectoryEntry>? _courtsDirectoryCache;
         private List<WayOfPointsElementEntry>? _wayOfPointsElementsCache;
         private List<WayOfPointsPathTypeEntry>? _wayOfPointsPathTypesCache;
+        private List<GreerFigureModel>? _greerFiguresCache;
+        private GreerHouseDirectory? _greerHousesCache;
 
         public Task<HouseChartModel> GenerateChartAsync(GenerateFourFiguresRequest request)
         {
@@ -160,6 +162,84 @@ namespace GeomancyWebUI.Services
                                          ?? new List<WayOfPointsPathTypeEntry>();
             return Task.FromResult(_wayOfPointsPathTypesCache);
         }
+
+        public Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync()
+        {
+            if (_greerFiguresCache != null) return Task.FromResult(_greerFiguresCache);
+
+            var entries = Handlers.GetGreerFiguresDirectory();
+            _greerFiguresCache = entries?.Select(MapToGreerFigureModel).ToList()
+                                 ?? new List<GreerFigureModel>();
+            return Task.FromResult(_greerFiguresCache);
+        }
+
+        public Task<GreerHouseDirectory> GetGreerHousesDirectoryAsync()
+        {
+            if (_greerHousesCache != null) return Task.FromResult(_greerHousesCache);
+
+            var directory = Handlers.GetGreerHousesDirectory();
+            _greerHousesCache = directory == null
+                ? new GreerHouseDirectory()
+                : new GreerHouseDirectory
+                {
+                    ChartCautions = directory.ChartCautions ?? string.Empty,
+                    Houses = directory.Houses?.Select(MapToGreerHouseEntry).ToList() ?? new List<GreerHouseEntry>()
+                };
+            return Task.FromResult(_greerHousesCache);
+        }
+
+        private static GreerFigureModel MapToGreerFigureModel(ContractModels.GreerFigureResponse src) =>
+            new GreerFigureModel
+            {
+                FigureId = src.FigureId ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                EnglishName = src.EnglishName ?? string.Empty,
+                OtherNames = src.OtherNames ?? string.Empty,
+                Keyword = src.Keyword ?? string.Empty,
+                Quality = src.Quality ?? string.Empty,
+                Planet = src.Planet ?? string.Empty,
+                Sign = src.Sign ?? string.Empty,
+                Imagery = src.Imagery ?? string.Empty,
+                StrongHouse = src.StrongHouse ?? string.Empty,
+                StrongHouseId = src.StrongHouseId,
+                WeakHouse = src.WeakHouse ?? string.Empty,
+                WeakHouseId = src.WeakHouseId,
+                OuterEl = src.OuterEl ?? string.Empty,
+                InnerEl = src.InnerEl ?? string.Empty,
+                FireElement = src.FireElement ?? string.Empty,
+                AirElement = src.AirElement ?? string.Empty,
+                WaterElement = src.WaterElement ?? string.Empty,
+                EarthElement = src.EarthElement ?? string.Empty,
+                Anatomy = src.Anatomy ?? string.Empty,
+                BodyType = src.BodyType ?? string.Empty,
+                CharacterType = src.CharacterType ?? string.Empty,
+                Colors = src.Colors ?? string.Empty,
+                Commentary = src.Commentary ?? string.Empty,
+                DivinatoryMeaning = src.DivinatoryMeaning ?? string.Empty,
+                Source = src.Source == null ? null : new GreerSourceModel
+                {
+                    Work = src.Source.Work ?? string.Empty,
+                    Chapter = src.Source.Chapter ?? string.Empty,
+                    Pages = src.Source.Pages ?? string.Empty,
+                    Attribution = src.Source.Attribution ?? string.Empty
+                }
+            };
+
+        private static GreerHouseEntry MapToGreerHouseEntry(ContractModels.GreerHouseEntryResponse src) =>
+            new GreerHouseEntry
+            {
+                Id = src.Id,
+                Ordinal = src.Ordinal ?? string.Empty,
+                Description = src.Description ?? string.Empty,
+                ExampleQuestions = src.ExampleQuestions ?? new List<string>(),
+                Source = src.Source == null ? null : new GreerSourceModel
+                {
+                    Work = src.Source.Work ?? string.Empty,
+                    Chapter = src.Source.Chapter ?? string.Empty,
+                    Pages = src.Source.Pages ?? string.Empty,
+                    Attribution = src.Source.Attribution ?? string.Empty
+                }
+            };
 
         // ---------------------------------------------------------------------
         // Client request -> Contracts request mappers

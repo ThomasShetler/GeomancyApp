@@ -15,6 +15,8 @@ namespace GeomancyWebUI.Client.Services
         private List<CourtDirectoryEntry>? _courtsDirectoryCache;
         private List<WayOfPointsElementEntry>? _wayOfPointsElementsCache;
         private List<WayOfPointsPathTypeEntry>? _wayOfPointsPathTypesCache;
+        private List<GreerFigureModel>? _greerFiguresCache;
+        private GreerHouseDirectory? _greerHousesCache;
 
         public GeomancyApiService(HttpClient httpClient)
         {
@@ -311,6 +313,95 @@ namespace GeomancyWebUI.Client.Services
             _wayOfPointsPathTypesCache = apiResponse?.Select(MapToWayOfPointsPathTypeEntry).ToList() ?? new List<WayOfPointsPathTypeEntry>();
             return _wayOfPointsPathTypesCache;
         }
+
+        public async Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync()
+        {
+            if (_greerFiguresCache != null) return _greerFiguresCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/references/greer/figures";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<List<GreerFigureResponseDto>>();
+            _greerFiguresCache = apiResponse?.Select(MapToGreerFigureModel).ToList() ?? new List<GreerFigureModel>();
+            return _greerFiguresCache;
+        }
+
+        public async Task<GreerHouseDirectory> GetGreerHousesDirectoryAsync()
+        {
+            if (_greerHousesCache != null) return _greerHousesCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/references/greer/houses";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<GreerHouseDirectoryResponseDto>();
+            _greerHousesCache = apiResponse == null
+                ? new GreerHouseDirectory()
+                : new GreerHouseDirectory
+                {
+                    ChartCautions = apiResponse.ChartCautions ?? string.Empty,
+                    Houses = apiResponse.Houses?.Select(MapToGreerHouseEntry).ToList() ?? new List<GreerHouseEntry>()
+                };
+            return _greerHousesCache;
+        }
+
+        private static GreerFigureModel MapToGreerFigureModel(GreerFigureResponseDto src) =>
+            new GreerFigureModel
+            {
+                FigureId = src.FigureId ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                EnglishName = src.EnglishName ?? string.Empty,
+                OtherNames = src.OtherNames ?? string.Empty,
+                Keyword = src.Keyword ?? string.Empty,
+                Quality = src.Quality ?? string.Empty,
+                Planet = src.Planet ?? string.Empty,
+                Sign = src.Sign ?? string.Empty,
+                Imagery = src.Imagery ?? string.Empty,
+                StrongHouse = src.StrongHouse ?? string.Empty,
+                StrongHouseId = src.StrongHouseId,
+                WeakHouse = src.WeakHouse ?? string.Empty,
+                WeakHouseId = src.WeakHouseId,
+                OuterEl = src.OuterEl ?? string.Empty,
+                InnerEl = src.InnerEl ?? string.Empty,
+                FireElement = src.FireElement ?? string.Empty,
+                AirElement = src.AirElement ?? string.Empty,
+                WaterElement = src.WaterElement ?? string.Empty,
+                EarthElement = src.EarthElement ?? string.Empty,
+                Anatomy = src.Anatomy ?? string.Empty,
+                BodyType = src.BodyType ?? string.Empty,
+                CharacterType = src.CharacterType ?? string.Empty,
+                Colors = src.Colors ?? string.Empty,
+                Commentary = src.Commentary ?? string.Empty,
+                DivinatoryMeaning = src.DivinatoryMeaning ?? string.Empty,
+                Source = src.Source == null ? null : new GreerSourceModel
+                {
+                    Work = src.Source.Work ?? string.Empty,
+                    Chapter = src.Source.Chapter ?? string.Empty,
+                    Pages = src.Source.Pages ?? string.Empty,
+                    Attribution = src.Source.Attribution ?? string.Empty
+                }
+            };
+
+        private static GreerHouseEntry MapToGreerHouseEntry(GreerHouseEntryResponseDto src) =>
+            new GreerHouseEntry
+            {
+                Id = src.Id,
+                Ordinal = src.Ordinal ?? string.Empty,
+                Description = src.Description ?? string.Empty,
+                ExampleQuestions = src.ExampleQuestions ?? new List<string>(),
+                Source = src.Source == null ? null : new GreerSourceModel
+                {
+                    Work = src.Source.Work ?? string.Empty,
+                    Chapter = src.Source.Chapter ?? string.Empty,
+                    Pages = src.Source.Pages ?? string.Empty,
+                    Attribution = src.Source.Attribution ?? string.Empty
+                }
+            };
 
         private static HouseDirectoryEntry MapToHouseDirectoryEntry(HouseDirectoryEntryResponse src)
         {
@@ -930,6 +1021,129 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("interpretation_paragraphs")]
             public List<string>? InterpretationParagraphs { get; set; }
+        }
+
+        private class GreerSourceResponseDto
+        {
+            [JsonPropertyName("work")]
+            public string? Work { get; set; }
+
+            [JsonPropertyName("chapter")]
+            public string? Chapter { get; set; }
+
+            [JsonPropertyName("pages")]
+            public string? Pages { get; set; }
+
+            [JsonPropertyName("attribution")]
+            public string? Attribution { get; set; }
+        }
+
+        private class GreerFigureResponseDto
+        {
+            [JsonPropertyName("figure_id")]
+            public string? FigureId { get; set; }
+
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("english_name")]
+            public string? EnglishName { get; set; }
+
+            [JsonPropertyName("other_names")]
+            public string? OtherNames { get; set; }
+
+            [JsonPropertyName("keyword")]
+            public string? Keyword { get; set; }
+
+            [JsonPropertyName("quality")]
+            public string? Quality { get; set; }
+
+            [JsonPropertyName("planet")]
+            public string? Planet { get; set; }
+
+            [JsonPropertyName("sign")]
+            public string? Sign { get; set; }
+
+            [JsonPropertyName("imagery")]
+            public string? Imagery { get; set; }
+
+            [JsonPropertyName("strong_house")]
+            public string? StrongHouse { get; set; }
+
+            [JsonPropertyName("strong_house_id")]
+            public int StrongHouseId { get; set; }
+
+            [JsonPropertyName("weak_house")]
+            public string? WeakHouse { get; set; }
+
+            [JsonPropertyName("weak_house_id")]
+            public int WeakHouseId { get; set; }
+
+            [JsonPropertyName("outer_el")]
+            public string? OuterEl { get; set; }
+
+            [JsonPropertyName("inner_el")]
+            public string? InnerEl { get; set; }
+
+            [JsonPropertyName("fire_element")]
+            public string? FireElement { get; set; }
+
+            [JsonPropertyName("air_element")]
+            public string? AirElement { get; set; }
+
+            [JsonPropertyName("water_element")]
+            public string? WaterElement { get; set; }
+
+            [JsonPropertyName("earth_element")]
+            public string? EarthElement { get; set; }
+
+            [JsonPropertyName("anatomy")]
+            public string? Anatomy { get; set; }
+
+            [JsonPropertyName("body_type")]
+            public string? BodyType { get; set; }
+
+            [JsonPropertyName("character_type")]
+            public string? CharacterType { get; set; }
+
+            [JsonPropertyName("colors")]
+            public string? Colors { get; set; }
+
+            [JsonPropertyName("commentary")]
+            public string? Commentary { get; set; }
+
+            [JsonPropertyName("divinatory_meaning")]
+            public string? DivinatoryMeaning { get; set; }
+
+            [JsonPropertyName("source")]
+            public GreerSourceResponseDto? Source { get; set; }
+        }
+
+        private class GreerHouseEntryResponseDto
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("ordinal")]
+            public string? Ordinal { get; set; }
+
+            [JsonPropertyName("description")]
+            public string? Description { get; set; }
+
+            [JsonPropertyName("example_questions")]
+            public List<string>? ExampleQuestions { get; set; }
+
+            [JsonPropertyName("source")]
+            public GreerSourceResponseDto? Source { get; set; }
+        }
+
+        private class GreerHouseDirectoryResponseDto
+        {
+            [JsonPropertyName("chart_cautions")]
+            public string? ChartCautions { get; set; }
+
+            [JsonPropertyName("houses")]
+            public List<GreerHouseEntryResponseDto>? Houses { get; set; }
         }
 
         private PerfectionModel MapToPerfectionModel(PerfectionResponse? apiResponse)

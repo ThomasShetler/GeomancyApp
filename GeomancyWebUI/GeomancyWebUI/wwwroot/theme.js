@@ -52,6 +52,19 @@
             window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     };
 
+    window.geofancyGreerReferenceModeGet = function () {
+        try {
+            return localStorage.getItem('greerReferenceMode') || 'Off';
+        } catch (e) {
+            return 'Off';
+        }
+    };
+    window.geofancyGreerReferenceModeSet = function (mode) {
+        try {
+            localStorage.setItem('greerReferenceMode', mode || 'Off');
+        } catch (e) { /* ignore */ }
+    };
+
     function clampPercent(value, min, max) {
         return Math.max(min, Math.min(max, value));
     }

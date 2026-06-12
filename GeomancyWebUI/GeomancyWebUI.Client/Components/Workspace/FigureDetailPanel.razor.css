@@ -1182,6 +1182,36 @@
     }
 }
 
+.greer-reference-block {
+    margin-top: 0.65rem;
+    padding: 0.75rem 0.85rem;
+    border-left: 3px solid var(--accent, #c9a227);
+    background: color-mix(in srgb, var(--accent, #c9a227) 8%, transparent);
+    border-radius: 0.35rem;
+}
+
+.greer-reference-eyebrow {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent, #c9a227);
+}
+
+.greer-attribution {
+    margin-top: 0.85rem;
+    padding: 0.75rem 0.85rem;
+    border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--text-muted, #9aa0a6);
+}
+
+.greer-attribution p {
+    margin: 0;
+}
+
 @media (max-width: 480px) {
     .elements-grid {
         grid-template-columns: repeat(2, 1fr);

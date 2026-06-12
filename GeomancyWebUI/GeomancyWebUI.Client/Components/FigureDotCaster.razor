@@ -234,6 +234,10 @@
     [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
     [Parameter] public bool MobileProgressiveRows { get; set; }
     [Parameter] public bool MobileActionsFirst { get; set; }
+    /// <summary>Fill available vertical space with equally tall dot rows.</summary>
+    [Parameter] public bool StretchRows { get; set; }
+    /// <summary>Faster pairing / cross-off animation (mothers setup flow).</summary>
+    [Parameter] public bool FastPairing { get; set; }
     /// <summary>Narrow wiki article column: smaller canvases and marks, stacked row labels.</summary>
     [Parameter] public bool WikiArticleLayout { get; set; }
 
@@ -252,9 +256,9 @@
     public bool IsComplete => _phase == CasterPhase.Complete;
     public FigureModel? ResolvedFigure => _resolvedFigure;
 
-    private int PairingStepDelayMs => _reducedMotion ? 80 : 450;
-    private int RowCompleteDelayMs => _reducedMotion ? 50 : 250;
-    private int FigureLineRevealDelayMs => _reducedMotion ? 80 : 400;
+    private int PairingStepDelayMs => _reducedMotion ? 80 : FastPairing ? 180 : 450;
+    private int RowCompleteDelayMs => _reducedMotion ? 50 : FastPairing ? 100 : 250;
+    private int FigureLineRevealDelayMs => _reducedMotion ? 80 : FastPairing ? 150 : 400;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -285,6 +289,8 @@
         if (_phase == CasterPhase.Complete) classes.Add("is-complete");
         if (MobileProgressiveRows) classes.Add("is-mobile-progressive");
         if (MobileActionsFirst) classes.Add("is-mobile-actions-first");
+        if (StretchRows) classes.Add("is-stretch-rows");
+        if (FastPairing) classes.Add("is-fast-pairing");
         if (WikiArticleLayout) classes.Add("is-wiki-article");
         return string.Join(" ", classes);
     }

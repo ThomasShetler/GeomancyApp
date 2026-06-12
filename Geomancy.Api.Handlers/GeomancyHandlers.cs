@@ -547,6 +547,60 @@ namespace GeomancyAPI.Handlers
         public static WayOfPointsPathTypeEntryResponse GetWayOfPointsPathTypeEntry(string id)
             => WayOfPointsDirectoryLoader.GetPathType(id);
 
+        public static IReadOnlyList<GreerFigureResponse> GetGreerFiguresDirectory()
+            => GreerFigureCorpusLoader.LoadFigures().Select(ConvertToGreerFigureResponse).ToList();
+
+        public static GreerFigureResponse GetGreerFigureDirectoryEntry(string figureName)
+        {
+            var figure = GreerFigureCorpusLoader.GetFigureByName(figureName);
+            return figure == null ? null : ConvertToGreerFigureResponse(figure);
+        }
+
+        public static GreerHouseDirectoryResponse GetGreerHousesDirectory()
+            => GreerHouseDirectoryLoader.GetDirectory();
+
+        public static GreerHouseEntryResponse GetGreerHouseDirectoryEntry(int id)
+            => GreerHouseDirectoryLoader.GetHouse(id);
+
+        private static GreerFigureResponse ConvertToGreerFigureResponse(GreerFigureData figure) =>
+            new GreerFigureResponse
+            {
+                FigureId = figure.FigureId,
+                Name = figure.Name,
+                EnglishName = figure.EnglishName,
+                OtherNames = figure.OtherNames,
+                Keyword = figure.Keyword,
+                Quality = figure.Quality,
+                Planet = figure.Planet,
+                Sign = figure.Sign,
+                Imagery = figure.Imagery,
+                StrongHouse = figure.StrongHouse,
+                StrongHouseId = figure.StrongHouseId,
+                WeakHouse = figure.WeakHouse,
+                WeakHouseId = figure.WeakHouseId,
+                OuterEl = figure.OuterEl,
+                InnerEl = figure.InnerEl,
+                FireElement = figure.FireElement,
+                AirElement = figure.AirElement,
+                WaterElement = figure.WaterElement,
+                EarthElement = figure.EarthElement,
+                Anatomy = figure.Anatomy,
+                BodyType = figure.BodyType,
+                CharacterType = figure.CharacterType,
+                Colors = figure.Colors,
+                Commentary = figure.Commentary,
+                DivinatoryMeaning = figure.DivinatoryMeaning,
+                Source = figure.Source == null
+                    ? null
+                    : new GreerSourceResponse
+                    {
+                        Work = figure.Source.Work,
+                        Chapter = figure.Source.Chapter,
+                        Pages = figure.Source.Pages,
+                        Attribution = figure.Source.Attribution
+                    }
+            };
+
         // -----------------------------------------------------------------------------
         // Internal helpers (validation / conversion / scoring)
         // -----------------------------------------------------------------------------

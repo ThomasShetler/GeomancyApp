@@ -105,6 +105,14 @@
       <Link>databank\HouseAndCourtDirectory\CourtData.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\databank\FigureCorpus\GreersFigures.json">
+      <Link>databank\FigureCorpus\GreersFigures.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\databank\HouseAndCourtDirectory\GreersHouseData.json">
+      <Link>databank\HouseAndCourtDirectory\GreersHouseData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Geomancy.Core\Geomancy.Core.csproj">

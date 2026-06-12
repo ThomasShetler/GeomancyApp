@@ -579,4 +579,151 @@ namespace GeomancyAPI.Models
         [JsonProperty("PathTypes")]
         public List<WayOfPointsPathTypeEntryResponse> PathTypes { get; set; } = new List<WayOfPointsPathTypeEntryResponse>();
     }
+
+    public class GreerLicenseResponse
+    {
+        [JsonProperty("work")]
+        public string Work { get; set; }
+
+        [JsonProperty("author")]
+        public string Author { get; set; }
+
+        [JsonProperty("publisher")]
+        public string Publisher { get; set; }
+
+        [JsonProperty("permission_date")]
+        public string PermissionDate { get; set; }
+
+        [JsonProperty("attribution")]
+        public string Attribution { get; set; }
+
+        [JsonProperty("approved_pages")]
+        public string ApprovedPages { get; set; }
+    }
+
+    public class GreerSourceResponse
+    {
+        [JsonProperty("work")]
+        public string Work { get; set; }
+
+        [JsonProperty("chapter")]
+        public string Chapter { get; set; }
+
+        [JsonProperty("pages")]
+        public string Pages { get; set; }
+
+        [JsonProperty("attribution")]
+        public string Attribution { get; set; }
+    }
+
+    public class GreerFigureResponse
+    {
+        [JsonProperty("figure_id")]
+        public string FigureId { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("english_name")]
+        public string EnglishName { get; set; }
+
+        [JsonProperty("other_names")]
+        public string OtherNames { get; set; }
+
+        [JsonProperty("keyword")]
+        public string Keyword { get; set; }
+
+        [JsonProperty("quality")]
+        public string Quality { get; set; }
+
+        [JsonProperty("planet")]
+        public string Planet { get; set; }
+
+        [JsonProperty("sign")]
+        public string Sign { get; set; }
+
+        [JsonProperty("imagery")]
+        public string Imagery { get; set; }
+
+        [JsonProperty("strong_house")]
+        public string StrongHouse { get; set; }
+
+        [JsonProperty("strong_house_id")]
+        public int StrongHouseId { get; set; }
+
+        [JsonProperty("weak_house")]
+        public string WeakHouse { get; set; }
+
+        [JsonProperty("weak_house_id")]
+        public int WeakHouseId { get; set; }
+
+        [JsonProperty("outer_el")]
+        public string OuterEl { get; set; }
+
+        [JsonProperty("inner_el")]
+        public string InnerEl { get; set; }
+
+        [JsonProperty("fire_element")]
+        public string FireElement { get; set; }
+
+        [JsonProperty("air_element")]
+        public string AirElement { get; set; }
+
+        [JsonProperty("water_element")]
+        public string WaterElement { get; set; }
+
+        [JsonProperty("earth_element")]
+        public string EarthElement { get; set; }
+
+        [JsonProperty("anatomy")]
+        public string Anatomy { get; set; }
+
+        [JsonProperty("body_type")]
+        public string BodyType { get; set; }
+
+        [JsonProperty("character_type")]
+        public string CharacterType { get; set; }
+
+        [JsonProperty("colors")]
+        public string Colors { get; set; }
+
+        [JsonProperty("commentary")]
+        public string Commentary { get; set; }
+
+        [JsonProperty("divinatory_meaning")]
+        public string DivinatoryMeaning { get; set; }
+
+        [JsonProperty("source")]
+        public GreerSourceResponse Source { get; set; }
+    }
+
+    public class GreerHouseEntryResponse
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("ordinal")]
+        public string Ordinal { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("example_questions")]
+        public List<string> ExampleQuestions { get; set; } = new List<string>();
+
+        [JsonProperty("source")]
+        public GreerSourceResponse Source { get; set; }
+    }
+
+    public class GreerHouseDirectoryResponse
+    {
+        [JsonProperty("chart_cautions")]
+        public string ChartCautions { get; set; }
+
+        [JsonProperty("license")]
+        public GreerLicenseResponse License { get; set; }
+
+        [JsonProperty("houses")]
+        public List<GreerHouseEntryResponse> Houses { get; set; } = new List<GreerHouseEntryResponse>();
+    }
 }

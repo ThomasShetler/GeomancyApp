@@ -20,6 +20,9 @@ namespace GeomancyWebUI.Client.Services
         // Static reference directory (databank/WayOfPointsDirectory/*.json on the API)
         Task<List<WayOfPointsElementEntry>> GetWayOfPointsElementsDirectoryAsync();
         Task<List<WayOfPointsPathTypeEntry>> GetWayOfPointsPathTypesDirectoryAsync();
+
+        Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync();
+        Task<GreerHouseDirectory> GetGreerHousesDirectoryAsync();
     }
 }
 

@@ -101,9 +101,14 @@
                                                    OnSelect="OnSlotSelected" />
                             </div>
                             <div class="court-houses-detail-col">
+                                <GreerReferenceModeBar Mode="@greerReferenceMode"
+                                                       ModeChanged="OnGreerReferenceModeChanged" />
                                 <FigureDetailPanel Selection="@selectedSlot"
                                                    Houses="@housesDirectory"
-                                                   Courts="@courtsDirectory" />
+                                                   Courts="@courtsDirectory"
+                                                   GreerReferenceMode="@greerReferenceMode"
+                                                   GreerFigures="@greerFigures"
+                                                   GreerHouses="@greerHousesDirectory" />
                             </div>
                         </div>
                         break;
@@ -341,6 +346,9 @@
     // ----- Reference directories -----
     private List<HouseDirectoryEntry> housesDirectory = new();
     private List<CourtDirectoryEntry> courtsDirectory = new();
+    private List<GreerFigureModel> greerFigures = new();
+    private GreerHouseDirectory greerHousesDirectory = new();
+    private GreerReferenceMode greerReferenceMode = GreerReferenceMode.Off;
     private List<WayOfPointsElementEntry>? wayOfPointsElements;
     private List<WayOfPointsPathTypeEntry>? wayOfPointsPathTypes;
 
@@ -382,6 +390,8 @@
         {
             housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
             courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
+            greerFigures = await GeomancyService.GetGreerFiguresDirectoryAsync();
+            greerHousesDirectory = await GeomancyService.GetGreerHousesDirectoryAsync();
         }
         catch (Exception ex)
         {
@@ -417,6 +427,11 @@
     private void OnSlotSelected(SlotSelection selection)
     {
         selectedSlot = selection;
+    }
+
+    private void OnGreerReferenceModeChanged(GreerReferenceMode mode)
+    {
+        greerReferenceMode = mode;
     }
 
     private void OnPerfectionSelected(PerfectionSelection selection)
