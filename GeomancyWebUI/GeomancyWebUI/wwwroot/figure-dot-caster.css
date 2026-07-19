@@ -724,11 +724,15 @@
 
 /* Faster pairing animation for mothers setup flow. */
 .figure-dot-caster.is-fast-pairing .canvas-mark.is-paired-animate {
-    animation: mark-pair-flash 0.16s ease-out;
+    animation: mark-pair-flash 0.08s ease-out;
 }
 
 .figure-dot-caster.is-fast-pairing .figure-dot-pair-line.is-drawing {
-    animation: pair-line-draw 0.14s ease-out forwards;
+    animation: pair-line-draw 0.07s ease-out forwards;
+}
+
+.figure-dot-caster.is-fast-pairing .figure-build-line {
+    transition: opacity 0.12s ease, color 0.12s ease, transform 0.12s ease;
 }
 
 /*

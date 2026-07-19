@@ -257,9 +257,8 @@
     public bool IsComplete => _phase == CasterPhase.Complete;
     public FigureModel? ResolvedFigure => _resolvedFigure;
 
-    private int PairingStepDelayMs => _reducedMotion ? 80 : FastPairing ? 180 : 450;
-    private int RowCompleteDelayMs => _reducedMotion ? 50 : FastPairing ? 100 : 250;
-    private int FigureLineRevealDelayMs => _reducedMotion ? 80 : FastPairing ? 150 : 400;
+    private int PairingStepDelayMs => _reducedMotion ? 40 : FastPairing ? 90 : 225;
+    private int RowCompleteDelayMs => _reducedMotion ? 30 : FastPairing ? 50 : 120;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -713,6 +712,7 @@
                 }
 
                 _resolvedLines[row] = FigureMarking.ResolveLineFromDotCount(marks.Count);
+                _revealedFigureLines = row + 1;
                 StateHasChanged();
                 await Task.Delay(RowCompleteDelayMs, token);
             }
@@ -729,14 +729,7 @@
             _resolvedFigure.BodyLine = body;
             _resolvedFigure.FootLine = foot;
 
-            for (var line = 0; line < 4; line++)
-            {
-                token.ThrowIfCancellationRequested();
-                _revealedFigureLines = line + 1;
-                StateHasChanged();
-                await Task.Delay(FigureLineRevealDelayMs, token);
-            }
-
+            _revealedFigureLines = 4;
             _figureNameRevealed = true;
             _phase = CasterPhase.Complete;
             StateHasChanged();

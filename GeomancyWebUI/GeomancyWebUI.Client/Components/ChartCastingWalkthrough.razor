@@ -54,45 +54,65 @@
         <section class="chart-casting-guidance-column">
             @if (_activeStage == WalkthroughStage.Mothers)
             {
-                @if (!UseEmbeddedMobileMothers && _currentMotherIndex == 0)
-                {
-                    <p class="chart-casting-shield-hint chart-casting-shield-hint--intro">
-                        Tap each row to drop marks, then generate. Place each Mother on the shield slot with the
-                        <strong>matching house number</strong> (top row reads 8→1 left to right; start with Vita in slot 1).
-                    </p>
-                }
-
                 @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
                 {
                     var current = _motherSlots[_currentMotherIndex];
                     @if (!UseEmbeddedMobileMothers)
                     {
-                        <p class="chart-casting-slot-target" aria-live="polite">
-                            @GetMotherSlotTargetText(current.HouseNumber)
-                        </p>
+                        <div class="chart-casting-mothers-workpanel">
+                            @if (_currentMotherIndex == 0)
+                            {
+                                <p class="chart-casting-shield-hint chart-casting-shield-hint--intro">
+                                    Tap each row to drop marks, then generate. Place each Mother on the shield slot with the
+                                    <strong>matching house number</strong> (top row reads 8→1 left to right; start with Vita in slot 1).
+                                </p>
+                            }
+                            <p class="chart-casting-slot-target" aria-live="polite">
+                                @GetMotherSlotTargetText(current.HouseNumber)
+                            </p>
+                            <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
+                                             @ref="_activeCaster"
+                                             MotherLabel="@string.Empty"
+                                             Compact="true"
+                                             WalkthroughLayout="true"
+                                             AutoReset="false"
+                                             ShowInstruction="false"
+                                             ShowRowCounts="false"
+                                             ShowRowUndo="false"
+                                             ShowMarkAgainButton="false"
+                                             StretchRows="true"
+                                             FastPairing="true"
+                                             MobileProgressiveRows="false"
+                                             MobileActionsFirst="false"
+                                             OnFigureCompleted="OnMotherFigureCompleted" />
+                        </div>
                     }
-                    <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
-                                     @ref="_activeCaster"
-                                     MotherLabel="@(UseEmbeddedMobileMothers ? current.Label : string.Empty)"
-                                     Compact="true"
-                                     WalkthroughLayout="true"
-                                     AutoReset="false"
-                                     ShowInstruction="false"
-                                     ShowRowCounts="false"
-                                     ShowRowUndo="false"
-                                     ShowMarkAgainButton="false"
-                                     StretchRows="true"
-                                     MobileProgressiveRows="@UseEmbeddedMobileMothers"
-                                     MobileActionsFirst="@UseEmbeddedMobileMothers"
-                                     OnFigureCompleted="OnMotherFigureCompleted" />
-                    @if (UseEmbeddedMobileMothers && HostMode != ChartCastingHostMode.WikiMobile)
+                    else
                     {
-                        <p class="chart-casting-slot-target chart-casting-slot-target--mobile" aria-live="polite">
-                            @GetMotherSlotTargetText(current.HouseNumber)
-                        </p>
-                        <p class="chart-casting-shield-hint chart-casting-shield-hint--mobile">
-                            Open the chart above to see this Mother on the shield. Collapse the chart when you are ready for the next row.
-                        </p>
+                        <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
+                                         @ref="_activeCaster"
+                                         MotherLabel="@current.Label"
+                                         Compact="true"
+                                         WalkthroughLayout="true"
+                                         AutoReset="false"
+                                         ShowInstruction="false"
+                                         ShowRowCounts="false"
+                                         ShowRowUndo="false"
+                                         ShowMarkAgainButton="false"
+                                         StretchRows="true"
+                                         FastPairing="true"
+                                         MobileProgressiveRows="true"
+                                         MobileActionsFirst="true"
+                                         OnFigureCompleted="OnMotherFigureCompleted" />
+                        @if (HostMode != ChartCastingHostMode.WikiMobile)
+                        {
+                            <p class="chart-casting-slot-target chart-casting-slot-target--mobile" aria-live="polite">
+                                @GetMotherSlotTargetText(current.HouseNumber)
+                            </p>
+                            <p class="chart-casting-shield-hint chart-casting-shield-hint--mobile">
+                                Open the chart above to see this Mother on the shield. Collapse the chart when you are ready for the next row.
+                            </p>
+                        }
                     }
                 }
                 else if (_motherSlots.All(s => s.Figure != null))
