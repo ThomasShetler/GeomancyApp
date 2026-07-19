@@ -1466,8 +1466,21 @@
     line-height: 1.48;
 }
 
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-shield-hint--intro {
+    flex-shrink: 0;
+}
+
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-guidance-column {
     gap: 0.45rem;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-review-host {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-slot-target {
@@ -1475,28 +1488,36 @@
     padding: 0.48rem 0.72rem;
     font-size: 0.85rem;
     line-height: 1.42;
+    flex-shrink: 0;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-info-pane {
     gap: 0.55rem;
     padding-top: 0.35rem;
+    height: 100%;
+    min-height: 0;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough {
+    flex: 1 1 auto;
+    min-height: 0;
     padding: 0.6rem 0.7rem;
-    --canvas-height: 2.6rem;
     --row-label-width: 3.1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row {
-    padding: 0.32rem 0.48rem;
-    gap: 0.4rem;
+    padding: 0.4rem 0.55rem;
+    gap: 0.45rem;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row-label {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: baseline;
+    align-content: center;
+    justify-content: flex-start;
     gap: 0.15rem 0.35rem;
 }
 
@@ -1517,6 +1538,7 @@
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result {
     min-width: 6.25rem;
     padding: 0.5rem 0.6rem;
+    align-self: stretch;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result-caption {
@@ -1525,7 +1547,8 @@
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-actions {
-    margin-top: 0.25rem;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
 }
 
 .chart-casting-slot-target {

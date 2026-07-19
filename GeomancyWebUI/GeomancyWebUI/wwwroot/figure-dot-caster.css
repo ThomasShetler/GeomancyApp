@@ -895,29 +895,41 @@
     background: color-mix(in srgb, var(--bg-secondary, #f5f5f5) 35%, var(--bg-primary, #fff));
 }
 
-/* Desktop walkthrough: fixed row HEIGHT only — rows must still grow horizontally
-   so the grid's 1fr canvas column has width (flex:0 + 1fr collapses to 0). */
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-body {
-    flex: 0 0 auto;
+/* Desktop mothers: match chart-column height; equal-height tap rows; keep canvas width. */
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows {
+    flex: 1 1 auto;
+    min-height: 0;
     width: 100%;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-rows {
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    align-items: stretch;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-rows {
     flex: 1 1 auto;
     min-width: 0;
-    width: auto;
+    min-height: 0;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row {
-    flex: 0 0 auto;
-    min-height: auto;
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-row {
+    flex: 1 1 0;
+    min-height: 3rem;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-canvas {
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-row-track-wrap {
+    min-height: 0;
+    height: 100%;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-canvas {
     flex: 1 1 auto;
     width: 100%;
-    height: var(--canvas-height);
-    min-height: var(--canvas-height);
-    max-height: var(--canvas-height);
+    height: 100%;
+    min-height: 3rem;
+    max-height: none;
     background-size: 11px 11px;
 }

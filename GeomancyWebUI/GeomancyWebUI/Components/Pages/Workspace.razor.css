@@ -258,6 +258,11 @@
     flex-shrink: 0;
 }
 
+.workspace-mothers-setup-grid ::deep .figure-dot-caster {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
 .workspace-placeholder {
     display: flex;
     align-items: center;
