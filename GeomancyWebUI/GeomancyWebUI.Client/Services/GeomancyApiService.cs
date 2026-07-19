@@ -344,7 +344,6 @@ namespace GeomancyWebUI.Client.Services
                 ? new GreerHouseDirectory()
                 : new GreerHouseDirectory
                 {
-                    ChartCautions = apiResponse.ChartCautions ?? string.Empty,
                     Houses = apiResponse.Houses?.Select(MapToGreerHouseEntry).ToList() ?? new List<GreerHouseEntry>()
                 };
             return _greerHousesCache;
@@ -392,7 +391,9 @@ namespace GeomancyWebUI.Client.Services
             {
                 Id = src.Id,
                 Ordinal = src.Ordinal ?? string.Empty,
-                Description = src.Description ?? string.Empty,
+                Governs = src.Governs ?? new List<string>(),
+                QuestionInvolves = src.QuestionInvolves ?? new List<string>(),
+                AdditionalDetails = src.AdditionalDetails ?? new List<string>(),
                 ExampleQuestions = src.ExampleQuestions ?? new List<string>(),
                 Source = src.Source == null ? null : new GreerSourceModel
                 {
@@ -1127,8 +1128,14 @@ namespace GeomancyWebUI.Client.Services
             [JsonPropertyName("ordinal")]
             public string? Ordinal { get; set; }
 
-            [JsonPropertyName("description")]
-            public string? Description { get; set; }
+            [JsonPropertyName("governs")]
+            public List<string>? Governs { get; set; }
+
+            [JsonPropertyName("question_involves")]
+            public List<string>? QuestionInvolves { get; set; }
+
+            [JsonPropertyName("additional_details")]
+            public List<string>? AdditionalDetails { get; set; }
 
             [JsonPropertyName("example_questions")]
             public List<string>? ExampleQuestions { get; set; }
@@ -1139,9 +1146,6 @@ namespace GeomancyWebUI.Client.Services
 
         private class GreerHouseDirectoryResponseDto
         {
-            [JsonPropertyName("chart_cautions")]
-            public string? ChartCautions { get; set; }
-
             [JsonPropertyName("houses")]
             public List<GreerHouseEntryResponseDto>? Houses { get; set; }
         }

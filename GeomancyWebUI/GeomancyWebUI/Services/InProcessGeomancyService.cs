@@ -182,7 +182,6 @@ namespace GeomancyWebUI.Services
                 ? new GreerHouseDirectory()
                 : new GreerHouseDirectory
                 {
-                    ChartCautions = directory.ChartCautions ?? string.Empty,
                     Houses = directory.Houses?.Select(MapToGreerHouseEntry).ToList() ?? new List<GreerHouseEntry>()
                 };
             return Task.FromResult(_greerHousesCache);
@@ -230,7 +229,9 @@ namespace GeomancyWebUI.Services
             {
                 Id = src.Id,
                 Ordinal = src.Ordinal ?? string.Empty,
-                Description = src.Description ?? string.Empty,
+                Governs = src.Governs ?? new List<string>(),
+                QuestionInvolves = src.QuestionInvolves ?? new List<string>(),
+                AdditionalDetails = src.AdditionalDetails ?? new List<string>(),
                 ExampleQuestions = src.ExampleQuestions ?? new List<string>(),
                 Source = src.Source == null ? null : new GreerSourceModel
                 {

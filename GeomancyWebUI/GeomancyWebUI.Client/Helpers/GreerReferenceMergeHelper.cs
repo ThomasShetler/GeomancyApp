@@ -16,6 +16,9 @@ namespace GeomancyWebUI.Client.Helpers
     public sealed class HouseReferenceBundle
     {
         public string Description { get; init; } = string.Empty;
+        public List<string> Governs { get; init; } = new List<string>();
+        public List<string> QuestionInvolves { get; init; } = new List<string>();
+        public List<string> AdditionalDetails { get; init; } = new List<string>();
         public List<string> ExampleQuestions { get; init; } = new List<string>();
         public GreerHouseEntry? GreerHouse { get; init; }
         public bool ShowGreerAlongside { get; init; }
@@ -98,7 +101,9 @@ namespace GeomancyWebUI.Client.Helpers
                 },
                 GreerReferenceMode.Override => new HouseReferenceBundle
                 {
-                    Description = FirstNonEmpty(greer.Description, baseHouse?.InterpretiveEssence),
+                    Governs = greer.Governs?.Count > 0 ? greer.Governs : new List<string>(),
+                    QuestionInvolves = greer.QuestionInvolves?.Count > 0 ? greer.QuestionInvolves : new List<string>(),
+                    AdditionalDetails = greer.AdditionalDetails?.Count > 0 ? greer.AdditionalDetails : new List<string>(),
                     ExampleQuestions = greer.ExampleQuestions?.Count > 0
                         ? greer.ExampleQuestions
                         : baseHouse?.ExampleQuestions ?? new List<string>(),
@@ -108,7 +113,9 @@ namespace GeomancyWebUI.Client.Helpers
                 },
                 GreerReferenceMode.GreerOnly => new HouseReferenceBundle
                 {
-                    Description = greer.Description ?? string.Empty,
+                    Governs = greer.Governs ?? new List<string>(),
+                    QuestionInvolves = greer.QuestionInvolves ?? new List<string>(),
+                    AdditionalDetails = greer.AdditionalDetails ?? new List<string>(),
                     ExampleQuestions = greer.ExampleQuestions ?? new List<string>(),
                     GreerHouse = greer,
                     ShowGreerAttribution = true,

@@ -128,60 +128,105 @@ def parse_figure_cs(content: str) -> list[dict]:
     return figures
 
 
-def build_house_description(house: dict) -> str:
-    ordinal = HOUSE_ORDINALS.get(house["id"], house.get("house", ""))
-    governs = house.get("governs", [])
-    governs_text = "; ".join(governs) if governs else ""
-    sig = house.get("significator_of_quesited_when", "")
-    parts = [f"The {ordinal} house traditionally governs {governs_text}."]
-    if sig:
-        parts.append(sig)
-    notes = house.get("notes", "")
-    if notes and house["id"] not in (1, 11):
-        parts.append(notes)
-    return " ".join(parts)
+def split_list_phrase(text: str) -> list[str]:
+    """Split a comma / and / or list into discrete items."""
+    text = text.strip().rstrip(".")
+    if not text:
+        return []
+
+    parts = [p.strip() for p in re.split(r",\s*", text) if p.strip()]
+    if len(parts) == 1:
+        multi = re.split(r"\s+(?:and|or)\s+", parts[0])
+        return [s.strip() for s in multi if s.strip()]
+
+    items: list[str] = []
+    for part in parts:
+        cleaned = re.sub(r"^(?:and|or)\s+", "", part, flags=re.I).strip()
+        if cleaned:
+            items.append(cleaned)
+    return items
 
 
-def build_chart_cautions(houses: list[dict]) -> str:
-    h1 = next((h for h in houses if h["id"] == 1), {})
-    h11 = next((h for h in houses if h["id"] == 11), {})
-    parts = [
-        "In some books on geomancy, you'll encounter the claim that the figures Rubeus and "
-        "Cauda Draconis are unspeakably bad omens if they appear in the First house of a geomantic chart. "
-        "When this happens, the geomancer is supposed to stop the divination, destroy the chart, and wait "
-        "at least two hours before trying again.",
-        h1.get("notes", ""),
-        h11.get("notes", ""),
-        "Still, it's not necessary to stop a reading if any of these signs appear. If you feel comfortable "
-        "doing so, you might mention the traditional meaning of the Figure and ask the querent if it might "
-        "have any bearing on the reading. If you are doing a reading for yourself, confront yourself directly: "
-        "Are you being honest with yourself? Will you listen if the reading tells you your preconceptions are "
-        "wrong? Is the question you're asking what you really want to know about?",
-    ]
-    return " ".join(p for p in parts if p)
+def parse_question_involves(sig: str) -> tuple[list[str], list[str]]:
+    """Return (question_involves items, leftover additional detail sentences)."""
+    sig = (sig or "").strip()
+    if not sig:
+        return [], []
+
+    m = re.match(r"^The question involves\s+(.+)$", sig, re.I | re.S)
+    if not m:
+        return [], [s.strip() for s in re.split(r"(?<=\.)\s+", sig) if s.strip()]
+
+    body = m.group(1).strip()
+    sentences = re.split(r"(?<=\.)\s+", body)
+    list_sentence = sentences[0]
+    extras = [s.strip() for s in sentences[1:] if s.strip()]
+    items = split_list_phrase(list_sentence)
+    # Normalize awkward "or when ..." list tails into clean bullets.
+    cleaned_items = []
+    for item in items:
+        if item.lower().startswith("when the true question is deliberately hidden"):
+            cleaned_items.append("cases where the true question is deliberately hidden")
+        else:
+            cleaned_items.append(item)
+    return cleaned_items, extras
+
+
+def filter_caution_notes(notes: str) -> list[str]:
+    """Remove Rubeus/Cauda/Populus caution sentences; keep rejoice + craft notes."""
+    text = (notes or "").strip()
+    if not text:
+        return []
+
+    # Drop known caution sentences (may span multiple sentences).
+    text = re.sub(
+        r"Traditionally,\s*if the figure Rubeus appears here.*?(?=Mercury traditionally|\Z)",
+        "",
+        text,
+        flags=re.I | re.S,
+    )
+    text = re.sub(
+        r"If Rubeus is in the Eleventh house and Populus in the First[^.]*\.",
+        "",
+        text,
+        flags=re.I,
+    )
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        return []
+
+    return [s.strip() for s in re.split(r"(?<=\.)\s+", text) if s.strip()]
+
+
+def transform_house(h: dict) -> dict:
+    governs = list(h.get("governs") or [])
+    question_involves, sig_extras = parse_question_involves(h.get("significator_of_quesited_when", ""))
+    additional = filter_caution_notes(h.get("notes", ""))
+    additional = sig_extras + additional
+
+    return {
+        "id": h["id"],
+        "ordinal": HOUSE_ORDINALS.get(h["id"], h.get("house", "")),
+        "governs": governs,
+        "question_involves": question_involves,
+        "additional_details": additional,
+        "example_questions": h.get("example_questions", []),
+        "source": {
+            "work": LICENSE_META["work"],
+            "chapter": "Chapter 6 — The Twelve Houses",
+            "pages": "103–111",
+            "attribution": ATTRIBUTION,
+        },
+    }
 
 
 def transform_houses(house_json: dict) -> dict:
     houses = house_json["HouseData"]["Houses"]
-    greer_houses = []
-    for h in houses:
-        greer_houses.append({
-            "id": h["id"],
-            "ordinal": HOUSE_ORDINALS.get(h["id"], h.get("house", "")),
-            "description": build_house_description(h),
-            "example_questions": h.get("example_questions", []),
-            "source": {
-                "work": LICENSE_META["work"],
-                "chapter": "Chapter 6 — The Twelve Houses",
-                "pages": "103–111",
-                "attribution": ATTRIBUTION,
-            },
-        })
+    greer_houses = [transform_house(h) for h in houses]
     return {
         "GreerHouseData": {
-            "schema_version": 1,
-            "license": {**LICENSE_META, "approved_pages": "103–111 (plus chart cautions intro)"},
-            "chart_cautions": build_chart_cautions(houses),
+            "schema_version": 2,
+            "license": {**LICENSE_META, "approved_pages": "103–111"},
             "houses": greer_houses,
         }
     }

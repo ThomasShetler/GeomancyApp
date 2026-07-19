@@ -60,7 +60,6 @@ namespace GeomancyAPI.Services
                 _houses = root.Houses;
                 _directory = new GreerHouseDirectoryResponse
                 {
-                    ChartCautions = root.ChartCautions,
                     Houses = root.Houses,
                     License = root.License
                 };
@@ -97,9 +96,6 @@ namespace GeomancyAPI.Services
 
         private sealed class GreerHouseDirectoryRoot
         {
-            [JsonProperty("chart_cautions")]
-            public string ChartCautions { get; set; }
-
             [JsonProperty("license")]
             public GreerLicenseResponse License { get; set; }
 

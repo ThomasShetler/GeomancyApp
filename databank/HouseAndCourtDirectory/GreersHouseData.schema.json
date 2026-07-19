@@ -7,11 +7,10 @@
   "properties": {
     "GreerHouseData": {
       "type": "object",
-      "required": ["schema_version", "license", "chart_cautions", "houses"],
+      "required": ["schema_version", "license", "houses"],
       "properties": {
-        "schema_version": { "type": "integer", "minimum": 1 },
+        "schema_version": { "type": "integer", "minimum": 2 },
         "license": { "$ref": "#/$defs/license" },
-        "chart_cautions": { "type": "string", "minLength": 1 },
         "houses": {
           "type": "array",
           "minItems": 12,
@@ -50,11 +49,13 @@
     },
     "greer_house": {
       "type": "object",
-      "required": ["id", "ordinal", "description", "example_questions", "source"],
+      "required": ["id", "ordinal", "governs", "question_involves", "additional_details", "example_questions", "source"],
       "properties": {
         "id": { "type": "integer", "minimum": 1, "maximum": 12 },
         "ordinal": { "type": "string" },
-        "description": { "type": "string", "minLength": 1 },
+        "governs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "question_involves": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "additional_details": { "type": "array", "items": { "type": "string", "minLength": 1 } },
         "example_questions": { "type": "array", "items": { "type": "string" } },
         "source": { "$ref": "#/$defs/source" }
       },

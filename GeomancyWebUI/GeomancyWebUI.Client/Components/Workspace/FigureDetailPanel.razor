@@ -37,15 +37,15 @@
         var showGreerHousePrimary = houseBundle.UseGreerPrimary && greerHouse != null;
         var showCourt = courtEntry != null && !hideGeofancyOnly;
         var showSources = !hideGeofancyOnly && fig.TraditionalSources?.Any() == true;
-        var showChartCautions = showGreerAttribution
-            && !string.IsNullOrWhiteSpace(GreerHouses?.ChartCautions)
-            && Selection.Kind == SlotKind.House;
+        var criticalFlags = GreerCriticalContextHelper.Evaluate(GreerReferenceMode, Selection, Chart);
+        var showCriticalContext = criticalFlags.Count > 0;
         var openInterpretation = IsInterpretationOpenByDefault(inSlot);
         var openHouse = IsHouseOpenByDefault(houseEntry) || showGreerHousePrimary;
         var openCourt = IsCourtOpenByDefault(courtEntry);
         var openCorrespondences = IsCorrespondencesOpenByDefault(inSlot);
         var hasContext = HasContextContent(fig, inSlot)
-            || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerContextContent(greerRef));
+            || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerContextContent(greerRef))
+            || showCriticalContext;
         var showPerson = HasPersonContent(fig)
             || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerPersonContent(greerRef));
         var showHouseAffinity = !string.IsNullOrWhiteSpace(fig.StrongHouse) || !string.IsNullOrWhiteSpace(fig.WeakHouse)
@@ -138,6 +138,24 @@
 
         <section id="section-context" class="detail-card detail-card-primary">
             <h3 class="card-title">Immediate Context</h3>
+            @if (showCriticalContext)
+            {
+                <div class="critical-context-block" role="status">
+                    <p class="critical-context-eyebrow">Critical Context · Greer (2009)</p>
+                    @foreach (var flag in criticalFlags)
+                    {
+                        <div class="critical-context-flag">
+                            <h4 class="critical-context-title">@flag.Title</h4>
+                            <p class="prose-text">@flag.Message</p>
+                            @if (flag.IncludeDestroyChartNote)
+                            {
+                                <p class="critical-context-action prose-text">@GreerCriticalContextHelper.DestroyChartNote</p>
+                            }
+                        </div>
+                    }
+                    <p class="critical-context-soft prose-text">@GreerCriticalContextHelper.SoftGuidanceNote</p>
+                </div>
+            }
             @if (inSlot != null)
             {
                 <div class="in-slot-card">
@@ -546,22 +564,34 @@
                 <details open="@openHouse">
                     <summary class="details-summary">House · @(houseEntry?.House ?? greerHouse?.Ordinal ?? "Reference")</summary>
                     <div class="details-body reference-stack">
-                        @if (showChartCautions)
-                        {
-                            <div class="reference-subcard detail-card prose-card greer-cautions-card">
-                                <h3 class="card-title">Chart Cautions</h3>
-                                <p class="prose-text">@GreerHouses!.ChartCautions</p>
-                            </div>
-                        }
-
                         @if (showGreerHousePrimary)
                         {
                             <p class="reference-section-eyebrow">Greer House Reference · @greerHouse!.Ordinal</p>
-                            @if (!string.IsNullOrWhiteSpace(houseBundle.Description))
+                            @if (houseBundle.Governs?.Any() == true)
                             {
-                                <div class="reference-subcard detail-card prose-card essence-card">
-                                    <h3 class="card-title">Description</h3>
-                                    <p class="prose-text">@houseBundle.Description</p>
+                                <div class="reference-subcard detail-card governs-card">
+                                    <h3 class="card-title">What it Governs</h3>
+                                    <ul class="bullet-list two-col-bullets">
+                                        @foreach (var g in houseBundle.Governs) { <li>@g</li> }
+                                    </ul>
+                                </div>
+                            }
+                            @if (houseBundle.QuestionInvolves?.Any() == true)
+                            {
+                                <div class="reference-subcard detail-card prose-card">
+                                    <h3 class="card-title">Question Involves</h3>
+                                    <ul class="bullet-list">
+                                        @foreach (var q in houseBundle.QuestionInvolves) { <li>@q</li> }
+                                    </ul>
+                                </div>
+                            }
+                            @if (houseBundle.AdditionalDetails?.Any() == true)
+                            {
+                                <div class="reference-subcard detail-card prose-card notes-card">
+                                    <h3 class="card-title">Additional Details</h3>
+                                    <ul class="bullet-list compact">
+                                        @foreach (var d in houseBundle.AdditionalDetails) { <li>@d</li> }
+                                    </ul>
                                 </div>
                             }
                             @if (houseBundle.ExampleQuestions?.Any() == true)
@@ -672,11 +702,31 @@
 
                         @if (houseBundle.ShowGreerAlongside && greerHouse != null)
                         {
-                            @if (!string.IsNullOrWhiteSpace(greerHouse.Description))
+                            @if (greerHouse.Governs?.Any() == true)
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card governs-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · What it Governs</p>
+                                    <ul class="bullet-list two-col-bullets">
+                                        @foreach (var g in greerHouse.Governs) { <li>@g</li> }
+                                    </ul>
+                                </div>
+                            }
+                            @if (greerHouse.QuestionInvolves?.Any() == true)
                             {
                                 <div class="greer-reference-block reference-subcard detail-card prose-card">
-                                    <p class="greer-reference-eyebrow">Greer (2009) · Description</p>
-                                    <p class="prose-text">@greerHouse.Description</p>
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Question Involves</p>
+                                    <ul class="bullet-list">
+                                        @foreach (var q in greerHouse.QuestionInvolves) { <li>@q</li> }
+                                    </ul>
+                                </div>
+                            }
+                            @if (greerHouse.AdditionalDetails?.Any() == true)
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card prose-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Additional Details</p>
+                                    <ul class="bullet-list compact">
+                                        @foreach (var d in greerHouse.AdditionalDetails) { <li>@d</li> }
+                                    </ul>
                                 </div>
                             }
                             @if (greerHouse.ExampleQuestions?.Any() == true)
@@ -692,11 +742,31 @@
                         }
                         else if (houseBundle.ShowGreerAlongside && greerHouse != null)
                         {
-                            @if (!string.IsNullOrWhiteSpace(greerHouse.Description))
+                            @if (greerHouse.Governs?.Any() == true)
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card governs-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · What it Governs</p>
+                                    <ul class="bullet-list two-col-bullets">
+                                        @foreach (var g in greerHouse.Governs) { <li>@g</li> }
+                                    </ul>
+                                </div>
+                            }
+                            @if (greerHouse.QuestionInvolves?.Any() == true)
                             {
                                 <div class="greer-reference-block reference-subcard detail-card prose-card">
-                                    <p class="greer-reference-eyebrow">Greer (2009) · Description</p>
-                                    <p class="prose-text">@greerHouse.Description</p>
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Question Involves</p>
+                                    <ul class="bullet-list">
+                                        @foreach (var q in greerHouse.QuestionInvolves) { <li>@q</li> }
+                                    </ul>
+                                </div>
+                            }
+                            @if (greerHouse.AdditionalDetails?.Any() == true)
+                            {
+                                <div class="greer-reference-block reference-subcard detail-card prose-card">
+                                    <p class="greer-reference-eyebrow">Greer (2009) · Additional Details</p>
+                                    <ul class="bullet-list compact">
+                                        @foreach (var d in greerHouse.AdditionalDetails) { <li>@d</li> }
+                                    </ul>
                                 </div>
                             }
                             @if (greerHouse.ExampleQuestions?.Any() == true)
@@ -852,6 +922,7 @@
 
 @code {
     [Parameter] public SlotSelection? Selection { get; set; }
+    [Parameter] public HouseChartModel? Chart { get; set; }
     [Parameter] public IReadOnlyList<HouseDirectoryEntry> Houses { get; set; } = Array.Empty<HouseDirectoryEntry>();
     [Parameter] public IReadOnlyList<CourtDirectoryEntry> Courts { get; set; } = Array.Empty<CourtDirectoryEntry>();
     [Parameter] public GreerReferenceMode GreerReferenceMode { get; set; } = GreerReferenceMode.Off;

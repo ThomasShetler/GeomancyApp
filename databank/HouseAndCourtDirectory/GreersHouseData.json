@@ -1,20 +1,32 @@
 {
   "GreerHouseData": {
-    "schema_version": 1,
+    "schema_version": 2,
     "license": {
       "work": "The Art and Practice of Geomancy",
       "author": "John Michael Greer",
       "publisher": "Red Wheel/Weiser LLC",
       "permission_date": "2026-06-10",
       "attribution": "Material excerpted from The Art and Practice of Geomancy © 2009, John Michael Greer with permission from Red Wheel/Weiser LLC. Newburyport, MA www.redwheelweiser.com",
-      "approved_pages": "103–111 (plus chart cautions intro)"
+      "approved_pages": "103–111"
     },
-    "chart_cautions": "In some books on geomancy, you'll encounter the claim that the figures Rubeus and Cauda Draconis are unspeakably bad omens if they appear in the First house of a geomantic chart. When this happens, the geomancer is supposed to stop the divination, destroy the chart, and wait at least two hours before trying again. Traditionally, if the figure Rubeus appears here, it suggests the querent is not being honest. If Cauda Draconis appears here, it suggests the querent has already decided what to do and won't listen. If Populus is in the First and Rubeus in the Eleventh, the querent has fabricated a fake question. Mercury traditionally rejoices in this house. Jupiter traditionally rejoices in this house. If Rubeus is in the Eleventh house and Populus in the First, it traditionally indicates the querent has made up a fake question to test or trick the diviner. Still, it's not necessary to stop a reading if any of these signs appear. If you feel comfortable doing so, you might mention the traditional meaning of the Figure and ask the querent if it might have any bearing on the reading. If you are doing a reading for yourself, confront yourself directly: Are you being honest with yourself? Will you listen if the reading tells you your preconceptions are wrong? Is the question you're asking what you really want to know about?",
     "houses": [
       {
         "id": 1,
         "ordinal": "First",
-        "description": "The First house traditionally governs The querent (the person asking the question); The querent's personality, consciousness, and physical body; The querent's name and self-image; Any vehicle in which the querent is traveling; The location and weather where the querent is situated; Newborn children (in specific life-reading divinations). Never the House of the Quesited in standard house chart readings. It acts as the anchor representing the querent.",
+        "governs": [
+          "The querent (the person asking the question)",
+          "The querent's personality, consciousness, and physical body",
+          "The querent's name and self-image",
+          "Any vehicle in which the querent is traveling",
+          "The location and weather where the querent is situated",
+          "Newborn children (in specific life-reading divinations)"
+        ],
+        "question_involves": [],
+        "additional_details": [
+          "Never the House of the Quesited in standard house chart readings.",
+          "It acts as the anchor representing the querent.",
+          "Mercury traditionally rejoices in this house."
+        ],
         "example_questions": [],
         "source": {
           "work": "The Art and Practice of Geomancy",
@@ -26,7 +38,25 @@
       {
         "id": 2,
         "ordinal": "Second",
-        "description": "The Second house traditionally governs Money, income, and personal finances; Movable property and personal belongings; Profit and loss; Investments (excluding speculative ones or real estate); Thefts and lost objects; Self-esteem and survival resources; Specific body parts (mouth, jaw, throat, and food consumed). The question involves day-to-day finances, financial profits or losses, thefts, and personal belongings. Real estate and land belong strictly to the Fourth House; speculative investments belong to the Fifth House. Conjunctions to the Second House often indicate something approaching rapidly or right before the querent's eyes.",
+        "governs": [
+          "Money, income, and personal finances",
+          "Movable property and personal belongings",
+          "Profit and loss",
+          "Investments (excluding speculative ones or real estate)",
+          "Thefts and lost objects",
+          "Self-esteem and survival resources",
+          "Specific body parts (mouth, jaw, throat, and food consumed)"
+        ],
+        "question_involves": [
+          "day-to-day finances",
+          "financial profits or losses",
+          "thefts",
+          "personal belongings"
+        ],
+        "additional_details": [
+          "Real estate and land belong strictly to the Fourth House; speculative investments belong to the Fifth House.",
+          "Conjunctions to the Second House often indicate something approaching rapidly or right before the querent's eyes."
+        ],
         "example_questions": [
           "Will my business make or lose money?",
           "Will the investment be profitable?",
@@ -47,7 +77,26 @@
       {
         "id": 3,
         "ordinal": "Third",
-        "description": "The Third house traditionally governs Brothers, sisters, and cousins; Neighbors and the immediate community; Journeys of less than 200 miles (daily commutes); Education (preschool through high school) and common skills; Advice, communication, and learning; News, rumors, gossip, and letters. The question involves family dynamics (excluding parents), neighbors, local surroundings, media, rumors, or early education. The Moon traditionally rejoices in this house. It is the house of what you receive and everyday interactions.",
+        "governs": [
+          "Brothers, sisters, and cousins",
+          "Neighbors and the immediate community",
+          "Journeys of less than 200 miles (daily commutes)",
+          "Education (preschool through high school) and common skills",
+          "Advice, communication, and learning",
+          "News, rumors, gossip, and letters"
+        ],
+        "question_involves": [
+          "family dynamics (excluding parents)",
+          "neighbors",
+          "local surroundings",
+          "media",
+          "rumors",
+          "early education"
+        ],
+        "additional_details": [
+          "The Moon traditionally rejoices in this house.",
+          "It is the house of what you receive and everyday interactions."
+        ],
         "example_questions": [
           "Will my relationship with my sister improve?",
           "Will the neighbors agree to an easement?",
@@ -67,7 +116,29 @@
       {
         "id": 4,
         "ordinal": "Fourth",
-        "description": "The Fourth house traditionally governs Land, real estate, and physical infrastructure; Agriculture, flora, and soil fertility; Building, cities, and towns; Relocation, moving, and settling; Anything underground (mines, wells, basements); Unknown objects, ancient places, and antiquities; Old age; The querent's father, parents in general, and ancestry; The final outcome of any matter. The question involves physical location, real estate, farming, ancestry, or endings. It also always holds the 'Significator of Completion'. Considered an Angular House (highly impactful). The figure here serves as the Significator of Completion, revealing how the situation posed by the question will ultimately resolve.",
+        "governs": [
+          "Land, real estate, and physical infrastructure",
+          "Agriculture, flora, and soil fertility",
+          "Building, cities, and towns",
+          "Relocation, moving, and settling",
+          "Anything underground (mines, wells, basements)",
+          "Unknown objects, ancient places, and antiquities",
+          "Old age",
+          "The querent's father, parents in general, and ancestry",
+          "The final outcome of any matter"
+        ],
+        "question_involves": [
+          "physical location",
+          "real estate",
+          "farming",
+          "ancestry",
+          "endings"
+        ],
+        "additional_details": [
+          "It also always holds the 'Significator of Completion'.",
+          "Considered an Angular House (highly impactful).",
+          "The figure here serves as the Significator of Completion, revealing how the situation posed by the question will ultimately resolve."
+        ],
         "example_questions": [
           "Is the property worth buying?",
           "Is the soil fertile?",
@@ -89,7 +160,28 @@
       {
         "id": 5,
         "ordinal": "Fifth",
-        "description": "The Fifth house traditionally governs Crops from perennial or biennial plants; Fertility, pregnancy, and children; Sexuality, romance, and pleasure (but not marriage); Parties, sports, and entertainment of all kinds; Food, drink, and luxury clothing; Bodies of water, fishing, and rain; Letters, messages, writing, and books; Speculative investments and gambling. The question involves fertility, growth, enjoyment, creative pursuits, casual romance, or speculative risks. Venus traditionally rejoices in this house. A woman who is pregnant does not shift to this house as her significator; she remains in the First (or whatever house she naturally occupies).",
+        "governs": [
+          "Crops from perennial or biennial plants",
+          "Fertility, pregnancy, and children",
+          "Sexuality, romance, and pleasure (but not marriage)",
+          "Parties, sports, and entertainment of all kinds",
+          "Food, drink, and luxury clothing",
+          "Bodies of water, fishing, and rain",
+          "Letters, messages, writing, and books",
+          "Speculative investments and gambling"
+        ],
+        "question_involves": [
+          "fertility",
+          "growth",
+          "enjoyment",
+          "creative pursuits",
+          "casual romance",
+          "speculative risks"
+        ],
+        "additional_details": [
+          "Venus traditionally rejoices in this house.",
+          "A woman who is pregnant does not shift to this house as her significator; she remains in the First (or whatever house she naturally occupies)."
+        ],
         "example_questions": [
           "Will the grape crop be good this year?",
           "Is Janis interested in me sexually?",
@@ -114,7 +206,25 @@
       {
         "id": 6,
         "ordinal": "Sixth",
-        "description": "The Sixth house traditionally governs Employees, servants, and domestic workers; Service professions (physicians, plumbers, entertainers, etc.); Practitioners of magic and occultism (other than the querent); Pets and domestic animals (excluding large livestock); Illnesses, physical injuries, and health-related routines; Daily obligations and tasks. The question involves service-people, employees, pets, disease, or routine maintenance. Mars traditionally rejoices in this house. It is a Cadent house often associated with problem-solving material troubles and maintaining daily function.",
+        "governs": [
+          "Employees, servants, and domestic workers",
+          "Service professions (physicians, plumbers, entertainers, etc.)",
+          "Practitioners of magic and occultism (other than the querent)",
+          "Pets and domestic animals (excluding large livestock)",
+          "Illnesses, physical injuries, and health-related routines",
+          "Daily obligations and tasks"
+        ],
+        "question_involves": [
+          "service-people",
+          "employees",
+          "pets",
+          "disease",
+          "routine maintenance"
+        ],
+        "additional_details": [
+          "Mars traditionally rejoices in this house.",
+          "It is a Cadent house often associated with problem-solving material troubles and maintaining daily function."
+        ],
         "example_questions": [
           "Should I hire Phyllis?",
           "Are my employees stealing from the till?",
@@ -137,7 +247,25 @@
       {
         "id": 7,
         "ordinal": "Seventh",
-        "description": "The Seventh house traditionally governs Intense human relationships (spouse, lover, marriage); Business partnerships, agreements, and treaties; Conflict, competition, lawsuits, and predator/prey dynamics; Thieves and robbers; Enemies known to the querent; Hunting and locating any specific person (known or unknown); The physician (specifically in medical divinations). The question involves deep human relationships between two individuals, formal agreements, direct conflicts, or identifying thieves. An Angular House directly opposing the First House. It represents the \"other\" and reflects the relationships and conflicts the querent engages in intentionally.",
+        "governs": [
+          "Intense human relationships (spouse, lover, marriage)",
+          "Business partnerships, agreements, and treaties",
+          "Conflict, competition, lawsuits, and predator/prey dynamics",
+          "Thieves and robbers",
+          "Enemies known to the querent",
+          "Hunting and locating any specific person (known or unknown)",
+          "The physician (specifically in medical divinations)"
+        ],
+        "question_involves": [
+          "deep human relationships between two individuals",
+          "formal agreements",
+          "direct conflicts",
+          "identifying thieves"
+        ],
+        "additional_details": [
+          "An Angular House directly opposing the First House.",
+          "It represents the \"other\" and reflects the relationships and conflicts the querent engages in intentionally."
+        ],
         "example_questions": [
           "Does Stanley love me?",
           "Will this relationship last?",
@@ -162,7 +290,27 @@
       {
         "id": 8,
         "ordinal": "Eighth",
-        "description": "The Eighth house traditionally governs Death and everything related to it; Absences in any form; Ghosts, spiritual entities, and the occult; Identifying murderers (in historical usage); Practical magic performed by or on behalf of the querent; Circumstances affecting absent or missing persons; Money, property, or items loaned to another person; Inheritances, legacies, and shared resources. The question involves missing people, profound internal shifts, the effects of death, absences, or loaned assets. Ethical geomancers typically refuse to answer questions predicting the length of life or the nature of a person's death. Note that divination and esoteric philosophy belong to the Ninth House, while practical magic casting belongs to the Eighth.",
+        "governs": [
+          "Death and everything related to it",
+          "Absences in any form",
+          "Ghosts, spiritual entities, and the occult",
+          "Identifying murderers (in historical usage)",
+          "Practical magic performed by or on behalf of the querent",
+          "Circumstances affecting absent or missing persons",
+          "Money, property, or items loaned to another person",
+          "Inheritances, legacies, and shared resources"
+        ],
+        "question_involves": [
+          "missing people",
+          "profound internal shifts",
+          "the effects of death",
+          "absences",
+          "loaned assets"
+        ],
+        "additional_details": [
+          "Ethical geomancers typically refuse to answer questions predicting the length of life or the nature of a person's death.",
+          "Note that divination and esoteric philosophy belong to the Ninth House, while practical magic casting belongs to the Eighth."
+        ],
         "example_questions": [
           "Should I get life insurance?",
           "How seriously should I take Bill's threats?",
@@ -182,7 +330,25 @@
       {
         "id": 9,
         "ordinal": "Ninth",
-        "description": "The Ninth house traditionally governs Long journeys (over 200 miles by land); Voyages by water, air, and space; Religion, spirituality, and belief systems; Colleges, universities, and adult education; Arts, publishing, and broadening horizons; Dream interpretation; Occult philosophy, astrology, and divination. The question involves long-distance travel, spiritual searching, higher education, or divinatory accuracy. The Sun traditionally rejoices in this house. It is the realm of the masculine and active intellect, representing how one strives for deeper understanding.",
+        "governs": [
+          "Long journeys (over 200 miles by land)",
+          "Voyages by water, air, and space",
+          "Religion, spirituality, and belief systems",
+          "Colleges, universities, and adult education",
+          "Arts, publishing, and broadening horizons",
+          "Dream interpretation",
+          "Occult philosophy, astrology, and divination"
+        ],
+        "question_involves": [
+          "long-distance travel",
+          "spiritual searching",
+          "higher education",
+          "divinatory accuracy"
+        ],
+        "additional_details": [
+          "The Sun traditionally rejoices in this house.",
+          "It is the realm of the masculine and active intellect, representing how one strives for deeper understanding."
+        ],
         "example_questions": [
           "Will I be able to go to Germany this summer?",
           "How congested will the airport be?",
@@ -203,7 +369,26 @@
       {
         "id": 10,
         "ordinal": "Tenth",
-        "description": "The Tenth house traditionally governs Career, vocation, and professional recognition; Reputation, fame, and position in society; Authority figures, bosses, and leadership; The querent's mother; Politics (from local boards to global entities); The state of the weather; The prescribed treatment (in medical divinations). The question involves social status, political ambitions, job changes, leadership, or the weather. An Angular House representing the highest point of the chart. It dictates what the querent is known for on a large scale.",
+        "governs": [
+          "Career, vocation, and professional recognition",
+          "Reputation, fame, and position in society",
+          "Authority figures, bosses, and leadership",
+          "The querent's mother",
+          "Politics (from local boards to global entities)",
+          "The state of the weather",
+          "The prescribed treatment (in medical divinations)"
+        ],
+        "question_involves": [
+          "social status",
+          "political ambitions",
+          "job changes",
+          "leadership",
+          "the weather"
+        ],
+        "additional_details": [
+          "An Angular House representing the highest point of the chart.",
+          "It dictates what the querent is known for on a large scale."
+        ],
         "example_questions": [
           "Should I look for a different job?",
           "Will I get the promotion?",
@@ -225,7 +410,24 @@
       {
         "id": 11,
         "ordinal": "Eleventh",
-        "description": "The Eleventh house traditionally governs Friends, acquaintances, and alliances; Associations, collectives, and professional networks; Promises and sources of help/benefactors; The querent's hopes, wishes, and future goals; Crops from annual plants; Any question the querent is unwilling to tell the diviner. The question involves friends, community networks, achieving long-term hopes, helpers, or when the true question is deliberately hidden.",
+        "governs": [
+          "Friends, acquaintances, and alliances",
+          "Associations, collectives, and professional networks",
+          "Promises and sources of help/benefactors",
+          "The querent's hopes, wishes, and future goals",
+          "Crops from annual plants",
+          "Any question the querent is unwilling to tell the diviner"
+        ],
+        "question_involves": [
+          "friends",
+          "community networks",
+          "achieving long-term hopes",
+          "helpers",
+          "cases where the true question is deliberately hidden"
+        ],
+        "additional_details": [
+          "Jupiter traditionally rejoices in this house."
+        ],
         "example_questions": [
           "How is my old college buddy Bill doing?",
           "Will my friend Sally make good on her promise?",
@@ -244,7 +446,27 @@
       {
         "id": 12,
         "ordinal": "Twelfth",
-        "description": "The Twelfth house traditionally governs Restrictions, limitations, and self-sabotage; Debts owed by the querent; Imprisonment, institutionalization, and isolation; Secrets, hidden mental health struggles, and the subconscious; Enemies the querent doesn't know about; Harmful magic cast against the querent by another person; Large livestock and wild animals (cattle, horses, donkeys, mules, camels). The question involves harm, strict limits, debts, hidden enemies, wild animals, or imprisonment. Saturn traditionally rejoices in this house. It is the realm of the unseen, addressing the trials and spiritual reckonings that occur away from the public eye.",
+        "governs": [
+          "Restrictions, limitations, and self-sabotage",
+          "Debts owed by the querent",
+          "Imprisonment, institutionalization, and isolation",
+          "Secrets, hidden mental health struggles, and the subconscious",
+          "Enemies the querent doesn't know about",
+          "Harmful magic cast against the querent by another person",
+          "Large livestock and wild animals (cattle, horses, donkeys, mules, camels)"
+        ],
+        "question_involves": [
+          "harm",
+          "strict limits",
+          "debts",
+          "hidden enemies",
+          "wild animals",
+          "imprisonment"
+        ],
+        "additional_details": [
+          "Saturn traditionally rejoices in this house.",
+          "It is the realm of the unseen, addressing the trials and spiritual reckonings that occur away from the public eye."
+        ],
         "example_questions": [
           "Will I be able to pay my bills next month?",
           "Will I be sent to prison?",

@@ -705,8 +705,14 @@ namespace GeomancyAPI.Models
         [JsonProperty("ordinal")]
         public string Ordinal { get; set; }
 
-        [JsonProperty("description")]
-        public string Description { get; set; }
+        [JsonProperty("governs")]
+        public List<string> Governs { get; set; } = new List<string>();
+
+        [JsonProperty("question_involves")]
+        public List<string> QuestionInvolves { get; set; } = new List<string>();
+
+        [JsonProperty("additional_details")]
+        public List<string> AdditionalDetails { get; set; } = new List<string>();
 
         [JsonProperty("example_questions")]
         public List<string> ExampleQuestions { get; set; } = new List<string>();
@@ -717,9 +723,6 @@ namespace GeomancyAPI.Models
 
     public class GreerHouseDirectoryResponse
     {
-        [JsonProperty("chart_cautions")]
-        public string ChartCautions { get; set; }
-
         [JsonProperty("license")]
         public GreerLicenseResponse License { get; set; }
 
