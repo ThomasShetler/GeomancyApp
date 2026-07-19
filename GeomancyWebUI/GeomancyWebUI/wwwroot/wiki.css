@@ -1511,6 +1511,7 @@
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-body {
     gap: 0.75rem;
+    width: 100%;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result {

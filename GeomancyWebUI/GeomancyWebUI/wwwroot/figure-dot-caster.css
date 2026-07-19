@@ -895,10 +895,17 @@
     background: color-mix(in srgb, var(--bg-secondary, #f5f5f5) 35%, var(--bg-primary, #fff));
 }
 
-/* Desktop walkthrough: fixed row height — do not stretch rows to fill pane */
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-rows,
+/* Desktop walkthrough: fixed row HEIGHT only — rows must still grow horizontally
+   so the grid's 1fr canvas column has width (flex:0 + 1fr collapses to 0). */
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-body {
     flex: 0 0 auto;
+    width: 100%;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-rows {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-row {
@@ -907,12 +914,10 @@
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-canvas {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    width: 100%;
     height: var(--canvas-height);
     min-height: var(--canvas-height);
     max-height: var(--canvas-height);
-}
-
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-canvas {
     background-size: 11px 11px;
 }

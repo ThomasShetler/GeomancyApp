@@ -103,7 +103,7 @@
                                     <span class="figure-dot-refocus-mask-text">Tap again to focus @RowNames[rowIndex]</span>
                                 </div>
                             }
-                            else if (marks.Count == 0 && _phase == CasterPhase.Marking && !IsRowInputLocked(rowIndex) && !WalkthroughLayout)
+                            else if (marks.Count == 0 && _phase == CasterPhase.Marking && !IsRowInputLocked(rowIndex))
                             {
                                 <span class="figure-dot-placeholder">@GetRowPlaceholder(rowIndex)</span>
                             }
@@ -398,7 +398,7 @@
             return "Double-tap to edit";
         }
 
-        return "Tap anywhere in this row";
+        return WalkthroughLayout ? "Tap" : "Tap anywhere in this row";
     }
 
     private void ClampActiveRowIndex()
