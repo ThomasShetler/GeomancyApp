@@ -418,6 +418,8 @@ namespace GeomancyWebUI.Client.Services
                 InterpretiveEssence = src.InterpretiveEssence ?? string.Empty,
                 KeySignificators = src.KeySignificators ?? new List<string>(),
                 CommonMisreadings = src.CommonMisreadings ?? new List<string>(),
+                ClassicalNote = src.ClassicalNote ?? string.Empty,
+                ReadWhen = src.ReadWhen ?? new List<string>(),
                 FigureCombinationsToWatch = src.FigureCombinationsToWatch ?? string.Empty,
                 ExampleQuestions = src.ExampleQuestions ?? new List<string>()
             };
@@ -905,6 +907,12 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("common_misreadings")]
             public List<string>? CommonMisreadings { get; set; }
+
+            [JsonPropertyName("classical_note")]
+            public string? ClassicalNote { get; set; }
+
+            [JsonPropertyName("read_when")]
+            public List<string>? ReadWhen { get; set; }
 
             [JsonPropertyName("figure_combinations_to_watch")]
             public string? FigureCombinationsToWatch { get; set; }

@@ -5,47 +5,54 @@
         "id": 1,
         "house": "First",
         "traditional_name": "House of the Querent (Helm / House of Self)",
-        "astrological_correspondence": "Identity, Appearance, and First Impressions",
+        "astrological_correspondence": "Life, Body, and the Querent's Person",
         "governs": [
-          "The querent—the person asking the question",
-          "Personality, consciousness, and the physical body",
-          "Name and self-image",
-          "Any vehicle in which the querent is traveling",
-          "Location and weather where the querent is situated",
-          "Newborn children (in dedicated life-reading charts)"
+          "The querent's life, vitality, and physical body",
+          "Complexion, stature, bearing, and general constitution",
+          "Name and outward character as brought to this question",
+          "The querent's vehicle when framed as their conveyance",
+          "Immediate local weather or conditions at the querent's location",
+          "The seat from which the whole shield is read when no third party is named"
         ],
-        "significator_of_quesited_when": "Never the House of the Quesited in standard house-chart work. It anchors the chart as the querent’s own seat.",
-        "notes": "Mercury rejoices in the helm: speech, carriage, and the pattern of the breath steer outcomes in quiet, bodily ways. A martial figure often marks blunt self-assertion; a lunar tail frequently means the querent has already rehearsed a verdict before sitting down. Read the First as the live feed—temperament visible in posture—not as a costume chosen for the consultation.",
+        "significator_of_quesited_when": "Practically never. The First is the querent's seat. Only in dedicated life-reading questions does it double as the quesited.",
+        "notes": "Mercury rejoices in the helm. Read the First before assigning any house to the quesited: every other testimony is measured against the querent's condition, bearing, and capacity to act.",
         "example_questions": [],
-        "interpretive_essence": "The First is the querent as instrument: pulse, posture, and the story offered from the chair. It does not hold the quesited in classical practice; it colors every other house with disposition and pace.",
+        "interpretive_essence": "The querent as they sit in the matter: body, vitality, bearing, and the condition brought to the question.",
+        "read_when": [
+          "Always read first, before any other house",
+          "When establishing the querent's figure before assigning a house to the quesited",
+          "When testing agreement or conflict between the querent and the house of the matter",
+          "When the question names no distinct other party",
+          "When judging the querent's capacity to act, apart from the outcome shown elsewhere"
+        ],
         "key_significators": [
-          "The querent as primary significator",
-          "Vehicles and immediate weather",
-          "Name, bearing, and reputation at a glance"
+          "The querent",
+          "Body and vitality",
+          "Bearing and immediate condition"
         ],
         "common_misreadings": [
-          "Placing a spouse in the First when the matter clearly belongs to the Seventh",
-          "Treating Rubeus only as moral evil rather than heat, friction, or secrecy",
-          "Reading Populus as absence instead of echo, multitude, or deferral"
+          "Treating the First as modern identity psychology rather than concrete body, vitality, and bearing",
+          "Placing a spouse, rival, or partner here instead of the Seventh",
+          "Reading the First as fixed personality typing rather than the condition brought to this question"
         ],
-        "figure_combinations_to_watch": "When the First shows a passive multitude while ally houses flare, ask whether the narrative is curated for witnesses. Pair angular Mars figures with cadent Albus to see whether anger is being cooled—or concealed—by counsel."
+        "classical_note": "The First is the seat the querent occupies. Every other house is read in relation to it.",
+        "figure_combinations_to_watch": "When the First shows a passive multitude while ally houses flare, ask whether the narrative is curated for witnesses before you trust surface testimony."
       },
       {
         "id": 2,
         "house": "Second",
         "traditional_name": "House of Value (Gate of Hades)",
-        "astrological_correspondence": "Money, Values, and Material Possessions",
+        "astrological_correspondence": "Money, Movable Goods, and the Querent's Substance",
         "governs": [
-          "Money, income, and personal finances",
-          "Movable property and personal belongings",
-          "Profit and loss",
-          "Investments that behave like savings or cash flow (excluding speculative plays and real-property titles)",
-          "Thefts and lost objects",
-          "Self-esteem and survival resources",
-          "Body zones tied to intake: mouth, jaw, throat, and food consumed"
+          "The querent's own money, income, and financial condition",
+          "Movable goods and personal possessions",
+          "Profit, gain, and loss in the querent's own dealings",
+          "The querent's credit: capacity to raise, borrow, or repay",
+          "Theft or loss of the querent's belongings, and their recovery",
+          "Concrete material sustenance, not abstract self-worth"
         ],
-        "significator_of_quesited_when": "The question concerns everyday finances, gains or losses, theft, or personal belongings.",
-        "notes": "Liquidity lives here: what moves across the table. Land titles lean toward the Fourth; venture or wager tilt toward the Fifth. Classical authors watched conjunctions to the Second when cash or goods were literally changing hands.",
+        "significator_of_quesited_when": "The question concerns the querent's own money, goods in hand, pay, personal theft, or solvency.",
+        "notes": "Liquidity lives here: what moves across the table. Land and titles belong to the Fourth; venture and wager to the Fifth; another person's substance to the Eighth.",
         "example_questions": [
           "Will my business make or lose money?",
           "Will the investment be profitable?",
@@ -56,34 +63,41 @@
           "Has my missing watch been stolen?",
           "Will my stolen car be recovered?"
         ],
-        "interpretive_essence": "Cash flow, movable goods, and the felt sense of enoughness. The Second answers whether resources arrive, depart, or linger in transit—not whether a life’s meaning is secure.",
+        "interpretive_essence": "The querent's own means: cash, income, movable goods, pay, and the fate of belongings lost or stolen.",
+        "read_when": [
+          "When the question concerns the querent's own cash, pay, income, or net worth",
+          "When judging whether the querent can afford, raise, or repay a sum",
+          "When the querent's goods have gone missing or been stolen",
+          "When weighing the material cost of a decision against the court's verdict"
+        ],
         "key_significators": [
-          "Cash on hand",
-          "Invoices and payroll",
-          "Mouth and throat as intake—literal and metaphorical"
+          "Querent's cash and income",
+          "Movable goods and belongings",
+          "Theft, loss, and recovery"
         ],
         "common_misreadings": [
-          "Routing monthly rent through the Second when the lease itself is a Fourth-house matter",
-          "Labeling leveraged crypto as Second when it behaves like Fifth-house risk",
-          "Overlooking theft or loss as legitimate Second themes"
+          "Using the Second for a partner's or opponent's income, which belongs to the Eighth",
+          "Routing real estate or land value through the Second instead of the Fourth",
+          "Treating value as modern self-worth psychology rather than literal cash and goods"
         ],
-        "figure_combinations_to_watch": "Amissio on the Second with Acquisitio in the Fifth can show money dancing through risk and back—follow the sequence of houses, not the snapshot of a single figure."
+        "classical_note": "The Second is always the querent's own substance. Another party's purse is the Eighth.",
+        "figure_combinations_to_watch": "Amissio on the Second with Acquisitio in the Fifth can show money moving through risk and back. Follow the sequence of houses, not one figure alone."
       },
       {
         "id": 3,
         "house": "Third",
-        "traditional_name": "House of Relationships (Goddess)",
-        "astrological_correspondence": "Communication, Mind, and Immediate Environment",
+        "traditional_name": "House of Kin and Letters (Goddess)",
+        "astrological_correspondence": "Near Kin, Messages, and Short Journeys",
         "governs": [
-          "Brothers, sisters, and cousins",
-          "Neighbors and the immediate community",
-          "Journeys under roughly two hundred miles—daily commutes and regional hops",
-          "Education from preschool through high school, and ordinary skill-building",
-          "Advice, communication, and informal learning",
-          "News, rumor, gossip, and correspondence"
+          "Siblings, cousins, and near kin",
+          "Neighbors and immediate community relations",
+          "Short or local journeys, traditionally within about a day's range",
+          "Letters, messages, rumor, and news",
+          "Elementary schooling and basic skill-learning",
+          "Everyday, low-formality communication"
         ],
-        "significator_of_quesited_when": "The question concerns siblings or cousins (not parents), neighbors, the near environment, media, rumor, or early schooling.",
-        "notes": "The Moon rejoices among letters, cousins, and short wheels. News arrives in bundles—messages, notices, portals—not only in formal documents. Discern signal from noise before you build strategy on chatter.",
+        "significator_of_quesited_when": "The question concerns a sibling or cousin, a neighbor, a short journey, or the reliability of a message or rumor.",
+        "notes": "The Moon rejoices among letters, cousins, and short wheels. Discern signal from noise before you build strategy on chatter.",
         "example_questions": [
           "Will my relationship with my sister improve?",
           "Will the neighbors agree to an easement?",
@@ -93,37 +107,41 @@
           "Is the news story accurate?",
           "Should I believe the rumors?"
         ],
-        "interpretive_essence": "The immediate circuit: kin nearby, neighbors, short trips, and the rumor ecology that feeds or unsettles decisions.",
+        "interpretive_essence": "Near kin, neighbors, short journeys, letters, rumor, and the local news that feeds or unsettles a decision.",
+        "read_when": [
+          "When the question names a sibling, cousin, or neighbor rather than a parent or spouse",
+          "When judging a short trip, errand, or local journey",
+          "When testing whether a rumor, letter, or piece of news is reliable",
+          "When distinguishing a near or local matter from the Ninth's far travel or doctrine"
+        ],
         "key_significators": [
           "Siblings and cousins",
-          "Neighbors and school districts",
-          "Short journeys under ~200 miles"
+          "Neighbors and local news",
+          "Short journeys and messages"
         ],
         "common_misreadings": [
-          "Elevating every group chat to the Third when the stress is vocational or public-tenth",
-          "Confusing ninth-house philosophy or pilgrimage with neighborhood friction",
-          "Treating rumor as fact without corroboration"
+          "Assigning modern communication psychology to the Third rather than concrete letters, kin, and errands",
+          "Calling a long or foreign journey Third when it belongs to the Ninth",
+          "Confusing a parent with a sibling here"
         ],
-        "figure_combinations_to_watch": "Conjunctio in the Third with Carcer in the Ninth can show paperwork blocked upstream while local talk runs free—address the choke point, not only the noise."
+        "classical_note": "The Third carries near kin and near travel. Doctrinal, ancestral, or long-range matters belong to the Ninth.",
+        "figure_combinations_to_watch": "Conjunctio in the Third with Carcer in the Ninth can show local talk running free while paperwork stays blocked upstream."
       },
       {
         "id": 4,
         "house": "Fourth",
         "traditional_name": "House of Land (Subterranean)",
-        "astrological_correspondence": "Home, Roots, and Family Lineage",
+        "astrological_correspondence": "Land, Father, and the End of the Matter",
         "governs": [
-          "Land, real estate, and physical infrastructure",
-          "Agriculture, flora, and soil fertility",
-          "Building works, cities, and towns",
-          "Relocation, moving, and settling",
-          "What lies underground—mines, wells, basements",
-          "Hidden objects, ancient sites, and antiquities",
-          "Old age",
-          "The querent’s father, parents in general, and ancestry",
-          "The final outcome of any matter (Significator of Completion)"
+          "The querent's father and paternal lineage",
+          "Land, houses, real property, and buildings",
+          "Agriculture, soil, and buried or hidden things",
+          "The end or final state of any matter",
+          "Old age and the close of life's arc",
+          "Cities and settled places in mundane usage"
         ],
-        "significator_of_quesited_when": "The question concerns place, real estate, farming, lineage, endings, or completion. It also holds the Significator of Completion in house-chart method.",
-        "notes": "Angular earth: foundations, closure, fathers, and the voice that pronounces how a matter lands when dust settles. Many lineages let the Fourth speak last when other houses have argued their parts.",
+        "significator_of_quesited_when": "The question concerns land or a house, the father, agriculture, buried or hidden objects, or explicitly asks how a matter will end.",
+        "notes": "Angular earth: foundations, closure, and the voice that pronounces how a matter lands when dust settles. Many lineages let the Fourth speak last when other houses have argued their parts.",
         "example_questions": [
           "Is the property worth buying?",
           "Is the soil fertile?",
@@ -135,36 +153,41 @@
           "How is my father doing?",
           "How will the present situation turn out in the end?"
         ],
-        "interpretive_essence": "Roots, soil, dwellings, and the structural finish of a story. Outcomes named here settle into beams and weathering, not applause.",
+        "interpretive_essence": "Land, home, the father line, ancestry, and the final outcome when the question asks how a matter ends.",
+        "read_when": [
+          "When the question explicitly asks how a matter will finally turn out",
+          "When land, a house, or real property is the literal subject",
+          "When the father, patrimony, or ancestral matters are named",
+          "When something must be verified as buried, hidden underground, or foundational"
+        ],
         "key_significators": [
-          "Real estate and soil",
-          "Parents, especially the father line",
-          "Completion significator"
+          "Real estate and home",
+          "Father and ancestry",
+          "Final outcome of the matter"
         ],
         "common_misreadings": [
-          "Using the Fourth for speculative instruments when the Fifth fits better",
-          "Calling every basement leak Twelfth when title, deed, or foundation is Fourth",
+          "Using the Fourth for the mother when the working tradition assigns her to the Tenth",
+          "Treating any dark topic as Fourth rather than checking the Eighth or Twelfth",
           "Skipping the completion read when the question explicitly asks how something ends"
         ],
-        "figure_combinations_to_watch": "Fortuna Major in the Fourth with Via in the Tenth can show domestic stability underwriting a public pivot—weigh which angular message bears more literal weight for the query."
+        "classical_note": "The Fourth closes the wheel: land, the father, and the end of the matter. Do not reach for it merely because a topic feels grave.",
+        "figure_combinations_to_watch": "Fortuna Major in the Fourth with Via in the Tenth can show domestic stability underwriting a public pivot. Weigh which angular message bears more literal weight."
       },
       {
         "id": 5,
         "house": "Fifth",
         "traditional_name": "House of Pleasure (Good Fortune)",
-        "astrological_correspondence": "Creativity, Romance, and Joy",
+        "astrological_correspondence": "Children, Pleasure, and Speculation",
         "governs": [
-          "Crops from perennial or biennial plants",
-          "Fertility, pregnancy, and children",
-          "Sexuality, romance, and pleasure (not marriage)",
-          "Parties, sport, and entertainment",
-          "Food, drink, and luxury dress",
-          "Bodies of water, fishing, and rain",
-          "Letters, messages, writing, and books",
-          "Speculative investment and gambling"
+          "Children and pregnancy",
+          "Pleasure, banquets, entertainment, and courtship's sensual side",
+          "Gambling, speculation, and games of chance",
+          "Messengers and go-betweens acting on another's behalf",
+          "Taverns and places of festivity",
+          "Fertility of crops in agricultural questions"
         ],
-        "significator_of_quesited_when": "The question concerns fertility, pleasure, creative pursuit, casual romance, children, or speculative risk.",
-        "notes": "Venus rejoices where joy is cultivated: flirtation, seedlings, creative ventures, and wagers that need a spark. Pleasure here is not contract; contract belongs across the wheel.",
+        "significator_of_quesited_when": "The question concerns children, pregnancy, gambling or speculation, an embassy or go-between, or pleasure not bound by contract.",
+        "notes": "Venus rejoices where joy is cultivated. The bond between two people belongs to the First and Seventh axis, not to a hard split between casual and serious romance.",
         "example_questions": [
           "Will the grape crop be good this year?",
           "Is Janis interested in me sexually?",
@@ -179,34 +202,41 @@
           "Will I receive a letter from my grandmother?",
           "Are the claims in the book I'm reading accurate?"
         ],
-        "interpretive_essence": "The economy of delight: romance without vows, fertility signals, creative flow, and stakes taken for the thrill as much as the return.",
+        "interpretive_essence": "Pleasure and what it produces: children, entertainment, creative risk, and the honest wager.",
+        "read_when": [
+          "When the question concerns conception, pregnancy, or a child's welfare",
+          "When judging a wager, speculative venture, or game of chance",
+          "When the matter is pleasure, festivity, or courtship rather than a committed bond",
+          "When a go-between or messenger's mission is the actual subject"
+        ],
         "key_significators": [
-          "Dating chemistry",
-          "Garden and orchard yields",
-          "Speculation and performance"
+          "Children and pregnancy",
+          "Pleasure and entertainment",
+          "Gambling and speculation"
         ],
         "common_misreadings": [
-          "Moving pregnancy significators away from their natural houses without textual reason",
-          "Reading Fifth romance as Seventh marriage or contract",
-          "Ignoring literal rain or water omens when the query is meteorological"
+          "Making the Fifth the default romance house while ignoring the Seventh's role in reciprocal bonds",
+          "Folding all creative work here without checking whether the trade is Sixth labor or Tenth vocation",
+          "Reading sexuality here as identical to modern Eighth-house intimacy"
         ],
-        "figure_combinations_to_watch": "Puella in the Fifth with Rubeus in the Eighth can tie a flirtation to shared debt or obligation—read both timelines before you isolate romance."
+        "classical_note": "The Fifth governs pleasure and its issue, including children and speculation. Bonds between people belong to the First and Seventh.",
+        "figure_combinations_to_watch": "Puella in the Fifth with Rubeus in the Eighth can tie pleasure to another party's obligation. Read both houses before isolating romance."
       },
       {
         "id": 6,
         "house": "Sixth",
         "traditional_name": "House of Health (Bad Fortune)",
-        "astrological_correspondence": "Work, Health, Routine, and Service",
+        "astrological_correspondence": "Sickness, Service, and Small Animals",
         "governs": [
-          "Employees, servants, and domestic workers",
-          "Service trades—physicians, plumbers, entertainers, and similar",
-          "Practitioners of magic or occult arts other than the querent",
-          "Pets and household-scale animals (not cattle-class livestock)",
-          "Illness, injury, and regimen",
-          "Daily obligations and upkeep"
+          "Sickness, disease, and bodily affliction",
+          "Servants, employees, and those laboring under the querent's direction",
+          "Small livestock and household animals",
+          "Hired trades and service work performed for another",
+          "Daily labor, toil, and routine upkeep",
+          "Practitioners of occult arts other than the querent, when hired as service"
         ],
-        "significator_of_quesited_when": "The question concerns hired help, employees, pets, illness, injury, or routine maintenance.",
-        "notes": "Mars rejoices in labor, small animals, and the body’s daily ledger. Illness here is disruption of rhythm and capacity; deeper transformation or shared crisis often speaks through the Eighth.",
+        "significator_of_quesited_when": "The question concerns an illness, a servant or employee, a small domestic animal, or hired labor.",
+        "notes": "Mars rejoices in labor, small animals, and the body's daily ledger. Illness here is disruption of rhythm and capacity. Death and the other party's resources belong to the Eighth.",
         "example_questions": [
           "Should I hire Phyllis?",
           "Are my employees stealing from the till?",
@@ -219,35 +249,41 @@
           "Is this a good time to have dental work done?",
           "Will I catch the flu this winter?"
         ],
-        "interpretive_essence": "Service loops: wages and tasks, clinicians and craftspeople, pets under the roof, and the calendar that keeps life runnable.",
+        "interpretive_essence": "Sickness and regimen, hired help, service trades, pets, and the daily work that keeps life runnable.",
+        "read_when": [
+          "When the question is specifically about an illness, its course, or severity",
+          "When judging the loyalty, competence, or fitness of an employee or servant",
+          "When a pet or small domestic animal is the named subject",
+          "When distinguishing day-labor and service from the vocation and honor of the Tenth"
+        ],
         "key_significators": [
-          "Employees and contractors",
           "Illness and regimen",
-          "Domestic animals up to the scale of hogs or goats"
+          "Employees and hired help",
+          "Pets and small livestock"
         ],
         "common_misreadings": [
-          "Routing every burnout to the Twelfth without examining Sixth workload or staffing",
-          "Calling every practitioner Sixth when teaching or doctrine is ninth-house",
-          "Confusing acute presentation (often tied to First-body concerns) with chronic grind"
+          "Sorting occupations into Sixth or Tenth by prestige rather than by service versus office",
+          "Sending every case of exhaustion to the Twelfth instead of examining Sixth workload",
+          "Reading modern wellness psychology into the Sixth rather than concrete illness"
         ],
-        "figure_combinations_to_watch": "Carcer in the Sixth with Laetitia in the Twelfth can show grinding duty relieved by private respite—check sleep, boundaries, and off-duty recovery."
+        "classical_note": "The Sixth judges sickness and service. Title, promotion, and public role belong to the Tenth.",
+        "figure_combinations_to_watch": "Carcer in the Sixth with Laetitia in the Twelfth can show grinding duty relieved by private respite. Check boundaries and recovery."
       },
       {
         "id": 7,
         "house": "Seventh",
         "traditional_name": "House of Partnerships (Descendant)",
-        "astrological_correspondence": "Relationships, Contracts, and Projections",
+        "astrological_correspondence": "The Other Party, Contracts, and Open Conflict",
         "governs": [
-          "Committed human bonds—spouse, lover, marriage",
-          "Business partnerships, agreements, and treaties",
-          "Conflict, competition, lawsuits, and predator–prey dynamics",
-          "Thieves and robbers",
-          "Known enemies",
-          "Hunting and locating a specified person",
-          "The physician in dedicated medical charts"
+          "The querent's spouse or committed partner",
+          "Open enemies, litigants, and adversaries in dispute",
+          "Contracts and agreements made face to face between two parties",
+          "Thieves as persons, distinct from the theft itself",
+          "Runaways and fugitives when the question is whether they will be found",
+          "In dedicated medical charts, the physician"
         ],
-        "significator_of_quesited_when": "The question concerns deep one-to-one ties, formal agreements, open conflict, locating someone, or naming thieves.",
-        "notes": "The descendant angle faces the other: lover, opponent, or signatory across the table. Contracts and contests share one geometry—two fronts on a single line.",
+        "significator_of_quesited_when": "The question concerns a spouse or partner, a business counterpart, an open adversary or lawsuit, or the identity of a thief.",
+        "notes": "The descendant angle faces the other: lover, opponent, or signatory across the table. To read that person's own resources or condition in depth, turn the chart from the Seventh.",
         "example_questions": [
           "Does Stanley love me?",
           "Will this relationship last?",
@@ -262,74 +298,85 @@
           "Is next weekend a good time for deer hunting?",
           "Will I be able to get in contact with Julie again?"
         ],
-        "interpretive_essence": "Pair-bonds, declared rivals, and mirrored stakes. Seventh is where the querent meets what cannot be swallowed alone.",
+        "interpretive_essence": "Whoever stands opposite the querent: partner, counterpart, litigant, competitor, or thief.",
+        "read_when": [
+          "When a specific other person stands opposite the querent in the matter",
+          "When the question is whether to enter, keep, or dissolve a mutual agreement",
+          "When a thief must be characterized or located",
+          "When turning the chart to read the other party's concerns from a derived First house"
+        ],
         "key_significators": [
-          "Spouse or steady partner",
-          "Business counterpart",
-          "Opposing party in litigation"
+          "The other party",
+          "Contracts and lawsuits",
+          "Partners, rivals, and thieves"
         ],
         "common_misreadings": [
-          "Forcing a crush into the Seventh before reciprocity or obligation exists",
-          "Treating a sports contest as Seventh without a clear quesited mapping",
-          "Forgetting the physician-as-seventh convention in medical layouts"
+          "Restricting the Seventh to romance alone and missing lawsuits, rivals, and thieves",
+          "Placing the other party's money in the Seventh instead of the Eighth",
+          "Forcing someone into the Seventh before a genuine reciprocal tie exists in the question"
         ],
-        "figure_combinations_to_watch": "Puer in the Seventh with Albus in the First can pit a sharp rival against a softly spoken querent—precision of terms matters more than volume."
+        "classical_note": "The Seventh is whoever meets the querent face to face, in love or in conflict. Turn the chart for that person's own particulars.",
+        "figure_combinations_to_watch": "Puer in the Seventh with Albus in the First can pit a sharp rival against a softly spoken querent. Precision of terms matters more than volume."
       },
       {
         "id": 8,
         "house": "Eighth",
         "traditional_name": "House of Death",
-        "astrological_correspondence": "Intimacy, Transformation, and Shared Resources",
+        "astrological_correspondence": "Death, Inheritance, and the Other's Substance",
         "governs": [
-          "Death and matters contiguous with it",
-          "Absence in any form",
-          "Apparitions, spiritual entities, and the occult as lived experience",
-          "Identifying murderers (historical usage)",
-          "Practical magic performed by or for the querent",
-          "Circumstances around absent or missing persons",
-          "Money, goods, or favors lent out",
-          "Inheritance, legacy, and jointly held resources"
+          "Death and matters directly contiguous with it",
+          "Inheritance, legacies, and dowry or portion",
+          "The resources or support of the person shown in the Seventh",
+          "Money lent out by the querent, once it sits in another's hands",
+          "Fear and dread as a classical topic",
+          "Absence and missing persons in traditional usage"
         ],
-        "significator_of_quesited_when": "The question concerns absence, deep change, death’s effects, missing persons, or lent and shared pools.",
-        "notes": "The classical gate of shared depths: other people’s stakes, voids, and the operative workbench—distinct from ninth-house doctrine or teaching. Ethical readers decline lifespan prurience; transformation and obligation still belong here.",
+        "significator_of_quesited_when": "The question concerns death or its immediate aftermath, inheritance or dowry, or whether another named party will provide support or repay a debt.",
+        "notes": "Classical geomancy treats the Eighth as the Second from the Seventh. Spiritual seeking is Ninth; secrecy and occult harm against the querent lean Twelfth; ancestry and the grave lean Fourth.",
         "example_questions": [
+          "Will he support me financially?",
           "Should I get life insurance?",
           "How seriously should I take Bill's threats?",
           "Is this a good time to make a will?",
-          "Is the house actually haunted?",
-          "Is the magical working I am planning appropriate?",
+          "Will I receive the inheritance I was promised?",
           "Is my neighbor's missing daughter all right?",
           "Will I ever get back the book I loaned to Greg?"
         ],
-        "interpretive_essence": "Shared pools and absences: loans and legacies, what is missing, and craft undertaken at the altar rather than debated in the seminar hall.",
+        "interpretive_essence": "Death, absence, loans out, inheritance, and the resources of whoever stands in the Seventh.",
+        "read_when": [
+          "When the question concerns death or matters following directly from a death",
+          "When judging whether another named party will support the querent materially",
+          "When a debt or loan already given out must be traced or recovered",
+          "When inheritance, dowry, or a legacy is explicitly the subject"
+        ],
         "key_significators": [
-          "Loans and legacies",
-          "Threads around missing persons",
-          "Hands-on spellcraft tied to the querent"
+          "The other party's money and means",
+          "Inheritance and dowry",
+          "Death, absence, and loans outstanding"
         ],
         "common_misreadings": [
-          "Parking university theology here simply because the topic feels uncanny",
-          "Trading in sensational death detail",
-          "Confusing fraud or petty theft (Second) with eighth-house shared obligation"
+          "Reading the Eighth as intimacy or psychological transformation through modern Scorpio association",
+          "Placing hidden enemies or secrecy here rather than in the Twelfth",
+          "Confusing death with ancestry, burial, or afterlife, which lean Fourth and Ninth"
         ],
-        "figure_combinations_to_watch": "Cauda in the Eighth with Caput in the Second can mark closure of a debt opening a new cash chapter—honor order of events, not symbols in isolation."
+        "classical_note": "The Eighth is the Second from the Seventh: death and the other party's substance, not sex, secrecy, or spirituality.",
+        "figure_combinations_to_watch": "Cauda in the Eighth with Caput in the Second can mark closure of a debt opening a new cash chapter. Honor order of events."
       },
       {
         "id": 9,
         "house": "Ninth",
         "traditional_name": "House of Journeys (God)",
-        "astrological_correspondence": "Expansion, Philosophy, and Higher Learning",
+        "astrological_correspondence": "Far Travel, Faith, and Higher Learning",
         "governs": [
-          "Long journeys over roughly two hundred miles by land",
-          "Voyage by water, air, or space",
-          "Religion, spirituality, and operative belief",
-          "Colleges, universities, and adult education",
-          "Arts, publishing, and horizon-broadening study",
-          "Dream interpretation when framed as inquiry",
-          "Occult philosophy, astrology, and divination as disciplines"
+          "Long journeys, voyages, and travel to distant or foreign places",
+          "Religion, clergy, and matters of faith or doctrine",
+          "Dreams and visions when their meaning is under inquiry",
+          "Higher education, universities, and advanced formal study",
+          "Law as a body of learning and legal philosophy",
+          "Publishing, astrology, and divination as disciplines"
         ],
-        "significator_of_quesited_when": "The question concerns long travel, spiritual seeking, higher education, publishing, or testing divinatory reliability.",
-        "notes": "The Sun rejoices on long roads, in print, and in faith argued under open sky. Divination’s philosophy sits here; the working altar often answers from the Eighth.",
+        "significator_of_quesited_when": "The question concerns long-distance travel, religion or faith, formal higher study, or the interpretation of a dream.",
+        "notes": "The Sun rejoices on long roads, in print, and in faith argued under open sky. Litigation itself stays in the Seventh even when law as a discipline is Ninth.",
         "example_questions": [
           "Will I be able to go to Germany this summer?",
           "How congested will the airport be?",
@@ -340,35 +387,41 @@
           "Does the dream I had last night mean anything?",
           "Should I study geomancy?"
         ],
-        "interpretive_essence": "Far horizons: pilgrimage and visa lines, faculty and clergy, and the maps—intellectual or sacred—we draw to explain the world.",
+        "interpretive_essence": "Far travel, religion, higher study, dreams under inquiry, and divinatory doctrine as a discipline.",
+        "read_when": [
+          "When a journey is long-distance, overseas, or beyond the Third's local range",
+          "When the question concerns faith, religious vocation, or doctrine",
+          "When a dream's meaning, rather than its cause alone, is under inquiry",
+          "When judging entry into or progress through university-level study"
+        ],
         "key_significators": [
-          "Journeys beyond ~200 miles",
-          "Universities and credentials",
-          "Dreams as texts when the question is interpretive"
+          "Religion and spiritual seeking",
+          "Long journeys",
+          "Universities and divinatory study"
         ],
         "common_misreadings": [
-          "Labeling every flight Ninth when the trip is a commute-third matter",
-          "Placing grimoire operations here without a doctrinal or teaching frame",
-          "Ignoring literal ocean passage when the chart demands voyage literalism"
+          "Treating occult topics as automatically Eighth because they feel uncanny, when seeking belongs here",
+          "Calling a routine commute Ninth rather than Third",
+          "Conflating law as discipline with an active lawsuit in the Seventh"
         ],
-        "figure_combinations_to_watch": "Via in the Ninth with Populus in the Third can show study-abroad chatter running ahead of facts—verify channels before you advise."
+        "classical_note": "The Ninth carries the far horizon: distant travel, doctrine, and higher learning. Hidden harm belongs to the Twelfth.",
+        "figure_combinations_to_watch": "Via in the Ninth with Populus in the Third can show distant plans running ahead of local facts. Verify channels before you advise."
       },
       {
         "id": 10,
         "house": "Tenth",
         "traditional_name": "House of Career (Midheaven)",
-        "astrological_correspondence": "Public Image, Reputation, and Ambition",
+        "astrological_correspondence": "Office, Honor, and Authority",
         "governs": [
-          "Career, vocation, and professional recognition",
-          "Reputation, fame, and social station",
-          "Authority figures, bosses, and leadership",
-          "The querent’s mother (in many traditional schemes)",
-          "Politics from local boards to global bodies",
-          "Weather in collective or public scope",
-          "Prescribed treatment in medical charts"
+          "Career, profession, and public vocation",
+          "Honor, reputation, and public standing",
+          "Kings, magistrates, employers, and those in authority over the querent",
+          "The querent's mother, per Lilly's classical convention",
+          "Public offices, governments, and matters of rule",
+          "Prescribed treatment in dedicated medical charts"
         ],
-        "significator_of_quesited_when": "The question concerns status, ambition, job change, governance, public weather, or the mother when that convention applies.",
-        "notes": "Midheaven angle: headline name, boss or crown, collective weather. Mother significations travel here in numerous lineages beside career and mandate.",
+        "significator_of_quesited_when": "The question concerns career, promotion or dismissal, an authority figure or employer, public honor, or the mother under the tradition being followed.",
+        "notes": "Midheaven angle: headline name, boss or crown, collective weather. Day-to-day labor under the same employer remains the Sixth's domain.",
         "example_questions": [
           "Should I look for a different job?",
           "Will I get the promotion?",
@@ -380,71 +433,84 @@
           "Will the weather tomorrow be clear and dry?",
           "Should I get a second opinion on the proposed treatment for my heart condition?"
         ],
-        "interpretive_essence": "Public arc: title, politics, reputation, and the visible mother or authority mirror.",
+        "interpretive_essence": "Public office, career, reputation, authority figures, and collective weather. In Lilly's convention the mother is read here as well.",
+        "read_when": [
+          "When career advancement, dismissal, or professional standing is the named subject",
+          "When an authority figure, employer, or governing body must be judged",
+          "When the querent's mother is the subject under the tradition being followed",
+          "When public reputation or honor, rather than private character, is at stake"
+        ],
         "key_significators": [
           "Career and honors",
-          "Elected or appointed office",
-          "Weather read as ambient condition"
+          "Bosses and public office",
+          "Mother, in Lilly's convention"
         ],
         "common_misreadings": [
-          "Mixing personal brand (First) with institutional role (Tenth)",
-          "Placing mother only in the Fourth when the chart’s tradition uses Tenth",
-          "Reading a single tenth-house headline without relation to aspects or witnesses"
+          "Sorting jobs into Sixth versus Tenth by prestige rather than by service versus standing",
+          "Assuming the mother is always Fourth when the classical horary line runs Tenth",
+          "Collapsing personal identity in the First into professional identity here"
         ],
-        "figure_combinations_to_watch": "Fortuna Minor in the Tenth with Tristitia in the Fourth can show visible success stressing domestic foundations—negotiate bandwidth before accepting every spotlight."
+        "classical_note": "The Tenth carries office and honor. Day-to-day labor and hired service remain the Sixth's domain.",
+        "figure_combinations_to_watch": "Fortuna Minor in the Tenth with Tristitia in the Fourth can show visible success stressing domestic foundations."
       },
       {
         "id": 11,
         "house": "Eleventh",
         "traditional_name": "House of Friends (Good Spirit)",
-        "astrological_correspondence": "Social Life, Community, and Future Vision",
+        "astrological_correspondence": "Friends, Hope, and Benefactors",
         "governs": [
-          "Friends, acquaintances, and alliances",
-          "Associations, collectives, and professional networks",
-          "Promises, patrons, and sources of help",
-          "Hopes, wishes, and longer horizons",
-          "Annual crops",
+          "Friends, allies, and well-wishers",
+          "Hope, trust, and expectation of good",
+          "Benefactors, patrons, and unearned favor",
+          "Counselors and advisors acting in the querent's interest",
+          "Annual crops in agricultural questions",
           "Questions the querent declines to state aloud"
         ],
-        "significator_of_quesited_when": "The question concerns allies, networks, durable hopes, benefactors, annual harvest—or the true question is deliberately withheld.",
-        "notes": "Jupiter rejoices among friends, benefactors, and the crop that closes the season. Hope sometimes masks the real ask; read kindly and verify what is actually needed.",
+        "significator_of_quesited_when": "The question concerns a friend, benefactor, or ally, matters of hope and trust, or an unearned gift or favor.",
+        "notes": "Jupiter rejoices among friends, benefactors, and the crop that closes the season. Once a formal bond is named, move to the Seventh.",
         "example_questions": [
           "How is my old college buddy Bill doing?",
           "Will my friend Sally make good on her promise?",
           "Can I count on the neighborhood association to support me?",
           "Will I achieve my fondest dream?",
           "Will I get a good crop of peas this year?",
-          "I don't want to tell you what my question is—can you answer it anyway?"
+          "I don't want to tell you what my question is; can you answer it anyway?"
         ],
-        "interpretive_essence": "Networks and patrons, promises kept or strained, and the forward tilt of desire. Eleventh shows who arrives when the truck is stuck in the mud.",
+        "interpretive_essence": "Friends, allies, patrons, hope, and questions the querent will not name aloud.",
+        "read_when": [
+          "When a friend, ally, or benefactor's reliability or intent is the subject",
+          "When the question turns on hope or expectation rather than an enforceable agreement",
+          "When a gift or favor given without formal contract is at issue",
+          "When the querent withholds the true question and general goodwill must be assessed"
+        ],
         "key_significators": [
           "Friends and allies",
-          "Crowdfunded or communal hopes",
-          "Annual harvest"
+          "Promises and patrons",
+          "Hope and withheld questions"
         ],
         "common_misreadings": [
-          "Reading anonymous forums as Eleventh without a lived tie to the querent",
-          "Promising windfalls from Jupiter rhetoric alone",
-          "Ignoring strings attached to patronage"
+          "Treating any online contact as automatically Eleventh without asking its real function",
+          "Promising a favorable outcome from hopeful testimony alone",
+          "Confusing a patron's goodwill with a contractual partner in the Seventh"
         ],
-        "figure_combinations_to_watch": "Rubeus in the Eleventh with Populus in the First can show a volatile circle cheering a querent who remains inwardly undecided—test sincerity before leaning on the crowd."
+        "classical_note": "The Eleventh governs friends and hope freely given. Formal bonds belong to the Seventh.",
+        "figure_combinations_to_watch": "Rubeus in the Eleventh with Populus in the First can show a volatile circle cheering a querent who remains inwardly undecided."
       },
       {
         "id": 12,
         "house": "Twelfth",
         "traditional_name": "House of Secrets (Bad Spirit)",
-        "astrological_correspondence": "Inner World, Intuition, and Self-Undoing",
+        "astrological_correspondence": "Hidden Enemies, Confinement, and Large Beasts",
         "governs": [
-          "Restrictions, limits, and self-sabotage",
-          "Debts owed by the querent",
-          "Imprisonment, institutional care, and isolation",
-          "Secrets, concealed struggle, and the subconscious",
-          "Enemies not yet recognized",
-          "Harmful magic attributed to another against the querent",
-          "Large livestock and wild animals—cattle, horses, donkeys, mules, camels"
+          "Hidden or unrecognized enemies",
+          "Imprisonment, confinement, exile, or institutional restraint",
+          "Large or working animals: horses, oxen, cattle, beasts of burden",
+          "Sorrow and self-undoing whose source is not yet visible",
+          "Witchcraft or malicious craft worked against the querent by another",
+          "Treachery and betrayal not yet uncovered"
         ],
-        "significator_of_quesited_when": "The question concerns harm, strict limits, debt owed by the querent, hidden foes, large animals, or confinement.",
-        "notes": "Saturn rejoices in what stays unseen: institutions, karmic ledgers, field-sized beasts, and rivals not yet introduced. Self-undoing is literal when we quietly dissolve our own calendar.",
+        "significator_of_quesited_when": "The question concerns an unidentified or hidden enemy, imprisonment or confinement, a large working animal, or suspected malice against the querent.",
+        "notes": "Saturn rejoices in what stays unseen. Spiritual seeking belongs to the Ninth. Secrecy and hidden enmity are Twelfth, not Eighth.",
         "example_questions": [
           "Will I be able to pay my bills next month?",
           "Will I be sent to prison?",
@@ -454,18 +520,25 @@
           "Is this horse worth buying?",
           "Will cattle fetch a good price this year?"
         ],
-        "interpretive_essence": "Seclusion, herd-scale animals, suspicion of occult harm, and the subconscious leak that steers choices from below deck.",
+        "interpretive_essence": "Hidden enemies, confinement, large livestock, and historically malicious magic cast against the querent.",
+        "read_when": [
+          "When an enemy or threat is suspected but not yet identified or named",
+          "When confinement, imprisonment, or institutional restriction is the literal subject",
+          "When a large working animal is the named subject",
+          "When the querent suspects hidden malice, sabotage, or witchcraft directed against them"
+        ],
         "key_significators": [
-          "Hospitals and prisons",
-          "Hidden antagonism",
-          "Cattle-class markets and animals"
+          "Secrets and hidden enemies",
+          "Prison, hospital, and isolation",
+          "Large livestock and occult harm"
         ],
         "common_misreadings": [
-          "Blaming the Twelfth for every anxiety when Sixth workload or health regimen explains the strain",
-          "Naming secret enemies without proportional evidence",
-          "Ignoring livestock markets when the query is ranch or herd economics"
+          "Softening the Twelfth into modern spirituality rather than concrete hidden threat and confinement",
+          "Naming a secret enemy from Twelfth testimony alone, without corroboration elsewhere",
+          "Confusing self-inflicted sorrow here with illness and regimen in the Sixth"
         ],
-        "figure_combinations_to_watch": "Laetitia in the Twelfth with Carcer in the Sixth can show relief inside constraint—a humane ward or structured care—read compassion through schedule and limits."
+        "classical_note": "The Twelfth holds what works against the querent unseen. Spiritual seeking reads through the Ninth, and death through the Eighth.",
+        "figure_combinations_to_watch": "Laetitia in the Twelfth with Carcer in the Sixth can show relief inside constraint, such as humane ward or structured care."
       }
     ]
   }

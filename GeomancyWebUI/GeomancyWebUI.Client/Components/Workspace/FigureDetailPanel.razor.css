@@ -65,6 +65,23 @@
     letter-spacing: 0.08em;
 }
 
+.content-scope-label {
+    margin: 0 0 0.2rem 0;
+    color: var(--accent-color);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.content-scope-label.card-scope-label {
+    margin-bottom: 0.35rem;
+}
+
+.in-slot-card .content-scope-label {
+    margin-bottom: 0.25rem;
+}
+
 .figure-name-display {
     margin: 0;
     font-size: 1.55rem;
@@ -194,6 +211,125 @@
 /* ============================================================
  * Chip row
  * ============================================================ */
+
+/* ============================================================
+ * House / court summary under figure header
+ * ============================================================ */
+.house-summary-card {
+    margin-top: 0.75rem;
+    padding: 0.7rem 0.8rem 0.75rem;
+    border-radius: 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
+    background:
+        linear-gradient(
+            165deg,
+            color-mix(in srgb, var(--accent-color) 8%, var(--bg-secondary)) 0%,
+            color-mix(in srgb, var(--bg-secondary) 92%, var(--bg-primary)) 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.house-summary-top {
+    min-width: 0;
+}
+
+.house-summary-eyebrow {
+    margin: 0;
+    color: var(--accent-color);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.house-summary-title {
+    margin: 0.12rem 0 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+
+.house-summary-subtitle {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+.house-summary-essence {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--text-primary);
+}
+
+.house-summary-blips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.house-blip {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.35rem;
+    border: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--bg-primary) 70%, transparent);
+    color: var(--text-primary);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.house-blip-greer {
+    border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
+}
+
+.house-summary-tip,
+.house-summary-caution {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
+.house-summary-tip-label,
+.house-summary-caution-label {
+    display: inline-block;
+    margin-right: 0.35rem;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+}
+
+.house-summary-caution-label {
+    color: color-mix(in srgb, #c27803 70%, var(--text-secondary));
+}
+
+.house-summary-more {
+    align-self: flex-start;
+    margin-top: 0.1rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--accent-color);
+    font-size: 0.76rem;
+    font-weight: 650;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.house-summary-more:hover {
+    opacity: 0.85;
+}
+
 .chip-row.compact-chips {
     display: flex;
     flex-wrap: wrap;

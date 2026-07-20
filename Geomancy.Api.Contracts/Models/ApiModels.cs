@@ -407,6 +407,12 @@ namespace GeomancyAPI.Models
         [JsonProperty("common_misreadings")]
         public List<string> CommonMisreadings { get; set; } = new List<string>();
 
+        [JsonProperty("classical_note")]
+        public string ClassicalNote { get; set; }
+
+        [JsonProperty("read_when")]
+        public List<string> ReadWhen { get; set; } = new List<string>();
+
         [JsonProperty("figure_combinations_to_watch")]
         public string FigureCombinationsToWatch { get; set; }
 

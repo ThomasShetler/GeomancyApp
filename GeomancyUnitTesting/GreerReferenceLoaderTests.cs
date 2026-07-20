@@ -107,5 +107,25 @@ namespace GeomancyUnitTesting
             Assert.AreEqual(0, GreerCriticalContextRules.Evaluate(true, 2, "Rubeus", "Via").Count);
             Assert.AreEqual(0, GreerCriticalContextRules.Evaluate(true, 1, "Puer", "Via").Count);
         }
+
+        [TestMethod]
+        public void GreerAlongsideText_TextMatches_CollapsesWhitespaceAndIgnoresCase()
+        {
+            Assert.IsTrue(GreerAlongsideText.TextMatches("Mars", "mars"));
+            Assert.IsTrue(GreerAlongsideText.TextMatches("  Fire   Air  ", "Fire Air"));
+            Assert.IsFalse(GreerAlongsideText.TextMatches("Mars", "Venus"));
+            Assert.IsFalse(GreerAlongsideText.TextMatches("Mars", null));
+            Assert.IsFalse(GreerAlongsideText.TextMatches(null, "Mars"));
+            Assert.IsFalse(GreerAlongsideText.TextMatches("", "   "));
+        }
+
+        [TestMethod]
+        public void GreerAlongsideText_GreerFieldDiffers_MatchVsDiffer()
+        {
+            Assert.IsFalse(GreerAlongsideText.GreerFieldDiffers("Boy", "boy"));
+            Assert.IsTrue(GreerAlongsideText.GreerFieldDiffers("Boy", "Girl"));
+            Assert.IsTrue(GreerAlongsideText.GreerFieldDiffers("", "Boy"));
+            Assert.IsFalse(GreerAlongsideText.GreerFieldDiffers("Boy", ""));
+        }
     }
 }

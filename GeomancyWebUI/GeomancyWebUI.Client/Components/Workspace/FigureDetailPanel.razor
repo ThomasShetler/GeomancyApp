@@ -22,8 +22,37 @@
         var showGreerAlongside = figureBundle.ShowGreerAlongside;
         var hideGeofancyOnly = figureBundle.HideGeofancyOnlySections;
         var showGreerAttribution = figureBundle.ShowGreerAttribution;
+        // Alongside: hide corpus fields that exactly match Greer (prefer Greer block).
+        var hideCorpusDivinatory = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.DivinatoryMeaning, greerRef?.DivinatoryMeaning);
+        var hideCorpusImagery = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.Imagery, greerRef?.Imagery);
+        var hideCorpusCommentary = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.Commentary, greerRef?.Commentary);
+        var hideCorpusInnerEl = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.InnerEl, greerRef?.InnerEl);
+        var hideCorpusOuterEl = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.OuterEl, greerRef?.OuterEl);
+        var hideCorpusBodyType = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.BodyType, greerRef?.BodyType);
+        var hideCorpusCharacterType = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.CharacterType, greerRef?.CharacterType);
+        var hideCorpusAnatomy = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.Anatomy, greerRef?.Anatomy);
+        var hideCorpusColors = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.Colors, greerRef?.Colors);
+        var hideCorpusStrongHouse = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.StrongHouse, greerRef?.StrongHouse);
+        var hideCorpusWeakHouse = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.WeakHouse, greerRef?.WeakHouse);
+        var hideCorpusPlanet = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.Planet, greerRef?.Planet);
+        var hideCorpusSign = showGreerAlongside
+            && GreerReferenceMergeHelper.TextMatches(fig.Sign, greerRef?.Sign);
         var planetSymbol = GetPlanetSymbol(fig.Planet);
         var zodiacSymbol = GetZodiacSymbol(fig.Sign);
+        var greerPlanetSymbol = GetPlanetSymbol(greerRef?.Planet ?? string.Empty);
+        var greerZodiacSymbol = GetZodiacSymbol(greerRef?.Sign ?? string.Empty);
         var strengthLabel = GetStrengthLabel(fig.HouseStrength);
         var inSlot = hideGeofancyOnly ? null : ResolveInSlotText(baseFig);
         var houseEntry = ResolveHouseEntry();
@@ -32,7 +61,8 @@
         var courtEntry = ResolveCourtEntry();
         var showInterpretation = hideGeofancyOnly
             ? HasInterpretationContent(fig)
-            : HasInterpretationContent(fig) || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerInterpretationContent(greerRef));
+            : HasVisibleInterpretationContent(fig, hideCorpusImagery, hideCorpusCommentary)
+              || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerInterpretationContent(greerRef));
         var showHouse = houseEntry != null || greerHouse != null;
         var showGreerHousePrimary = houseBundle.UseGreerPrimary && greerHouse != null;
         var showCourt = courtEntry != null && !hideGeofancyOnly;
@@ -43,12 +73,14 @@
         var openHouse = IsHouseOpenByDefault(houseEntry) || showGreerHousePrimary;
         var openCourt = IsCourtOpenByDefault(courtEntry);
         var openCorrespondences = IsCorrespondencesOpenByDefault(inSlot);
-        var hasContext = HasContextContent(fig, inSlot)
+        var hasContext = HasVisibleContextContent(fig, inSlot, hideCorpusDivinatory, hideGeofancyOnly)
             || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerContextContent(greerRef))
             || showCriticalContext;
-        var showPerson = HasPersonContent(fig)
+        var showPerson = HasVisiblePersonContent(fig, hideCorpusBodyType, hideCorpusCharacterType, hideCorpusAnatomy, hideCorpusColors)
             || (showGreerAlongside && GreerReferenceMergeHelper.HasGreerPersonContent(greerRef));
-        var showHouseAffinity = !string.IsNullOrWhiteSpace(fig.StrongHouse) || !string.IsNullOrWhiteSpace(fig.WeakHouse)
+        var showHouseAffinity =
+            (!string.IsNullOrWhiteSpace(fig.StrongHouse) && !hideCorpusStrongHouse)
+            || (!string.IsNullOrWhiteSpace(fig.WeakHouse) && !hideCorpusWeakHouse)
             || (showGreerAlongside && greerRef != null && (
                 !string.IsNullOrWhiteSpace(greerRef.StrongHouse) || !string.IsNullOrWhiteSpace(greerRef.WeakHouse)));
         var qualityChipClass = GetQualityChipClass(fig.Quality);
@@ -85,18 +117,32 @@
             </header>
 
             <div class="chip-row compact-chips">
-                @if (!string.IsNullOrWhiteSpace(fig.Planet))
+                @if (!string.IsNullOrWhiteSpace(fig.Planet) && !hideCorpusPlanet)
                 {
                     <span class="chip chip-planet">
                         <span class="chip-glyph">@planetSymbol</span>
                         <span class="chip-text">@fig.Planet</span>
                     </span>
                 }
-                @if (!string.IsNullOrWhiteSpace(fig.Sign))
+                @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.Planet))
+                {
+                    <span class="chip chip-planet" title="Greer (2009)">
+                        <span class="chip-glyph">@greerPlanetSymbol</span>
+                        <span class="chip-text">@greerRef!.Planet</span>
+                    </span>
+                }
+                @if (!string.IsNullOrWhiteSpace(fig.Sign) && !hideCorpusSign)
                 {
                     <span class="chip chip-sign">
                         <span class="chip-glyph">@zodiacSymbol</span>
                         <span class="chip-text">@fig.Sign</span>
+                    </span>
+                }
+                @if (showGreerAlongside && !string.IsNullOrWhiteSpace(greerRef?.Sign))
+                {
+                    <span class="chip chip-sign" title="Greer (2009)">
+                        <span class="chip-glyph">@greerZodiacSymbol</span>
+                        <span class="chip-text">@greerRef!.Sign</span>
                     </span>
                 }
                 @if (!string.IsNullOrWhiteSpace(fig.Quality))
@@ -112,6 +158,139 @@
                     <span class="chip chip-humor" title="Traditional humor">@fig.Humor</span>
                 }
             </div>
+
+            @if (houseEntry != null || (showGreerHousePrimary && greerHouse != null))
+            {
+                var summaryHouse = houseEntry;
+                var summaryTitle = summaryHouse != null
+                    ? $"House {summaryHouse.Id} · {summaryHouse.House}"
+                    : $"House {greerHouse!.Id} · {greerHouse.Ordinal}";
+                // Prefer short correspondence over long traditional titles in the summary strip.
+                var summarySubtitle = !string.IsNullOrWhiteSpace(summaryHouse?.AstrologicalCorrespondence)
+                    ? summaryHouse!.AstrologicalCorrespondence
+                    : (summaryHouse?.TraditionalName ?? string.Empty);
+                var summaryEssence = !string.IsNullOrWhiteSpace(summaryHouse?.InterpretiveEssence)
+                    ? summaryHouse!.InterpretiveEssence
+                    : string.Empty;
+                var summaryBlips = summaryHouse?.KeySignificators?
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Take(3)
+                    .ToList() ?? new List<string>();
+                var summaryClassical = summaryHouse?.ClassicalNote ?? string.Empty;
+                // First misreading is curated as the #1 routing trap for the summary card.
+                var summaryCaution = summaryHouse?.CommonMisreadings?
+                    .FirstOrDefault(m => !string.IsNullOrWhiteSpace(m));
+                // Avoid stacking tip + watch when they say the same thing.
+                var showSummaryCaution = !string.IsNullOrWhiteSpace(summaryCaution)
+                    && !hideGeofancyOnly
+                    && !CautionDuplicatesTip(summaryCaution, summaryClassical);
+                var greerGovernBlips = hideGeofancyOnly
+                    ? (greerHouse?.Governs?
+                        .Where(g => !string.IsNullOrWhiteSpace(g))
+                        .Take(3)
+                        .ToList() ?? new List<string>())
+                    : new List<string>();
+
+                <aside class="house-summary-card" aria-label="House reading summary">
+                    <div class="house-summary-top">
+                        <p class="house-summary-eyebrow">House · In play</p>
+                        <h3 class="house-summary-title">@summaryTitle</h3>
+                        @if (!string.IsNullOrWhiteSpace(summarySubtitle))
+                        {
+                            <p class="house-summary-subtitle">@summarySubtitle</p>
+                        }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(summaryEssence) && !hideGeofancyOnly)
+                    {
+                        <p class="house-summary-essence">@summaryEssence</p>
+                    }
+                    @if (summaryBlips.Count > 0 && !hideGeofancyOnly)
+                    {
+                        <div class="house-summary-blips" aria-label="Key significators">
+                            @foreach (var blip in summaryBlips)
+                            {
+                                <span class="house-blip">@blip</span>
+                            }
+                        </div>
+                    }
+                    @if (greerGovernBlips.Count > 0)
+                    {
+                        <div class="house-summary-blips" aria-label="Greer house themes">
+                            @foreach (var blip in greerGovernBlips)
+                            {
+                                <span class="house-blip house-blip-greer" title="Greer (2009)">@blip</span>
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(summaryClassical) && !hideGeofancyOnly)
+                    {
+                        <p class="house-summary-tip">
+                            <span class="house-summary-tip-label">Keep in mind</span>
+                            @summaryClassical
+                        </p>
+                    }
+                    @if (showSummaryCaution)
+                    {
+                        <p class="house-summary-caution">
+                            <span class="house-summary-caution-label">Watch</span>
+                            @summaryCaution
+                        </p>
+                    }
+                    @if (showHouse)
+                    {
+                        <button type="button"
+                                class="house-summary-more"
+                                @onclick='() => ScrollToSection("section-house")'>
+                            Full house notes
+                        </button>
+                    }
+                </aside>
+            }
+            else if (showCourt && courtEntry != null)
+            {
+                var courtBlips = courtEntry.Meaning?
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Take(3)
+                    .ToList() ?? new List<string>();
+                var courtCaution = courtEntry.Pitfalls?
+                    .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p));
+
+                <aside class="house-summary-card court-summary-card" aria-label="Court reading summary">
+                    <div class="house-summary-top">
+                        <p class="house-summary-eyebrow">Court · In play</p>
+                        <h3 class="house-summary-title">@courtEntry.Placement</h3>
+                        @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName))
+                        {
+                            <p class="house-summary-subtitle">@courtEntry.TraditionalName</p>
+                        }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(courtEntry.Essence))
+                    {
+                        <p class="house-summary-essence">@courtEntry.Essence</p>
+                    }
+                    @if (courtBlips.Count > 0)
+                    {
+                        <div class="house-summary-blips" aria-label="What this placement covers">
+                            @foreach (var blip in courtBlips)
+                            {
+                                <span class="house-blip">@blip</span>
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(courtCaution))
+                    {
+                        <p class="house-summary-caution">
+                            <span class="house-summary-caution-label">Watch</span>
+                            @courtCaution
+                        </p>
+                    }
+                    <button type="button"
+                            class="house-summary-more"
+                            @onclick='() => ScrollToSection("section-court")'>
+                        Full court notes
+                    </button>
+                </aside>
+            }
         </div>
 
         <nav class="section-jump-nav detail-sticky-tabs" aria-label="Figure detail sections">
@@ -137,7 +316,8 @@
         </nav>
 
         <section id="section-context" class="detail-card detail-card-primary">
-            <h3 class="card-title">Immediate Context</h3>
+            <p class="content-scope-label card-scope-label">Figure · Immediate context</p>
+            <h3 class="card-title">What this figure shows here</h3>
             @if (showCriticalContext)
             {
                 <div class="critical-context-block" role="status">
@@ -159,14 +339,15 @@
             @if (inSlot != null)
             {
                 <div class="in-slot-card">
-                    <p class="in-slot-eyebrow">@inSlot.Eyebrow</p>
+                    <p class="content-scope-label">@inSlot.Eyebrow</p>
                     <h4 class="in-slot-title">@inSlot.Title</h4>
                     <p class="in-slot-body prose-text">@inSlot.Body</p>
                 </div>
             }
-            @if (!string.IsNullOrWhiteSpace(fig.DivinatoryMeaning))
+            @if (!string.IsNullOrWhiteSpace(fig.DivinatoryMeaning) && !hideCorpusDivinatory)
             {
                 <div class="context-block divinatory-hero @(inSlot == null ? "is-lead" : "")">
+                    <p class="content-scope-label">Figure · General meaning</p>
                     <h4 class="prose-heading">Divinatory Meaning</h4>
                     <p class="prose-text divinatory-text">@fig.DivinatoryMeaning</p>
                 </div>
@@ -181,6 +362,7 @@
             @if (!hideGeofancyOnly && fig.CoreMeaning?.Any() == true)
             {
                 <div class="context-block">
+                    <p class="content-scope-label">Figure · Core keywords</p>
                     <h4 class="prose-heading">Core Meaning</h4>
                     <div class="pill-row">
                         @foreach (var tag in fig.CoreMeaning)
@@ -199,7 +381,8 @@
         @if (showVerdict)
         {
         <section id="section-verdict" class="detail-card">
-            <h3 class="card-title">Reading Verdict</h3>
+            <p class="content-scope-label card-scope-label">Figure · Reading verdict</p>
+            <h3 class="card-title">Favorable &amp; Unfavorable</h3>
             <div class="verdict-grid">
                 <div class="verdict-col is-favorable fav-card">
                     <h4>Favorable</h4>
@@ -235,13 +418,13 @@
         {
             <section id="section-interpretation" class="detail-card">
                 <details open="@openInterpretation">
-                    <summary class="details-summary">Interpretation &amp; Imagery</summary>
+                    <summary class="details-summary">Figure · Interpretation &amp; Imagery</summary>
                     <div class="details-body">
-                        @if (!string.IsNullOrWhiteSpace(fig.Imagery) || fig.TraditionalImagery?.Any() == true)
+                        @if ((!string.IsNullOrWhiteSpace(fig.Imagery) && !hideCorpusImagery) || fig.TraditionalImagery?.Any() == true)
                         {
                             <div class="context-block imagery-card">
                                 <h4 class="prose-heading">Imagery</h4>
-                                @if (!string.IsNullOrWhiteSpace(fig.Imagery))
+                                @if (!string.IsNullOrWhiteSpace(fig.Imagery) && !hideCorpusImagery)
                                 {
                                     <p class="imagery-primary prose-text">@fig.Imagery</p>
                                 }
@@ -277,7 +460,7 @@
                                 }
                             </div>
                         }
-                        @if (!string.IsNullOrWhiteSpace(fig.Commentary))
+                        @if (!string.IsNullOrWhiteSpace(fig.Commentary) && !hideCorpusCommentary)
                         {
                             <div class="context-block prose-card">
                                 <h4 class="prose-heading">Commentary</h4>
@@ -307,7 +490,7 @@
 
         <section id="section-correspondences" class="detail-card">
             <details open="@openCorrespondences">
-                <summary class="details-summary">Body, Elements &amp; Correspondences</summary>
+                <summary class="details-summary">Figure · Elements &amp; Correspondences</summary>
                 <div class="details-body">
                     <div class="elements-card">
                         <h4 class="prose-heading">Elemental Composition</h4>
@@ -321,10 +504,12 @@
                                 </div>
                             }
                         </div>
-                        @if (!string.IsNullOrWhiteSpace(fig.InnerEl) || !string.IsNullOrWhiteSpace(fig.OuterEl) || !string.IsNullOrWhiteSpace(fig.ElementalPattern))
+                        @if ((!string.IsNullOrWhiteSpace(fig.InnerEl) && !hideCorpusInnerEl)
+                             || (!string.IsNullOrWhiteSpace(fig.OuterEl) && !hideCorpusOuterEl)
+                             || !string.IsNullOrWhiteSpace(fig.ElementalPattern))
                         {
                             <div class="inner-outer-row">
-                                @if (!string.IsNullOrWhiteSpace(fig.InnerEl))
+                                @if (!string.IsNullOrWhiteSpace(fig.InnerEl) && !hideCorpusInnerEl)
                                 {
                                     <span class="io-pill">
                                         <span class="io-label">Inner</span>
@@ -332,7 +517,7 @@
                                         <span class="io-value">@fig.InnerEl</span>
                                     </span>
                                 }
-                                @if (!string.IsNullOrWhiteSpace(fig.OuterEl))
+                                @if (!string.IsNullOrWhiteSpace(fig.OuterEl) && !hideCorpusOuterEl)
                                 {
                                     <span class="io-pill">
                                         <span class="io-label">Outer</span>
@@ -380,7 +565,7 @@
                     {
                         <div class="person-card">
                             <h4 class="prose-heading">Person &amp; Body</h4>
-                            @if (!string.IsNullOrWhiteSpace(fig.BodyType))
+                            @if (!string.IsNullOrWhiteSpace(fig.BodyType) && !hideCorpusBodyType)
                             {
                                 <div class="person-row">
                                     <p class="person-label">Body</p>
@@ -401,7 +586,7 @@
                                     <p class="prose-text person-body">@fig.TraditionalBodyType</p>
                                 </div>
                             }
-                            @if (!string.IsNullOrWhiteSpace(fig.CharacterType))
+                            @if (!string.IsNullOrWhiteSpace(fig.CharacterType) && !hideCorpusCharacterType)
                             {
                                 <div class="person-row">
                                     <p class="person-label">Character</p>
@@ -422,17 +607,18 @@
                                     <p class="prose-text person-body">@fig.TraditionalCharacterType</p>
                                 </div>
                             }
-                            @if (!string.IsNullOrWhiteSpace(fig.Anatomy) || !string.IsNullOrWhiteSpace(fig.Colors))
+                            @if ((!string.IsNullOrWhiteSpace(fig.Anatomy) && !hideCorpusAnatomy)
+                                 || (!string.IsNullOrWhiteSpace(fig.Colors) && !hideCorpusColors))
                             {
                                 <div class="person-meta-row">
-                                    @if (!string.IsNullOrWhiteSpace(fig.Anatomy))
+                                    @if (!string.IsNullOrWhiteSpace(fig.Anatomy) && !hideCorpusAnatomy)
                                     {
                                         <span class="person-meta">
                                             <span class="person-meta-label">Anatomy</span>
                                             <span class="person-meta-value">@fig.Anatomy</span>
                                         </span>
                                     }
-                                    @if (!string.IsNullOrWhiteSpace(fig.Colors))
+                                    @if (!string.IsNullOrWhiteSpace(fig.Colors) && !hideCorpusColors)
                                     {
                                         <span class="person-meta">
                                             <span class="person-meta-label">Colors</span>
@@ -469,29 +655,35 @@
                     @if (showHouseAffinity)
                     {
                         <div class="house-affinity-card">
-                            <h4 class="prose-heading">House Affinity</h4>
-                            <div class="affinity-row">
-                                @if (!string.IsNullOrWhiteSpace(fig.StrongHouse))
-                                {
-                                    <div class="affinity-pill affinity-strong">
-                                        <span class="affinity-glyph">▲</span>
-                                        <span class="affinity-label">Strong</span>
-                                        <span class="affinity-value">@fig.StrongHouse</span>
-                                    </div>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(fig.StrongHouse) && !string.IsNullOrWhiteSpace(fig.WeakHouse))
-                                {
-                                    <span class="affinity-vs">vs.</span>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(fig.WeakHouse))
-                                {
-                                    <div class="affinity-pill affinity-weak">
-                                        <span class="affinity-glyph">▼</span>
-                                        <span class="affinity-label">Weak</span>
-                                        <span class="affinity-value">@fig.WeakHouse</span>
-                                    </div>
-                                }
-                            </div>
+                            <p class="content-scope-label">Figure · House affinity</p>
+                            <h4 class="prose-heading">Strong &amp; Weak Houses</h4>
+                            @if ((!string.IsNullOrWhiteSpace(fig.StrongHouse) && !hideCorpusStrongHouse)
+                                 || (!string.IsNullOrWhiteSpace(fig.WeakHouse) && !hideCorpusWeakHouse))
+                            {
+                                <div class="affinity-row">
+                                    @if (!string.IsNullOrWhiteSpace(fig.StrongHouse) && !hideCorpusStrongHouse)
+                                    {
+                                        <div class="affinity-pill affinity-strong">
+                                            <span class="affinity-glyph">▲</span>
+                                            <span class="affinity-label">Strong</span>
+                                            <span class="affinity-value">@fig.StrongHouse</span>
+                                        </div>
+                                    }
+                                    @if ((!string.IsNullOrWhiteSpace(fig.StrongHouse) && !hideCorpusStrongHouse)
+                                         && (!string.IsNullOrWhiteSpace(fig.WeakHouse) && !hideCorpusWeakHouse))
+                                    {
+                                        <span class="affinity-vs">vs.</span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(fig.WeakHouse) && !hideCorpusWeakHouse)
+                                    {
+                                        <div class="affinity-pill affinity-weak">
+                                            <span class="affinity-glyph">▼</span>
+                                            <span class="affinity-label">Weak</span>
+                                            <span class="affinity-value">@fig.WeakHouse</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
                             @if (showGreerAlongside && greerRef != null
                                  && (!string.IsNullOrWhiteSpace(greerRef.StrongHouse) || !string.IsNullOrWhiteSpace(greerRef.WeakHouse)))
                             {
@@ -570,7 +762,7 @@
                             @if (houseBundle.Governs?.Any() == true)
                             {
                                 <div class="reference-subcard detail-card governs-card">
-                                    <h3 class="card-title">What it Governs</h3>
+                                    <h3 class="card-title">House · What it Governs</h3>
                                     <ul class="bullet-list two-col-bullets">
                                         @foreach (var g in houseBundle.Governs) { <li>@g</li> }
                                     </ul>
@@ -597,7 +789,7 @@
                             @if (houseBundle.ExampleQuestions?.Any() == true)
                             {
                                 <div class="reference-subcard detail-card example-questions-card">
-                                    <h3 class="card-title">Example Questions</h3>
+                                    <h3 class="card-title">House · Example Questions</h3>
                                     <ul class="bullet-list">
                                         @foreach (var q in houseBundle.ExampleQuestions) { <li>@q</li> }
                                     </ul>
@@ -606,13 +798,13 @@
                         }
                         else if (houseEntry != null)
                         {
-                        <p class="reference-section-eyebrow">House Reference · @houseEntry.House</p>
+                        <p class="reference-section-eyebrow">House · Reference · @houseEntry.House</p>
 
                         @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName)
                              || !string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
                         {
                             <div class="reference-subcard detail-card reference-card house-identity-card">
-                                <h3 class="card-title">House Identity</h3>
+                                <h3 class="card-title">House · Identity</h3>
                                 @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName))
                                 {
                                     <p class="reference-title-line">@houseEntry.TraditionalName</p>
@@ -627,7 +819,7 @@
                         @if (houseEntry.Governs?.Any() == true)
                         {
                             <div class="reference-subcard detail-card governs-card">
-                                <h3 class="card-title">What it Governs</h3>
+                                <h3 class="card-title">House · What it Governs</h3>
                                 <ul class="bullet-list two-col-bullets">
                                     @foreach (var g in houseEntry.Governs) { <li>@g</li> }
                                 </ul>
@@ -637,15 +829,25 @@
                         @if (!string.IsNullOrWhiteSpace(houseEntry.SignificatorOfQuesitedWhen))
                         {
                             <div class="reference-subcard detail-card prose-card significator-card">
-                                <h3 class="card-title">When This House Is the Quesited</h3>
+                                <h3 class="card-title">House · When Quesited</h3>
                                 <p class="prose-text">@houseEntry.SignificatorOfQuesitedWhen</p>
+                            </div>
+                        }
+
+                        @if (houseEntry.ReadWhen?.Any() == true)
+                        {
+                            <div class="reference-subcard detail-card read-when-card">
+                                <h3 class="card-title">House · Read When</h3>
+                                <ul class="bullet-list compact">
+                                    @foreach (var rw in houseEntry.ReadWhen) { <li>@rw</li> }
+                                </ul>
                             </div>
                         }
 
                         @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
                         {
                             <div class="reference-subcard detail-card prose-card essence-card">
-                                <h3 class="card-title">Interpretive Essence</h3>
+                                <h3 class="card-title">House · Interpretive Essence</h3>
                                 <p class="prose-text">@houseEntry.InterpretiveEssence</p>
                             </div>
                         }
@@ -653,7 +855,14 @@
                         @if (HasReadingCraftContent(houseEntry))
                         {
                             <div class="reference-subcard detail-card reading-craft-card">
-                                <h3 class="card-title">Reading Craft</h3>
+                                <h3 class="card-title">House · Reading Craft</h3>
+                                @if (!string.IsNullOrWhiteSpace(houseEntry.ClassicalNote))
+                                {
+                                    <div class="craft-subsection">
+                                        <h4 class="craft-subheading">Keep in Mind</h4>
+                                        <p class="prose-text">@houseEntry.ClassicalNote</p>
+                                    </div>
+                                }
                                 @if (houseEntry.KeySignificators?.Any() == true)
                                 {
                                     <div class="craft-subsection">
@@ -685,7 +894,7 @@
                         @if (!string.IsNullOrWhiteSpace(houseEntry.Notes))
                         {
                             <div class="reference-subcard detail-card prose-card notes-card">
-                                <h3 class="card-title">Notes</h3>
+                                <h3 class="card-title">House · Notes</h3>
                                 <p class="prose-text">@houseEntry.Notes</p>
                             </div>
                         }
@@ -693,7 +902,7 @@
                         @if (houseEntry.ExampleQuestions?.Any() == true)
                         {
                             <div class="reference-subcard detail-card example-questions-card">
-                                <h3 class="card-title">Example Questions</h3>
+                                <h3 class="card-title">House · Example Questions</h3>
                                 <ul class="bullet-list">
                                     @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
                                 </ul>
@@ -790,13 +999,13 @@
                 <details open="@openCourt">
                     <summary class="details-summary">Court · @courtEntry!.Placement</summary>
                     <div class="details-body reference-stack">
-                        <p class="reference-section-eyebrow">Court Reference · @courtEntry.Placement</p>
+                        <p class="reference-section-eyebrow">Court · Reference · @courtEntry.Placement</p>
 
                         @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName)
                              || !string.IsNullOrWhiteSpace(courtEntry.GeneratedBy))
                         {
                             <div class="reference-subcard detail-card reference-card court-identity-card">
-                                <h3 class="card-title">Court Identity</h3>
+                                <h3 class="card-title">Court · Identity</h3>
                                 @if (!string.IsNullOrWhiteSpace(courtEntry.TraditionalName))
                                 {
                                     <p class="reference-title-line">@courtEntry.TraditionalName</p>
@@ -811,7 +1020,7 @@
                         @if (courtEntry.Meaning?.Any() == true)
                         {
                             <div class="reference-subcard detail-card meaning-card">
-                                <h3 class="card-title">Meaning</h3>
+                                <h3 class="card-title">Court · Meaning</h3>
                                 <ul class="bullet-list">
                                     @foreach (var m in courtEntry.Meaning) { <li>@m</li> }
                                 </ul>
@@ -821,7 +1030,7 @@
                         @if (!string.IsNullOrWhiteSpace(courtEntry.UtilityInReading))
                         {
                             <div class="reference-subcard detail-card prose-card utility-card">
-                                <h3 class="card-title">Utility in Reading</h3>
+                                <h3 class="card-title">Court · Utility in Reading</h3>
                                 <p class="prose-text">@courtEntry.UtilityInReading</p>
                             </div>
                         }
@@ -829,7 +1038,7 @@
                         @if (!string.IsNullOrWhiteSpace(courtEntry.Essence))
                         {
                             <div class="reference-subcard detail-card prose-card essence-card">
-                                <h3 class="card-title">Essence</h3>
+                                <h3 class="card-title">Court · Essence</h3>
                                 <p class="prose-text">@courtEntry.Essence</p>
                             </div>
                         }
@@ -837,7 +1046,7 @@
                         @if (courtEntry.ReadWhen?.Any() == true)
                         {
                             <div class="reference-subcard detail-card read-when-card">
-                                <h3 class="card-title">Read When</h3>
+                                <h3 class="card-title">Court · Read When</h3>
                                 <ul class="bullet-list compact">
                                     @foreach (var rw in courtEntry.ReadWhen) { <li>@rw</li> }
                                 </ul>
@@ -847,7 +1056,7 @@
                         @if (courtEntry.Pitfalls?.Any() == true)
                         {
                             <div class="reference-subcard detail-card pitfalls-card">
-                                <h3 class="card-title">Pitfalls</h3>
+                                <h3 class="card-title">Court · Pitfalls</h3>
                                 <ul class="bullet-list compact bullet-warning">
                                     @foreach (var p in courtEntry.Pitfalls) { <li>@p</li> }
                                 </ul>
@@ -857,7 +1066,7 @@
                         @if (courtEntry.Examples?.Any() == true)
                         {
                             <div class="reference-subcard detail-card examples-card">
-                                <h3 class="card-title">Examples</h3>
+                                <h3 class="card-title">Court · Examples</h3>
                                 <ul class="bullet-list compact">
                                     @foreach (var e in courtEntry.Examples) { <li>@e</li> }
                                 </ul>
@@ -975,6 +1184,15 @@
         || !string.IsNullOrWhiteSpace(fig.DivinatoryMeaning)
         || fig.CoreMeaning?.Any() == true;
 
+    private static bool HasVisibleContextContent(
+        FigureModel fig,
+        InSlotInfo? inSlot,
+        bool hideCorpusDivinatory,
+        bool hideGeofancyOnly) =>
+        inSlot != null
+        || (!hideCorpusDivinatory && !string.IsNullOrWhiteSpace(fig.DivinatoryMeaning))
+        || (!hideGeofancyOnly && fig.CoreMeaning?.Any() == true);
+
     private static string GetQualityChipClass(string? quality) => quality?.Trim().ToLowerInvariant() switch
     {
         "mobile" => "chip-quality chip-quality-mobile",
@@ -990,6 +1208,17 @@
         || !string.IsNullOrWhiteSpace(fig.Commentary)
         || fig.ModernExamples?.Any() == true;
 
+    private static bool HasVisibleInterpretationContent(
+        FigureModel fig,
+        bool hideCorpusImagery,
+        bool hideCorpusCommentary) =>
+        (!hideCorpusImagery && !string.IsNullOrWhiteSpace(fig.Imagery))
+        || fig.TraditionalImagery?.Any() == true
+        || !string.IsNullOrWhiteSpace(fig.ElementalSynthesis)
+        || fig.Interpretation?.Any() == true
+        || (!hideCorpusCommentary && !string.IsNullOrWhiteSpace(fig.Commentary))
+        || fig.ModernExamples?.Any() == true;
+
     private static bool HasPersonContent(FigureModel fig) =>
         !string.IsNullOrWhiteSpace(fig.BodyType)
         || !string.IsNullOrWhiteSpace(fig.TraditionalBodyType)
@@ -997,6 +1226,19 @@
         || !string.IsNullOrWhiteSpace(fig.TraditionalCharacterType)
         || !string.IsNullOrWhiteSpace(fig.Anatomy)
         || !string.IsNullOrWhiteSpace(fig.Colors);
+
+    private static bool HasVisiblePersonContent(
+        FigureModel fig,
+        bool hideCorpusBodyType,
+        bool hideCorpusCharacterType,
+        bool hideCorpusAnatomy,
+        bool hideCorpusColors) =>
+        (!hideCorpusBodyType && !string.IsNullOrWhiteSpace(fig.BodyType))
+        || !string.IsNullOrWhiteSpace(fig.TraditionalBodyType)
+        || (!hideCorpusCharacterType && !string.IsNullOrWhiteSpace(fig.CharacterType))
+        || !string.IsNullOrWhiteSpace(fig.TraditionalCharacterType)
+        || (!hideCorpusAnatomy && !string.IsNullOrWhiteSpace(fig.Anatomy))
+        || (!hideCorpusColors && !string.IsNullOrWhiteSpace(fig.Colors));
 
     private static bool HasPlanetaryContent(FigureModel fig) =>
         !string.IsNullOrWhiteSpace(fig.PlanetaryIntelligence)
@@ -1036,7 +1278,9 @@
     }
 
     private static bool HasReadingCraftContent(HouseDirectoryEntry houseEntry) =>
-        houseEntry.KeySignificators?.Any() == true
+        houseEntry.ReadWhen?.Any() == true
+        || !string.IsNullOrWhiteSpace(houseEntry.ClassicalNote)
+        || houseEntry.KeySignificators?.Any() == true
         || houseEntry.CommonMisreadings?.Any() == true
         || !string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch);
 
@@ -1069,7 +1313,7 @@
                     "Reconciler"   => "As Reconciler",
                     _              => "In this slot"
                 };
-                return new InSlotInfo("This figure in this court slot", title, courtBody);
+                return new InSlotInfo("Figure · In this court role", title, courtBody);
             }
             return null;
         }
@@ -1081,7 +1325,7 @@
                 && fig.InHouses.TryGetValue(n, out var houseBody)
                 && !string.IsNullOrWhiteSpace(houseBody))
             {
-                return new InSlotInfo("This figure in this house slot", $"In House {n}", houseBody);
+                return new InSlotInfo("Figure · In this house", $"House {n} occupant", houseBody);
             }
         }
 
@@ -1104,6 +1348,29 @@
     {
         if (Selection?.Kind != SlotKind.House || Selection.HouseNumber == null) return null;
         return Houses.FirstOrDefault(h => h.Id == Selection.HouseNumber.Value);
+    }
+
+    /// <summary>
+    /// Skip stacking Watch under Route when the caution mostly restates the tip.
+    /// </summary>
+    private static bool CautionDuplicatesTip(string? caution, string? tip)
+    {
+        if (string.IsNullOrWhiteSpace(caution) || string.IsNullOrWhiteSpace(tip)) return false;
+        static string Normalize(string s) =>
+            new string(s.ToLowerInvariant().Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)).ToArray());
+        var c = Normalize(caution).Trim();
+        var t = Normalize(tip).Trim();
+        if (c.Length < 16 || t.Length < 16) return false;
+        if (c.Contains(t) || t.Contains(c)) return true;
+        var tipWords = t.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Where(w => w.Length >= 5)
+            .ToHashSet(StringComparer.Ordinal);
+        if (tipWords.Count == 0) return false;
+        var cautionWords = c.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Where(w => w.Length >= 5)
+            .ToHashSet(StringComparer.Ordinal);
+        var shared = tipWords.Count(w => cautionWords.Contains(w));
+        return shared >= 3 && shared >= tipWords.Count * 0.6;
     }
 
     private CourtDirectoryEntry? ResolveCourtEntry()

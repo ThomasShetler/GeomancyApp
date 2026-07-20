@@ -501,6 +501,8 @@ namespace GeomancyWebUI.Services
                 InterpretiveEssence = src.InterpretiveEssence ?? string.Empty,
                 KeySignificators = src.KeySignificators ?? new List<string>(),
                 CommonMisreadings = src.CommonMisreadings ?? new List<string>(),
+                ClassicalNote = src.ClassicalNote ?? string.Empty,
+                ReadWhen = src.ReadWhen ?? new List<string>(),
                 FigureCombinationsToWatch = src.FigureCombinationsToWatch ?? string.Empty,
                 ExampleQuestions = src.ExampleQuestions ?? new List<string>(),
             };

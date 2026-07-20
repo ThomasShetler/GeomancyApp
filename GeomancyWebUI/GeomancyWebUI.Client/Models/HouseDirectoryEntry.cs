@@ -26,6 +26,12 @@ namespace GeomancyWebUI.Client.Models
         [JsonPropertyName("common_misreadings")]
         public List<string> CommonMisreadings { get; set; } = new List<string>();
 
+        [JsonPropertyName("classical_note")]
+        public string ClassicalNote { get; set; } = string.Empty;
+
+        [JsonPropertyName("read_when")]
+        public List<string> ReadWhen { get; set; } = new List<string>();
+
         [JsonPropertyName("figure_combinations_to_watch")]
         public string FigureCombinationsToWatch { get; set; } = string.Empty;
 

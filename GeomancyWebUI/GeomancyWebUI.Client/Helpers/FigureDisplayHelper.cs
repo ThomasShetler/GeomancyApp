@@ -48,7 +48,9 @@ namespace GeomancyWebUI.Client.Helpers
             || !string.IsNullOrWhiteSpace(fig.PlanetaryAngel);
 
         public static bool HasReadingCraftContent(HouseDirectoryEntry houseEntry) =>
-            houseEntry.KeySignificators?.Any() == true
+            houseEntry.ReadWhen?.Any() == true
+            || !string.IsNullOrWhiteSpace(houseEntry.ClassicalNote)
+            || houseEntry.KeySignificators?.Any() == true
             || houseEntry.CommonMisreadings?.Any() == true
             || !string.IsNullOrWhiteSpace(houseEntry.FigureCombinationsToWatch);
 

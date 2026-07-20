@@ -5,108 +5,117 @@
         "id": 13,
         "placement": "Right Witness",
         "traditional_name": "Testis Dexter",
-        "generated_by": "Adding the figures of the 9th and 10th Houses (the First and Second Nieces).",
+        "generated_by": "Adding the figures of the 9th and 10th Houses (the First and Second Nieces, from the Mothers' side of the shield).",
         "meaning": [
-          "Past vector: how the querent arrived at the question",
-          "Inner stance—courage, denial, fatigue, or appetite for change",
-          "Root fuel: habit, debt, loyalty, or old grief still accruing interest"
+          "The querent's side of the court: will, motive, and what they bring to the matter",
+          "In one reading mode, the querent personally; in another, how the matter opens or begins",
+          "Built from the shield's querent-side triads: the querent's condition and the situation as they know it"
         ],
-        "utility_in_reading": "Turn to the Right Witness before you grant full authority to the Judge: it sorts motive from melodrama and history from hype. It is the querent-side lane—what they confess aloud and what the chart confesses on their behalf.",
-        "essence": "The dexter witness is upstream weather—momentum, bias, and unfinished business tinting the present. It seldom contradicts the First; more often it thickens the portrait until temperament reads honestly.",
+        "utility_in_reading": "The Right Witness is the querent-side voice in the court. Classical readers treat it as the querent's argument, inner momentum, or starting position before the Judge synthesizes both witnesses. Read it against the Left Witness, not in isolation.",
+        "essence": "The Right Witness speaks for the querent's side: what they bring, how they enter the matter, and the force behind their question.",
         "read_when": [
-          "Career turns where years of burnout precede the résumé question",
-          "Relationship charts where an old attachment still sets the thermostat",
-          "Money crises where spending rhythms antedate the emergency"
+          "Before the Judge, when you need the querent's side of the court",
+          "When the question turns on what the querent brings: motive, history, courage, denial, or appetite for change",
+          "When you compare the Right Witness to the First house to test whether the querent's own significator agrees",
+          "When the matter reads as a progression and you need how it opens or begins",
+          "When the chart names another person and the witnesses are read as querent (Right) against quesited (Left)"
         ],
         "pitfalls": [
-          "Reading it as prophecy of the future rather than soil in which the future grows",
-          "Under-weighting agreement with the First—when they align, lean into candor",
-          "Overwriting the figure with the story the querent prefers"
+          "Reading it as the future; classical usage places the Left Witness closer to outcome, circumstance, or how the matter ends",
+          "Treating it as the whole answer; the Judge alone holds the court's verdict",
+          "Ignoring the Ninth and Tenth houses that generate it when you need the querent-side detail behind the witness"
         ],
         "examples": [
-          "Founder admits they already chose to sell—Via in the Right Witness names motion decided before the casting",
-          "Student asks about an exam while Carcer names schedules and obligation—the Witness speaks study debt, not drama"
+          "Right Witness Albus in a business question: the querent's plan or judgment is sound, even if the Left Witness shows harder conditions ahead",
+          "Right Witness agrees with the First house: trust that the querent's stated position matches the chart"
         ]
       },
       {
         "id": 14,
         "placement": "Left Witness",
         "traditional_name": "Testis Sinister",
-        "generated_by": "Adding the figures of the 11th and 12th Houses (the Third and Fourth Nieces).",
+        "generated_by": "Adding the figures of the 11th and 12th Houses (the Third and Fourth Nieces, from the Daughters' side of the shield).",
         "meaning": [
-          "Incoming vector: what presses against the querent now",
-          "Environmental tone—market, kin network, boss, or literal weather",
-          "Near-future hinge: offers, deadlines, rivals advancing pieces"
+          "The world's side of the court: circumstance, resistance, and what presses in from outside",
+          "In one reading mode, the quesited or other party; in another, how the matter ends or resolves",
+          "Built from the shield's outer triads: the setting of the question and the people or conditions surrounding it"
         ],
-        "utility_in_reading": "Balance Left Witness against Right: the tension between yesterday’s momentum and tomorrow’s lever is often the whole drama. Think of it as the board’s reply to the square where the querent stands.",
-        "essence": "The sinister witness names outer leverage—partners, regulators, lovers, cycles—that do not originate in the querent’s skull yet still bend outcomes.",
+        "utility_in_reading": "The Left Witness is the other voice in the court. Classical readers treat it as external pressure, the quesited's position, opposition, or the conditions under which the answer must land. The Judge is literally the sum of Right and Left.",
+        "essence": "The Left Witness speaks for the other side of the matter: outside pressure, the quesited, opposition, or the conditions that will shape the outcome.",
         "read_when": [
-          "A hiring freeze lands on an offer already drafted",
-          "A partner’s visa timeline collides with wedding plans",
-          "A landlord sells the building—tenant’s chart wants environmental facts"
+          "Before the Judge, when you need the world's side of the court",
+          "When the question turns on circumstance, opposition, deadlines, allies, hidden limits, or another party's move",
+          "When Right and Left Witnesses differ and you need to see which voice the Judge favors",
+          "When the matter reads as a progression and you need how it ends or resolves",
+          "When the chart names another person and the witnesses are read as querent (Right) against quesited (Left)"
         ],
         "pitfalls": [
-          "Defaulting to secret enemy; sometimes the Left Witness is timely aid",
-          "Forgetting mobile figures turn faster than stable ones",
-          "Mistaking long-tail Sentence for this nearer hinge"
+          "Assuming enmity by default; the Left Witness can show help, promise, or favorable circumstance",
+          "Reading it as the querent's inner life; that belongs to the Right Witness and the First house",
+          "Confusing it with the Reconciler, which shows how the Judge lands on the querent, not outside pressure"
         ],
         "examples": [
-          "Left Witness Acquisitio with Right Witness Amissio—resources arrive as pride or liquidity drains; trace which witness leads the exchange",
-          "Populus left with Puer right—crowd noise encouraging a rash move; counsel pacing before commitment"
+          "Left Witness Caput in a business question: the venture or opening is promising, even if the querent's side is cautious",
+          "Left Witness Acquisitio with Right Witness Amissio: resources or opportunity arrive against loss or drain on the querent's side; trace which witness the Judge follows"
         ]
       },
       {
         "id": 15,
         "placement": "The Judge",
         "traditional_name": "Iudex",
-        "generated_by": "Adding the figures of the Right Witness (13) and Left Witness (14).",
+        "generated_by": "Adding the figures of the Right Witness (13) and Left Witness (14) line by line.",
         "meaning": [
-          "Verdict plane—yes, no, wait, or mixed with teeth",
-          "Synthesis of both witnesses through elemental addition",
-          "Integrity check: paired dots must read even; if odd, recount the Mothers"
+          "The court's verdict: the synthesis of both witnesses",
+          "The headline answer to the question at the level of the whole chart",
+          "A figure of even points only; if the arithmetic fails, the shield must be recounted"
         ],
-        "utility_in_reading": "The Judge compresses the witnesses into one hue once vectors have had their say. Geomantic arithmetic is prior art—confirm the math, then narrate the mercy or severity with proportion.",
-        "essence": "Judges crystallize the quarrel between witnesses into a single quality—benefic, malefic, mixed, or diffuse. They headline the chart; houses and court-mates supply the fine print.",
+        "utility_in_reading": "Classical geomancy treats the Judge as the court's answer. Read it first to frame the shield, then use the houses, perfections, and witnesses for detail. It states the outcome in broad terms; the rest of the chart explains how and why.",
+        "essence": "The Judge is the court's verdict: the single figure formed from both witnesses, and the headline answer the chart gives.",
         "read_when": [
-          "Binary business go or no-go after context is named",
-          "Medical layouts once specialists and sites are identified",
-          "Legal questions where counsel is already engaged"
+          "Always, once the shield is complete and you want the court's answer to the question",
+          "First among the court figures, to frame how the rest of the shield and house chart should be read",
+          "When the question asks chiefly whether something will happen, fail, wait, or resolve with qualification",
+          "After weighing Right and Left Witness to see which side the verdict favors",
+          "Before turning to houses for detail, perfections, or the Way of Points"
         ],
         "pitfalls": [
-          "Discarding a Judge because the emotional answer disagrees",
-          "Skipping even-dot validation on the paired lines",
-          "Isolating the Judge from the rest of the court"
+          "Skipping the Judge and letting the house chart alone stand in for the court's verdict",
+          "Discarding the Judge because a single house figure tells a prettier story",
+          "Forgetting that only even figures can be Judge; odd arithmetic means the shield was built incorrectly"
         ],
         "examples": [
-          "Judge Fortuna Major with Sentence Tristitia—success lands with a quieter cost; name the sleepless clause",
-          "Judge Populus—outcome tracks allies and rumor; glance toward the Eleventh before closing"
+          "Judge Acquisitio from Albus and Caput: the deal or course is profitable overall, though the witnesses named different parts of the case",
+          "Judge Populus: the outcome follows allies, rumor, or collective movement; check the Eleventh house for detail"
         ]
       },
       {
         "id": 16,
         "placement": "The Reconciler",
         "traditional_name": "Sentence / Fallout / Superjudge / Vindex",
-        "generated_by": "Adding the figure of the Judge (15) to the figure of the First House (1 - The First Mother).",
+        "generated_by": "Adding the figure of the Judge (15) to the figure of the First House (1, the First Mother).",
         "meaning": [
-          "Aftermath: how the verdict settles into the querent’s life",
-          "Coping arc—relief, regret, or hunger for the next crisis",
-          "Slow variables: leases, visas, therapy cadence, vesting cliffs"
+          "How the Judge's verdict combines with the querent",
+          "The personal effect of the judgment on the querent's life and condition",
+          "Whether the querent can accept, bear, or prosper under the outcome the Judge names"
         ],
-        "utility_in_reading": "Sentence narrates the second wave—feelings, cash flow, and body six months past the headline. It keeps readings from stopping at champagne and rescues proportion when optimism runs ahead of structure.",
-        "essence": "The Reconciler is epilogue: whether promotion nourishes partnership, whether settlement restores sleep, whether grant terms mature into golden handcuffs or genuine freedom.",
+        "utility_in_reading": "The Reconciler does not replace the Judge. It is Judge plus First House, so it translates the court's verdict into personal terms: what that answer will mean for this querent once it lands. When it repeats the Judge, the outcome and its personal effect are of one piece.",
+        "essence": "The Reconciler joins the Judge to the First House: how the verdict sits on the querent, and what it will mean for them in practice.",
         "read_when": [
-          "Merger charts asking what culture feels like after the ink dries",
-          "Breakups where life after the lease matters as much as the split",
-          "Litigation ends leaving tax and stamina bills to pay"
+          "After the Judge, when you need the personal effect of the verdict on the querent",
+          "When the querent asks what this means for me, not only whether it will happen",
+          "When Judge and Reconciler show different figures or tones, so reception, cost, or relief becomes part of the reading",
+          "When Judge and Reconciler repeat the same figure, to show the outcome will land on the querent directly without softening or extra burden",
+          "When the First house is central to the question and you need to see the verdict combined with the querent's own significator"
         ],
         "pitfalls": [
-          "Granting Sentence the same constitutional weight as Judge—related voice, different tempo",
-          "Missing when Sentence repeats Judge—then the outcome tends to stick",
-          "Forcing catastrophe when repetition simply underscores caution"
+          "Treating the Reconciler as a second verdict that can overturn the Judge",
+          "Reading it before the Judge, when it has no meaning without the court's answer",
+          "Missing repetition with the Judge; the same figure in both places usually means the outcome will stick as stated"
         ],
         "examples": [
-          "Sentence Carcer after Judge Laetitia—celebration followed by structure that limits spontaneity",
-          "Caput following Cauda—new role or resource after a closing chapter"
+          "Judge Laetitia with Reconciler Carcer: the answer is favorable, but the querent will soon feel bound by new structure or obligation",
+          "Judge and Reconciler both Fortuna Major: the outcome is favorable and the querent can actually live with and benefit from it",
+          "Judge Fortuna Major with Reconciler Tristitia: success arrives, but with private heaviness or regret for the querent"
         ]
       }
     ]
