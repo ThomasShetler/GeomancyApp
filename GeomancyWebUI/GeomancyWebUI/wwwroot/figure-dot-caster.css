@@ -1006,11 +1006,9 @@
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-side {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     height: 100%;
     min-height: 0;
-    width: 8.5rem;
-    min-width: 8.5rem;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-rows {
@@ -1048,12 +1046,10 @@
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
     height: 100%;
     align-self: stretch;
-    width: 8.5rem;
-    min-width: 8.5rem;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side .figure-dot-caster-actions--side-bottom,
