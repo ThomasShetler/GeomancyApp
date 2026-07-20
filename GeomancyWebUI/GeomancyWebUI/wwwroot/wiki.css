@@ -1055,6 +1055,83 @@
     column-gap: 1.1rem;
 }
 
+.wiki-house-stack .reference-subcard.reference-card {
+    border-left: 3px solid var(--accent-color);
+}
+
+.wiki-house-stack .reference-title-line {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.wiki-house-stack .reference-subtitle {
+    margin: 0.15rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.wiki-house-stack .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.wiki-house-stack .meaning-pill {
+    display: inline-block;
+    padding: 0.18rem 0.52rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    background: rgba(100, 181, 246, 0.12);
+    border: 1px solid var(--border-color);
+}
+
+.wiki-house-stack .bullet-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--text-primary);
+}
+
+.wiki-house-stack .bullet-list.compact li {
+    margin-bottom: 0.25rem;
+    line-height: 1.45;
+}
+
+.wiki-house-stack .reading-craft-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.wiki-house-stack .craft-subsection + .craft-subsection {
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.wiki-house-stack .craft-subheading {
+    margin: 0 0 0.4rem 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+}
+
+.wiki-house-stack .bullet-warning {
+    color: var(--text-primary);
+}
+
+.wiki-house-stack .bullet-warning li::marker {
+    color: #ef5350;
+}
+
+.wiki-house-stack .example-questions-card .bullet-list {
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
 @media (max-width: 640px) {
     .wiki-house-stack .two-col-bullets {
         columns: 1;

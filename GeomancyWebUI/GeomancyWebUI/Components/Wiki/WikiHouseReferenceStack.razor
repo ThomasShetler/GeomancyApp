@@ -6,13 +6,13 @@
     var houseEntry = House;
 
     <div class="reference-stack wiki-house-stack">
-        <p class="reference-section-eyebrow">House Reference · @houseEntry.House</p>
+        <p class="reference-section-eyebrow">House · Reference · @houseEntry.House</p>
 
         @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName)
              || !string.IsNullOrWhiteSpace(houseEntry.AstrologicalCorrespondence))
         {
             <div class="reference-subcard detail-card reference-card house-identity-card">
-                <h3 class="card-title">House Identity</h3>
+                <h3 class="card-title">House · Identity</h3>
                 @if (!string.IsNullOrWhiteSpace(houseEntry.TraditionalName))
                 {
                     <p class="reference-title-line">@houseEntry.TraditionalName</p>
@@ -27,7 +27,7 @@
         @if (houseEntry.Governs?.Any() == true)
         {
             <div class="reference-subcard detail-card governs-card">
-                <h3 class="card-title">What it Governs</h3>
+                <h3 class="card-title">House · What it Governs</h3>
                 <ul class="bullet-list two-col-bullets">
                     @foreach (var g in houseEntry.Governs) { <li>@g</li> }
                 </ul>
@@ -37,15 +37,25 @@
         @if (!string.IsNullOrWhiteSpace(houseEntry.SignificatorOfQuesitedWhen))
         {
             <div class="reference-subcard detail-card prose-card significator-card">
-                <h3 class="card-title">When This House Is the Quesited</h3>
+                <h3 class="card-title">House · When Quesited</h3>
                 <p class="prose-text">@houseEntry.SignificatorOfQuesitedWhen</p>
+            </div>
+        }
+
+        @if (houseEntry.ReadWhen?.Any() == true)
+        {
+            <div class="reference-subcard detail-card read-when-card">
+                <h3 class="card-title">House · Read When</h3>
+                <ul class="bullet-list compact">
+                    @foreach (var rw in houseEntry.ReadWhen) { <li>@rw</li> }
+                </ul>
             </div>
         }
 
         @if (!string.IsNullOrWhiteSpace(houseEntry.InterpretiveEssence))
         {
             <div class="reference-subcard detail-card prose-card essence-card">
-                <h3 class="card-title">Interpretive Essence</h3>
+                <h3 class="card-title">House · Interpretive Essence</h3>
                 <p class="prose-text">@houseEntry.InterpretiveEssence</p>
             </div>
         }
@@ -53,7 +63,14 @@
         @if (FigureDisplayHelper.HasReadingCraftContent(houseEntry))
         {
             <div class="reference-subcard detail-card reading-craft-card">
-                <h3 class="card-title">Reading Craft</h3>
+                <h3 class="card-title">House · Reading Craft</h3>
+                @if (!string.IsNullOrWhiteSpace(houseEntry.ClassicalNote))
+                {
+                    <div class="craft-subsection">
+                        <h4 class="craft-subheading">Keep in Mind</h4>
+                        <p class="prose-text">@houseEntry.ClassicalNote</p>
+                    </div>
+                }
                 @if (houseEntry.KeySignificators?.Any() == true)
                 {
                     <div class="craft-subsection">
@@ -85,7 +102,7 @@
         @if (!string.IsNullOrWhiteSpace(houseEntry.Notes))
         {
             <div class="reference-subcard detail-card prose-card notes-card">
-                <h3 class="card-title">Notes</h3>
+                <h3 class="card-title">House · Notes</h3>
                 <p class="prose-text">@houseEntry.Notes</p>
             </div>
         }
@@ -93,7 +110,7 @@
         @if (houseEntry.ExampleQuestions?.Any() == true)
         {
             <div class="reference-subcard detail-card example-questions-card">
-                <h3 class="card-title">Example Questions</h3>
+                <h3 class="card-title">House · Example Questions</h3>
                 <ul class="bullet-list">
                     @foreach (var q in houseEntry.ExampleQuestions) { <li>@q</li> }
                 </ul>
