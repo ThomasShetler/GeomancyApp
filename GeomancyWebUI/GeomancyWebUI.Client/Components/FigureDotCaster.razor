@@ -181,7 +181,7 @@
                                 @onclick="AcknowledgeCompletionAsync">
                             @(_isAcknowledging
                                 ? (IsLastMother ? "Opening workspace..." : "Continuing...")
-                                : (IsLastMother ? "Generate full chart?" : "Create Next Mother"))
+                                : (IsLastMother ? "Generate chart?" : "Create Next"))
                         </button>
                     </div>
                 }
@@ -306,7 +306,7 @@
     [Parameter] public bool WalkthroughLayout { get; set; }
     /// <summary>House number shown in the post-generate "You got … for Mother N" message.</summary>
     [Parameter] public int MotherHouseNumber { get; set; }
-    /// <summary>When true, the continue button reads "Generate full chart?" instead of "Create Next Mother".</summary>
+    /// <summary>When true, the continue button reads "Generate chart?" instead of "Create Next".</summary>
     [Parameter] public bool IsLastMother { get; set; }
 
     private bool UseWalkthroughSidePanel => WalkthroughLayout && !MobileActionsFirst;
@@ -804,7 +804,7 @@
 
             if (UseWalkthroughSidePanel)
             {
-                // Pause for "You got …" / Create Next Mother (or Generate full chart?).
+                // Pause for "You got …" / Create Next (or Generate chart?).
                 return;
             }
 

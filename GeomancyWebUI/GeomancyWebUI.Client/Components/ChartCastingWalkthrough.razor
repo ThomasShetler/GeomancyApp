@@ -135,7 +135,7 @@
                                         class="figure-dot-caster-btn figure-dot-caster-btn-primary"
                                         disabled="@_isContinuingToWorkspace"
                                         @onclick="ContinueToWorkspaceAsync">
-                                    @(_isContinuingToWorkspace ? "Generating chart..." : "Generate the full chart")
+                                    @(_isContinuingToWorkspace ? "Generating chart..." : "Generate chart")
                                 </button>
                             }
                             else if (HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.Full)
@@ -172,7 +172,7 @@
                                         class="figure-dot-caster-btn figure-dot-caster-btn-primary"
                                         disabled="@_isContinuingToWorkspace"
                                         @onclick="ContinueToWorkspaceAsync">
-                                    @(_isContinuingToWorkspace ? "Generating chart..." : "Generate the full chart")
+                                    @(_isContinuingToWorkspace ? "Generating chart..." : "Generate chart")
                                 </button>
                             }
                             else if (Mode == ChartCastingMode.MothersOnly)
