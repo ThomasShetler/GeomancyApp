@@ -259,7 +259,8 @@
 }
 
 .workspace-mothers-setup-grid ::deep .chart-casting-shield-hint,
-.workspace-mothers-setup-grid ::deep .chart-casting-slot-target {
+.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-header,
+.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-header .chart-casting-slot-target {
     flex-shrink: 0;
 }
 

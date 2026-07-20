@@ -1543,6 +1543,22 @@
     line-height: 1.48;
 }
 
+.chart-casting-mothers-cast-header {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.55rem;
+}
+
+.chart-casting-mothers-cast-header .chart-casting-shield-hint--intro {
+    margin: 0;
+}
+
+.chart-casting-mothers-cast-header .chart-casting-slot-target {
+    margin: 0;
+}
+
 /* Desktop mothers workpanel: same outer frame as the shield chart */
 .chart-casting-mothers-workpanel {
     flex: 0 0 auto;
@@ -1555,20 +1571,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
     overflow: hidden;
     box-sizing: border-box;
-}
-
-.chart-casting-mothers-workpanel .chart-casting-shield-hint--intro {
-    margin: 0;
-    padding: 0.55rem 0.75rem 0.4rem;
-    flex-shrink: 0;
-}
-
-.chart-casting-mothers-workpanel .chart-casting-slot-target {
-    margin: 0;
-    border-radius: 0;
-    border-left: none;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-    flex-shrink: 0;
 }
 
 .chart-casting-mothers-workpanel .figure-dot-caster.is-walkthrough {
@@ -1621,7 +1623,7 @@
     flex-direction: column;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-slot-target {
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-mothers-cast-header .chart-casting-slot-target {
     margin: 0;
     padding: 0.48rem 0.72rem;
     font-size: 0.85rem;

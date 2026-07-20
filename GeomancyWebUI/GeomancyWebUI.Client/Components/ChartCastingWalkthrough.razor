@@ -60,19 +60,21 @@
                     var current = _motherSlots[_currentMotherIndex];
                     @if (!UseEmbeddedMobileMothers)
                     {
+                        <div class="chart-casting-mothers-cast-header">
+                            @if (_currentMotherIndex == 0)
+                            {
+                                <p class="chart-casting-shield-hint chart-casting-shield-hint--intro">
+                                    Tap each row to drop marks, then generate. Place each Mother on the shield slot with the
+                                    <strong>matching house number</strong> (top row reads 8→1 left to right; start with Vita in slot 1).
+                                </p>
+                            }
+                            <p class="chart-casting-slot-target" aria-live="polite">
+                                @GetMotherSlotTargetText(current.HouseNumber)
+                            </p>
+                        </div>
                         <div @ref="_mothersCastAlign" class="chart-casting-mothers-cast-align">
                             <div @ref="_mothersWorkpanel"
                                  class="chart-casting-mothers-workpanel">
-                                @if (_currentMotherIndex == 0)
-                                {
-                                    <p class="chart-casting-shield-hint chart-casting-shield-hint--intro">
-                                        Tap each row to drop marks, then generate. Place each Mother on the shield slot with the
-                                        <strong>matching house number</strong> (top row reads 8→1 left to right; start with Vita in slot 1).
-                                    </p>
-                                }
-                                <p class="chart-casting-slot-target" aria-live="polite">
-                                    @GetMotherSlotTargetText(current.HouseNumber)
-                                </p>
                                 <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                                                  @ref="_activeCaster"
                                                  MotherLabel="@string.Empty"
