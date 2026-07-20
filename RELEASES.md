@@ -11,8 +11,10 @@ Feature and QA release building on the classical house corpus, figure slot rewri
 
 - **Classical house corpus.** All twelve houses rewritten with traditional governs lists, `read_when` triggers, `classical_note` routing sentences, and misreading guards (especially Eighth = death and other's substance, not modern Scorpio drift).
 - **Figure slot text.** All sixteen figures updated: `in_houses` and `in_court_roles` aligned to the same house doctrine; Eighth-house intimacy/joint-resource phrasing removed.
+- **Greer reference overlay.** Licensed Greer figure and house translations in Court & Houses with **Off / Alongside / Greer-primary** modes, structured house fields (including Critical Context flags), and attribution in the detail panel.
 - **Workspace detail panel.** Clear **Figure ·** / **House ·** / **Court ·** scope labels; house summary cards with Keep in mind and Watch; full house Read When and Reading Craft sections.
 - **Wiki house pages revamp.** Glossary index with filter, essence previews, and topic chips; article pages with summary card, house pager, and full reference stack.
+- **Mothers casting walkthrough.** Desktop side-panel dot casting aligned to the shield chart; mobile walkthrough parity (tapping, completion flow, scrollable figure detail); chart seed restore prompt on return visits.
 - **Reference integrity tests.** `HouseDirectoryContentTests`, `ReferenceIntegrityTests`, and repaired aspect/perfection tests guard corpus quality in CI.
 
 ### Implementation notes

@@ -756,6 +756,16 @@
     private bool UseEmbeddedMobileMothers =>
         EmbeddedMobileMothers || HostMode == ChartCastingHostMode.WikiMobile;
 
+    /// <summary>
+    /// Share/open path base: embedded hosts pass WorkspaceBasePath; mobile walkthrough uses /mobile.
+    /// </summary>
+    private string EffectiveWorkspaceBasePath =>
+        HostMode == ChartCastingHostMode.EmbeddedWorkspace
+            ? WorkspaceBasePath
+            : UseEmbeddedMobileMothers
+                ? "/mobile"
+                : WorkspaceBasePath;
+
     private bool ShowWikiMobileIntro =>
         HostMode == ChartCastingHostMode.WikiMobile && Mode == ChartCastingMode.Full && WikiMobileIntro != null;
 
@@ -1117,7 +1127,7 @@
         else
         {
             _workspaceSharePath = ChartSeedCodec.BuildSharePath(
-                WorkspaceBasePath,
+                EffectiveWorkspaceBasePath,
                 _motherByHouse[1],
                 _motherByHouse[2],
                 _motherByHouse[3],
@@ -1760,7 +1770,7 @@
 
         _currentMotherIndex = _motherSlots.Length;
         _workspaceSharePath = ChartSeedCodec.BuildSharePath(
-            WorkspaceBasePath,
+            EffectiveWorkspaceBasePath,
             _motherByHouse[1],
             _motherByHouse[2],
             _motherByHouse[3],
