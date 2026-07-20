@@ -77,18 +77,18 @@
                                  class="chart-casting-mothers-workpanel">
                                 <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                                                  @ref="_activeCaster"
-                                                 MotherLabel="@string.Empty"
+                                                 MotherLabel="@(UseEmbeddedMobileMothers ? current.Label : string.Empty)"
                                                  Compact="true"
-                                                 WalkthroughLayout="true"
+                                                 WalkthroughLayout="@(!UseEmbeddedMobileMothers)"
                                                  AutoReset="false"
                                                  ShowInstruction="false"
-                                                 ShowRowCounts="false"
-                                                 ShowRowUndo="false"
+                                                 ShowRowCounts="@(!UseEmbeddedMobileMothers)"
+                                                 ShowRowUndo="@(!UseEmbeddedMobileMothers)"
                                                  ShowMarkAgainButton="false"
-                                                 StretchRows="true"
-                                                 FastPairing="true"
-                                                 MobileProgressiveRows="false"
-                                                 MobileActionsFirst="false"
+                                                 StretchRows="@(!UseEmbeddedMobileMothers)"
+                                                 FastPairing="@(!UseEmbeddedMobileMothers)"
+                                                 MobileProgressiveRows="@UseEmbeddedMobileMothers"
+                                                 MobileActionsFirst="@UseEmbeddedMobileMothers"
                                                  MotherHouseNumber="@current.HouseNumber"
                                                  IsLastMother="@(_currentMotherIndex >= _motherSlots.Length - 1)"
                                                  OnFigureCompleted="OnMotherFigureCompleted" />
@@ -99,15 +99,20 @@
                     {
                         <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                                          @ref="_activeCaster"
-                                         MotherLabel="@current.Label"
+                                         MotherLabel="@(UseEmbeddedMobileMothers ? current.Label : string.Empty)"
                                          Compact="true"
+                                         WalkthroughLayout="@(!UseEmbeddedMobileMothers)"
                                          AutoReset="false"
                                          ShowInstruction="false"
-                                         ShowRowCounts="false"
-                                         ShowRowUndo="false"
+                                         ShowRowCounts="@(!UseEmbeddedMobileMothers)"
+                                         ShowRowUndo="@(!UseEmbeddedMobileMothers)"
                                          ShowMarkAgainButton="false"
-                                         MobileProgressiveRows="true"
-                                         MobileActionsFirst="true"
+                                         StretchRows="@(!UseEmbeddedMobileMothers)"
+                                         FastPairing="@(!UseEmbeddedMobileMothers)"
+                                         MobileProgressiveRows="@UseEmbeddedMobileMothers"
+                                         MobileActionsFirst="@UseEmbeddedMobileMothers"
+                                         MotherHouseNumber="@current.HouseNumber"
+                                         IsLastMother="@(_currentMotherIndex >= _motherSlots.Length - 1)"
                                          OnFigureCompleted="OnMotherFigureCompleted" />
                         @if (HostMode != ChartCastingHostMode.WikiMobile)
                         {
@@ -1108,33 +1113,29 @@
         if (_currentMotherIndex < _motherSlots.Length)
         {
             _motherSlots[_currentMotherIndex].IsCurrent = true;
-            ApplyActiveStageState();
-            await NotifyMobileChartPreviewAsync(slot.HouseNumber);
-            StateHasChanged();
-            return;
+        }
+        else
+        {
+            _workspaceSharePath = ChartSeedCodec.BuildSharePath(
+                WorkspaceBasePath,
+                _motherByHouse[1],
+                _motherByHouse[2],
+                _motherByHouse[3],
+                _motherByHouse[4]);
+            await PersistCompletedMothersSeedAsync();
+
+            // Desktop workspace mothers: skip the completion panel and go straight to chart.
+            if (HostMode == ChartCastingHostMode.EmbeddedWorkspace
+                && !UseEmbeddedMobileMothers
+                && OnMothersCompleted.HasDelegate)
+            {
+                await ContinueToWorkspaceAsync();
+                return;
+            }
         }
 
-        _workspaceSharePath = ChartSeedCodec.BuildSharePath(
-            WorkspaceBasePath,
-            _motherByHouse[1],
-            _motherByHouse[2],
-            _motherByHouse[3],
-            _motherByHouse[4]);
-        await PersistCompletedMothersSeedAsync();
         ApplyActiveStageState();
         await NotifyMobileChartPreviewAsync(slot.HouseNumber);
-
-        // Desktop workspace mothers flow: go straight to the seeded chart workspace
-        // instead of the intermediate stage-complete / wiki-style summary panel.
-        // Mobile keeps the completion screen (Generate chart / Cast again) in the panel.
-        if (HostMode == ChartCastingHostMode.EmbeddedWorkspace
-            && !UseEmbeddedMobileMothers
-            && OnMothersCompleted.HasDelegate)
-        {
-            await ContinueToWorkspaceAsync();
-            return;
-        }
-
         StateHasChanged();
     }
 
