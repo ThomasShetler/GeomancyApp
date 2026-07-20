@@ -996,6 +996,11 @@
     align-items: stretch;
 }
 
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-side {
+    height: 100%;
+    min-height: 0;
+}
+
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-rows {
     flex: 1 1 auto;
     min-width: 0;
@@ -1028,4 +1033,23 @@
     align-self: stretch;
     height: auto;
     max-height: none;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side {
+    flex: 0 0 auto;
+    min-height: 0;
+    align-self: stretch;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side .figure-dot-caster-actions--stack,
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side .figure-dot-caster-confirm--side {
+    margin-top: auto;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side .figure-dot-caster-got-message {
+    margin-top: auto;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side .figure-dot-caster-got-message + .figure-dot-caster-actions--stack {
+    margin-top: 0.65rem;
 }
