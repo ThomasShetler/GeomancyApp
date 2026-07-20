@@ -1545,8 +1545,8 @@
 
 /* Desktop mothers workpanel: same outer frame as the shield chart */
 .chart-casting-mothers-workpanel {
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 0 0 auto;
+    width: 100%;
     display: flex;
     flex-direction: column;
     border: 1px solid var(--border-color);
@@ -1554,6 +1554,7 @@
     background: var(--bg-primary);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .chart-casting-mothers-workpanel .chart-casting-shield-hint--intro {
@@ -1580,27 +1581,25 @@
 }
 
 .chart-casting-mothers-cast-align {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
-.chart-casting-mothers-cast-stack {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
+.chart-casting-walkthrough.is-desktop-mothers-casting {
+    align-items: start;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-guidance-column {
     gap: 0;
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-review-host {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -1617,47 +1616,24 @@
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-info-pane {
     gap: 0;
     padding: 0.35rem 1rem 1rem;
-    height: 100%;
+    height: auto;
     min-height: 0;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-chart-pane {
-    align-items: stretch;
-    justify-content: stretch;
+    align-self: start;
+    align-items: center;
+    justify-content: center;
     padding: 0.35rem 1rem 1rem;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-chart-preview {
-    height: 100%;
-    min-height: 0;
-    align-items: stretch;
-    justify-content: stretch;
-    overflow: hidden;
-}
-
-.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-chart-preview .charts-side-by-side,
-.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-chart-preview .shield-chart-container,
-.chart-casting-walkthrough.is-desktop-mothers-casting .shield-chart-container.is-wiki {
     width: 100%;
-    height: 100%;
-    min-width: 0;
-    min-height: 0;
-    max-width: none;
-    max-height: none;
-    aspect-ratio: auto;
-}
-
-.chart-casting-walkthrough.is-desktop-mothers-casting .charts-side-by-side {
-    display: flex;
-    align-items: stretch;
-    justify-content: stretch;
-    gap: 0;
-}
-
-.chart-casting-walkthrough.is-desktop-mothers-casting .charts-side-by-side > .shield-chart-container:only-child {
-    grid-column: auto;
-    margin: 0;
-    max-width: none;
+    height: auto;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough {
