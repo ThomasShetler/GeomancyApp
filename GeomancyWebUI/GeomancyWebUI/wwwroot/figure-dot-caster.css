@@ -990,6 +990,7 @@
 }
 
 /* Desktop mothers: match chart-column height; equal-height tap rows; side actions. */
+@media (min-width: 1101px) {
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows {
     flex: 1 1 auto;
     min-height: 0;
@@ -1075,4 +1076,5 @@
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster-side .figure-dot-caster-got-message + .figure-dot-caster-actions--side-bottom {
     margin-top: 0.65rem;
+}
 }

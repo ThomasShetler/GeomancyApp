@@ -1129,7 +1129,10 @@
 
         // Desktop workspace mothers flow: go straight to the seeded chart workspace
         // instead of the intermediate stage-complete / wiki-style summary panel.
-        if (HostMode == ChartCastingHostMode.EmbeddedWorkspace && OnMothersCompleted.HasDelegate)
+        // Mobile keeps the completion screen (Generate chart / Cast again) in the panel.
+        if (HostMode == ChartCastingHostMode.EmbeddedWorkspace
+            && !UseEmbeddedMobileMothers
+            && OnMothersCompleted.HasDelegate)
         {
             await ContinueToWorkspaceAsync();
             return;
