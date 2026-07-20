@@ -154,26 +154,27 @@
 
                 @if (_phase == CasterPhase.Confirm)
                 {
-                    <div class="figure-dot-caster-confirm figure-dot-caster-confirm--side" role="dialog" aria-modal="true" aria-labelledby="@_confirmTitleId">
-                        <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text">
-                            Cross marks off in twos until one or two remain in each row, then build the figure?
-                        </p>
-                        <div class="figure-dot-caster-actions figure-dot-caster-actions--stack">
-                            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">Cancel</button>
-                            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">OK, generate</button>
-                        </div>
+                    <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text figure-dot-caster-confirm-text--side" role="status">
+                        Cross marks off in twos until one or two remain in each row, then build the figure?
+                    </p>
+                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack figure-dot-caster-actions--side-bottom"
+                         role="dialog"
+                         aria-modal="true"
+                         aria-labelledby="@_confirmTitleId">
+                        <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">Cancel</button>
+                        <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">Generate</button>
                     </div>
                 }
                 else if (_phase == CasterPhase.Marking && !HideActions)
                 {
-                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack">
+                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack figure-dot-caster-actions--side-bottom">
                         <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
                         <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
                     </div>
                 }
                 else if (_phase == CasterPhase.Complete)
                 {
-                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack">
+                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack figure-dot-caster-actions--side-bottom">
                         <button type="button"
                                 class="figure-dot-caster-btn figure-dot-caster-btn-primary"
                                 disabled="@_isAcknowledging"

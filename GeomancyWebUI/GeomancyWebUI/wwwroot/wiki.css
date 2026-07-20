@@ -1643,6 +1643,7 @@
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough {
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
     padding: 0.6rem 0.7rem;
     --row-label-width: 3.1rem;
     display: flex;
@@ -1678,7 +1679,7 @@
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result {
-    min-width: 6.25rem;
+    min-width: 8.5rem;
     padding: 0.5rem 0.6rem;
     align-self: stretch;
 }
@@ -1688,7 +1689,7 @@
     margin-bottom: 0.3rem;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-actions {
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-actions:not(.figure-dot-caster-actions--side-bottom) {
     margin-top: 0.35rem;
     flex-shrink: 0;
 }
