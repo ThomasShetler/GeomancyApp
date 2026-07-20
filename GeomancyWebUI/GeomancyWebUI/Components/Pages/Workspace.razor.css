@@ -244,14 +244,19 @@
     min-width: 0;
 }
 
-.workspace-mothers-setup-grid ::deep .chart-casting-review-host {
+.workspace-mothers-setup-grid ::deep .chart-casting-review-host:not(.is-active) {
     flex: 0 0 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
 }
 
-.workspace-mothers-setup-grid ::deep .chart-casting-guidance-column {
+.workspace-mothers-setup-grid ::deep .chart-casting-review-host.is-active {
+    display: grid;
+    flex: 1 1 auto;
+}
+
+.workspace-mothers-setup-grid ::deep .chart-casting-review-host:not(.is-active) .chart-casting-guidance-column {
     flex: 0 0 auto;
     min-height: 0;
     display: flex;

@@ -1610,17 +1610,22 @@
     padding: 0.35rem 1rem 1rem;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-guidance-column {
-    gap: 0;
-    flex: 0 0 auto;
-    min-height: 0;
-}
-
-.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-review-host {
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-review-host:not(.is-active) {
     flex: 0 0 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-review-host.is-active {
+    display: grid;
+    flex: 1 1 auto;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-review-host:not(.is-active) .chart-casting-guidance-column {
+    gap: 0;
+    flex: 0 0 auto;
+    min-height: 0;
 }
 
 .chart-casting-walkthrough.is-desktop-mothers-casting .chart-casting-mothers-cast-header .chart-casting-slot-target {
