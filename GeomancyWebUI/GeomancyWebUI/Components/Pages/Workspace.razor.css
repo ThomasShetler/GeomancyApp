@@ -294,11 +294,6 @@
     flex-shrink: 0;
 }
 
-.workspace-mothers-setup-grid ::deep .chart-casting-mothers-workpanel {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
 .workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-align {
     flex: 1 1 auto;
     min-height: 0;
