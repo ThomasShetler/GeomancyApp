@@ -572,6 +572,52 @@
     width: 100%;
 }
 
+/* Figure detail in walkthrough: grow with content; .mobile-panel-body scrolls. */
+.mobile-panel-body .chart-casting-review-host.is-active {
+    overflow: visible;
+    flex: 0 0 auto;
+}
+
+.mobile-mothers-setup:has(.chart-casting-review-host.is-active),
+.mobile-mothers-setup:has(.chart-casting-review-host.is-active) .chart-casting-walkthrough.is-embedded-mobile-mothers {
+    height: auto;
+    flex: 0 0 auto;
+}
+
+.mobile-panel-body .figure-detail-panel,
+.mobile-panel-body .chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+}
+
+.mobile-panel-body .figure-detail-panel .detail-sticky-tabs {
+    top: 0;
+    z-index: 4;
+}
+
+.mobile-panel-body .figure-detail-panel .section-jump-nav {
+    gap: 0.25rem;
+}
+
+.mobile-panel-body .figure-detail-panel .jump-chip {
+    font-size: 0.62rem;
+    padding: 0.12rem 0.42rem;
+}
+
+.mobile-panel-body .figure-detail-panel .elements-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.mobile-panel-body .figure-detail-panel .detail-card {
+    scroll-margin-top: 3.25rem;
+}
+
+.mobile-panel-body .figure-detail-panel details > summary {
+    padding: 0.2rem 0;
+}
+
 /* Full shield walkthrough chart in drawer (post-Mothers stages). */
 .mobile-chart-drawer.is-wiki-walkthrough.is-expanded .mobile-chart-stage--wiki-walkthrough {
     --chart-native-size: 535px;

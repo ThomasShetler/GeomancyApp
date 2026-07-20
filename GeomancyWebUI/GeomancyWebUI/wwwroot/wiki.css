@@ -1594,6 +1594,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    overflow: visible;
+    flex: 0 0 auto;
 }
 
 .chart-casting-walkthrough.is-embedded-mobile-mothers .chart-casting-review-host.is-active .chart-casting-review-workspace-layout.court-houses-layout {
@@ -1606,6 +1608,13 @@
 .chart-casting-walkthrough.is-embedded-mobile-mothers .chart-casting-review-host.is-active .chart-casting-stage-detail-shell.court-houses-detail-col {
     min-width: 0;
     overflow: visible;
+}
+
+.chart-casting-walkthrough.is-embedded-mobile-mothers .chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    flex: none;
 }
 
 @media (min-width: 1101px) {
@@ -1945,13 +1954,9 @@
 
     .chart-casting-review-host.is-active {
         display: flex;
-        gap: 0.9rem;
-    }
-
-    .chart-casting-review-host.is-active {
-        display: flex;
         flex-direction: column;
         gap: 0.75rem;
+        overflow: visible;
     }
 
     .chart-casting-review-host.is-active .chart-casting-guidance-column,
@@ -1960,6 +1965,13 @@
         grid-column: auto;
         grid-row: auto;
         overflow: visible;
+    }
+
+    .chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel {
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        flex: none;
     }
 
     .chart-casting-review-host.is-active .chart-casting-review-workspace-layout.court-houses-layout {

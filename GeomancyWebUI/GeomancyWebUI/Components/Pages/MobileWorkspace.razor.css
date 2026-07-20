@@ -687,6 +687,25 @@
     width: 100%;
 }
 
+/* Walkthrough inspector: let figure detail grow; panel body scrolls. */
+.mobile-mothers-setup:has(.chart-casting-review-host.is-active),
+.mobile-mothers-setup:has(.chart-casting-review-host.is-active) ::deep .chart-casting-walkthrough.is-embedded-mobile-mothers {
+    height: auto;
+    flex: 0 0 auto;
+}
+
+.mobile-panel-body ::deep .chart-casting-review-host.is-active {
+    overflow: visible;
+    flex: 0 0 auto;
+}
+
+.mobile-panel-body ::deep .chart-casting-review-host.is-active .chart-casting-stage-detail-shell .figure-detail-panel {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+}
+
 /* One-time (dismissible) orientation card; storage key in MobileWorkspace.razor */
 .mobile-welcome-callout {
     flex-shrink: 0;
