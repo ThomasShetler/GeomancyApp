@@ -698,68 +698,6 @@
     min-height: 0;
 }
 
-/* Mobile mothers (/mobile + wiki-mobile): equal-height rows in the panel, not desktop stretch. */
-.figure-dot-caster.is-mobile-mothers-casting {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    pointer-events: auto;
-}
-
-.figure-dot-caster.is-mobile-mothers-casting .figure-dot-caster-body--mobile {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
-.figure-dot-caster.is-mobile-mothers-casting .figure-dot-caster-rows {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.figure-dot-caster.is-mobile-mothers-casting .figure-dot-row {
-    flex: 1 1 0;
-    min-height: 3rem;
-}
-
-.figure-dot-caster.is-mobile-mothers-casting .figure-dot-row-track-wrap {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-}
-
-.figure-dot-caster.is-mobile-mothers-casting .figure-dot-canvas {
-    flex: 1 1 auto;
-    width: 100%;
-    height: auto;
-    min-height: 3rem;
-    max-height: none;
-    touch-action: none;
-    pointer-events: auto;
-    position: relative;
-    z-index: 1;
-}
-
-.chart-casting-mobile-mothers-cast {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    width: 100%;
-}
-
-.chart-casting-walkthrough.is-mobile-mothers-casting.no-chart-column,
-.chart-casting-walkthrough.is-mobile-mothers-casting.no-chart-column .chart-casting-info-pane {
-    overflow: visible;
-}
-
-.chart-casting-walkthrough.is-mobile-mothers-casting .chart-casting-mobile-mothers-cast {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
 
 .figure-dot-caster.is-mobile-progressive .figure-dot-row.is-row-locked {
     opacity: 0.45;
