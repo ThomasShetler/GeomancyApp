@@ -22,13 +22,13 @@ namespace GeomancyApp
         /// User-facing semver string (e.g. "0.1.0-beta", "1.0.0", "1.2.0-rc.1").
         /// Use this for any UI label that should read like marketing copy.
         /// </summary>
-        public const string Display = "1.0.6";
+        public const string Display = "1.0.7";
 
         /// <summary>
         /// Human-readable release date for the current Display version.
         /// Used by the release-notes section on the landing page.
         /// </summary>
-        public const string ReleaseDate = "May 2026";
+        public const string ReleaseDate = "July 2026";
 
         /// <summary>
         /// SemVer release "channel" derived from the suffix on Display.

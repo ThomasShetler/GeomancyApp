@@ -2,15 +2,16 @@
 @rendermode InteractiveServer
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Components.Wiki
 @inject IGeomancyService GeomancyService
 
 <PageSeo Title="House Glossary"
-          Description="Twelve astrological houses in geomancy: what each house governs, example questions, and reading craft from the Geofancy corpus."
+          Description="Twelve astrological houses in geomancy: classical governs lists, read-when triggers, keep-in-mind notes, and example questions from the Geofancy corpus."
           CanonicalPath="/wiki/glossary/houses"
-          Keywords="geomancy houses, twelve houses, horary houses geomancy, house meanings" />
+          Keywords="geomancy houses, twelve houses, horary houses geomancy, house meanings, classical house chart" />
 
 <WikiArticleShell Title="House Glossary"
-                  Lead="Twelve astrological houses with traditional names, governs lists, and reading craft."
+                  Lead="Twelve astrological houses with traditional names, classical routing notes, and reading craft aligned to horary and geomantic practice."
                   ParentHref="/wiki"
                   ParentLabel="Wiki">
 
@@ -20,15 +21,48 @@
     }
     else
     {
-        <ul class="wiki-glossary-list">
-            @foreach (var house in _houses.OrderBy(h => h.Id))
+        <section class="wiki-house-intro detail-card">
+            <p class="wiki-section-eyebrow">How to use this glossary</p>
+            <p class="prose-text">
+                Each house page lists what the slot governs in traditional geomancy, when to read it as the quesited,
+                functional <strong>read when</strong> triggers, and common misreadings. Pair these notes with the
+                figure in that house slot in your chart for the full picture.
+            </p>
+        </section>
+
+        <input class="wiki-filter"
+               type="search"
+               placeholder="Filter by name, topic, or keyword…"
+               @bind="_filter"
+               @bind:event="oninput"
+               aria-label="Filter houses" />
+
+        <ul class="wiki-glossary-list wiki-house-glossary-list">
+            @foreach (var house in FilteredHouses)
             {
                 <li>
-                    <a class="wiki-glossary-row" href="/wiki/glossary/houses/@house.Id">
+                    <a class="wiki-glossary-row wiki-house-glossary-row" href="/wiki/glossary/houses/@house.Id">
                         <span class="wiki-glossary-row-title">House @house.Id · @house.House</span>
                         @if (!string.IsNullOrWhiteSpace(house.TraditionalName))
                         {
                             <span class="wiki-glossary-row-sub">@house.TraditionalName</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(house.AstrologicalCorrespondence))
+                        {
+                            <span class="wiki-glossary-row-tagline">@house.AstrologicalCorrespondence</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(house.InterpretiveEssence))
+                        {
+                            <span class="wiki-house-glossary-essence">@house.InterpretiveEssence</span>
+                        }
+                        @if (house.KeySignificators?.Any() == true)
+                        {
+                            <span class="wiki-glossary-row-meta">
+                                @foreach (var ks in house.KeySignificators.Where(s => !string.IsNullOrWhiteSpace(s)).Take(3))
+                                {
+                                    <span class="chip chip-house-topic">@ks</span>
+                                }
+                            </span>
                         }
                     </a>
                 </li>
@@ -41,10 +75,29 @@
 @code {
     private List<HouseDirectoryEntry> _houses = new();
     private bool _loading = true;
+    private string _filter = string.Empty;
+
+    private IEnumerable<HouseDirectoryEntry> FilteredHouses =>
+        string.IsNullOrWhiteSpace(_filter)
+            ? _houses.OrderBy(h => h.Id)
+            : _houses
+                .Where(MatchesFilter)
+                .OrderBy(h => h.Id);
 
     protected override async Task OnInitializedAsync()
     {
         _houses = await GeomancyService.GetHousesDirectoryAsync();
         _loading = false;
+    }
+
+    private bool MatchesFilter(HouseDirectoryEntry house)
+    {
+        if (house.House.Contains(_filter, StringComparison.OrdinalIgnoreCase)) return true;
+        if (house.TraditionalName?.Contains(_filter, StringComparison.OrdinalIgnoreCase) == true) return true;
+        if (house.AstrologicalCorrespondence?.Contains(_filter, StringComparison.OrdinalIgnoreCase) == true) return true;
+        if (house.InterpretiveEssence?.Contains(_filter, StringComparison.OrdinalIgnoreCase) == true) return true;
+        if (house.ClassicalNote?.Contains(_filter, StringComparison.OrdinalIgnoreCase) == true) return true;
+        return house.KeySignificators?.Any(k => k.Contains(_filter, StringComparison.OrdinalIgnoreCase)) == true
+            || house.Governs?.Any(g => g.Contains(_filter, StringComparison.OrdinalIgnoreCase)) == true;
     }
 }

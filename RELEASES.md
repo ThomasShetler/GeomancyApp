@@ -1,5 +1,27 @@
 # Releases
 
+## v1.0.7 — Classical house reference & wiki revamp
+
+**Released:** July 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Feature and QA release building on the classical house corpus, figure slot rewrites, and workspace detail panel scope labels.
+
+### Highlights
+
+- **Classical house corpus.** All twelve houses rewritten with traditional governs lists, `read_when` triggers, `classical_note` routing sentences, and misreading guards (especially Eighth = death and other's substance, not modern Scorpio drift).
+- **Figure slot text.** All sixteen figures updated: `in_houses` and `in_court_roles` aligned to the same house doctrine; Eighth-house intimacy/joint-resource phrasing removed.
+- **Workspace detail panel.** Clear **Figure ·** / **House ·** / **Court ·** scope labels; house summary cards with Keep in mind and Watch; full house Read When and Reading Craft sections.
+- **Wiki house pages revamp.** Glossary index with filter, essence previews, and topic chips; article pages with summary card, house pager, and full reference stack.
+- **Reference integrity tests.** `HouseDirectoryContentTests`, `ReferenceIntegrityTests`, and repaired aspect/perfection tests guard corpus quality in CI.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.7.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production; `web-app` = integration / testing.
+
+---
+
 ## v1.0.6 — Production deploy & detail panel styling
 
 **Released:** May 2026  

@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
+@using GeomancyWebUI.Components.Wiki
 @using GeomancyWebUI.Services
 @inject IGeomancyService GeomancyService
 
@@ -12,7 +13,7 @@
           OgType="article" />
 
 <WikiArticleShell Title="@(_house != null ? $"House {_house.Id} · {_house.House}" : "House not found")"
-                  Lead="@(_house?.TraditionalName)"
+                  Lead="@(_house?.AstrologicalCorrespondence ?? _house?.TraditionalName)"
                   ParentHref="/wiki/glossary/houses"
                   ParentLabel="Houses">
 
@@ -29,6 +30,31 @@
     }
     else
     {
+        <nav class="wiki-house-pager" aria-label="House navigation">
+            @if (_house.Id > 1)
+            {
+                <a class="wiki-house-pager-link" href="/wiki/glossary/houses/@(_house.Id - 1)">← House @(_house.Id - 1)</a>
+            }
+            else
+            {
+                <span class="wiki-house-pager-spacer"></span>
+            }
+            <a class="wiki-house-pager-all" href="/wiki/glossary/houses">All houses</a>
+            @if (_house.Id < 12)
+            {
+                <a class="wiki-house-pager-link wiki-house-pager-link--next" href="/wiki/glossary/houses/@(_house.Id + 1)">House @(_house.Id + 1) →</a>
+            }
+            else
+            {
+                <span class="wiki-house-pager-spacer"></span>
+            }
+        </nav>
+
+        <WikiHouseSummaryCard House="@_house"
+                              Eyebrow="House · In play"
+                              CssClass="wiki-house-summary--article"
+                              ShowFirstReadWhen="true" />
+
         <WikiHouseReferenceStack House="@_house" />
     }
 
@@ -43,11 +69,11 @@
     private string HouseSeoTitle => _house is null ? "House · Geomancy Wiki" : $"House {_house.Id} · {_house.House}";
     private string HouseSeoDescription => _house is null
         ? "Geomantic house reference in the Geofancy wiki."
-        : SeoSite.Truncate($"House {_house.Id} ({_house.House}): {_house.TraditionalName}. Topics, example questions, and reading notes for geomancy.");
+        : SeoSite.Truncate($"House {_house.Id} ({_house.House}): {_house.InterpretiveEssence} Topics, read-when triggers, and classical notes for geomancy.");
     private string HouseCanonicalPath => $"/wiki/glossary/houses/{HouseId}";
     private string HouseSeoKeywords => _house is null
         ? "geomancy houses, house glossary"
-        : $"geomancy house {_house.Id}, {_house.House?.ToLowerInvariant()}, astrological house geomancy";
+        : $"geomancy house {_house.Id}, {_house.House?.ToLowerInvariant()}, astrological house geomancy, {_house.TraditionalName?.ToLowerInvariant()}";
 
     protected override async Task OnInitializedAsync()
     {

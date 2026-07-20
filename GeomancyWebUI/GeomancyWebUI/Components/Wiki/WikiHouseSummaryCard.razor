@@ -1,0 +1,47 @@
+@using GeomancyWebUI.Client.Models
+
+@if (House != null)
+{
+    <aside class="wiki-house-summary @CssClass" aria-label="House summary">
+        @if (!string.IsNullOrWhiteSpace(Eyebrow))
+        {
+            <p class="wiki-house-summary-eyebrow">@Eyebrow</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(House.InterpretiveEssence))
+        {
+            <p class="wiki-house-summary-essence">@House.InterpretiveEssence</p>
+        }
+        @if (House.KeySignificators?.Any() == true && ShowBlips)
+        {
+            <div class="wiki-house-summary-blips" aria-label="Key significators">
+                @foreach (var blip in House.KeySignificators.Where(s => !string.IsNullOrWhiteSpace(s)).Take(3))
+                {
+                    <span class="wiki-house-blip">@blip</span>
+                }
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(House.ClassicalNote) && ShowClassicalNote)
+        {
+            <p class="wiki-house-summary-tip">
+                <span class="wiki-house-summary-tip-label">Keep in mind</span>
+                @House.ClassicalNote
+            </p>
+        }
+        @if (House.ReadWhen?.Any() == true && ShowFirstReadWhen)
+        {
+            <p class="wiki-house-summary-read-when">
+                <span class="wiki-house-summary-tip-label">Read when</span>
+                @House.ReadWhen.First()
+            </p>
+        }
+    </aside>
+}
+
+@code {
+    [Parameter] public HouseDirectoryEntry? House { get; set; }
+    [Parameter] public string? Eyebrow { get; set; }
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+    [Parameter] public bool ShowBlips { get; set; } = true;
+    [Parameter] public bool ShowClassicalNote { get; set; } = true;
+    [Parameter] public bool ShowFirstReadWhen { get; set; }
+}
