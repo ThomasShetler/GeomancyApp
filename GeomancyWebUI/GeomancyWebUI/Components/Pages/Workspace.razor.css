@@ -294,24 +294,14 @@
     flex-shrink: 0;
 }
 
-.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-align {
+.workspace-mothers-setup-grid ::deep .chart-casting-mothers-workpanel {
     flex: 1 1 auto;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
 }
 
-.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-stack {
+.workspace-mothers-setup-grid ::deep .figure-dot-caster {
     flex: 1 1 auto;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-stack .figure-dot-caster {
-    flex: 1 1 auto;
-    min-height: 0;
-    max-height: 100%;
 }
 
 .workspace-placeholder {

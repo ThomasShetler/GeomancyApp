@@ -5,7 +5,6 @@
 @using Microsoft.JSInterop
 @inject IGeomancyService GeomancyService
 @inject IJSRuntime JSRuntime
-@implements IDisposable
 
 <div class="chart-casting-walkthrough @GetWalkthroughRootClass()">
     <section class="chart-casting-info-pane">
@@ -55,18 +54,42 @@
         <section class="chart-casting-guidance-column">
             @if (_activeStage == WalkthroughStage.Mothers)
             {
-                @if (!UseEmbeddedMobileMothers && _currentMotherIndex == 0)
-                {
-                    <p class="chart-casting-shield-hint chart-casting-shield-hint--intro">
-                        Tap each row to drop marks, then generate. Place each Mother on the shield slot with the
-                        <strong>matching house number</strong> (top row reads 8→1 left to right; start with Vita in slot 1).
-                    </p>
-                }
-
                 @if (_currentMotherIndex >= 0 && _currentMotherIndex < _motherSlots.Length)
                 {
                     var current = _motherSlots[_currentMotherIndex];
-                    @if (UseEmbeddedMobileMothers)
+                    @if (!UseEmbeddedMobileMothers)
+                    {
+                        <div class="chart-casting-mothers-workpanel">
+                            @if (_currentMotherIndex == 0)
+                            {
+                                <p class="chart-casting-shield-hint chart-casting-shield-hint--intro">
+                                    Tap each row to drop marks, then generate. Place each Mother on the shield slot with the
+                                    <strong>matching house number</strong> (top row reads 8→1 left to right; start with Vita in slot 1).
+                                </p>
+                            }
+                            <p class="chart-casting-slot-target" aria-live="polite">
+                                @GetMotherSlotTargetText(current.HouseNumber)
+                            </p>
+                            <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
+                                             @ref="_activeCaster"
+                                             MotherLabel="@string.Empty"
+                                             Compact="true"
+                                             WalkthroughLayout="true"
+                                             AutoReset="false"
+                                             ShowInstruction="false"
+                                             ShowRowCounts="false"
+                                             ShowRowUndo="false"
+                                             ShowMarkAgainButton="false"
+                                             StretchRows="true"
+                                             FastPairing="true"
+                                             MobileProgressiveRows="false"
+                                             MobileActionsFirst="false"
+                                             MotherHouseNumber="@current.HouseNumber"
+                                             IsLastMother="@(_currentMotherIndex >= _motherSlots.Length - 1)"
+                                             OnFigureCompleted="OnMotherFigureCompleted" />
+                        </div>
+                    }
+                    else
                     {
                         <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                                          @ref="_activeCaster"
@@ -92,34 +115,6 @@
                                 Open the chart above to see this Mother on the shield. Collapse the chart when you are ready for the next row.
                             </p>
                         }
-                    }
-                    else
-                    {
-                        <p class="chart-casting-slot-target" aria-live="polite">
-                            @GetMotherSlotTargetText(current.HouseNumber)
-                        </p>
-                        <div @ref="_mothersCastAlign" class="chart-casting-mothers-cast-align">
-                            <div @ref="_mothersCastStack"
-                                 class="chart-casting-mothers-cast-stack">
-                                <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
-                                                 @ref="_activeCaster"
-                                                 MotherLabel=""
-                                                 Compact="true"
-                                                 WalkthroughLayout="true"
-                                                 AutoReset="false"
-                                                 ShowInstruction="false"
-                                                 ShowRowCounts="false"
-                                                 ShowRowUndo="false"
-                                                 ShowMarkAgainButton="false"
-                                                 StretchRows="true"
-                                                 FastPairing="true"
-                                                 MobileProgressiveRows="false"
-                                                 MobileActionsFirst="false"
-                                                 MotherHouseNumber="@current.HouseNumber"
-                                                 IsLastMother="@(_currentMotherIndex >= _motherSlots.Length - 1)"
-                                                 OnFigureCompleted="OnMotherFigureCompleted" />
-                            </div>
-                        </div>
                     }
                 }
                 else if (_motherSlots.All(s => s.Figure != null))
@@ -514,7 +509,7 @@
     @if (ShowChartColumn)
     {
     <section class="chart-casting-chart-pane">
-        <div @ref="_chartPreviewRoot" class="chart-casting-chart-preview">
+        <div class="chart-casting-chart-preview">
             <ChartSurface Chart="@_chart"
                           View="ChartSurfaceView.Shield"
                           IsWikiLayout="true"
@@ -691,11 +686,6 @@
     private MotherSlot[] _motherSlots = Array.Empty<MotherSlot>();
     private int _currentMotherIndex;
     private FigureDotCaster? _activeCaster;
-    private ElementReference _chartPreviewRoot;
-    private ElementReference _mothersCastStack;
-    private ElementReference _mothersCastAlign;
-    private bool _mothersCastSyncActive;
-    private readonly string _mothersCastSyncKey = Guid.NewGuid().ToString("N");
     private readonly Dictionary<int, FigureModel> _motherByHouse = new();
     private HouseChartModel? _chart;
     private string _workspaceSharePath = "/workspace";
@@ -846,66 +836,6 @@
         }
         ApplyActiveStageState();
         _ = NotifyMobileChartPreviewAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await SyncMothersCastHeightAsync();
-    }
-
-    private bool ShouldSyncMothersCastHeight() =>
-        ShowChartColumn
-        && !UseEmbeddedMobileMothers
-        && _activeStage == WalkthroughStage.Mothers
-        && _currentMotherIndex >= 0
-        && _currentMotherIndex < _motherSlots.Length;
-
-    private async Task SyncMothersCastHeightAsync()
-    {
-        if (!ShouldSyncMothersCastHeight())
-        {
-            if (_mothersCastSyncActive)
-            {
-                try
-                {
-                    await JSRuntime.InvokeVoidAsync("geofancyMothersCastSync.stop", _mothersCastSyncKey);
-                }
-                catch (JSDisconnectedException)
-                {
-                }
-
-                _mothersCastSyncActive = false;
-            }
-
-            return;
-        }
-
-        try
-        {
-            await JSRuntime.InvokeVoidAsync(
-                "geofancyMothersCastSync.start",
-                _mothersCastSyncKey,
-                _chartPreviewRoot,
-                _mothersCastStack,
-                _mothersCastAlign);
-            _mothersCastSyncActive = true;
-        }
-        catch (JSDisconnectedException)
-        {
-        }
-        catch (JSException)
-        {
-            // Script may not be ready on first paint.
-        }
-    }
-
-    public void Dispose()
-    {
-        if (_mothersCastSyncActive)
-        {
-            _ = JSRuntime.InvokeVoidAsync("geofancyMothersCastSync.stop", _mothersCastSyncKey);
-            _mothersCastSyncActive = false;
-        }
     }
 
     private FigureModel? GetMotherOrNull(int houseNumber) =>
