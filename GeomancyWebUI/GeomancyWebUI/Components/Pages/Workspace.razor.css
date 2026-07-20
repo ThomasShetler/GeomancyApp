@@ -233,51 +233,10 @@
 
 .workspace-mothers-setup-grid ::deep .chart-casting-chart-pane {
     min-width: 0;
-    align-items: stretch;
-    justify-content: stretch;
-    padding: 0.35rem 1rem 1rem;
 }
 
 .workspace-mothers-setup-grid ::deep .chart-casting-info-pane {
     min-width: 0;
-    padding: 0.35rem 1rem 1rem;
-}
-
-.workspace-mothers-setup-grid ::deep .chart-casting-chart-preview {
-    height: 100%;
-    min-height: 0;
-    align-items: stretch;
-    justify-content: stretch;
-    overflow: hidden;
-}
-
-.workspace-mothers-setup-grid ::deep .chart-casting-chart-preview .charts-side-by-side,
-.workspace-mothers-setup-grid ::deep .chart-casting-chart-preview .shield-chart-container {
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-}
-
-.workspace-mothers-setup-grid ::deep .chart-casting-chart-preview .charts-side-by-side {
-    display: flex;
-    align-items: stretch;
-    justify-content: stretch;
-}
-
-.workspace-mothers-setup-grid ::deep .shield-chart-container.is-wiki {
-    width: 100%;
-    height: 100%;
-    min-width: 0;
-    min-height: 0;
-    max-width: none;
-    max-height: none;
-    aspect-ratio: auto;
-}
-
-.workspace-mothers-setup-grid ::deep .chart-casting-mothers-workpanel {
-    flex: 1 1 auto;
-    min-height: 0;
 }
 
 .workspace-mothers-setup-grid ::deep .chart-casting-review-host {
@@ -299,9 +258,15 @@
     flex-shrink: 0;
 }
 
-.workspace-mothers-setup-grid ::deep .figure-dot-caster {
+.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-align {
     flex: 1 1 auto;
     min-height: 0;
+}
+
+.workspace-mothers-setup-grid ::deep .chart-casting-mothers-cast-stack .figure-dot-caster {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
 }
 
 .workspace-placeholder {

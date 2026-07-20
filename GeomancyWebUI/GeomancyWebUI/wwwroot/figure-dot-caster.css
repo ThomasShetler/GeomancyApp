@@ -410,6 +410,91 @@
     justify-content: center;
 }
 
+.figure-dot-caster-actions--stack {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+.figure-dot-caster-actions--stack .figure-dot-caster-btn {
+    width: 100%;
+}
+
+.figure-dot-caster-side {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 0 0 auto;
+    width: 7.5rem;
+    min-width: 7.5rem;
+    align-self: stretch;
+}
+
+.figure-dot-caster-result--tight {
+    align-self: stretch;
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    padding: 0.55rem 0.5rem 0.6rem;
+}
+
+.figure-dot-caster-result--tight .figure-dot-caster-figure-build {
+    min-height: 0;
+    gap: 0.1rem;
+}
+
+.figure-dot-caster-result--tight .figure-build-line {
+    min-height: 1.15rem;
+    font-size: 1.05rem;
+}
+
+.figure-dot-caster-got-message {
+    margin: 0.65rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--text-secondary, #aaa);
+    text-align: center;
+}
+
+.figure-dot-caster-got-message strong {
+    color: var(--text-primary);
+}
+
+.figure-dot-caster-confirm--side {
+    margin-top: 0.65rem;
+    padding: 0.55rem 0.5rem;
+}
+
+.figure-dot-caster-confirm--side .figure-dot-caster-confirm-text {
+    font-size: 0.72rem;
+    line-height: 1.4;
+    margin: 0 0 0.55rem;
+}
+
+.figure-dot-caster-body--side-actions {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+@media (min-width: 640px) {
+    .figure-dot-caster-body--side-actions {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0.85rem;
+    }
+
+    .figure-dot-caster-body--side-actions .figure-dot-caster-rows {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 0;
+    }
+}
+
 .figure-dot-caster-btn {
     min-height: 44px;
     padding: 0.5rem 1.25rem;
@@ -683,6 +768,7 @@
 .figure-dot-caster.is-stretch-rows .figure-dot-caster-instruction,
 .figure-dot-caster.is-stretch-rows .figure-dot-caster-result,
 .figure-dot-caster.is-stretch-rows .figure-dot-caster-result--mobile-top,
+.figure-dot-caster.is-stretch-rows .figure-dot-caster-side,
 .figure-dot-caster.is-stretch-rows .figure-dot-caster-actions,
 .figure-dot-caster.is-stretch-rows .figure-dot-caster-actions--top,
 .figure-dot-caster.is-stretch-rows .figure-dot-caster-confirm,
@@ -724,15 +810,11 @@
 
 /* Faster pairing animation for mothers setup flow. */
 .figure-dot-caster.is-fast-pairing .canvas-mark.is-paired-animate {
-    animation: mark-pair-flash 0.08s ease-out;
+    animation: mark-pair-flash 0.16s ease-out;
 }
 
 .figure-dot-caster.is-fast-pairing .figure-dot-pair-line.is-drawing {
-    animation: pair-line-draw 0.07s ease-out forwards;
-}
-
-.figure-dot-caster.is-fast-pairing .figure-build-line {
-    transition: opacity 0.12s ease, color 0.12s ease, transform 0.12s ease;
+    animation: pair-line-draw 0.14s ease-out forwards;
 }
 
 /*
@@ -899,14 +981,15 @@
     background: color-mix(in srgb, var(--bg-secondary, #f5f5f5) 35%, var(--bg-primary, #fff));
 }
 
-/* Desktop mothers: match chart-column height; equal-height tap rows; keep canvas width. */
+/* Desktop mothers: match chart-column height; equal-height tap rows; side actions. */
 .chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows {
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
 }
 
-.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-body {
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-body,
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough.is-stretch-rows .figure-dot-caster-body--side-actions {
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
@@ -936,4 +1019,13 @@
     min-height: 3rem;
     max-height: none;
     background-size: 11px 11px;
+}
+
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result,
+.chart-casting-walkthrough.is-desktop-mothers-casting .figure-dot-caster.is-walkthrough .figure-dot-caster-result--tight {
+    /* Keep the outline tight around caption + figure lines (do not stretch). */
+    flex: 0 0 auto;
+    align-self: stretch;
+    height: auto;
+    max-height: none;
 }

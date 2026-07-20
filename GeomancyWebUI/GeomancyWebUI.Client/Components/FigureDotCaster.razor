@@ -54,7 +54,7 @@
         </div>
     }
 
-    <div class="figure-dot-caster-body @(MobileActionsFirst ? "figure-dot-caster-body--mobile" : "")">
+    <div class="figure-dot-caster-body @(MobileActionsFirst ? "figure-dot-caster-body--mobile" : "") @(UseWalkthroughSidePanel ? "figure-dot-caster-body--side-actions" : "")">
         <div class="figure-dot-caster-rows" aria-label="Mark dots in four horizontal rows">
             @for (var row = 0; row < 4; row++)
             {
@@ -128,7 +128,65 @@
             }
         </div>
 
-        @if (ShowResultFigure && !MobileActionsFirst)
+        @if (ShowResultFigure && UseWalkthroughSidePanel)
+        {
+            <div class="figure-dot-caster-side">
+                <div class="figure-dot-caster-result figure-dot-caster-result--tight" aria-live="polite">
+                    <p class="figure-dot-caster-result-caption">Figure (read top to bottom)</p>
+                    <div class="figure-dot-caster-figure-build">
+                        @for (var line = 0; line < 4; line++)
+                        {
+                            var revealed = line < _revealedFigureLines;
+                            var lineValue = revealed && _resolvedLines != null ? _resolvedLines[line] : null;
+                            <div class="figure-build-line @(revealed ? "is-revealed" : "")">
+                                @(lineValue.HasValue ? GetLineDisplay(lineValue.Value) : "·")
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @if (_phase == CasterPhase.Complete && _resolvedFigure != null && _figureNameRevealed)
+                {
+                    <p class="figure-dot-caster-got-message" aria-live="polite">
+                        You got <strong>@_resolvedFigure.Name</strong> for Mother @MotherHouseNumber
+                    </p>
+                }
+
+                @if (_phase == CasterPhase.Confirm)
+                {
+                    <div class="figure-dot-caster-confirm figure-dot-caster-confirm--side" role="dialog" aria-modal="true" aria-labelledby="@_confirmTitleId">
+                        <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text">
+                            Cross marks off in twos until one or two remain in each row, then build the figure?
+                        </p>
+                        <div class="figure-dot-caster-actions figure-dot-caster-actions--stack">
+                            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">Cancel</button>
+                            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">OK, generate</button>
+                        </div>
+                    </div>
+                }
+                else if (_phase == CasterPhase.Marking && !HideActions)
+                {
+                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack">
+                        <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
+                        <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
+                    </div>
+                }
+                else if (_phase == CasterPhase.Complete)
+                {
+                    <div class="figure-dot-caster-actions figure-dot-caster-actions--stack">
+                        <button type="button"
+                                class="figure-dot-caster-btn figure-dot-caster-btn-primary"
+                                disabled="@_isAcknowledging"
+                                @onclick="AcknowledgeCompletionAsync">
+                            @(_isAcknowledging
+                                ? (IsLastMother ? "Opening workspace..." : "Continuing...")
+                                : (IsLastMother ? "Generate full chart?" : "Create Next Mother"))
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+        else if (ShowResultFigure && !MobileActionsFirst)
         {
             <div class="figure-dot-caster-result">
                 <p class="figure-dot-caster-result-caption">Figure (read top to bottom)</p>
@@ -154,30 +212,33 @@
         }
     </div>
 
-    @if (_phase == CasterPhase.Confirm && !MobileActionsFirst)
+    @if (!UseWalkthroughSidePanel)
     {
-        <div class="figure-dot-caster-confirm" role="dialog" aria-modal="true" aria-labelledby="@_confirmTitleId">
-            <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text">
-                Cross marks off in twos until one or two remain in each row, then build the figure on the right?
-            </p>
-            <div class="figure-dot-caster-actions">
-                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">Cancel</button>
-                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">OK, generate</button>
+        @if (_phase == CasterPhase.Confirm && !MobileActionsFirst)
+        {
+            <div class="figure-dot-caster-confirm" role="dialog" aria-modal="true" aria-labelledby="@_confirmTitleId">
+                <p id="@_confirmTitleId" class="figure-dot-caster-confirm-text">
+                    Cross marks off in twos until one or two remain in each row, then build the figure on the right?
+                </p>
+                <div class="figure-dot-caster-actions">
+                    <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="CancelConfirm">Cancel</button>
+                    <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" @onclick="RunPairingAsync">OK, generate</button>
+                </div>
             </div>
-        </div>
-    }
-    else if (_phase == CasterPhase.Marking && !HideActions && !MobileActionsFirst)
-    {
-        <div class="figure-dot-caster-actions">
-            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
-            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
-        </div>
-    }
-    else if (_phase == CasterPhase.Complete && ShowMarkAgainButton)
-    {
-        <div class="figure-dot-caster-actions">
-            <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="ClearAll">Mark again</button>
-        </div>
+        }
+        else if (_phase == CasterPhase.Marking && !HideActions && !MobileActionsFirst)
+        {
+            <div class="figure-dot-caster-actions">
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" disabled="@(!CanClear)" @onclick="ClearAll">Clear</button>
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-primary" disabled="@(!CanGenerate)" @onclick="ShowConfirm">Generate figure</button>
+            </div>
+        }
+        else if (_phase == CasterPhase.Complete && ShowMarkAgainButton)
+        {
+            <div class="figure-dot-caster-actions">
+                <button type="button" class="figure-dot-caster-btn figure-dot-caster-btn-secondary" @onclick="ClearAll">Mark again</button>
+            </div>
+        }
     }
 </div>
 
@@ -220,6 +281,7 @@
     private int _revealedFigureLines;
     private bool _figureNameRevealed;
     private long _dropFlashMarkKey = -1;
+    private bool _isAcknowledging;
 
     [Parameter] public string? MotherLabel { get; set; }
     [Parameter] public bool Compact { get; set; }
@@ -241,6 +303,12 @@
     /// <summary>Narrow wiki article column: smaller canvases and marks, stacked row labels.</summary>
     [Parameter] public bool WikiArticleLayout { get; set; }
     [Parameter] public bool WalkthroughLayout { get; set; }
+    /// <summary>House number shown in the post-generate "You got … for Mother N" message.</summary>
+    [Parameter] public int MotherHouseNumber { get; set; }
+    /// <summary>When true, the continue button reads "Generate full chart?" instead of "Create Next Mother".</summary>
+    [Parameter] public bool IsLastMother { get; set; }
+
+    private bool UseWalkthroughSidePanel => WalkthroughLayout && !MobileActionsFirst;
 
     private int _activeRowIndex;
     private int? _editUnlockedRow;
@@ -729,10 +797,15 @@
             _resolvedFigure.BodyLine = body;
             _resolvedFigure.FootLine = foot;
 
-            _revealedFigureLines = 4;
             _figureNameRevealed = true;
             _phase = CasterPhase.Complete;
             StateHasChanged();
+
+            if (UseWalkthroughSidePanel)
+            {
+                // Pause for "You got …" / Create Next Mother (or Generate full chart?).
+                return;
+            }
 
             await OnFigureCompleted.InvokeAsync(_resolvedFigure);
 
@@ -745,6 +818,25 @@
         catch (OperationCanceledException)
         {
             // Component disposed or reset during animation.
+        }
+    }
+
+    private async Task AcknowledgeCompletionAsync()
+    {
+        if (_phase != CasterPhase.Complete || _resolvedFigure == null || _isAcknowledging)
+        {
+            return;
+        }
+
+        _isAcknowledging = true;
+        StateHasChanged();
+        try
+        {
+            await OnFigureCompleted.InvokeAsync(_resolvedFigure);
+        }
+        finally
+        {
+            _isAcknowledging = false;
         }
     }
 
@@ -764,6 +856,7 @@
         _activePairingRow = -1;
         _revealedFigureLines = 0;
         _figureNameRevealed = false;
+        _isAcknowledging = false;
         _phase = CasterPhase.Marking;
         _activeRowIndex = 0;
         _editUnlockedRow = null;

@@ -182,3 +182,62 @@ window.geofancyScrollElementToTop = (el) => {
 
     return true;
 };
+
+/** Keep desktop mothers cast stack height/top locked to the shield chart box. */
+window.geofancyMothersCastSync = {
+    _sessions: new Map(),
+    start: function (key, chartRoot, castStack, castAlign) {
+        this.stop(key);
+        if (!chartRoot || !castStack) {
+            return;
+        }
+
+        var chartEl = chartRoot.classList && chartRoot.classList.contains('shield-chart-container')
+            ? chartRoot
+            : chartRoot.querySelector('.shield-chart-container');
+        if (!chartEl) {
+            return;
+        }
+
+        var apply = function () {
+            var chartRect = chartEl.getBoundingClientRect();
+            var h = Math.round(chartRect.height);
+            if (h <= 40) {
+                return;
+            }
+
+            castStack.style.height = h + 'px';
+            castStack.style.maxHeight = h + 'px';
+            castStack.style.minHeight = h + 'px';
+
+            if (castAlign) {
+                var alignRect = castAlign.getBoundingClientRect();
+                var offset = Math.round(chartRect.top - alignRect.top);
+                castStack.style.marginTop = Math.max(0, offset) + 'px';
+            }
+        };
+
+        var ro = new ResizeObserver(function () { apply(); });
+        ro.observe(chartEl);
+        if (castAlign) {
+            ro.observe(castAlign);
+        }
+        window.addEventListener('resize', apply);
+        apply();
+        this._sessions.set(key, { ro: ro, castStack: castStack, apply: apply });
+    },
+    stop: function (key) {
+        var session = this._sessions.get(key);
+        if (!session) {
+            return;
+        }
+
+        session.ro.disconnect();
+        window.removeEventListener('resize', session.apply);
+        session.castStack.style.height = '';
+        session.castStack.style.maxHeight = '';
+        session.castStack.style.minHeight = '';
+        session.castStack.style.marginTop = '';
+        this._sessions.delete(key);
+    }
+};
