@@ -97,6 +97,7 @@
                     }
                     else
                     {
+                        <div class="chart-casting-mobile-mothers-cast">
                         <FigureDotCaster @key="@($"mother-{_currentMotherIndex}")"
                                          @ref="_activeCaster"
                                          MotherLabel="@current.Label"
@@ -107,11 +108,13 @@
                                          ShowRowCounts="false"
                                          ShowRowUndo="false"
                                          ShowMarkAgainButton="false"
-                                         StretchRows="true"
+                                         StretchRows="false"
                                          FastPairing="true"
                                          MobileProgressiveRows="true"
                                          MobileActionsFirst="true"
+                                         MobileMothersCasting="true"
                                          OnFigureCompleted="OnMotherFigureCompleted" />
+                        </div>
                         @if (HostMode != ChartCastingHostMode.WikiMobile)
                         {
                             <p class="chart-casting-slot-target chart-casting-slot-target--mobile" aria-live="polite">
@@ -788,6 +791,7 @@
             if (EmbeddedMobileMothers)
             {
                 classes.Add("is-embedded-mobile-mothers");
+                classes.Add("is-mobile-mothers-casting");
             }
         }
 
@@ -795,6 +799,7 @@
         {
             classes.Add("is-embedded-workspace");
             classes.Add("is-embedded-mobile-mothers");
+            classes.Add("is-mobile-mothers-casting");
             if (Mode == ChartCastingMode.Full)
             {
                 classes.Add("is-wiki-mobile-full");

@@ -695,6 +695,16 @@
     height: 100%;
 }
 
+.mobile-mothers-setup ::deep .chart-casting-mobile-mothers-cast {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+}
+
+.mobile-mothers-setup ::deep .figure-dot-caster.is-mobile-mothers-casting {
+    pointer-events: auto;
+}
+
 .mobile-mothers-setup ::deep .figure-dot-caster.is-mobile-actions-first {
     flex: 1 1 auto;
     min-height: 0;

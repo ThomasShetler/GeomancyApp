@@ -76,8 +76,11 @@
                         <div @ref="_canvasRefs[rowIndex]"
                              class="figure-dot-canvas @GetCanvasClass(rowIndex)"
                              @onpointerdown="(e) => OnCanvasPointerDown(e, rowIndex)"
-                             @onpointerdown:preventDefault="true"
+                             @onpointerdown:preventDefault="@(!MobileMothersCasting)"
                              @onpointerdown:stopPropagation="true"
+                             @ontouchstart="(e) => OnCanvasTouchStart(e, rowIndex)"
+                             @ontouchstart:preventDefault="@MobileMothersCasting"
+                             @ontouchstart:stopPropagation="true"
                              role="button"
                              tabindex="@(_phase == CasterPhase.Marking && (!IsRowInputLocked(rowIndex) || CanRequestRowRefocus(rowIndex)) ? 0 : -1)"
                              aria-label="@GetRowAriaLabel(rowIndex, marks.Count)">
@@ -297,6 +300,8 @@
     [Parameter] public EventCallback<FigureModel> OnFigureCompleted { get; set; }
     [Parameter] public bool MobileProgressiveRows { get; set; }
     [Parameter] public bool MobileActionsFirst { get; set; }
+    /// <summary>Embedded /mobile or wiki-mobile mothers flow — isolated tap layout and touch handling.</summary>
+    [Parameter] public bool MobileMothersCasting { get; set; }
     /// <summary>Fill available vertical space with equally tall dot rows.</summary>
     [Parameter] public bool StretchRows { get; set; }
     /// <summary>Faster pairing / cross-off animation (mothers setup flow).</summary>
@@ -358,6 +363,7 @@
         if (_phase == CasterPhase.Complete) classes.Add("is-complete");
         if (MobileProgressiveRows) classes.Add("is-mobile-progressive");
         if (MobileActionsFirst) classes.Add("is-mobile-actions-first");
+        if (MobileMothersCasting) classes.Add("is-mobile-mothers-casting");
         if (StretchRows) classes.Add("is-stretch-rows");
         if (FastPairing) classes.Add("is-fast-pairing");
         if (WikiArticleLayout) classes.Add("is-wiki-article");
@@ -595,6 +601,48 @@
 
     private async Task OnCanvasPointerDown(PointerEventArgs e, int rowIndex)
     {
+        if (MobileMothersCasting && e.PointerType == "touch")
+        {
+            // Touch is handled by OnCanvasTouchStart on mobile mothers.
+            return;
+        }
+
+        if (e.PointerType == "mouse" && e.Button != 0)
+        {
+            return;
+        }
+
+        await PlaceMarkFromPointerAsync(
+            rowIndex,
+            e.ClientX,
+            e.ClientY,
+            e.OffsetX,
+            e.OffsetY);
+    }
+
+    private async Task OnCanvasTouchStart(TouchEventArgs e, int rowIndex)
+    {
+        if (!MobileMothersCasting || Disabled || _phase != CasterPhase.Marking || e.ChangedTouches.Length == 0)
+        {
+            return;
+        }
+
+        var touch = e.ChangedTouches[0];
+        await PlaceMarkFromPointerAsync(
+            rowIndex,
+            touch.ClientX,
+            touch.ClientY,
+            double.NaN,
+            double.NaN);
+    }
+
+    private async Task PlaceMarkFromPointerAsync(
+        int rowIndex,
+        double clientX,
+        double clientY,
+        double offsetX,
+        double offsetY)
+    {
         if (Disabled || _phase != CasterPhase.Marking)
         {
             return;
@@ -615,12 +663,25 @@
         ClearRefocusPrompt();
         OnMobileRowFocus(rowIndex);
 
-        if (e.PointerType == "mouse" && e.Button != 0)
+        PointerPercent? pos = null;
+        if (JS is IJSInProcessRuntime syncJs)
         {
-            return;
+            try
+            {
+                pos = syncJs.Invoke<PointerPercent>(
+                    "geofancyCasterPointerPercent",
+                    _canvasRefs[rowIndex],
+                    clientX,
+                    clientY,
+                    offsetX,
+                    offsetY);
+            }
+            catch
+            {
+                pos = null;
+            }
         }
 
-        var pos = ResolvePointerPercent(_canvasRefs[rowIndex], e);
         if (pos == null)
         {
             try
@@ -628,10 +689,10 @@
                 pos = await JS.InvokeAsync<PointerPercent>(
                     "geofancyCasterPointerPercent",
                     _canvasRefs[rowIndex],
-                    e.ClientX,
-                    e.ClientY,
-                    e.OffsetX,
-                    e.OffsetY);
+                    clientX,
+                    clientY,
+                    offsetX,
+                    offsetY);
             }
             catch
             {
@@ -649,29 +710,6 @@
         _dropFlashMarkKey = MarkKey(rowIndex, markId);
 
         StateHasChanged();
-    }
-
-    private PointerPercent? ResolvePointerPercent(ElementReference canvas, PointerEventArgs e)
-    {
-        if (JS is not IJSInProcessRuntime syncJs)
-        {
-            return null;
-        }
-
-        try
-        {
-            return syncJs.Invoke<PointerPercent>(
-                "geofancyCasterPointerPercent",
-                canvas,
-                e.ClientX,
-                e.ClientY,
-                e.OffsetX,
-                e.OffsetY);
-        }
-        catch
-        {
-            return null;
-        }
     }
 
     private sealed class PointerPercent
