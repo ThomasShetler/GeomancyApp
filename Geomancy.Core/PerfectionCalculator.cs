@@ -653,34 +653,46 @@ private static string Root(string name)
         // Helper method to calculate aspect type with Dexter/Sinister detection
         // Based on forward distance: diff = (target - h + 12) % 12
         private static (AspectType aspect, string direction) CalculateAspectWithDirection(int fromHouse, int toHouse)
-        {
-            // Calculate forward distance
-            int diff = (toHouse - fromHouse + 12) % 12;
+{
+    // Calculate the forward distance around the 12-house wheel
+    int distance = (toHouse - fromHouse + 12) % 12;
+
+    switch (distance)
+    {
+        case 2:
+            // 2 houses forward (e.g., 1st to 3rd) = 60 degrees
+            return (AspectType.Sextile, "Sinister"); 
             
-            // Sextile (60°)
-            if (diff == 2)
-                return (AspectType.Sextile, "Sinister Sextile (Forward)");
-            if (diff == 10)
-                return (AspectType.Sextile, "Dexter Sextile (Backward)");
+        case 10:
+            // 2 houses backward (e.g., 1st to 11th) = 60 degrees
+            return (AspectType.Sextile, "Dexter");
             
-            // Square (90°) [Malefic]
-            if (diff == 3)
-                return (AspectType.Square, "Sinister Square (Forward)");
-            if (diff == 9)
-                return (AspectType.Square, "Dexter Square (Backward)");
+        case 3:
+            // 3 houses forward (e.g., 1st to 4th) = 90 degrees
+            return (AspectType.Square, "Sinister");
             
-            // Trine (120°)
-            if (diff == 4)
-                return (AspectType.Trine, "Sinister Trine (Forward)");
-            if (diff == 8)
-                return (AspectType.Trine, "Dexter Trine (Backward)");
+        case 9:
+            // 3 houses backward (e.g., 1st to 10th) = 90 degrees
+            return (AspectType.Square, "Dexter");
             
-            // Opposition (180°) [Malefic]
-            if (diff == 6)
-                return (AspectType.Opposition, "Opposition");
+        case 4:
+            // 4 houses forward (e.g., 1st to 5th) = 120 degrees
+            return (AspectType.Trine, "Sinister");
             
-            return (AspectType.None, "");
-        }
+        case 8:
+            // 4 houses backward (e.g., 1st to 9th) = 120 degrees
+            return (AspectType.Trine, "Dexter");
+            
+        case 6:
+            // 6 houses away = 180 degrees
+            return (AspectType.Opposition, "Opposition");
+            
+        default:
+            // Adjacent houses (1 or 11) or inconjunct (5 or 7) do not form classical aspects
+            return (AspectType.None, "None"); 
+    }
+}
+
 
         // Helper method to check for Aspects (both benefic and malefic) via Translation
         // Implements "Translation" logic: checks for significators in other houses
