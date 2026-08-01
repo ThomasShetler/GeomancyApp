@@ -295,10 +295,20 @@ namespace GeomancyApp
         }
 
         // Helper method to sanitize figure root names by removing hidden characters
-        private static string Root(string name)
-        {
-            return name.Split(' ')[0].Trim().Trim('\u200b', '\u200c', '\uFEFF'); // strip BOM & zero-width spaces
-        }
+private static string Root(string name)
+{
+    var cleaned = name.Trim().Trim('\u200b', '\u200c', '\uFEFF'); // strip BOM & zero-width spaces
+    
+    // Preserve known two-word figures to prevent them from collapsing into a single word
+    if (cleaned.StartsWith("Fortuna Major", StringComparison.OrdinalIgnoreCase)) return "Fortuna Major";
+    if (cleaned.StartsWith("Fortuna Minor", StringComparison.OrdinalIgnoreCase)) return "Fortuna Minor";
+    if (cleaned.StartsWith("Caput Draconis", StringComparison.OrdinalIgnoreCase)) return "Caput Draconis";
+    if (cleaned.StartsWith("Cauda Draconis", StringComparison.OrdinalIgnoreCase)) return "Cauda Draconis";
+    
+    // Default to the original behavior (taking the first word) for all single-word figures
+    return cleaned.Split(' ')[0];
+}
+
 
         // Helper method to add interpretation tips to notes based on perfection mode
         private static void AddInterpretationTip(PerfectionResult result, HouseChart chart, int querentHouse, int quesitedHouse)
