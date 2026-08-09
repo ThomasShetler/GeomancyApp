@@ -54,6 +54,30 @@ namespace GeomancyApp
             }
         }
 
+        /// <summary>
+        /// Aspect type plus dexter/sinister direction from forward distance on the 12-house wheel.
+        /// Distance 2/3/4 forward = Sinister; 10/9/8 backward = Dexter; 6 = Opposition.
+        /// </summary>
+        public static (AspectType aspect, string direction) GetAspectWithDirection(int fromHouse, int toHouse)
+        {
+            if (fromHouse == toHouse)
+                return (AspectType.Conjunction, "Conjunction");
+
+            int distance = (toHouse - fromHouse + 12) % 12;
+
+            return distance switch
+            {
+                2 => (AspectType.Sextile, "Sinister"),
+                10 => (AspectType.Sextile, "Dexter"),
+                3 => (AspectType.Square, "Sinister"),
+                9 => (AspectType.Square, "Dexter"),
+                4 => (AspectType.Trine, "Sinister"),
+                8 => (AspectType.Trine, "Dexter"),
+                6 => (AspectType.Opposition, "Opposition"),
+                _ => (AspectType.None, "None")
+            };
+        }
+
         /*  Enumerate every pair once (i < j) and yield aspects >= min  */
         /*  Only count aspects when the figures in the two houses are different  */
         public static IEnumerable<(int from, int to, AspectType aspect)>
@@ -72,16 +96,8 @@ namespace GeomancyApp
                         
                         if (figure1 != null && figure2 != null)
                         {
-                            // Compare figures by name (root name, ignoring case)
-                            string name1 = figure1.Name ?? "";
-                            string name2 = figure2.Name ?? "";
-                            
-                            // Extract root name (before any parentheses)
-                            string root1 = name1.Contains("(") ? name1.Substring(0, name1.IndexOf("(")).Trim() : name1.Trim();
-                            string root2 = name2.Contains("(") ? name2.Substring(0, name2.IndexOf("(")).Trim() : name2.Trim();
-                            
-                            // Only yield if figures are different
-                            if (!root1.Equals(root2, StringComparison.OrdinalIgnoreCase))
+                            if (!FigureNameHelper.Root(figure1.Name)
+                                    .Equals(FigureNameHelper.Root(figure2.Name), StringComparison.OrdinalIgnoreCase))
                             {
                                 yield return (i, j, asp);
                             }

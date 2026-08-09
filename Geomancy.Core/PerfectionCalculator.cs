@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace GeomancyApp
 {
@@ -130,14 +129,11 @@ namespace GeomancyApp
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(querentFigureName, StringComparison.OrdinalIgnoreCase))
                 {
-                    var (aspect, direction) = CalculateAspectWithDirection(h, quesitedHouse);
+                    var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(h, quesitedHouse);
                     if (aspect == AspectType.Sextile || aspect == AspectType.Trine)
                     {
                         res.Mode = PerfectionType.Aspect;
-                        res.AspectBetweenSignificators = aspect;
-                        if (direction.Contains("Dexter")) res.AspectDirection = "Dexter";
-                        else if (direction.Contains("Sinister")) res.AspectDirection = "Sinister";
-                        else if (direction.Contains("Opposition")) res.AspectDirection = "Opposition";
+                        AssignAspectCast(res, h, quesitedHouse, aspect, direction);
                         res.Notes.Add($"Querent figure {querentFigureName} in house {h} (translation) aspects quesited's house {quesitedHouse} by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
@@ -153,14 +149,11 @@ namespace GeomancyApp
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(quesitedFigureName, StringComparison.OrdinalIgnoreCase))
                 {
-                    var (aspect, direction) = CalculateAspectWithDirection(h, querentHouse);
+                    var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(h, querentHouse);
                     if (aspect == AspectType.Sextile || aspect == AspectType.Trine)
                     {
                         res.Mode = PerfectionType.Aspect;
-                        res.AspectBetweenSignificators = aspect;
-                        if (direction.Contains("Dexter")) res.AspectDirection = "Dexter";
-                        else if (direction.Contains("Sinister")) res.AspectDirection = "Sinister";
-                        else if (direction.Contains("Opposition")) res.AspectDirection = "Opposition";
+                        AssignAspectCast(res, h, querentHouse, aspect, direction);
                         res.Notes.Add($"Quesited figure {quesitedFigureName} in house {h} (translation) aspects querent's house {querentHouse} by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
@@ -295,20 +288,35 @@ namespace GeomancyApp
         }
 
         // Helper method to sanitize figure root names by removing hidden characters
-private static string Root(string name)
-{
-    var cleaned = name.Trim().Trim('\u200b', '\u200c', '\uFEFF'); // strip BOM & zero-width spaces
-    
-    // Preserve known two-word figures to prevent them from collapsing into a single word
-    if (cleaned.StartsWith("Fortuna Major", StringComparison.OrdinalIgnoreCase)) return "Fortuna Major";
-    if (cleaned.StartsWith("Fortuna Minor", StringComparison.OrdinalIgnoreCase)) return "Fortuna Minor";
-    if (cleaned.StartsWith("Caput Draconis", StringComparison.OrdinalIgnoreCase)) return "Caput Draconis";
-    if (cleaned.StartsWith("Cauda Draconis", StringComparison.OrdinalIgnoreCase)) return "Cauda Draconis";
-    
-    // Default to the original behavior (taking the first word) for all single-word figures
-    return cleaned.Split(' ')[0];
-}
+        private static string Root(string name) => FigureNameHelper.Root(name);
 
+        private static void AssignAspectCast(PerfectionResult res, int fromHouse, int toHouse, AspectType aspect, string direction)
+        {
+            res.AspectBetweenSignificators = aspect;
+            res.AspectFromHouse = fromHouse;
+            res.AspectToHouse = toHouse;
+            if (direction.IndexOf("Dexter", StringComparison.OrdinalIgnoreCase) >= 0)
+                res.AspectDirection = "Dexter";
+            else if (direction.IndexOf("Sinister", StringComparison.OrdinalIgnoreCase) >= 0)
+                res.AspectDirection = "Sinister";
+            else if (direction.IndexOf("Opposition", StringComparison.OrdinalIgnoreCase) >= 0 || aspect == AspectType.Opposition)
+                res.AspectDirection = "Opposition";
+        }
+
+        private static AspectRecord BuildAspectRecord(PerfectionResult result)
+        {
+            return new AspectRecord
+            {
+                AspectType = result.AspectBetweenSignificators,
+                MadeThroughCompany = result.MadeThroughCompany,
+                Description = string.Join(" ", result.Notes),
+                FromHouse = result.AspectFromHouse,
+                ToHouse = result.AspectToHouse,
+                Direction = result.AspectDirection,
+                IsMajorAspect = result.AspectDirection == "Dexter"
+                    || result.AspectBetweenSignificators == AspectType.Opposition
+            };
+        }
 
         // Helper method to add interpretation tips to notes based on perfection mode
         private static void AddInterpretationTip(PerfectionResult result, HouseChart chart, int querentHouse, int quesitedHouse)
@@ -650,50 +658,6 @@ private static string Root(string name)
             }
         }
 
-        // Helper method to calculate aspect type with Dexter/Sinister detection
-        // Based on forward distance: diff = (target - h + 12) % 12
-        private static (AspectType aspect, string direction) CalculateAspectWithDirection(int fromHouse, int toHouse)
-{
-    // Calculate the forward distance around the 12-house wheel
-    int distance = (toHouse - fromHouse + 12) % 12;
-
-    switch (distance)
-    {
-        case 2:
-            // 2 houses forward (e.g., 1st to 3rd) = 60 degrees
-            return (AspectType.Sextile, "Sinister"); 
-            
-        case 10:
-            // 2 houses backward (e.g., 1st to 11th) = 60 degrees
-            return (AspectType.Sextile, "Dexter");
-            
-        case 3:
-            // 3 houses forward (e.g., 1st to 4th) = 90 degrees
-            return (AspectType.Square, "Sinister");
-            
-        case 9:
-            // 3 houses backward (e.g., 1st to 10th) = 90 degrees
-            return (AspectType.Square, "Dexter");
-            
-        case 4:
-            // 4 houses forward (e.g., 1st to 5th) = 120 degrees
-            return (AspectType.Trine, "Sinister");
-            
-        case 8:
-            // 4 houses backward (e.g., 1st to 9th) = 120 degrees
-            return (AspectType.Trine, "Dexter");
-            
-        case 6:
-            // 6 houses away = 180 degrees
-            return (AspectType.Opposition, "Opposition");
-            
-        default:
-            // Adjacent houses (1 or 11) or inconjunct (5 or 7) do not form classical aspects
-            return (AspectType.None, "None"); 
-    }
-}
-
-
         // Helper method to check for Aspects (both benefic and malefic) via Translation
         // Implements "Translation" logic: checks for significators in other houses
         private static void CheckAllAspects(HouseChart chart, int querentHouse, int quesitedHouse,
@@ -709,7 +673,7 @@ private static string Root(string name)
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(querentFigureName, StringComparison.OrdinalIgnoreCase))
                 {
-                    var (aspect, direction) = CalculateAspectWithDirection(h, quesitedHouse);
+                    var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(h, quesitedHouse);
                     if (aspect != AspectType.None)
                     {
                         var querentFullName = chart.GetHouseFigure(querentHouse)?.Name ?? querentFigureName;
@@ -718,17 +682,10 @@ private static string Root(string name)
                         var res = new PerfectionResult
                         {
                             Mode = PerfectionType.Aspect,
-                            AspectBetweenSignificators = aspect,
                             QuerentHouse = querentHouse,
                             QuesitedHouse = quesitedHouse
                         };
-                        // Extract direction for mode display (Dexter, Sinister, or Opposition)
-                        if (direction.Contains("Dexter"))
-                            res.AspectDirection = "Dexter";
-                        else if (direction.Contains("Sinister"))
-                            res.AspectDirection = "Sinister";
-                        else if (direction.Contains("Opposition"))
-                            res.AspectDirection = "Opposition";
+                        AssignAspectCast(res, h, quesitedHouse, aspect, direction);
                         res.Notes.Add($"Querent figure {querentFullName} in house {h} (via translation) aspects quesited's house {quesitedHouse} ({quesitedFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -745,7 +702,7 @@ private static string Root(string name)
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(quesitedFigureName, StringComparison.OrdinalIgnoreCase))
                 {
-                    var (aspect, direction) = CalculateAspectWithDirection(h, querentHouse);
+                    var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(h, querentHouse);
                     if (aspect != AspectType.None)
                     {
                         var querentFullName = chart.GetHouseFigure(querentHouse)?.Name ?? querentFigureName;
@@ -753,17 +710,10 @@ private static string Root(string name)
                         var res = new PerfectionResult
                         {
                             Mode = PerfectionType.Aspect,
-                            AspectBetweenSignificators = aspect,
                             QuerentHouse = querentHouse,
                             QuesitedHouse = quesitedHouse
                         };
-                        // Extract direction for mode display (Dexter, Sinister, or Opposition)
-                        if (direction.Contains("Dexter"))
-                            res.AspectDirection = "Dexter";
-                        else if (direction.Contains("Sinister"))
-                            res.AspectDirection = "Sinister";
-                        else if (direction.Contains("Opposition"))
-                            res.AspectDirection = "Opposition";
+                        AssignAspectCast(res, h, querentHouse, aspect, direction);
                         res.Notes.Add($"Quesited figure {quesitedFullName} in house {h} (via translation) aspects querent's house {querentHouse} ({querentFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -1261,20 +1211,13 @@ private static string Root(string name)
 
             // 3. Aspect: Check DIRECT aspect from the Company House first!
             // (This fixes the missing Square from House 2)
-            var (directCompanyAspect, dir) = CalculateAspectWithDirection(companyHouse, targetHouse);
+            var (directCompanyAspect, dir) = GeomanticAspects.GetAspectWithDirection(companyHouse, targetHouse);
             if (directCompanyAspect != AspectType.None)
             {
                 var res = new PerfectionResult();
                 res.Mode = PerfectionType.Aspect;
-                res.AspectBetweenSignificators = directCompanyAspect;
                 res.MadeThroughCompany = true;
-                // Extract direction for mode display (Dexter, Sinister, or Opposition)
-                if (dir.Contains("Dexter"))
-                    res.AspectDirection = "Dexter";
-                else if (dir.Contains("Sinister"))
-                    res.AspectDirection = "Sinister";
-                else if (dir.Contains("Opposition"))
-                    res.AspectDirection = "Opposition";
+                AssignAspectCast(res, companyHouse, targetHouse, directCompanyAspect, dir);
                 var companyFullName = companyFigure.Name;
                 var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
                 res.Notes.Add($"Figure in company {companyFullName} in house {companyHouse} (direct) aspects house {targetHouse} ({targetFullName}) by {dir}.");
@@ -1295,20 +1238,13 @@ private static string Root(string name)
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(companyFigureName, StringComparison.OrdinalIgnoreCase))
                 {
-                    var (aspect, direction) = CalculateAspectWithDirection(h, targetHouse);
+                    var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(h, targetHouse);
                     if (aspect != AspectType.None)
                     {
                         var res = new PerfectionResult();
                         res.Mode = PerfectionType.Aspect;
-                        res.AspectBetweenSignificators = aspect;
                         res.MadeThroughCompany = true;
-                        // Extract direction for mode display (Dexter, Sinister, or Opposition)
-                        if (direction.Contains("Dexter"))
-                            res.AspectDirection = "Dexter";
-                        else if (direction.Contains("Sinister"))
-                            res.AspectDirection = "Sinister";
-                        else if (direction.Contains("Opposition"))
-                            res.AspectDirection = "Opposition";
+                        AssignAspectCast(res, h, targetHouse, aspect, direction);
                         var companyFullName = companyFigure.Name;
                         var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
                         res.Notes.Add($"Figure in company {companyFullName} in house {h} (translation) aspects house {targetHouse} ({targetFullName}) by {direction}.");
@@ -1742,91 +1678,26 @@ private static string Root(string name)
             // Extract all aspects from results and categorize them
             foreach (var result in results)
             {
-                // Only process results that have aspects
-                if (result.AspectBetweenSignificators != AspectType.None)
+                if (result.Mode != PerfectionType.Aspect)
+                    continue;
+
+                if (result.AspectBetweenSignificators == AspectType.None
+                    || result.AspectFromHouse <= 0
+                    || result.AspectToHouse <= 0)
+                    continue;
+
+                var aspectRecord = BuildAspectRecord(result);
+
+                // Categorize as positive or negative
+                if (result.AspectBetweenSignificators == AspectType.Sextile || 
+                    result.AspectBetweenSignificators == AspectType.Trine)
                 {
-                    var aspectRecord = new AspectRecord
-                    {
-                        AspectType = result.AspectBetweenSignificators,
-                        MadeThroughCompany = result.MadeThroughCompany
-                    };
-
-                    // Extract information from notes
-                    string fullNote = string.Join(" ", result.Notes);
-                    aspectRecord.Description = fullNote;
-
-                    // Parse direction from notes (e.g., "Dexter Sextile (Backward)", "Sinister Trine (Forward)")
-                    // Set IsMajorAspect: Dexter aspects and Opposition are Major (high energy/dominant)
-                    if (fullNote.Contains("Dexter"))
-                    {
-                        aspectRecord.Direction = "Dexter (Backward)";
-                        aspectRecord.IsMajorAspect = true;
-                    }
-                    else if (fullNote.Contains("Sinister"))
-                    {
-                        aspectRecord.Direction = "Sinister (Forward)";
-                        aspectRecord.IsMajorAspect = false;
-                    }
-                    else if (fullNote.Contains("Opposition"))
-                    {
-                        aspectRecord.Direction = "Opposition";
-                        aspectRecord.IsMajorAspect = true; // Opposition is total denial, considered Major
-                    }
-                    else
-                    {
-                        aspectRecord.Direction = result.AspectBetweenSignificators.ToString();
-                        // Default: Opposition is Major, others depend on context
-                        aspectRecord.IsMajorAspect = result.AspectBetweenSignificators == AspectType.Opposition;
-                    }
-
-                    // Extract house numbers from notes
-                    // Pattern: "house X" or "House X" or "house X (translation)"
-                    var houseMatches = Regex.Matches(fullNote, @"[Hh]ouse\s+(\d+)");
-                    if (houseMatches.Count >= 2)
-                    {
-                        aspectRecord.FromHouse = int.Parse(houseMatches[0].Groups[1].Value);
-                        aspectRecord.ToHouse = int.Parse(houseMatches[1].Groups[1].Value);
-                    }
-                    else if (houseMatches.Count == 1)
-                    {
-                        // For direct aspects, use querent/quesited houses
-                        aspectRecord.FromHouse = querentHouse;
-                        aspectRecord.ToHouse = quesitedHouse;
-                    }
-                    else
-                    {
-                        // Fallback: try to extract from "in house X" pattern
-                        var inHouseMatches = Regex.Matches(fullNote, @"in house (\d+)");
-                        if (inHouseMatches.Count > 0)
-                        {
-                            aspectRecord.FromHouse = int.Parse(inHouseMatches[0].Groups[1].Value);
-                            // Determine target house from context
-                            if (fullNote.Contains("quesited"))
-                                aspectRecord.ToHouse = quesitedHouse;
-                            else if (fullNote.Contains("querent"))
-                                aspectRecord.ToHouse = querentHouse;
-                            else
-                                aspectRecord.ToHouse = quesitedHouse; // Default
-                        }
-                        else
-                        {
-                            // Last resort: use querent/quesited
-                            aspectRecord.FromHouse = querentHouse;
-                            aspectRecord.ToHouse = quesitedHouse;
-                        }
-                    }
-
-                    // Categorize as positive or negative
-                    if (result.AspectBetweenSignificators == AspectType.Sextile || 
-                        result.AspectBetweenSignificators == AspectType.Trine)
-                    {
-                        analysis.PositiveAspects.Add(aspectRecord);
-                    }
-                    else if (result.AspectBetweenSignificators == AspectType.Square || 
-                             result.AspectBetweenSignificators == AspectType.Opposition)
-                    {
-                        analysis.NegativeAspects.Add(aspectRecord);
-                    }
+                    analysis.PositiveAspects.Add(aspectRecord);
+                }
+                else if (result.AspectBetweenSignificators == AspectType.Square || 
+                         result.AspectBetweenSignificators == AspectType.Opposition)
+                {
+                    analysis.NegativeAspects.Add(aspectRecord);
                 }
             }
 

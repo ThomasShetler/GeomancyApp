@@ -35,6 +35,10 @@ namespace GeomancyApp
         public PerfectionType BaseMode { get; set; } = PerfectionType.None;  // The underlying mode when made through company
         public CompanyType CompanyType { get; set; } = CompanyType.None;  // Type of company (Simple, DemiSimple, Compound, Capitular)
         public string CompanyTypeDescription { get; set; } = string.Empty;  // Detailed description of company type (e.g., "Company Compound (opposite figures)")
+        /// <summary>House the aspect casts from (casting house), when Mode is Aspect or company-aspect.</summary>
+        public int AspectFromHouse { get; set; }
+        /// <summary>House the aspect casts to (receiving house).</summary>
+        public int AspectToHouse { get; set; }
     }
 
     /// <summary>

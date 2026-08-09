@@ -55,6 +55,7 @@
     <Compile Include="ReferenceIntegrityTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="AspectEngineTests.cs" />
+    <Compile Include="PerfectionCalculatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
