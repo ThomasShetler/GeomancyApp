@@ -213,6 +213,10 @@ namespace GeomancyAPI.Models
         public string Mode { get; set; }
         public string AspectBetweenSignificators { get; set; }
         public string AspectDirection { get; set; }
+        /// <summary>House the aspect casts from (may differ from QuerentHouse for company/translation).</summary>
+        public int AspectFromHouse { get; set; }
+        /// <summary>House the aspect casts to.</summary>
+        public int AspectToHouse { get; set; }
         public int TranslatorHouse { get; set; }
         public string TranslatorFigure { get; set; }
         public List<string> Notes { get; set; }

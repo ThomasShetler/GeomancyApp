@@ -743,6 +743,8 @@ namespace GeomancyWebUI.Client.Services
             public string Mode { get; set; } = string.Empty;
             public string AspectBetweenSignificators { get; set; } = string.Empty;
             public string AspectDirection { get; set; } = string.Empty;
+            public int AspectFromHouse { get; set; }
+            public int AspectToHouse { get; set; }
             public int TranslatorHouse { get; set; }
             public string TranslatorFigure { get; set; } = string.Empty;
             public List<string>? Notes { get; set; }
@@ -1169,6 +1171,9 @@ namespace GeomancyWebUI.Client.Services
                 Message = apiResponse.Message ?? string.Empty,
                 Mode = apiResponse.Mode ?? string.Empty,
                 AspectBetweenSignificators = apiResponse.AspectBetweenSignificators ?? string.Empty,
+                AspectDirection = apiResponse.AspectDirection ?? string.Empty,
+                AspectFromHouse = apiResponse.AspectFromHouse,
+                AspectToHouse = apiResponse.AspectToHouse,
                 TranslatorHouse = apiResponse.TranslatorHouse,
                 TranslatorFigure = apiResponse.TranslatorFigure ?? string.Empty,
                 Notes = apiResponse.Notes ?? new List<string>(),

@@ -1,4 +1,5 @@
 @using System.Text.RegularExpressions
+@using GeomancyApp
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Helpers
 
@@ -8,16 +9,12 @@
     Renders structured detail for whichever entry was clicked on the left:
       - Perfection / Denial: header w/ score pill, mode glossary tagline,
         chip row (mode, company, base mode, aspect + direction, translation,
-        MTC), Significators card (Querent → Quesited), Translator card,
-        Company card, Indentation card, Score breakdown, Mechanism card
-        (factual notes parsed out of the Notes list), Interpretation card
-        (the "Interpretation: ..." prose from Notes).
+        MTC), Significators card (Querent → Quesited), optional Cast from/to,
+        Translator card, Company card, Indentation card, Score breakdown,
+        How this formed (structured) / Mechanism fallback, Interpretation.
       - Positive / Negative Aspect: header w/ score pill, aspect glossary
-        tagline, chip row (Major/Minor, Direction, MTC), From → To houses,
-        Score breakdown, Mechanism card + Interpretation card parsed out
-        of the aspect's Description.
-
-    The panel itself is the only scroll container in the right column.
+        tagline, chip row (Major/Minor, Direction, MTC), Cast from → Cast to,
+        Score breakdown, How this formed + Interpretation.
 *@
 
 <div class="perf-detail-panel @(Selection == null ? "is-empty" : "")">
@@ -46,6 +43,10 @@
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
             var directionVis = AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
+            var mechanism = BuildPerfectionMechanism(p);
+            var castVis = mechanism.HasStructuredCast
+                ? AspectDirectionHelper.Resolve(mechanism.Cast!.Direction, mechanism.Cast.AspectType)
+                : directionVis;
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -122,6 +123,38 @@
                     </div>
                 </div>
             </section>
+
+            @if (mechanism.HasStructuredCast)
+            {
+                <section class="detail-card aspect-flow-card @AspectDirectionHelper.AspectTypeClass(mechanism.Cast!.AspectType)">
+                    <h3 class="card-title">Cast</h3>
+                    <div class="significators-grid">
+                        <div class="sig-cell">
+                            <span class="sig-eyebrow">Cast from</span>
+                            <span class="sig-house">House @mechanism.Cast.FromHouse</span>
+                            @if (!string.IsNullOrEmpty(mechanism.Cast.FromFigure))
+                            {
+                                <span class="sig-figure">@mechanism.Cast.FromFigure</span>
+                            }
+                        </div>
+                        <div class="sig-arrow @castVis.CssClass" title="@castVis.Hint">
+                            @castVis.Glyph
+                        </div>
+                        <div class="sig-cell">
+                            <span class="sig-eyebrow">Cast to</span>
+                            <span class="sig-house">House @mechanism.Cast.ToHouse</span>
+                            @if (!string.IsNullOrEmpty(mechanism.Cast.ToFigure))
+                            {
+                                <span class="sig-figure">@mechanism.Cast.ToFigure</span>
+                            }
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(mechanism.DirectionHint))
+                    {
+                        <p class="cast-direction-hint">@mechanism.DirectionHint</p>
+                    }
+                </section>
+            }
 
             <!-- Translator card -->
             @if (p.TranslatorHouse > 0)
@@ -208,8 +241,25 @@
                 </div>
             </section>
 
-            <!-- Mechanism (factual notes pulled out of p.Notes) -->
-            @if (noteParts.Mechanisms.Count > 0)
+            <!-- How this formed (structured) or Mechanism fallback from notes -->
+            @if (mechanism.Steps.Count > 0)
+            {
+                <section class="detail-card mechanism-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⚙</span> @mechanism.Title
+                    </h3>
+                    <ol class="mechanism-list mechanism-steps">
+                        @for (var si = 0; si < mechanism.Steps.Count; si++)
+                        {
+                            <li class="mechanism-item">
+                                <span class="mechanism-step-num">@(si + 1)</span>
+                                <span class="mechanism-text">@HighlightTokens(mechanism.Steps[si])</span>
+                            </li>
+                        }
+                    </ol>
+                </section>
+            }
+            else if (noteParts.Mechanisms.Count > 0)
             {
                 <section class="detail-card mechanism-card">
                     <h3 class="card-title">
@@ -276,9 +326,10 @@
             var aspectGlossary = GetAspectGlossary(a.AspectType, a.Direction);
             var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
             var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
-            // Description on AspectRecord is just joined Notes from the source perfection,
-            // so the same parser that extracts mechanism vs interpretation works here.
             var aNoteParts = ParseDescription(a.Description);
+            var aMechanism = BuildAspectMechanism(a);
+            var fromFigureName = GetHouseFigureName(a.FromHouse);
+            var toFigureName = GetHouseFigureName(a.ToHouse);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -328,36 +379,34 @@
                 }
             </div>
 
-            <!-- Houses card -->
+            <!-- Cast houses -->
             <section class="detail-card aspect-flow-card @aspectTypeClass">
-                <h3 class="card-title">House flow</h3>
+                <h3 class="card-title">Cast</h3>
                 <div class="significators-grid">
                     <div class="sig-cell">
-                        <span class="sig-eyebrow">From</span>
+                        <span class="sig-eyebrow">Cast from</span>
                         <span class="sig-house">House @a.FromHouse</span>
-                        @{
-                            var fromFigure = GetHouseFigureName(a.FromHouse);
-                            if (!string.IsNullOrEmpty(fromFigure))
-                            {
-                                <span class="sig-figure">@fromFigure</span>
-                            }
+                        @if (!string.IsNullOrEmpty(fromFigureName))
+                        {
+                            <span class="sig-figure">@fromFigureName</span>
                         }
                     </div>
                     <div class="sig-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">
                         @aDirectionVis.Glyph
                     </div>
                     <div class="sig-cell">
-                        <span class="sig-eyebrow">To</span>
+                        <span class="sig-eyebrow">Cast to</span>
                         <span class="sig-house">House @a.ToHouse</span>
-                        @{
-                            var toFigure = GetHouseFigureName(a.ToHouse);
-                            if (!string.IsNullOrEmpty(toFigure))
-                            {
-                                <span class="sig-figure">@toFigure</span>
-                            }
+                        @if (!string.IsNullOrEmpty(toFigureName))
+                        {
+                            <span class="sig-figure">@toFigureName</span>
                         }
                     </div>
                 </div>
+                @if (!string.IsNullOrEmpty(aMechanism.DirectionHint))
+                {
+                    <p class="cast-direction-hint">@aMechanism.DirectionHint</p>
+                }
             </section>
 
             <!-- Score breakdown -->
@@ -375,7 +424,24 @@
                 </div>
             </section>
 
-            @if (aNoteParts.Mechanisms.Count > 0)
+            @if (aMechanism.Steps.Count > 0)
+            {
+                <section class="detail-card mechanism-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⚙</span> @aMechanism.Title
+                    </h3>
+                    <ol class="mechanism-list mechanism-steps">
+                        @for (var si = 0; si < aMechanism.Steps.Count; si++)
+                        {
+                            <li class="mechanism-item">
+                                <span class="mechanism-step-num">@(si + 1)</span>
+                                <span class="mechanism-text">@HighlightTokens(aMechanism.Steps[si])</span>
+                            </li>
+                        }
+                    </ol>
+                </section>
+            }
+            else if (aNoteParts.Mechanisms.Count > 0)
             {
                 <section class="detail-card mechanism-card">
                     <h3 class="card-title">
@@ -425,6 +491,64 @@
         if (Chart?.Houses == null || houseNumber <= 0) return string.Empty;
         var house = Chart.Houses.FirstOrDefault(h => h.HouseNumber == houseNumber);
         return house?.Figure?.Name ?? string.Empty;
+    }
+
+    private PerfectionMechanismHelper.MechanismExplanation BuildPerfectionMechanism(PerfectionModel p)
+    {
+        var fromHouse = p.AspectFromHouse;
+        var toHouse = p.AspectToHouse;
+        if (fromHouse <= 0 || toHouse <= 0)
+            return new PerfectionMechanismHelper.MechanismExplanation();
+
+        var fromFigure = GetHouseFigureName(fromHouse);
+        var toFigure = GetHouseFigureName(toHouse);
+        if (string.IsNullOrEmpty(fromFigure) && fromHouse == p.QuerentHouse)
+            fromFigure = p.QuerentFigure;
+        if (string.IsNullOrEmpty(toFigure) && toHouse == p.QuesitedHouse)
+            toFigure = p.QuesitedFigure;
+
+        return PerfectionMechanismHelper.ExplainAspectCast(
+            fromHouse,
+            toHouse,
+            fromFigure,
+            toFigure,
+            p.AspectBetweenSignificators,
+            p.AspectDirection,
+            p.QuerentHouse,
+            p.QuesitedHouse,
+            p.QuerentFigure,
+            p.QuesitedFigure,
+            p.MadeThroughCompany,
+            p.CompanyType,
+            p.CompanyTypeDescription,
+            p.Mode,
+            p.BaseMode);
+    }
+
+    private PerfectionMechanismHelper.MechanismExplanation BuildAspectMechanism(AspectRecordModel a)
+    {
+        if (a.FromHouse <= 0 || a.ToHouse <= 0)
+            return new PerfectionMechanismHelper.MechanismExplanation();
+
+        var querent = Analysis?.QuerentHouse ?? 0;
+        var quesited = Analysis?.QuesitedHouse ?? 0;
+
+        return PerfectionMechanismHelper.ExplainAspectCast(
+            a.FromHouse,
+            a.ToHouse,
+            GetHouseFigureName(a.FromHouse),
+            GetHouseFigureName(a.ToHouse),
+            a.AspectType,
+            a.Direction,
+            querent,
+            quesited,
+            GetHouseFigureName(querent),
+            GetHouseFigureName(quesited),
+            a.MadeThroughCompany,
+            string.Empty,
+            string.Empty,
+            "Aspect",
+            string.Empty);
     }
 
     // ----- Score helpers -----

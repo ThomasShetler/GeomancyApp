@@ -23,6 +23,10 @@ namespace GeomancyWebUI.Client.Models
         public string Mode { get; set; } = string.Empty;
         public string AspectBetweenSignificators { get; set; } = string.Empty;
         public string AspectDirection { get; set; } = string.Empty;
+        /// <summary>House the aspect casts from (may differ from QuerentHouse for company/translation).</summary>
+        public int AspectFromHouse { get; set; }
+        /// <summary>House the aspect casts to.</summary>
+        public int AspectToHouse { get; set; }
         public int TranslatorHouse { get; set; }
         public string TranslatorFigure { get; set; } = string.Empty;
         public List<string> Notes { get; set; } = new();

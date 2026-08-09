@@ -134,7 +134,7 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Aspect;
                         AssignAspectCast(res, h, quesitedHouse, aspect, direction);
-                        res.Notes.Add($"Querent figure {querentFigureName} in house {h} (translation) aspects quesited's house {quesitedHouse} by {direction}.");
+                        res.Notes.Add($"Querent figure {querentFigureName} appears in house {h} (translation of the significator) and aspects quesited's house {quesitedHouse} by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
                     }
@@ -154,7 +154,7 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Aspect;
                         AssignAspectCast(res, h, querentHouse, aspect, direction);
-                        res.Notes.Add($"Quesited figure {quesitedFigureName} in house {h} (translation) aspects querent's house {querentHouse} by {direction}.");
+                        res.Notes.Add($"Quesited figure {quesitedFigureName} appears in house {h} (translation of the significator) and aspects querent's house {querentHouse} by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
                     }
@@ -712,7 +712,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         AssignAspectCast(res, h, quesitedHouse, aspect, direction);
-                        res.Notes.Add($"Querent figure {querentFullName} in house {h} (via translation) aspects quesited's house {quesitedHouse} ({quesitedFullName}) by {direction}.");
+                        res.Notes.Add($"Querent figure {querentFullName} appears in house {h} (translation of the significator) and aspects quesited's house {quesitedHouse} ({quesitedFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                     }
@@ -740,7 +740,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         AssignAspectCast(res, h, querentHouse, aspect, direction);
-                        res.Notes.Add($"Quesited figure {quesitedFullName} in house {h} (via translation) aspects querent's house {querentHouse} ({querentFullName}) by {direction}.");
+                        res.Notes.Add($"Quesited figure {quesitedFullName} appears in house {h} (translation of the significator) and aspects querent's house {querentHouse} ({querentFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                     }
@@ -1246,7 +1246,7 @@ namespace GeomancyApp
                 AssignAspectCast(res, companyHouse, targetHouse, directCompanyAspect, dir);
                 var companyFullName = companyFigure.Name;
                 var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
-                res.Notes.Add($"Figure in company {companyFullName} in house {companyHouse} (direct) aspects house {targetHouse} ({targetFullName}) by {dir}.");
+                res.Notes.Add($"Figure in company {companyFullName} in house {companyHouse} casts directly to house {targetHouse} ({targetFullName}) by {dir}.");
                 AddInterpretationTip(res, chart, companyHouse, targetHouse);
                 return res;
             }
@@ -1273,7 +1273,7 @@ namespace GeomancyApp
                         AssignAspectCast(res, h, targetHouse, aspect, direction);
                         var companyFullName = companyFigure.Name;
                         var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
-                        res.Notes.Add($"Figure in company {companyFullName} in house {h} (translation) aspects house {targetHouse} ({targetFullName}) by {direction}.");
+                        res.Notes.Add($"Figure in company {companyFullName} appears in house {h} (translation of the company figure) and aspects house {targetHouse} ({targetFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, companyHouse, targetHouse);
                         return res;
                     }
