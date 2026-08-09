@@ -349,6 +349,48 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void CompanySimple_AdjacentSignificators_DoesNotInventSelfPathConjunction()
+        {
+            // Screenshot bug: Q H7 Cauda in Simple company with H8 Cauda, X H6 Caput (adjacent to H7).
+            // Old logic treated Cauda-in-H7 as a "company pass" → H7→H7 conjunction.
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(6, "Caput Draconis");
+            chart.SetHouseFigure(7, "Cauda Draconis");
+            chart.SetHouseFigure(8, "Cauda Draconis");
+
+            var results = PerfectionCalculator.Find(chart, 7, 6, returnAllModes: true);
+
+            Assert.IsFalse(results.Any(r =>
+                    r.Mode == PerfectionType.Company
+                    && r.BaseMode == PerfectionType.Conjunction
+                    && r.PathFromHouse == r.PathToHouse),
+                "Company conjunction must never path a house to itself.");
+
+            Assert.IsFalse(results.Any(r =>
+                    r.Mode == PerfectionType.Company
+                    && r.BaseMode == PerfectionType.Conjunction
+                    && r.PathFromHouse == 7 && r.PathToHouse == 7),
+                "Must not invent Conjunction via the significator's own seat.");
+
+            // Companion H8 sextiles H6 — valid company aspect instead of fake conjunction.
+            var companyAspect = results.FirstOrDefault(r =>
+                r.Mode == PerfectionType.Company
+                && r.BaseMode == PerfectionType.Aspect
+                && r.AspectFromHouse == 8
+                && r.AspectToHouse == 6);
+            Assert.IsNotNull(companyAspect, "Expected company-mediated aspect from companion H8 to X H6.");
+            Assert.AreEqual(CompanyType.Simple, companyAspect.CompanyType);
+
+            var explanation = PerfectionMechanismHelper.ExplainFromPerfectionResult(
+                companyAspect,
+                chart.GetHouseFigure(8)?.Name ?? string.Empty,
+                chart.GetHouseFigure(6)?.Name ?? string.Empty);
+            Assert.IsFalse(explanation.Steps.Any(s =>
+                System.Text.RegularExpressions.Regex.IsMatch(s, @"House 7 .* company with House 7")),
+                "Company context must not claim a house is in company with itself.");
+        }
+
+        [TestMethod]
         public void AnalyzePerfections_ImpeditionOnly_ScoresUnfavorableTotal()
         {
             var chart = ChartWithUniqueFigures();

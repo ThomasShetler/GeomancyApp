@@ -35,6 +35,20 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void HasPath_RejectsSelfHouseLoop()
+        {
+            var path = new PerfectionPathDisplay.ListRowPath
+            {
+                FromHouse = 7,
+                ToHouse = 7,
+                FromFigure = "Cauda Draconis",
+                ActorPrefix = "Q."
+            };
+            Assert.IsFalse(path.HasPath);
+            Assert.AreEqual(string.Empty, PerfectionPathDisplay.FormatFlow(path));
+        }
+
+        [TestMethod]
         public void FormatFlow_MutationTwoFigures()
         {
             var path = new PerfectionPathDisplay.ListRowPath

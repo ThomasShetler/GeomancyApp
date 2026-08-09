@@ -1282,10 +1282,14 @@ namespace GeomancyApp
 
             var companyFigureName = Root(companyFigure.Name);
 
-            // 2. Conjunction: figure in company appears adjacent to other significator's house
+            // 2. Conjunction: company figure appears in another house adjacent to the target.
+            // Skip the original significator house — for Simple company it holds the same
+            // figure, and treating it as a "pass" invents Hn→Hn next to an adjacent target.
+            int originalSignificatorHouse = GetPairedHouse(companyHouse);
             for (int h = 1; h <= 12; h++)
             {
-                if (h == companyHouse) continue;
+                if (h == companyHouse || h == originalSignificatorHouse || h == targetHouse)
+                    continue;
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(companyFigureName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -1295,9 +1299,9 @@ namespace GeomancyApp
                         res.Mode = PerfectionType.Conjunction;
                         var companyFullName = companyFigure.Name;
                         var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
-                        int significatorHouse = GetPairedHouse(companyHouse);
                         string actor = querentInCompany ? "Q." : "Qst.";
-                        AssignPath(res, significatorHouse, h, companyFullName, null, actor);
+                        // Path: companion seat → pass house beside the other significator.
+                        AssignPath(res, companyHouse, h, companyFullName, null, actor);
                         res.Notes.Add($"Figure in company {companyFullName} in house {h} is adjacent to house {targetHouse} ({targetFullName}).");
                         AddInterpretationTip(res, chart, companyHouse, targetHouse);
                         return res;
@@ -1325,12 +1329,7 @@ namespace GeomancyApp
             // 4. Aspect via Translation (Company Figure appearing elsewhere)
             for (int h = 1; h <= 12; h++)
             {
-                if (h == companyHouse) continue;
-                
-                // CRITICAL FIX: Don't let the company figure circle back to the Paired House
-                // (e.g. If checking House 2's company, don't use House 1 (the original querent) as a translator)
-                int originalSignificatorHouse = GetPairedHouse(companyHouse);
-                if (h == originalSignificatorHouse) continue;
+                if (h == companyHouse || h == originalSignificatorHouse) continue;
 
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(companyFigureName, StringComparison.OrdinalIgnoreCase))
@@ -1402,10 +1401,7 @@ namespace GeomancyApp
             var companyFigureHouses = new List<int>();
             for (int h = 1; h <= 12; h++)
             {
-                if (h == companyHouse) continue;
-                // Exclude original significator to avoid circular logic
-                int originalSignificatorHouse = GetPairedHouse(companyHouse);
-                if (h == originalSignificatorHouse) continue;
+                if (h == companyHouse || h == originalSignificatorHouse) continue;
 
                 var houseFigure = chart.GetHouseFigure(h);
                 if (houseFigure != null && Root(houseFigure.Name).Equals(companyFigureName, StringComparison.OrdinalIgnoreCase))

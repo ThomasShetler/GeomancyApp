@@ -328,7 +328,7 @@ namespace GeomancyApp
         {
             var fig = string.IsNullOrWhiteSpace(pathFigure) ? "the significator" : pathFigure.Trim();
             var actor = NormalizeActorLabel(pathActor);
-            if (pathFromHouse > 0 && pathToHouse > 0)
+            if (pathFromHouse > 0 && pathToHouse > 0 && pathFromHouse != pathToHouse)
             {
                 if (!string.IsNullOrEmpty(actor))
                 {
@@ -424,26 +424,48 @@ namespace GeomancyApp
             string companyTypeDescription)
         {
             var typeLabel = CompanyTypeLabel(companyType, companyTypeDescription);
-            var companionHouse = pathToHouse > 0 ? pathToHouse : pathFromHouse;
             var companionFigure = string.IsNullOrWhiteSpace(pathFigure) ? "the companion figure" : pathFigure.Trim();
             var actor = (pathActor ?? string.Empty).Trim();
 
-            if (actor.StartsWith("Qst", StringComparison.OrdinalIgnoreCase) && quesitedHouse > 0 && companionHouse > 0)
+            // Companion is always the classical paired house of the significator in company —
+            // never a path endpoint that can collapse to the significator itself (Hn→Hn).
+            if (actor.StartsWith("Qst", StringComparison.OrdinalIgnoreCase) && quesitedHouse > 0)
             {
-                var xFig = string.IsNullOrWhiteSpace(quesitedFigure) ? "the quesited figure" : quesitedFigure.Trim();
-                explanation.Steps.Add(
-                    $"House {quesitedHouse} ({xFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}).");
+                int companionHouse = PairedHouse(quesitedHouse);
+                if (companionHouse > 0 && companionHouse != quesitedHouse)
+                {
+                    var xFig = string.IsNullOrWhiteSpace(quesitedFigure) ? "the quesited figure" : quesitedFigure.Trim();
+                    explanation.Steps.Add(
+                        $"House {quesitedHouse} ({xFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}).");
+                    return;
+                }
             }
-            else if (actor.StartsWith("Q", StringComparison.OrdinalIgnoreCase) && querentHouse > 0 && companionHouse > 0)
+
+            if (actor.StartsWith("Q", StringComparison.OrdinalIgnoreCase) && querentHouse > 0)
             {
-                var qFig = string.IsNullOrWhiteSpace(querentFigure) ? "the querent figure" : querentFigure.Trim();
-                explanation.Steps.Add(
-                    $"House {querentHouse} ({qFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}).");
+                int companionHouse = PairedHouse(querentHouse);
+                if (companionHouse > 0 && companionHouse != querentHouse)
+                {
+                    var qFig = string.IsNullOrWhiteSpace(querentFigure) ? "the querent figure" : querentFigure.Trim();
+                    explanation.Steps.Add(
+                        $"House {querentHouse} ({qFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}).");
+                    return;
+                }
             }
-            else if (companionHouse > 0)
+
+            // Fallback when actor is unknown: prefer a path house that is a true pair seat.
+            int fromPairOfTo = pathToHouse > 0 ? PairedHouse(pathToHouse) : 0;
+            int toPairOfFrom = pathFromHouse > 0 ? PairedHouse(pathFromHouse) : 0;
+            if (pathFromHouse > 0 && pathToHouse > 0 && pathFromHouse != pathToHouse
+                && (pathFromHouse == fromPairOfTo || pathToHouse == toPairOfFrom))
             {
                 explanation.Steps.Add(
-                    $"Made through company ({typeLabel}): {companionFigure} in House {companionHouse} acts for a significator in company.");
+                    $"House {pathFromHouse} is in {typeLabel} company with House {pathToHouse} ({companionFigure}).");
+            }
+            else if (pathFromHouse > 0 && pathFromHouse != pathToHouse)
+            {
+                explanation.Steps.Add(
+                    $"Made through company ({typeLabel}): {companionFigure} in House {pathFromHouse} acts for a significator in company.");
             }
         }
 

@@ -14,7 +14,7 @@ namespace GeomancyApp
             public string FromFigure { get; set; } = string.Empty;
             public string ToFigure { get; set; } = string.Empty;
             public string ActorPrefix { get; set; } = string.Empty;
-            public bool HasPath => FromHouse > 0 && ToHouse > 0;
+            public bool HasPath => FromHouse > 0 && ToHouse > 0 && FromHouse != ToHouse;
         }
 
         public static ListRowPath ForListRow(PerfectionResult result)
