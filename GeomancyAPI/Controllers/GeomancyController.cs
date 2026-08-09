@@ -750,6 +750,56 @@ namespace GeomancyAPI.Controllers
         }
 
         [HttpGet]
+        [Route("perfections/company-types")]
+        [ResponseType(typeof(CompanyTypeDirectoryResponse))]
+        public HttpResponseMessage GetCompanyTypesDirectory()
+        {
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, GeomancyHandlers.GetCompanyTypesDirectory());
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading company types directory: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("perfections/company-types/{id}")]
+        [ResponseType(typeof(CompanyTypeEntryResponse))]
+        public HttpResponseMessage GetCompanyTypeDirectoryEntry(string id)
+        {
+            try
+            {
+                var entry = GeomancyHandlers.GetCompanyTypeDirectoryEntry(id);
+                if (entry == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No company type entry for '{id}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, entry);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading company type entry: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet]
         [Route("references/greer/figures")]
         [ResponseType(typeof(List<GreerFigureResponse>))]
         public HttpResponseMessage GetGreerFiguresDirectory()

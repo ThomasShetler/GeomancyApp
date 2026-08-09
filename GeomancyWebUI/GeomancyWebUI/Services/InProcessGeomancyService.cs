@@ -20,6 +20,7 @@ namespace GeomancyWebUI.Services
         private List<CourtDirectoryEntry>? _courtsDirectoryCache;
         private List<WayOfPointsElementEntry>? _wayOfPointsElementsCache;
         private List<WayOfPointsPathTypeEntry>? _wayOfPointsPathTypesCache;
+        private CompanyTypeDirectory? _companyTypesCache;
         private List<GreerFigureModel>? _greerFiguresCache;
         private GreerHouseDirectory? _greerHousesCache;
 
@@ -161,6 +162,22 @@ namespace GeomancyWebUI.Services
             _wayOfPointsPathTypesCache = entries?.Select(MapToWayOfPointsPathTypeEntry).ToList()
                                          ?? new List<WayOfPointsPathTypeEntry>();
             return Task.FromResult(_wayOfPointsPathTypesCache);
+        }
+
+        public Task<CompanyTypeDirectory> GetCompanyTypesDirectoryAsync()
+        {
+            if (_companyTypesCache != null) return Task.FromResult(_companyTypesCache);
+
+            var directory = Handlers.GetCompanyTypesDirectory();
+            _companyTypesCache = directory == null
+                ? new CompanyTypeDirectory()
+                : new CompanyTypeDirectory
+                {
+                    Overview = directory.Overview == null ? null : MapToCompanyTypeOverview(directory.Overview),
+                    CompanyTypes = directory.CompanyTypes?.Select(MapToCompanyTypeEntry).ToList()
+                                   ?? new List<CompanyTypeEntry>()
+                };
+            return Task.FromResult(_companyTypesCache);
         }
 
         public Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync()
@@ -563,6 +580,38 @@ namespace GeomancyWebUI.Services
                 MechanismSummary = src.MechanismSummary ?? string.Empty,
                 CoReads = src.CoReads ?? string.Empty,
                 InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>(),
+            };
+
+        private static CompanyTypeOverview MapToCompanyTypeOverview(ContractModels.CompanyTypeOverviewResponse src)
+            => new CompanyTypeOverview
+            {
+                Id = src.Id ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                MechanismSummary = src.MechanismSummary ?? string.Empty,
+                CoReads = src.CoReads ?? string.Empty,
+                InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>(),
+            };
+
+        private static CompanyTypeEntry MapToCompanyTypeEntry(ContractModels.CompanyTypeEntryResponse src)
+            => new CompanyTypeEntry
+            {
+                Id = src.Id ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                ShortLabel = src.ShortLabel ?? string.Empty,
+                ListLabel = src.ListLabel ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                DetectionRule = src.DetectionRule ?? string.Empty,
+                MechanismSummary = src.MechanismSummary ?? string.Empty,
+                CoReads = src.CoReads ?? string.Empty,
+                InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>(),
+                Variants = src.Variants?.Select(v => new CompanyTypeVariant
+                {
+                    Id = v.Id ?? string.Empty,
+                    Name = v.Name ?? string.Empty,
+                    Tagline = v.Tagline ?? string.Empty,
+                    MechanismSummary = v.MechanismSummary ?? string.Empty,
+                }).ToList() ?? new List<CompanyTypeVariant>(),
             };
     }
 }

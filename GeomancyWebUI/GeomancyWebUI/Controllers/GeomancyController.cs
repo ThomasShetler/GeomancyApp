@@ -664,6 +664,52 @@ namespace GeomancyWebUI.Controllers
             }
         }
 
+        [HttpGet("perfections/company-types")]
+        public IActionResult GetCompanyTypesDirectory()
+        {
+            try
+            {
+                return Ok(GeomancyHandlers.GetCompanyTypesDirectory());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading company types directory: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpGet("perfections/company-types/{id}")]
+        public IActionResult GetCompanyTypeDirectoryEntry(string id)
+        {
+            try
+            {
+                var entry = GeomancyHandlers.GetCompanyTypeDirectoryEntry(id);
+                if (entry == null)
+                {
+                    return NotFound(new ErrorResponse
+                    {
+                        Error = "NotFound",
+                        Message = $"No company type entry for '{id}'",
+                        Timestamp = DateTime.UtcNow
+                    });
+                }
+                return Ok(entry);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "DirectoryLoadFailed",
+                    Message = $"Error loading company type entry: {ex.Message}",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
         [HttpGet("references/greer/figures")]
         public IActionResult GetGreerFiguresDirectory()
         {

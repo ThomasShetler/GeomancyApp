@@ -596,6 +596,101 @@ namespace GeomancyAPI.Models
         public List<WayOfPointsPathTypeEntryResponse> PathTypes { get; set; } = new List<WayOfPointsPathTypeEntryResponse>();
     }
 
+    // Reference directory for Company of Houses terms (Simple / DemiSimple / Compound / Capitular),
+    // sourced from databank/PerfectionDirectory/CompanyTypeData.json
+    public class CompanyTypeEntryResponse
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("short_label")]
+        public string ShortLabel { get; set; }
+
+        [JsonProperty("list_label")]
+        public string ListLabel { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("detection_rule")]
+        public string DetectionRule { get; set; }
+
+        [JsonProperty("mechanism_summary")]
+        public string MechanismSummary { get; set; }
+
+        [JsonProperty("co_reads")]
+        public string CoReads { get; set; }
+
+        [JsonProperty("interpretation_paragraphs")]
+        public List<string> InterpretationParagraphs { get; set; } = new List<string>();
+
+        [JsonProperty("variants")]
+        public List<CompanyTypeVariantResponse> Variants { get; set; } = new List<CompanyTypeVariantResponse>();
+    }
+
+    public class CompanyTypeVariantResponse
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("mechanism_summary")]
+        public string MechanismSummary { get; set; }
+    }
+
+    public class CompanyTypeOverviewResponse
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("mechanism_summary")]
+        public string MechanismSummary { get; set; }
+
+        [JsonProperty("co_reads")]
+        public string CoReads { get; set; }
+
+        [JsonProperty("interpretation_paragraphs")]
+        public List<string> InterpretationParagraphs { get; set; } = new List<string>();
+    }
+
+    public class CompanyTypeDirectoryResponse
+    {
+        [JsonProperty("overview")]
+        public CompanyTypeOverviewResponse Overview { get; set; }
+
+        [JsonProperty("company_types")]
+        public List<CompanyTypeEntryResponse> CompanyTypes { get; set; } = new List<CompanyTypeEntryResponse>();
+    }
+
+    public class CompanyTypeFile
+    {
+        [JsonProperty("CompanyTypeData")]
+        public CompanyTypeFilePayload CompanyTypeData { get; set; }
+    }
+
+    public class CompanyTypeFilePayload
+    {
+        [JsonProperty("Overview")]
+        public CompanyTypeOverviewResponse Overview { get; set; }
+
+        [JsonProperty("CompanyTypes")]
+        public List<CompanyTypeEntryResponse> CompanyTypes { get; set; } = new List<CompanyTypeEntryResponse>();
+    }
+
     public class GreerLicenseResponse
     {
         [JsonProperty("work")]

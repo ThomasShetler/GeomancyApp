@@ -1,0 +1,98 @@
+{
+  "CompanyTypeData": {
+    "Overview": {
+      "id": "CompanyOfHouses",
+      "name": "Company of Houses",
+      "tagline": "Company — a paired house companion can speak for friends, kin, or partners woven into the question.",
+      "mechanism_summary": "Classical geomancy pairs houses 1–2, 3–4, 5–6, 7–8, 9–10, and 11–12. When the figure in a significator's house is in company with the figure in its paired house, that companion can act as a second significator and complete occupation, conjunction, translation, mutation, or an aspect with the other party.",
+      "co_reads": "Treat company as an auxiliary voice in the room — not a replacement for the querent or quesited, but a helper whose dignity and company type tell you how tightly the helper is bound to the significator.",
+      "interpretation_paragraphs": [
+        "Company of Houses — Odd and even houses sit as fixed pairs on the geomantic wheel. When those two figures qualify as company, the companion can perfect the matter on behalf of (or alongside) the significator it sits beside.",
+        "Always name which side is in company (querent's pair or quesited's pair) and which company type binds them. The type is how tightly the helper matches the significator — from identical Simple company down to surface-level Capitular company.",
+        "Company does not invent a new classical mode by itself; it opens a door so another mode (occupation, conjunction, aspect, and so on) can form through the companion figure."
+      ]
+    },
+    "CompanyTypes": [
+      {
+        "id": "Simple",
+        "name": "Company Simple",
+        "short_label": "Simple",
+        "list_label": "Co. Simple",
+        "tagline": "Simple — the companion is the same figure as its partner.",
+        "detection_rule": "Both paired houses hold the same geomantic figure (after name rooting).",
+        "mechanism_summary": "Company Simple is detected when the significator and its paired-house companion are the same figure. The engine treats them as one voice spread across two seats — the strongest of the four company bonds.",
+        "co_reads": "Read Simple company as kindred spirits, mirrored agendas, or a single party operating from two angles. The helper doubles the figure's force rather than importing a different temperament.",
+        "interpretation_paragraphs": [
+          "Company Simple — The companion is identical to its partner. What perfects through that companion is essentially the significator's own nature speaking from the neighboring house.",
+          "In a reading, this often looks like family, a twin agenda, or the same person/agency appearing in two roles. Weight the shared figure's dignity heavily — there is no softening from a different companion character.",
+          "Because the bond is identity rather than mere alliance, Simple company tends to feel concentrated and direct once the companion completes a mode with the other significator."
+        ]
+      },
+      {
+        "id": "DemiSimple",
+        "name": "Company Demi-Simple",
+        "short_label": "Demi-Simple",
+        "list_label": "Co. Demi",
+        "tagline": "Demi-Simple — companions share a planetary patron without being the same figure.",
+        "detection_rule": "Paired figures share the same planet, or a Dragon's Head/Tail keeps special company with Jupiter/Venus or Saturn/Mars respectively.",
+        "mechanism_summary": "Company Demi-Simple is detected when the paired figures are not identical, but answer to the same planetary ruler — or when Caput/Cauda Draconis keep their traditional planetary company (Caput with Jupiter or Venus; Cauda with Saturn or Mars). The bond is temperamental kinship, not identity.",
+        "co_reads": "Read Demi-Simple company as friends, allies, or co-workers united by shared temperament. Help arrives from a related nature, not a clone of the significator — so the companion can shade the outcome with its own figure story.",
+        "interpretation_paragraphs": [
+          "Company Demi-Simple — The companions pull in the same planetary direction without being the same figure. Expect cooperation by affinity: similar aims, shared style, or a helper who 'gets' the significator.",
+          "Because the figures differ, always read both: the significator's house names the principal, while the companion's figure shows the flavor of the help or interference.",
+          "Special node cases matter: Caput with Jupiter/Venus leans toward openings and attraction; Cauda with Saturn/Mars leans toward endings, contraction, or sharp decisive force. Name the planet (or node pairing) when you tell the story."
+        ],
+        "variants": [
+          {
+            "id": "DemiSimpleSamePlanet",
+            "name": "Demi-Simple · same planet",
+            "tagline": "Both figures answer to the same planetary patron.",
+            "mechanism_summary": "Detected when each figure's planet field matches (for example two Venus figures that are not the same named figure)."
+          },
+          {
+            "id": "DemiSimpleCaputJupiterVenus",
+            "name": "Demi-Simple · Caput with Jupiter or Venus",
+            "tagline": "North Node keeps company with increase and attraction.",
+            "mechanism_summary": "Caput Draconis is treated as demi-simple company with Jupiter or Venus figures — helpers of growth, openings, harmony, or welcome attraction."
+          },
+          {
+            "id": "DemiSimpleCaudaSaturnMars",
+            "name": "Demi-Simple · Cauda with Saturn or Mars",
+            "tagline": "South Node keeps company with contraction and cutting force.",
+            "mechanism_summary": "Cauda Draconis is treated as demi-simple company with Saturn or Mars figures — helpers of release, endings, sober delay, or sharp decisive action."
+          }
+        ]
+      },
+      {
+        "id": "Compound",
+        "name": "Company Compound",
+        "short_label": "Compound",
+        "list_label": "Co. Comp.",
+        "tagline": "Compound — companions are structural opposites yoked together.",
+        "detection_rule": "Paired figures form a classical opposite pair (each line flipped), such as Via/Populus or Caput/Cauda.",
+        "mechanism_summary": "Company Compound is detected when the paired figures are opposites on the geomantic table — every binary line inverted. The engine treats them as complementary partners forced into the same arena: each completes the other while importing a contrary aim.",
+        "co_reads": "Read Compound company as cooperation with friction — spouses, rivals-turned-partners, or balances that work because they pull differently. The companion can perfect the matter and still color it with tension.",
+        "interpretation_paragraphs": [
+          "Company Compound — The companion is the figure's structural inverse. Help or mediation arrives from the other pole of the same axis.",
+          "In practice this often describes relationships that need both sides: give-and-take, push-and-pull, or a helper whose contrary nature still makes the link possible.",
+          "When a Compound companion completes a favorable mode, do not ignore the contrary figure's dignity — the yes may come through a challenging intermediary."
+        ]
+      },
+      {
+        "id": "Capitular",
+        "name": "Company Capitular",
+        "short_label": "Capitular",
+        "list_label": "Co. Cap.",
+        "tagline": "Capitular — companions share only the Fire (head) line.",
+        "detection_rule": "Paired figures share the same HeadLine / Fire row value, and do not already qualify as Simple, Demi-Simple, or Compound.",
+        "mechanism_summary": "Company Capitular is the weakest company bond: the pair matches only on the topmost Fire line (initiative and outward face). The engine accepts it as real company, but shallower than identity, planet, or opposite bonds.",
+        "co_reads": "Read Capitular company as acquaintances joined by occasion, office, or shared cause rather than deep temperament. The helper can still open a mode, yet the connection is surface-level and situational.",
+        "interpretation_paragraphs": [
+          "Company Capitular — Only the head line matches. Treat the companion as a situational ally: present, useful, but not deeply kindred.",
+          "This often describes people brought together by role, timing, or a common project rather than lasting affinity. Weight other chart witnesses when judging how reliable that help will be.",
+          "Because Capitular is the weakest company type, a perfection made only through it can feel thinner or more contingent than Simple or Demi-Simple company of the same mode."
+        ]
+      }
+    ]
+  }
+}

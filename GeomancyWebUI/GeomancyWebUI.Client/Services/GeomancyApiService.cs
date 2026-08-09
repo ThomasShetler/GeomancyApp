@@ -15,6 +15,7 @@ namespace GeomancyWebUI.Client.Services
         private List<CourtDirectoryEntry>? _courtsDirectoryCache;
         private List<WayOfPointsElementEntry>? _wayOfPointsElementsCache;
         private List<WayOfPointsPathTypeEntry>? _wayOfPointsPathTypesCache;
+        private CompanyTypeDirectory? _companyTypesCache;
         private List<GreerFigureModel>? _greerFiguresCache;
         private GreerHouseDirectory? _greerHousesCache;
 
@@ -314,6 +315,28 @@ namespace GeomancyWebUI.Client.Services
             return _wayOfPointsPathTypesCache;
         }
 
+        public async Task<CompanyTypeDirectory> GetCompanyTypesDirectoryAsync()
+        {
+            if (_companyTypesCache != null) return _companyTypesCache;
+
+            var baseAddress = _httpClient.BaseAddress?.ToString() ?? "http://localhost:5000/api/geomancy";
+            var endpoint = baseAddress.TrimEnd('/') + "/perfections/company-types";
+
+            var response = await _httpClient.GetAsync(new Uri(endpoint));
+            response.EnsureSuccessStatusCode();
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<CompanyTypeDirectoryResponseDto>();
+            _companyTypesCache = apiResponse == null
+                ? new CompanyTypeDirectory()
+                : new CompanyTypeDirectory
+                {
+                    Overview = apiResponse.Overview == null ? null : MapToCompanyTypeOverview(apiResponse.Overview),
+                    CompanyTypes = apiResponse.CompanyTypes?.Select(MapToCompanyTypeEntry).ToList()
+                                   ?? new List<CompanyTypeEntry>()
+                };
+            return _companyTypesCache;
+        }
+
         public async Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync()
         {
             if (_greerFiguresCache != null) return _greerFiguresCache;
@@ -479,6 +502,38 @@ namespace GeomancyWebUI.Client.Services
                 InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>()
             };
         }
+
+        private static CompanyTypeOverview MapToCompanyTypeOverview(CompanyTypeOverviewResponseDto src)
+            => new CompanyTypeOverview
+            {
+                Id = src.Id ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                MechanismSummary = src.MechanismSummary ?? string.Empty,
+                CoReads = src.CoReads ?? string.Empty,
+                InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>()
+            };
+
+        private static CompanyTypeEntry MapToCompanyTypeEntry(CompanyTypeEntryResponseDto src)
+            => new CompanyTypeEntry
+            {
+                Id = src.Id ?? string.Empty,
+                Name = src.Name ?? string.Empty,
+                ShortLabel = src.ShortLabel ?? string.Empty,
+                ListLabel = src.ListLabel ?? string.Empty,
+                Tagline = src.Tagline ?? string.Empty,
+                DetectionRule = src.DetectionRule ?? string.Empty,
+                MechanismSummary = src.MechanismSummary ?? string.Empty,
+                CoReads = src.CoReads ?? string.Empty,
+                InterpretationParagraphs = src.InterpretationParagraphs ?? new List<string>(),
+                Variants = src.Variants?.Select(v => new CompanyTypeVariant
+                {
+                    Id = v.Id ?? string.Empty,
+                    Name = v.Name ?? string.Empty,
+                    Tagline = v.Tagline ?? string.Empty,
+                    MechanismSummary = v.MechanismSummary ?? string.Empty,
+                }).ToList() ?? new List<CompanyTypeVariant>()
+            };
 
         private AspectAnalysisModel MapToAspectAnalysisModel(AspectAnalysisResponse? apiResponse)
         {
@@ -1038,6 +1093,84 @@ namespace GeomancyWebUI.Client.Services
 
             [JsonPropertyName("interpretation_paragraphs")]
             public List<string>? InterpretationParagraphs { get; set; }
+        }
+
+        private class CompanyTypeDirectoryResponseDto
+        {
+            [JsonPropertyName("overview")]
+            public CompanyTypeOverviewResponseDto? Overview { get; set; }
+
+            [JsonPropertyName("company_types")]
+            public List<CompanyTypeEntryResponseDto>? CompanyTypes { get; set; }
+        }
+
+        private class CompanyTypeOverviewResponseDto
+        {
+            [JsonPropertyName("id")]
+            public string? Id { get; set; }
+
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("tagline")]
+            public string? Tagline { get; set; }
+
+            [JsonPropertyName("mechanism_summary")]
+            public string? MechanismSummary { get; set; }
+
+            [JsonPropertyName("co_reads")]
+            public string? CoReads { get; set; }
+
+            [JsonPropertyName("interpretation_paragraphs")]
+            public List<string>? InterpretationParagraphs { get; set; }
+        }
+
+        private class CompanyTypeEntryResponseDto
+        {
+            [JsonPropertyName("id")]
+            public string? Id { get; set; }
+
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("short_label")]
+            public string? ShortLabel { get; set; }
+
+            [JsonPropertyName("list_label")]
+            public string? ListLabel { get; set; }
+
+            [JsonPropertyName("tagline")]
+            public string? Tagline { get; set; }
+
+            [JsonPropertyName("detection_rule")]
+            public string? DetectionRule { get; set; }
+
+            [JsonPropertyName("mechanism_summary")]
+            public string? MechanismSummary { get; set; }
+
+            [JsonPropertyName("co_reads")]
+            public string? CoReads { get; set; }
+
+            [JsonPropertyName("interpretation_paragraphs")]
+            public List<string>? InterpretationParagraphs { get; set; }
+
+            [JsonPropertyName("variants")]
+            public List<CompanyTypeVariantResponseDto>? Variants { get; set; }
+        }
+
+        private class CompanyTypeVariantResponseDto
+        {
+            [JsonPropertyName("id")]
+            public string? Id { get; set; }
+
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("tagline")]
+            public string? Tagline { get; set; }
+
+            [JsonPropertyName("mechanism_summary")]
+            public string? MechanismSummary { get; set; }
         }
 
         private class GreerSourceResponseDto

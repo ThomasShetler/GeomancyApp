@@ -21,6 +21,9 @@ namespace GeomancyWebUI.Client.Services
         Task<List<WayOfPointsElementEntry>> GetWayOfPointsElementsDirectoryAsync();
         Task<List<WayOfPointsPathTypeEntry>> GetWayOfPointsPathTypesDirectoryAsync();
 
+        // Static reference directory (databank/PerfectionDirectory/*.json on the API)
+        Task<CompanyTypeDirectory> GetCompanyTypesDirectoryAsync();
+
         Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync();
         Task<GreerHouseDirectory> GetGreerHousesDirectoryAsync();
     }

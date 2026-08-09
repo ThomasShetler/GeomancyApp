@@ -534,6 +534,12 @@ namespace GeomancyAPI.Handlers
         public static WayOfPointsPathTypeEntryResponse GetWayOfPointsPathTypeEntry(string id)
             => WayOfPointsDirectoryLoader.GetPathType(id);
 
+        public static CompanyTypeDirectoryResponse GetCompanyTypesDirectory()
+            => CompanyTypeDirectoryLoader.GetDirectory();
+
+        public static CompanyTypeEntryResponse GetCompanyTypeDirectoryEntry(string id)
+            => CompanyTypeDirectoryLoader.GetCompanyType(id);
+
         public static IReadOnlyList<GreerFigureResponse> GetGreerFiguresDirectory()
             => GreerFigureCorpusLoader.LoadFigures().Select(ConvertToGreerFigureResponse).ToList();
 

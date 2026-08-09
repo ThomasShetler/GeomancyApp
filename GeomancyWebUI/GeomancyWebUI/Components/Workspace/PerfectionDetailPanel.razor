@@ -34,12 +34,21 @@
             var headerEyebrow = isDenial ? "Denial" : "Perfection";
             var modeTitle = ResolveModeTitle(p);
             var companyDisplay = GetCompanyTypeDisplay(p);
+            var companyEntry = LookupCompanyType(p.CompanyType);
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
             var explanation = BuildRelationshipExplanation(p);
+            var listPath = ResolveListPath(p);
             var castVis = explanation.HasStructuredCast
                 ? AspectDirectionHelper.Resolve(explanation.Cast!.Direction, explanation.Cast.AspectType)
                 : AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
+            var pathRelation = DescribeHouseRelation(
+                listPath.HasPath ? listPath.FromHouse : 0,
+                listPath.HasPath ? listPath.ToHouse : 0,
+                p.Mode,
+                p.BaseMode,
+                p.AspectBetweenSignificators,
+                p.AspectDirection);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -66,18 +75,72 @@
                 </div>
             }
 
+            @if (companyEntry != null)
+            {
+                <section class="detail-card interpretation-card company-glossary-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⧉</span> @companyEntry.Name
+                    </h3>
+                    @if (!string.IsNullOrEmpty(companyEntry.Tagline))
+                    {
+                        <p class="company-type-tagline">@companyEntry.Tagline</p>
+                    }
+                    @if (!string.IsNullOrEmpty(companyEntry.MechanismSummary))
+                    {
+                        <p class="company-type-mechanism">
+                            <strong>How it forms.</strong> @companyEntry.MechanismSummary
+                        </p>
+                    }
+                    @if (companyEntry.InterpretationParagraphs.Count > 0)
+                    {
+                        <div class="interpretation-tips">
+                            @for (var i = 0; i < companyEntry.InterpretationParagraphs.Count; i++)
+                            {
+                                var tip = companyEntry.InterpretationParagraphs[i];
+                                <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
+                                    <span class="tip-bullet">⧉</span>
+                                    <p class="tip-text">@HighlightTokens(tip)</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(companyEntry.CoReads))
+                    {
+                        <p class="interpretation-footer">
+                            <strong>In the reading:</strong> @companyEntry.CoReads
+                        </p>
+                    }
+                </section>
+            }
+
             <section class="detail-card parties-card">
                 <h3 class="card-title">Parties</h3>
                 <div class="parties-grid">
                     <div class="sig-cell">
                         <span class="sig-eyebrow">Querent</span>
                         <span class="sig-house">House @p.QuerentHouse</span>
+                        <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(p.QuerentHouse)</span>
                         <span class="sig-figure">@(string.IsNullOrEmpty(p.QuerentFigure) ? "—" : p.QuerentFigure)</span>
+                        @{
+                            var qSubtitle = FormatHouseSubtitle(p.QuerentHouse);
+                        }
+                        @if (!string.IsNullOrEmpty(qSubtitle))
+                        {
+                            <span class="house-relation-subtitle">@qSubtitle</span>
+                        }
                     </div>
                     <div class="sig-cell">
                         <span class="sig-eyebrow">Quesited</span>
                         <span class="sig-house">House @p.QuesitedHouse</span>
+                        <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(p.QuesitedHouse)</span>
                         <span class="sig-figure">@(string.IsNullOrEmpty(p.QuesitedFigure) ? "—" : p.QuesitedFigure)</span>
+                        @{
+                            var xSubtitle = FormatHouseSubtitle(p.QuesitedHouse);
+                        }
+                        @if (!string.IsNullOrEmpty(xSubtitle))
+                        {
+                            <span class="house-relation-subtitle">@xSubtitle</span>
+                        }
                     </div>
                 </div>
             </section>
@@ -89,9 +152,46 @@
                         <span class="card-title-icon">⚙</span> @explanation.Title
                     </h3>
 
-                    @if (!string.IsNullOrEmpty(explanation.Flow))
+                    @if (listPath.HasPath)
                     {
-                        <p class="formation-flow">@explanation.Flow</p>
+                        <div class="formation-path-block">
+                            <div class="formation-path-flow">
+                                @if (!string.IsNullOrEmpty(listPath.ActorPrefix))
+                                {
+                                    <span class="flow-actor">@listPath.ActorPrefix</span>
+                                }
+                                <span class="flow-house-num">H@(listPath.FromHouse)</span>
+                                <span class="flow-arrow @castVis.CssClass" title="@castVis.Hint">@(string.IsNullOrEmpty(castVis.Glyph) ? "→" : castVis.Glyph)</span>
+                                <span class="flow-house-num">H@(listPath.ToHouse)</span>
+                                @if (!string.IsNullOrEmpty(listPath.FromFigure) || !string.IsNullOrEmpty(listPath.ToFigure))
+                                {
+                                    <span class="flow-figures">
+                                        @if (!string.IsNullOrEmpty(listPath.FromFigure) && !string.IsNullOrEmpty(listPath.ToFigure))
+                                        {
+                                            <span>@listPath.FromFigure</span>
+                                            <span class="flow-fig-sep">·</span>
+                                            <span>@listPath.ToFigure</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@(string.IsNullOrEmpty(listPath.FromFigure) ? listPath.ToFigure : listPath.FromFigure)</span>
+                                        }
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="house-relation-grid">
+                                @RenderHouseRelationCell(listPath.FromHouse, "From")
+                                <div class="house-relation-mid">
+                                    <span class="house-relation-arrow">↔</span>
+                                    @if (!string.IsNullOrEmpty(pathRelation))
+                                    {
+                                        <span class="house-relation-label">@pathRelation</span>
+                                    }
+                                </div>
+                                @RenderHouseRelationCell(listPath.ToHouse, "To")
+                            </div>
+                        </div>
                     }
 
                     @if (explanation.HasStructuredCast)
@@ -100,6 +200,7 @@
                             <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast from</span>
                                 <span class="sig-house">House @explanation.Cast!.FromHouse</span>
+                                <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(explanation.Cast.FromHouse)</span>
                                 @if (!string.IsNullOrEmpty(explanation.Cast.FromFigure))
                                 {
                                     <span class="sig-figure">@explanation.Cast.FromFigure</span>
@@ -111,6 +212,7 @@
                             <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast to</span>
                                 <span class="sig-house">House @explanation.Cast.ToHouse</span>
+                                <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(explanation.Cast.ToHouse)</span>
                                 @if (!string.IsNullOrEmpty(explanation.Cast.ToFigure))
                                 {
                                     <span class="sig-figure">@explanation.Cast.ToFigure</span>
@@ -149,15 +251,21 @@
                             var blurb = fig != null && part.House > 0
                                 ? FigureDisplayHelper.GetFigureInHouseText(fig, part.House)
                                 : fig?.Tagline;
+                            var houseContext = part.House > 0 ? FormatHouseContext(part.House) : null;
                             <li class="participant-item">
                                 <div class="participant-header">
                                     <span class="participant-role">@part.Role</span>
                                     @if (part.House > 0)
                                     {
-                                        <span class="participant-house">H@versionpart.House</span>
+                                        <span class="participant-house">House @(part.House)</span>
+                                        <span class="participant-house-name">@FigureDisplayHelper.GetHouseName(part.House)</span>
                                     }
                                     <span class="participant-name">@(string.IsNullOrEmpty(part.FigureName) ? "—" : part.FigureName)</span>
                                 </div>
+                                @if (!string.IsNullOrEmpty(houseContext))
+                                {
+                                    <p class="participant-house-context">@houseContext</p>
+                                }
                                 @if (fig != null)
                                 {
                                     <div class="participant-chips">
@@ -268,6 +376,7 @@
             var headerEyebrow = isPositive ? "Positive Aspect" : "Negative Aspect";
             var totalScore = isPositive ? a.FavorableScore : a.UnfavorableScore;
             var aspectGlossary = GetAspectGlossary(a.AspectType, a.Direction);
+            var companyOverview = a.MadeThroughCompany ? CompanyTypesDirectory?.Overview : null;
             var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
             var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
             var aNoteParts = ParseDescription(a.Description);
@@ -276,6 +385,21 @@
             var quesitedHouse = Analysis?.QuesitedHouse ?? 0;
             var querentFigureName = GetHouseFigureName(querentHouse);
             var quesitedFigureName = GetHouseFigureName(quesitedHouse);
+            var listPath = new PerfectionPathDisplay.ListRowPath
+            {
+                FromHouse = a.FromHouse,
+                ToHouse = a.ToHouse,
+                FromFigure = GetHouseFigureName(a.FromHouse),
+                ToFigure = string.Empty,
+                ActorPrefix = string.Empty
+            };
+            var pathRelation = DescribeHouseRelation(
+                a.FromHouse,
+                a.ToHouse,
+                "Aspect",
+                string.Empty,
+                a.AspectType,
+                a.Direction);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -290,6 +414,31 @@
             @if (!string.IsNullOrEmpty(aspectGlossary))
             {
                 <p class="glossary-tagline">@aspectGlossary</p>
+            }
+
+            @if (companyOverview != null && (!string.IsNullOrEmpty(companyOverview.Tagline) || !string.IsNullOrEmpty(companyOverview.MechanismSummary)))
+            {
+                <section class="detail-card interpretation-card company-glossary-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⧉</span> @(string.IsNullOrEmpty(companyOverview.Name) ? "Company of Houses" : companyOverview.Name)
+                    </h3>
+                    @if (!string.IsNullOrEmpty(companyOverview.Tagline))
+                    {
+                        <p class="company-type-tagline">@companyOverview.Tagline</p>
+                    }
+                    @if (!string.IsNullOrEmpty(companyOverview.MechanismSummary))
+                    {
+                        <p class="company-type-mechanism">
+                            <strong>How it forms.</strong> @companyOverview.MechanismSummary
+                        </p>
+                    }
+                    @if (!string.IsNullOrEmpty(companyOverview.CoReads))
+                    {
+                        <p class="interpretation-footer">
+                            <strong>In the reading:</strong> @companyOverview.CoReads
+                        </p>
+                    }
+                </section>
             }
 
             @if (querentHouse > 0 || quesitedHouse > 0)
@@ -318,9 +467,31 @@
                         <span class="card-title-icon">⚙</span> @explanation.Title
                     </h3>
 
-                    @if (!string.IsNullOrEmpty(explanation.Flow))
+                    @if (listPath.HasPath)
                     {
-                        <p class="formation-flow">@explanation.Flow</p>
+                        <div class="formation-path-block">
+                            <div class="formation-path-flow">
+                                <span class="flow-house-num">H@(listPath.FromHouse)</span>
+                                <span class="flow-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">@(string.IsNullOrEmpty(aDirectionVis.Glyph) ? "→" : aDirectionVis.Glyph)</span>
+                                <span class="flow-house-num">H@(listPath.ToHouse)</span>
+                                @if (!string.IsNullOrEmpty(listPath.FromFigure))
+                                {
+                                    <span class="flow-figures"><span>@listPath.FromFigure</span></span>
+                                }
+                            </div>
+
+                            <div class="house-relation-grid">
+                                @RenderHouseRelationCell(listPath.FromHouse, "From")
+                                <div class="house-relation-mid">
+                                    <span class="house-relation-arrow">↔</span>
+                                    @if (!string.IsNullOrEmpty(pathRelation))
+                                    {
+                                        <span class="house-relation-label">@pathRelation</span>
+                                    }
+                                </div>
+                                @RenderHouseRelationCell(listPath.ToHouse, "To")
+                            </div>
+                        </div>
                     }
 
                     @if (explanation.HasStructuredCast)
@@ -329,6 +500,7 @@
                             <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast from</span>
                                 <span class="sig-house">House @explanation.Cast!.FromHouse</span>
+                                <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(explanation.Cast.FromHouse)</span>
                                 @if (!string.IsNullOrEmpty(explanation.Cast.FromFigure))
                                 {
                                     <span class="sig-figure">@explanation.Cast.FromFigure</span>
@@ -340,6 +512,7 @@
                             <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast to</span>
                                 <span class="sig-house">House @explanation.Cast.ToHouse</span>
+                                <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(explanation.Cast.ToHouse)</span>
                                 @if (!string.IsNullOrEmpty(explanation.Cast.ToFigure))
                                 {
                                     <span class="sig-figure">@explanation.Cast.ToFigure</span>
@@ -378,15 +551,21 @@
                             var blurb = fig != null && part.House > 0
                                 ? FigureDisplayHelper.GetFigureInHouseText(fig, part.House)
                                 : fig?.Tagline;
+                            var houseContext = part.House > 0 ? FormatHouseContext(part.House) : null;
                             <li class="participant-item">
                                 <div class="participant-header">
                                     <span class="participant-role">@part.Role</span>
                                     @if (part.House > 0)
                                     {
-                                        <span class="participant-house">H@versionpart.House</span>
+                                        <span class="participant-house">House @(part.House)</span>
+                                        <span class="participant-house-name">@FigureDisplayHelper.GetHouseName(part.House)</span>
                                     }
                                     <span class="participant-name">@(string.IsNullOrEmpty(part.FigureName) ? "—" : part.FigureName)</span>
                                 </div>
+                                @if (!string.IsNullOrEmpty(houseContext))
+                                {
+                                    <p class="participant-house-context">@houseContext</p>
+                                }
                                 @if (fig != null)
                                 {
                                     <div class="participant-chips">
@@ -456,6 +635,167 @@
     [Parameter] public PerfectionSelection? Selection { get; set; }
     [Parameter] public PerfectionAnalysisModel? Analysis { get; set; }
     [Parameter] public HouseChartModel? Chart { get; set; }
+    [Parameter] public IReadOnlyList<HouseDirectoryEntry> HousesDirectory { get; set; } = Array.Empty<HouseDirectoryEntry>();
+    [Parameter] public CompanyTypeDirectory? CompanyTypesDirectory { get; set; }
+
+    private CompanyTypeEntry? LookupCompanyType(string? companyType)
+    {
+        if (string.IsNullOrWhiteSpace(companyType)
+            || string.Equals(companyType, "None", StringComparison.OrdinalIgnoreCase)
+            || CompanyTypesDirectory?.CompanyTypes == null
+            || CompanyTypesDirectory.CompanyTypes.Count == 0)
+        {
+            return null;
+        }
+
+        static string Normalize(string id) =>
+            id.Trim().Replace("-", string.Empty).Replace(" ", string.Empty);
+
+        var needle = Normalize(companyType);
+        return CompanyTypesDirectory.CompanyTypes.FirstOrDefault(e =>
+            string.Equals(Normalize(e.Id), needle, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(e.ShortLabel, companyType.Trim(), StringComparison.OrdinalIgnoreCase)
+            || string.Equals(e.Name, companyType.Trim(), StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static PerfectionPathDisplay.ListRowPath ResolveListPath(PerfectionModel p) =>
+        PerfectionPathDisplay.ForListRow(
+            p.PathFromHouse,
+            p.PathToHouse,
+            p.PathFigure,
+            p.PathSecondaryFigure,
+            p.PathActor,
+            p.AspectFromHouse,
+            p.AspectToHouse);
+
+    private HouseDirectoryEntry? FindHouseEntry(int houseNumber)
+    {
+        if (houseNumber <= 0 || HousesDirectory == null || HousesDirectory.Count == 0)
+            return null;
+        return HousesDirectory.FirstOrDefault(h => h.Id == houseNumber);
+    }
+
+    private string FormatHouseContext(int houseNumber)
+    {
+        if (houseNumber <= 0) return string.Empty;
+        var ordinal = FigureDisplayHelper.GetHouseName(houseNumber);
+        var subtitle = FormatHouseSubtitle(houseNumber);
+        return string.IsNullOrEmpty(subtitle) ? $"{ordinal} house" : $"{ordinal} · {subtitle}";
+    }
+
+    private string FormatHouseSubtitle(int houseNumber)
+    {
+        var entry = FindHouseEntry(houseNumber);
+        if (entry == null) return string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(entry.TraditionalName))
+            return entry.TraditionalName.Trim();
+
+        var govern = entry.Governs?.FirstOrDefault(g => !string.IsNullOrWhiteSpace(g));
+        if (!string.IsNullOrWhiteSpace(govern))
+            return govern!.Trim();
+
+        if (!string.IsNullOrWhiteSpace(entry.InterpretiveEssence))
+        {
+            var essence = entry.InterpretiveEssence.Trim();
+            return essence.Length > 90 ? essence[..87] + "..." : essence;
+        }
+
+        return string.Empty;
+    }
+
+    private RenderFragment RenderHouseRelationCell(int houseNumber, string eyebrow) => __builder =>
+    {
+        var entry = FindHouseEntry(houseNumber);
+        var ordinal = FigureDisplayHelper.GetHouseName(houseNumber);
+        var subtitle = !string.IsNullOrWhiteSpace(entry?.TraditionalName)
+            ? entry!.TraditionalName
+            : (entry?.Governs?.FirstOrDefault(g => !string.IsNullOrWhiteSpace(g))?.Trim() ?? string.Empty);
+
+        <div class="house-relation-cell">
+            <span class="sig-eyebrow">@eyebrow</span>
+            <span class="sig-house">House @houseNumber</span>
+            <span class="sig-house-sub">@ordinal</span>
+            @if (!string.IsNullOrEmpty(subtitle))
+            {
+                <span class="house-relation-subtitle">@subtitle</span>
+            }
+        </div>
+    };
+
+    private static string DescribeHouseRelation(
+        int fromHouse,
+        int toHouse,
+        string mode,
+        string baseMode,
+        string aspectType,
+        string aspectDirection)
+    {
+        if (fromHouse <= 0 || toHouse <= 0) return string.Empty;
+
+        var effective = string.Equals(mode, "Company", StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(baseMode)
+            ? baseMode
+            : mode;
+
+        if (string.Equals(effective, "Aspect", StringComparison.OrdinalIgnoreCase)
+            || (!string.IsNullOrWhiteSpace(aspectType)
+                && !aspectType.Equals("None", StringComparison.OrdinalIgnoreCase)))
+        {
+            var dir = (aspectDirection ?? string.Empty).Trim();
+            var type = (aspectType ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(type) || type.Equals("None", StringComparison.OrdinalIgnoreCase))
+            {
+                var (a, d) = GeomanticAspects.GetAspectWithDirection(fromHouse, toHouse);
+                if (a != AspectType.None)
+                {
+                    type = a.ToString();
+                    dir = d;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(type) && !type.Equals("None", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrEmpty(dir)
+                    && !dir.Equals("None", StringComparison.OrdinalIgnoreCase)
+                    && !dir.Equals("Opposition", StringComparison.OrdinalIgnoreCase))
+                    return $"{dir} {type}";
+                return type;
+            }
+        }
+
+        if (string.Equals(effective, "Conjunction", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(effective, "Translation", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(effective, "Mutation", StringComparison.OrdinalIgnoreCase)
+            || AreAdjacentHouses(fromHouse, toHouse))
+        {
+            return AreAdjacentHouses(fromHouse, toHouse)
+                ? "Adjacent houses"
+                : "Pass relationship";
+        }
+
+        if (string.Equals(effective, "Occupation", StringComparison.OrdinalIgnoreCase))
+            return "Shared occupation";
+
+        var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(fromHouse, toHouse);
+        if (aspect != AspectType.None)
+        {
+            if (!string.IsNullOrEmpty(direction)
+                && direction != "None"
+                && direction != "Opposition")
+                return $"{direction} {aspect}";
+            return aspect.ToString();
+        }
+
+        return "House link";
+    }
+
+    private static bool AreAdjacentHouses(int a, int b)
+    {
+        if (a < 1 || a > 12 || b < 1 || b > 12) return false;
+        var diff = Math.Abs(a - b);
+        return diff == 1 || diff == 11;
+    }
 
     private string GetHouseFigureName(int houseNumber)
     {
@@ -558,7 +898,7 @@
         ? "score-positive-text"
         : n < 0 ? "score-negative-text" : "score-neutral-text";
 
-    private static string ResolveModeTitle(PerfectionModel p)
+    private string ResolveModeTitle(PerfectionModel p)
     {
         if (p.Mode == "None") return "No Perfection";
         if (p.Mode == "Impedition") return "Impedition";
@@ -576,19 +916,30 @@
         return string.IsNullOrEmpty(p.Mode) ? "Perfection" : p.Mode;
     }
 
-    private static string GetCompanyTypeDisplay(PerfectionModel p) => p.CompanyType switch
+    private string GetCompanyTypeDisplay(PerfectionModel p)
     {
-        "Simple" => "Company Simple",
-        "DemiSimple" => "Company Demi-Simple",
-        "Compound" => "Company Compound",
-        "Capitular" => "Company Capitular",
-        _ => string.Empty
-    };
+        var entry = LookupCompanyType(p.CompanyType);
+        if (entry != null && !string.IsNullOrEmpty(entry.Name))
+            return entry.Name;
 
-    private static string GetModeGlossary(PerfectionModel p)
+        return p.CompanyType switch
+        {
+            "Simple" => "Company Simple",
+            "DemiSimple" => "Company Demi-Simple",
+            "Compound" => "Company Compound",
+            "Capitular" => "Company Capitular",
+            _ => string.Empty
+        };
+    }
+
+    private string GetModeGlossary(PerfectionModel p)
     {
         if (p.Mode == "Company")
         {
+            var overview = CompanyTypesDirectory?.Overview;
+            if (overview != null && !string.IsNullOrEmpty(overview.Tagline))
+                return overview.Tagline;
+
             return "Company of Houses — a companion figure in the paired house helps perfect the matter.";
         }
         var key = string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == p.Mode

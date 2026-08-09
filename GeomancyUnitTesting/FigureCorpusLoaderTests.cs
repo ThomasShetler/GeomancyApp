@@ -93,5 +93,27 @@ namespace GeomancyUnitTesting
             Assert.AreEqual(4, elements.Count);
             Assert.IsNotNull(elements.FirstOrDefault(e => e.Id == 1));
         }
+
+        [TestMethod]
+        public void CompanyTypeDirectoryLoader_LoadsReaderCentricTypes()
+        {
+            var directory = CompanyTypeDirectoryLoader.GetDirectory();
+
+            Assert.IsNotNull(directory.Overview);
+            Assert.AreEqual("CompanyOfHouses", directory.Overview.Id);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(directory.Overview.Tagline));
+
+            Assert.AreEqual(4, directory.CompanyTypes.Count);
+            Assert.IsNotNull(CompanyTypeDirectoryLoader.GetCompanyType("Simple"));
+            Assert.IsNotNull(CompanyTypeDirectoryLoader.GetCompanyType("Demi-Simple"));
+            Assert.IsNotNull(CompanyTypeDirectoryLoader.GetCompanyType("DemiSimple"));
+            Assert.IsNotNull(CompanyTypeDirectoryLoader.GetCompanyType("Compound"));
+            Assert.IsNotNull(CompanyTypeDirectoryLoader.GetCompanyType("Capitular"));
+
+            var demi = CompanyTypeDirectoryLoader.GetCompanyType("DemiSimple");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(demi.MechanismSummary));
+            Assert.IsTrue(demi.InterpretationParagraphs.Count > 0);
+            Assert.IsTrue(demi.Variants.Count >= 3);
+        }
     }
 }

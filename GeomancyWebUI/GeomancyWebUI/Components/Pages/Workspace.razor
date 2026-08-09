@@ -136,7 +136,9 @@
                             <div class="perfections-detail-col">
                                 <PerfectionDetailPanel Selection="@selectedPerfection"
                                                        Analysis="@perfectionAnalysis"
-                                                       Chart="@houseChart" />
+                                                       Chart="@houseChart"
+                                                       HousesDirectory="@housesDirectory"
+                                                       CompanyTypesDirectory="@companyTypesDirectory" />
                             </div>
                         </div>
                         break;
@@ -362,6 +364,7 @@
     private GreerReferenceMode greerReferenceMode = GreerReferenceMode.Off;
     private List<WayOfPointsElementEntry>? wayOfPointsElements;
     private List<WayOfPointsPathTypeEntry>? wayOfPointsPathTypes;
+    private CompanyTypeDirectory? companyTypesDirectory;
 
     // ----- Analysis state (Perfections / Aspects / Way of Points) -----
     private int selectedQuerentHouse = 0;
@@ -427,6 +430,17 @@
             // fails (e.g. legacy API server without the new endpoints).
             errorMessage = string.IsNullOrEmpty(errorMessage)
                 ? $"Way of Points directory unavailable: {ex.Message}"
+                : errorMessage;
+        }
+
+        try
+        {
+            companyTypesDirectory = await GeomancyService.GetCompanyTypesDirectoryAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = string.IsNullOrEmpty(errorMessage)
+                ? $"Company types directory unavailable: {ex.Message}"
                 : errorMessage;
         }
     }
