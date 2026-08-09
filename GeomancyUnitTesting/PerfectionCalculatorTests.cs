@@ -30,7 +30,10 @@ namespace GeomancyUnitTesting
 
         private static void AssertResultMatchesEngine(PerfectionResult result)
         {
-            Assert.AreEqual(PerfectionType.Aspect, result.Mode);
+            Assert.IsTrue(
+                result.Mode == PerfectionType.Aspect
+                || (result.Mode == PerfectionType.Company && result.BaseMode == PerfectionType.Aspect),
+                "Expected a direct or company-mediated cast aspect result.");
             Assert.IsTrue(result.AspectFromHouse > 0 && result.AspectToHouse > 0,
                 "Aspect cast houses must be set on engine results.");
 
@@ -175,6 +178,33 @@ namespace GeomancyUnitTesting
             Assert.AreEqual(0, analysis.PositiveAspects.Count);
             Assert.AreEqual(0, analysis.NegativeAspects.Count,
                 "Static house-pair opposition must not be shown as a cast aspect when Mode is None.");
+        }
+
+        [TestMethod]
+        public void CompanyAspect_ReLabeledToCompanyStillSurfacesInUiAspectLists()
+        {
+            // Houses 1–2 in simple company (Via/Via); company house 2 casts sinister trine to quesited house 6.
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Via");
+            chart.SetHouseFigure(6, "Populus");
+
+            var engineResults = PerfectionCalculator.Find(chart, 1, 6, returnAllModes: true);
+            var companyAspect = engineResults.FirstOrDefault(r =>
+                r.Mode == PerfectionType.Company && r.BaseMode == PerfectionType.Aspect);
+
+            Assert.IsNotNull(companyAspect, "Expected a company-mediated aspect perfection.");
+            AssertResultMatchesEngine(companyAspect);
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 6);
+            var uiTrine = analysis.PositiveAspects.FirstOrDefault(r => r.AspectType == AspectType.Trine);
+
+            Assert.IsNotNull(uiTrine, "Company aspect must appear in PositiveAspects despite Mode=Company.");
+            Assert.IsTrue(uiTrine.MadeThroughCompany);
+            Assert.AreEqual(2, uiTrine.FromHouse);
+            Assert.AreEqual(6, uiTrine.ToHouse);
+            Assert.AreEqual("Sinister", uiTrine.Direction);
+            AssertRecordMatchesEngine(uiTrine);
         }
 
         [TestMethod]

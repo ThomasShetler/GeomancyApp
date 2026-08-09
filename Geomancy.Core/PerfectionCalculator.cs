@@ -318,6 +318,12 @@ namespace GeomancyApp
             };
         }
 
+        private static bool IsCastAspectResult(PerfectionResult result)
+        {
+            return result.Mode == PerfectionType.Aspect
+                || (result.Mode == PerfectionType.Company && result.BaseMode == PerfectionType.Aspect);
+        }
+
         // Helper method to add interpretation tips to notes based on perfection mode
         private static void AddInterpretationTip(PerfectionResult result, HouseChart chart, int querentHouse, int quesitedHouse)
         {
@@ -1678,7 +1684,7 @@ namespace GeomancyApp
             // Extract all aspects from results and categorize them
             foreach (var result in results)
             {
-                if (result.Mode != PerfectionType.Aspect)
+                if (!IsCastAspectResult(result))
                     continue;
 
                 if (result.AspectBetweenSignificators == AspectType.None
