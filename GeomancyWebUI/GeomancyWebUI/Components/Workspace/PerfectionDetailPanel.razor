@@ -44,6 +44,7 @@
             var noteParts = ParseNotes(p.Notes);
             var directionVis = AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
             var mechanism = BuildPerfectionMechanism(p);
+            var listPath = ResolveListPath(p);
             var castVis = mechanism.HasStructuredCast
                 ? AspectDirectionHelper.Resolve(mechanism.Cast!.Direction, mechanism.Cast.AspectType)
                 : directionVis;
@@ -153,6 +154,13 @@
                     {
                         <p class="cast-direction-hint">@mechanism.DirectionHint</p>
                     }
+                </section>
+            }
+            else if (listPath.HasPath)
+            {
+                <section class="detail-card">
+                    <h3 class="card-title">Relationship path</h3>
+                    <p class="prose-text path-flow-line">@PerfectionPathDisplay.FormatFlow(listPath)</p>
                 </section>
             }
 
@@ -492,6 +500,16 @@
         var house = Chart.Houses.FirstOrDefault(h => h.HouseNumber == houseNumber);
         return house?.Figure?.Name ?? string.Empty;
     }
+
+    private static PerfectionPathDisplay.ListRowPath ResolveListPath(PerfectionModel p) =>
+        PerfectionPathDisplay.ForListRow(
+            p.PathFromHouse,
+            p.PathToHouse,
+            p.PathFigure,
+            p.PathSecondaryFigure,
+            p.PathActor,
+            p.AspectFromHouse,
+            p.AspectToHouse);
 
     private PerfectionMechanismHelper.MechanismExplanation BuildPerfectionMechanism(PerfectionModel p)
     {

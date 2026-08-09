@@ -745,6 +745,12 @@ namespace GeomancyWebUI.Client.Services
             public string AspectDirection { get; set; } = string.Empty;
             public int AspectFromHouse { get; set; }
             public int AspectToHouse { get; set; }
+            public int PathFromHouse { get; set; }
+            public int PathToHouse { get; set; }
+            public string PathFigure { get; set; } = string.Empty;
+            public string PathSecondaryFigure { get; set; } = string.Empty;
+            public string PathActor { get; set; } = string.Empty;
+            public int TranslatorHouseSecondary { get; set; }
             public int TranslatorHouse { get; set; }
             public string TranslatorFigure { get; set; } = string.Empty;
             public List<string>? Notes { get; set; }
@@ -1174,6 +1180,12 @@ namespace GeomancyWebUI.Client.Services
                 AspectDirection = apiResponse.AspectDirection ?? string.Empty,
                 AspectFromHouse = apiResponse.AspectFromHouse,
                 AspectToHouse = apiResponse.AspectToHouse,
+                PathFromHouse = apiResponse.PathFromHouse,
+                PathToHouse = apiResponse.PathToHouse,
+                PathFigure = apiResponse.PathFigure ?? string.Empty,
+                PathSecondaryFigure = apiResponse.PathSecondaryFigure ?? string.Empty,
+                PathActor = apiResponse.PathActor ?? string.Empty,
+                TranslatorHouseSecondary = apiResponse.TranslatorHouseSecondary,
                 TranslatorHouse = apiResponse.TranslatorHouse,
                 TranslatorFigure = apiResponse.TranslatorFigure ?? string.Empty,
                 Notes = apiResponse.Notes ?? new List<string>(),

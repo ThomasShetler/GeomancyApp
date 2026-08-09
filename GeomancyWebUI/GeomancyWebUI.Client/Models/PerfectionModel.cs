@@ -27,6 +27,12 @@ namespace GeomancyWebUI.Client.Models
         public int AspectFromHouse { get; set; }
         /// <summary>House the aspect casts to.</summary>
         public int AspectToHouse { get; set; }
+        public int PathFromHouse { get; set; }
+        public int PathToHouse { get; set; }
+        public string PathFigure { get; set; } = string.Empty;
+        public string PathSecondaryFigure { get; set; } = string.Empty;
+        public string PathActor { get; set; } = string.Empty;
+        public int TranslatorHouseSecondary { get; set; }
         public int TranslatorHouse { get; set; }
         public string TranslatorFigure { get; set; } = string.Empty;
         public List<string> Notes { get; set; } = new();

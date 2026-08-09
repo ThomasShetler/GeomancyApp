@@ -72,6 +72,14 @@
     flex-shrink: 0;
 }
 
+.flow-actor {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    margin-right: 0.1rem;
+}
+
 .flow-arrow {
     flex-shrink: 0;
     font-size: 0.9rem;

@@ -75,6 +75,7 @@ namespace GeomancyApp
             if (querentFigureName.Equals(quesitedFigureName, StringComparison.OrdinalIgnoreCase))
             {
                 res.Mode = PerfectionType.Occupation;
+                AssignPath(res, querentHouse, quesitedHouse, Q.Name);
                 res.Notes.Add($"Both significators are {querentFigureName} (occupation).");
                 AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                 return res;
@@ -92,6 +93,7 @@ namespace GeomancyApp
                     if (AreAdjacentHouses(h, quesitedHouse))
                     {
                         res.Mode = PerfectionType.Conjunction;
+                        AssignPath(res, querentHouse, h, houseFigure.Name, null, "Q.");
                         res.Notes.Add($"Querent figure {querentFigureName} in house {h} is adjacent to quesited's house {quesitedHouse}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
@@ -109,6 +111,7 @@ namespace GeomancyApp
                     if (AreAdjacentHouses(h, querentHouse))
                     {
                         res.Mode = PerfectionType.Conjunction;
+                        AssignPath(res, quesitedHouse, h, houseFigure.Name, null, "Qst.");
                         res.Notes.Add($"Quesited figure {quesitedFigureName} in house {h} is adjacent to querent's house {querentHouse}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
@@ -134,6 +137,7 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Aspect;
                         AssignAspectCast(res, h, quesitedHouse, aspect, direction);
+                        AssignAspectPath(res, chart, h, quesitedHouse);
                         res.Notes.Add($"Querent figure {querentFigureName} appears in house {h} (translation of the significator) and aspects quesited's house {quesitedHouse} by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
@@ -154,6 +158,7 @@ namespace GeomancyApp
                     {
                         res.Mode = PerfectionType.Aspect;
                         AssignAspectCast(res, h, querentHouse, aspect, direction);
+                        AssignAspectPath(res, chart, h, querentHouse);
                         res.Notes.Add($"Quesited figure {quesitedFigureName} appears in house {h} (translation of the significator) and aspects querent's house {querentHouse} by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         return res;
@@ -206,8 +211,10 @@ namespace GeomancyApp
                         Root(figureInAdjQuesited.Name).Equals(translatorName, StringComparison.OrdinalIgnoreCase))
             {
                 res.Mode = PerfectionType.Translation;
-                        res.TranslatorHouse = adjQuerentHouse; // Return the first translator house found
+                        res.TranslatorHouse = adjQuerentHouse;
+                        res.TranslatorHouseSecondary = adjQuesitedHouse;
                         var translatorFullName = chart.GetHouseFigure(adjQuerentHouse)?.Name ?? translatorName;
+                        AssignPath(res, adjQuerentHouse, adjQuesitedHouse, translatorFullName);
                         res.Notes.Add($"{translatorFullName} in house {adjQuerentHouse} (adjacent to querent) and house {adjQuesitedHouse} (adjacent to quesited) translates the light.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                 return res;
@@ -250,6 +257,9 @@ namespace GeomancyApp
                     if (AreAdjacentHouses(qHouse, xHouse))
             {
                 res.Mode = PerfectionType.Mutation;
+                        var qFig = chart.GetHouseFigure(qHouse)?.Name ?? querentFigureName;
+                        var xFig = chart.GetHouseFigure(xHouse)?.Name ?? quesitedFigureName;
+                        AssignPath(res, qHouse, xHouse, qFig, xFig);
                         res.Notes.Add($"Both significators pass to neighboring houses: {querentFigureName} in house {qHouse} and {quesitedFigureName} in house {xHouse}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                 return res;
@@ -301,6 +311,27 @@ namespace GeomancyApp
                 res.AspectDirection = "Sinister";
             else if (direction.IndexOf("Opposition", StringComparison.OrdinalIgnoreCase) >= 0 || aspect == AspectType.Opposition)
                 res.AspectDirection = "Opposition";
+        }
+
+        private static void AssignPath(
+            PerfectionResult res,
+            int fromHouse,
+            int toHouse,
+            string pathFigure,
+            string pathSecondaryFigure = null,
+            string pathActor = null)
+        {
+            res.PathFromHouse = fromHouse;
+            res.PathToHouse = toHouse;
+            res.PathFigure = pathFigure ?? string.Empty;
+            res.PathSecondaryFigure = pathSecondaryFigure ?? string.Empty;
+            res.PathActor = pathActor ?? string.Empty;
+        }
+
+        private static void AssignAspectPath(PerfectionResult res, HouseChart chart, int fromHouse, int toHouse)
+        {
+            var fromFig = chart.GetHouseFigure(fromHouse)?.Name ?? string.Empty;
+            AssignPath(res, fromHouse, toHouse, fromFig);
         }
 
         private static AspectRecord BuildAspectRecord(PerfectionResult result)
@@ -583,6 +614,7 @@ namespace GeomancyApp
                 };
                 var querentFullName = chart.GetHouseFigure(querentHouse)?.Name ?? querentFigureName;
                 res.Notes.Add($"Both significators are {querentFullName} (occupation).");
+                AssignPath(res, querentHouse, quesitedHouse, querentFullName);
                 AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                 results.Add(res);
             }
@@ -647,6 +679,7 @@ namespace GeomancyApp
                             QuerentHouse = querentHouse,
                             QuesitedHouse = quesitedHouse
                         };
+                        AssignPath(res, querentHouse, h, houseFigure.Name, null, "Q.");
                         res.Notes.Add($"Querent figure {querentFigureName} in house {h} is adjacent to quesited's house {quesitedHouse}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -675,6 +708,7 @@ namespace GeomancyApp
                         };
                         var querentFullName = chart.GetHouseFigure(querentHouse)?.Name ?? querentFigureName;
                         var quesitedFullName = chart.GetHouseFigure(quesitedHouse)?.Name ?? quesitedFigureName;
+                        AssignPath(res, quesitedHouse, h, quesitedFullName, null, "Qst.");
                         res.Notes.Add($"Quesited figure {quesitedFullName} in house {h} is adjacent to querent's house {querentHouse} ({querentFullName}).");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -712,6 +746,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         AssignAspectCast(res, h, quesitedHouse, aspect, direction);
+                        AssignAspectPath(res, chart, h, quesitedHouse);
                         res.Notes.Add($"Querent figure {querentFullName} appears in house {h} (translation of the significator) and aspects quesited's house {quesitedHouse} ({quesitedFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -740,6 +775,7 @@ namespace GeomancyApp
                             QuesitedHouse = quesitedHouse
                         };
                         AssignAspectCast(res, h, querentHouse, aspect, direction);
+                        AssignAspectPath(res, chart, h, querentHouse);
                         res.Notes.Add($"Quesited figure {quesitedFullName} appears in house {h} (translation of the significator) and aspects querent's house {querentHouse} ({querentFullName}) by {direction}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -796,10 +832,13 @@ namespace GeomancyApp
                         {
                             Mode = PerfectionType.Translation,
                             TranslatorHouse = adjQuerentHouse,
+                            TranslatorHouseSecondary = adjQuesitedHouse,
                             QuerentHouse = querentHouse,
                             QuesitedHouse = quesitedHouse
                         };
-                        res.Notes.Add($"{translatorName} in house {adjQuerentHouse} (adjacent to querent) and house {adjQuesitedHouse} (adjacent to quesited) translates the light.");
+                        var translatorFullName = chart.GetHouseFigure(adjQuerentHouse)?.Name ?? translatorName;
+                        AssignPath(res, adjQuerentHouse, adjQuesitedHouse, translatorFullName);
+                        res.Notes.Add($"{translatorFullName} in house {adjQuerentHouse} (adjacent to querent) and house {adjQuesitedHouse} (adjacent to quesited) translates the light.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
                         return; // Only need one translation
@@ -849,6 +888,9 @@ namespace GeomancyApp
                             QuerentHouse = querentHouse,
                             QuesitedHouse = quesitedHouse
                         };
+                        var qFig = chart.GetHouseFigure(qHouse)?.Name ?? querentFigureName;
+                        var xFig = chart.GetHouseFigure(xHouse)?.Name ?? quesitedFigureName;
+                        AssignPath(res, qHouse, xHouse, qFig, xFig);
                         res.Notes.Add($"Both significators pass to neighboring houses: {querentFigureName} in house {qHouse} and {quesitedFigureName} in house {xHouse}.");
                         AddInterpretationTip(res, chart, querentHouse, quesitedHouse);
                         results.Add(res);
@@ -1208,6 +1250,9 @@ namespace GeomancyApp
             {
                 var res = new PerfectionResult();
                 res.Mode = PerfectionType.Occupation;
+                int significatorHouse = GetPairedHouse(companyHouse);
+                string actor = querentInCompany ? "Q." : "Qst.";
+                AssignPath(res, significatorHouse, companyHouse, companyFigure.Name, null, actor);
                 res.Notes.Add($"Figure in company {companyFigure.Name} occupies both houses {companyHouse} and {targetHouse}.");
                 AddInterpretationTip(res, chart, companyHouse, targetHouse);
                 return res;
@@ -1228,6 +1273,9 @@ namespace GeomancyApp
                         res.Mode = PerfectionType.Conjunction;
                         var companyFullName = companyFigure.Name;
                         var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
+                        int significatorHouse = GetPairedHouse(companyHouse);
+                        string actor = querentInCompany ? "Q." : "Qst.";
+                        AssignPath(res, significatorHouse, h, companyFullName, null, actor);
                         res.Notes.Add($"Figure in company {companyFullName} in house {h} is adjacent to house {targetHouse} ({targetFullName}).");
                         AddInterpretationTip(res, chart, companyHouse, targetHouse);
                         return res;
@@ -1244,6 +1292,7 @@ namespace GeomancyApp
                 res.Mode = PerfectionType.Aspect;
                 res.MadeThroughCompany = true;
                 AssignAspectCast(res, companyHouse, targetHouse, directCompanyAspect, dir);
+                AssignAspectPath(res, chart, companyHouse, targetHouse);
                 var companyFullName = companyFigure.Name;
                 var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
                 res.Notes.Add($"Figure in company {companyFullName} in house {companyHouse} casts directly to house {targetHouse} ({targetFullName}) by {dir}.");
@@ -1271,6 +1320,7 @@ namespace GeomancyApp
                         res.Mode = PerfectionType.Aspect;
                         res.MadeThroughCompany = true;
                         AssignAspectCast(res, h, targetHouse, aspect, direction);
+                        AssignAspectPath(res, chart, h, targetHouse);
                         var companyFullName = companyFigure.Name;
                         var targetFullName = chart.GetHouseFigure(targetHouse)?.Name ?? Root(targetFigure.Name);
                         res.Notes.Add($"Figure in company {companyFullName} appears in house {h} (translation of the company figure) and aspects house {targetHouse} ({targetFullName}) by {direction}.");
@@ -1316,7 +1366,9 @@ namespace GeomancyApp
                         var res = new PerfectionResult();
                         res.Mode = PerfectionType.Translation;
                         res.TranslatorHouse = adjHouse1;
+                        res.TranslatorHouseSecondary = adjHouse2;
                         var translatorFullName = chart.GetHouseFigure(adjHouse1)?.Name ?? translatorName;
+                        AssignPath(res, adjHouse1, adjHouse2, translatorFullName);
                         res.Notes.Add($"Figure in company enables translation: {translatorFullName} in houses {adjHouse1} and {adjHouse2}.");
                         AddInterpretationTip(res, chart, companyHouse, targetHouse);
                         return res;
@@ -1358,6 +1410,7 @@ namespace GeomancyApp
                         res.Mode = PerfectionType.Mutation;
                         var companyFullName = companyFigure.Name;
                         var otherFullName = targetFigure.Name;
+                        AssignPath(res, ch, oh, companyFullName, otherFullName);
                         res.Notes.Add($"Figure in company {companyFullName} in house {ch} and {otherFullName} in house {oh} are in neighboring houses.");
                         AddInterpretationTip(res, chart, companyHouse, targetHouse);
                         return res;

@@ -1,3 +1,4 @@
+@using GeomancyApp
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Helpers
 
@@ -129,6 +130,7 @@
                                     if (!IsClassicalPerfection(p)) continue;
                                     var idx = i;
                                     var sel = new PerfectionSelection(PerfectionEntryKind.Perfection, idx, p, null);
+                                    var path = ResolveListPath(p);
                                     <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
                                                               RowVariant="perfection"
                                                               Mode="@p.Mode"
@@ -136,10 +138,11 @@
                                                               AspectType="@p.AspectBetweenSignificators"
                                                               AspectDirection="@p.AspectDirection"
                                                               CompanyType="@p.CompanyType"
-                                                              FromHouse="@p.QuerentHouse"
-                                                              ToHouse="@p.QuesitedHouse"
-                                                              FromFigure="@p.QuerentFigure"
-                                                              ToFigure="@p.QuesitedFigure"
+                                                              FromHouse="@path.FromHouse"
+                                                              ToHouse="@path.ToHouse"
+                                                              FromFigure="@path.FromFigure"
+                                                              ToFigure="@path.ToFigure"
+                                                              ActorPrefix="@path.ActorPrefix"
                                                               Score="@(p.FavorableScore + p.UnfavorableScore)"
                                                               OnClick="@(() => RaiseSelect(sel))" />
                                 }
@@ -165,6 +168,7 @@
                                     if (!IsCompanyPerfection(p)) continue;
                                     var idx = i;
                                     var sel = new PerfectionSelection(PerfectionEntryKind.Perfection, idx, p, null);
+                                    var path = ResolveListPath(p);
                                     <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
                                                               RowVariant="perfection"
                                                               Mode="@p.Mode"
@@ -172,10 +176,11 @@
                                                               AspectType="@p.AspectBetweenSignificators"
                                                               AspectDirection="@p.AspectDirection"
                                                               CompanyType="@p.CompanyType"
-                                                              FromHouse="@p.QuerentHouse"
-                                                              ToHouse="@p.QuesitedHouse"
-                                                              FromFigure="@p.QuerentFigure"
-                                                              ToFigure="@p.QuesitedFigure"
+                                                              FromHouse="@path.FromHouse"
+                                                              ToHouse="@path.ToHouse"
+                                                              FromFigure="@path.FromFigure"
+                                                              ToFigure="@path.ToFigure"
+                                                              ActorPrefix="@path.ActorPrefix"
                                                               Score="@(p.FavorableScore + p.UnfavorableScore)"
                                                               OnClick="@(() => RaiseSelect(sel))" />
                                 }
@@ -207,7 +212,7 @@
                                                               FromHouse="@a.FromHouse"
                                                               ToHouse="@a.ToHouse"
                                                               FromFigure="@GetHouseFigureName(a.FromHouse)"
-                                                              ToFigure="@GetHouseFigureName(a.ToHouse)"
+                                                              ToFigure=""
                                                               IsMajorAspect="@a.IsMajorAspect"
                                                               Score="@a.FavorableScore"
                                                               OnClick="@(() => RaiseSelect(sel))" />
@@ -237,6 +242,7 @@
                                 var idx = i;
                                 var d = Analysis.Denials[idx];
                                 var sel = new PerfectionSelection(PerfectionEntryKind.Denial, idx, d, null);
+                                var path = ResolveListPath(d);
                                 <CompactPerfectionListRow IsSelected="@IsSelected(sel)"
                                                           RowVariant="denial"
                                                           Mode="@d.Mode"
@@ -244,10 +250,11 @@
                                                           AspectType="@d.AspectBetweenSignificators"
                                                           AspectDirection="@d.AspectDirection"
                                                           CompanyType="@d.CompanyType"
-                                                          FromHouse="@d.QuerentHouse"
-                                                          ToHouse="@d.QuesitedHouse"
-                                                          FromFigure="@d.QuerentFigure"
-                                                          ToFigure="@d.QuesitedFigure"
+                                                          FromHouse="@path.FromHouse"
+                                                          ToHouse="@path.ToHouse"
+                                                          FromFigure="@path.FromFigure"
+                                                          ToFigure="@path.ToFigure"
+                                                          ActorPrefix="@path.ActorPrefix"
                                                           Score="@(d.FavorableScore + d.UnfavorableScore)"
                                                           OnClick="@(() => RaiseSelect(sel))" />
                             }
@@ -278,7 +285,7 @@
                                                               FromHouse="@a.FromHouse"
                                                               ToHouse="@a.ToHouse"
                                                               FromFigure="@GetHouseFigureName(a.FromHouse)"
-                                                              ToFigure="@GetHouseFigureName(a.ToHouse)"
+                                                              ToFigure=""
                                                               IsMajorAspect="@a.IsMajorAspect"
                                                               Score="@a.UnfavorableScore"
                                                               OnClick="@(() => RaiseSelect(sel))" />
@@ -336,6 +343,16 @@
 
     private static bool IsCompanyPerfection(PerfectionModel p) =>
         string.Equals(p.Mode, "Company", StringComparison.OrdinalIgnoreCase);
+
+    private static PerfectionPathDisplay.ListRowPath ResolveListPath(PerfectionModel p) =>
+        PerfectionPathDisplay.ForListRow(
+            p.PathFromHouse,
+            p.PathToHouse,
+            p.PathFigure,
+            p.PathSecondaryFigure,
+            p.PathActor,
+            p.AspectFromHouse,
+            p.AspectToHouse);
 
     private string GetHouseFigureName(int houseNumber)
     {

@@ -39,6 +39,19 @@ namespace GeomancyApp
         public int AspectFromHouse { get; set; }
         /// <summary>House the aspect casts to (receiving house).</summary>
         public int AspectToHouse { get; set; }
+
+        /// <summary>Relationship path from-house for list/detail (translator, pass house, company companion, etc.).</summary>
+        public int PathFromHouse { get; set; }
+        /// <summary>Relationship path to-house.</summary>
+        public int PathToHouse { get; set; }
+        /// <summary>Primary figure on the path (translator, moving significator, company figure, casting figure).</summary>
+        public string PathFigure { get; set; } = string.Empty;
+        /// <summary>Second figure on the path (mutation); empty otherwise.</summary>
+        public string PathSecondaryFigure { get; set; } = string.Empty;
+        /// <summary>Actor prefix for list rows: "Q.", "Qst.", or empty.</summary>
+        public string PathActor { get; set; } = string.Empty;
+        /// <summary>Second translator house for Translation of Light (PathToHouse mirrors this).</summary>
+        public int TranslatorHouseSecondary { get; set; }
     }
 
     /// <summary>
