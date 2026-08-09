@@ -181,9 +181,8 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
-        public void CompanyAspect_ReLabeledToCompanyStillSurfacesInUiAspectLists()
+        public void CompanyAspect_PerfectionNotDuplicatedInPositiveAspectList()
         {
-            // Houses 1–2 in simple company (Via/Via); company house 2 casts sinister trine to quesited house 6.
             var chart = ChartWithUniqueFigures();
             chart.SetHouseFigure(1, "Via");
             chart.SetHouseFigure(2, "Via");
@@ -197,14 +196,44 @@ namespace GeomancyUnitTesting
             AssertResultMatchesEngine(companyAspect);
 
             var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 6);
-            var uiTrine = analysis.PositiveAspects.FirstOrDefault(r => r.AspectType == AspectType.Trine);
 
-            Assert.IsNotNull(uiTrine, "Company aspect must appear in PositiveAspects despite Mode=Company.");
-            Assert.IsTrue(uiTrine.MadeThroughCompany);
-            Assert.AreEqual(2, uiTrine.FromHouse);
-            Assert.AreEqual(6, uiTrine.ToHouse);
-            Assert.AreEqual("Sinister", uiTrine.Direction);
-            AssertRecordMatchesEngine(uiTrine);
+            Assert.IsTrue(analysis.Perfections.Any(p =>
+                p.Mode == PerfectionType.Company && p.BaseMode == PerfectionType.Aspect));
+            Assert.AreEqual(0, analysis.PositiveAspects.Count,
+                "Company-mediated aspect perfections must not duplicate into PositiveAspects.");
+        }
+
+        [TestMethod]
+        public void AnalyzePerfections_TotalsMatchListedRowScores()
+        {
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Via");
+            chart.SetHouseFigure(6, "Populus");
+            chart.SetHouseFigure(4, "Populus");
+            chart.SetHouseFigure(10, "Populus");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 6);
+
+            int listedFavorable =
+                analysis.Perfections.Sum(p => PerfectionCalculator.CalculateScore(p))
+                + analysis.Denials.Sum(d => PerfectionCalculator.CalculateScore(d))
+                + analysis.PositiveAspects.Sum(a =>
+                    a.AspectType == AspectType.Trine || a.AspectType == AspectType.Sextile
+                        ? (a.MadeThroughCompany ? 2 : 3) : 0);
+
+            int listedUnfavorable =
+                analysis.Perfections.Sum(p => PerfectionCalculator.CalculateUnfavorableScore(p))
+                + analysis.Denials.Where(d => d.Mode != PerfectionType.Aspect)
+                    .Sum(d => PerfectionCalculator.CalculateUnfavorableScore(d))
+                + analysis.NegativeAspects.Sum(a =>
+                    a.AspectType == AspectType.Square ? (a.MadeThroughCompany ? -4 : -3)
+                    : a.AspectType == AspectType.Opposition ? (a.MadeThroughCompany ? -5 : -4)
+                    : 0);
+
+            Assert.AreEqual(listedFavorable, analysis.TotalFavorableScore);
+            Assert.AreEqual(listedUnfavorable, analysis.TotalUnfavorableScore);
+            Assert.AreEqual(analysis.TotalFavorableScore + analysis.TotalUnfavorableScore, analysis.NetScore);
         }
 
         [TestMethod]

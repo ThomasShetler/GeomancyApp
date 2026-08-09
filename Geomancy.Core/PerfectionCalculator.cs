@@ -318,10 +318,30 @@ namespace GeomancyApp
             };
         }
 
-        private static bool IsCastAspectResult(PerfectionResult result)
+        private static bool IsStandaloneCastAspect(PerfectionResult result)
         {
             return result.Mode == PerfectionType.Aspect
-                || (result.Mode == PerfectionType.Company && result.BaseMode == PerfectionType.Aspect);
+                && result.AspectBetweenSignificators != AspectType.None
+                && result.AspectFromHouse > 0
+                && result.AspectToHouse > 0;
+        }
+
+        private static string PerfectionDedupKey(PerfectionResult result)
+        {
+            return $"{result.Mode}|{result.BaseMode}|{result.AspectBetweenSignificators}|{result.AspectFromHouse}|{result.AspectToHouse}|{result.CompanyType}";
+        }
+
+        private static List<PerfectionResult> DeduplicatePerfections(IEnumerable<PerfectionResult> perfections)
+        {
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            var list = new List<PerfectionResult>();
+            foreach (var p in perfections)
+            {
+                var key = PerfectionDedupKey(p);
+                if (seen.Add(key))
+                    list.Add(p);
+            }
+            return list;
         }
 
         // Helper method to add interpretation tips to notes based on perfection mode
@@ -1629,8 +1649,7 @@ namespace GeomancyApp
             // Separate perfections and denials
             if (hasPerfections)
             {
-                // We have actual perfections - separate them from unfavorable aspects
-                analysis.Perfections = results.Where(r => IsActualPerfection(r)).ToList();
+                analysis.Perfections = DeduplicatePerfections(results.Where(r => IsActualPerfection(r)));
                 
                 // Unfavorable aspects that appear alongside perfections are "difficulties" - 
                 // they're still in results for scoring but not in Perfections list
@@ -1692,12 +1711,7 @@ namespace GeomancyApp
             // Extract all aspects from results and categorize them
             foreach (var result in results)
             {
-                if (!IsCastAspectResult(result))
-                    continue;
-
-                if (result.AspectBetweenSignificators == AspectType.None
-                    || result.AspectFromHouse <= 0
-                    || result.AspectToHouse <= 0)
+                if (!IsStandaloneCastAspect(result))
                     continue;
 
                 var aspectRecord = BuildAspectRecord(result);
@@ -1715,26 +1729,61 @@ namespace GeomancyApp
                 }
             }
 
-            // Calculate scores for each result and totals
-            foreach (var result in results)
+            // Totals must match what the UI lists: perfections + standalone aspects only (no double-count).
+            foreach (var perfection in analysis.Perfections)
             {
-                // Calculate individual scores for each result (for display purposes)
-                // These will be used by the API to show per-result scoring
-                int favorableScore = CalculateScore(result);
-                int unfavorableScore = CalculateUnfavorableScore(result);
-                
-                // Store in a way that can be accessed (we'll need to add properties or use notes)
-                // For now, we'll calculate these on-demand in the API layer
-                
-                // Add to totals
-                analysis.TotalFavorableScore += favorableScore;
-                analysis.TotalUnfavorableScore += unfavorableScore;
+                analysis.TotalFavorableScore += CalculateScore(perfection);
+                analysis.TotalUnfavorableScore += CalculateUnfavorableScore(perfection);
             }
 
-            // Calculate net score
+            foreach (var denial in analysis.Denials)
+            {
+                // Unfavorable Mode=Aspect rows are listed under Negative Aspects; avoid double-counting.
+                if (denial.Mode == PerfectionType.Aspect)
+                    continue;
+
+                analysis.TotalFavorableScore += CalculateScore(denial);
+                analysis.TotalUnfavorableScore += CalculateUnfavorableScore(denial);
+            }
+
+            foreach (var aspect in analysis.PositiveAspects)
+            {
+                analysis.TotalFavorableScore += CalculateAspectListScore(aspect);
+            }
+
+            foreach (var aspect in analysis.NegativeAspects)
+            {
+                analysis.TotalUnfavorableScore += CalculateAspectListUnfavorableScore(aspect);
+            }
+
             analysis.NetScore = analysis.TotalFavorableScore + analysis.TotalUnfavorableScore;
 
             return analysis;
+        }
+
+        private static int CalculateAspectListScore(AspectRecord aspect)
+        {
+            if (aspect.AspectType == AspectType.Trine || aspect.AspectType == AspectType.Sextile)
+            {
+                int baseScore = 3;
+                if (aspect.MadeThroughCompany)
+                    baseScore = Math.Max(0, baseScore - 1);
+                return baseScore;
+            }
+            return 0;
+        }
+
+        private static int CalculateAspectListUnfavorableScore(AspectRecord aspect)
+        {
+            int baseScore = aspect.AspectType switch
+            {
+                AspectType.Opposition => -4,
+                AspectType.Square => -3,
+                _ => 0
+            };
+            if (baseScore < 0 && aspect.MadeThroughCompany)
+                baseScore -= 1;
+            return baseScore;
         }
     }
 }
