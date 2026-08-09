@@ -4,17 +4,11 @@
 @using GeomancyWebUI.Client.Helpers
 
 @*
-    Right-column detail panel for the revamped Perfections tab.
+    Relationship-reading detail panel for the Perfections tab.
 
-    Renders structured detail for whichever entry was clicked on the left:
-      - Perfection / Denial: header w/ score pill, mode glossary tagline,
-        chip row (mode, company, base mode, aspect + direction, translation,
-        MTC), Significators card (Querent → Quesited), optional Cast from/to,
-        Translator card, Company card, Indentation card, Score breakdown,
-        How this formed (structured) / Mechanism fallback, Interpretation.
-      - Positive / Negative Aspect: header w/ score pill, aspect glossary
-        tagline, chip row (Major/Minor, Direction, MTC), Cast from → Cast to,
-        Score breakdown, How this formed + Interpretation.
+    Spine (Perfection / Denial / Aspect):
+      Header (mode + glossary) → Parties (Q | X) → Formation (path/cast + steps)
+      → Participants (corpus chips) → Reading (interpretation) → Meta (score)
 *@
 
 <div class="perf-detail-panel @(Selection == null ? "is-empty" : "")">
@@ -42,12 +36,10 @@
             var companyDisplay = GetCompanyTypeDisplay(p);
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
-            var directionVis = AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
-            var mechanism = BuildPerfectionMechanism(p);
-            var listPath = ResolveListPath(p);
-            var castVis = mechanism.HasStructuredCast
-                ? AspectDirectionHelper.Resolve(mechanism.Cast!.Direction, mechanism.Cast.AspectType)
-                : directionVis;
+            var explanation = BuildRelationshipExplanation(p);
+            var castVis = explanation.HasStructuredCast
+                ? AspectDirectionHelper.Resolve(explanation.Cast!.Direction, explanation.Cast.AspectType)
+                : AspectDirectionHelper.Resolve(p.AspectDirection, p.AspectBetweenSignificators);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -60,9 +52,6 @@
                         <span>@modeTitle</span>
                     </h2>
                 </div>
-                <div class="header-score-pill @ScoreClass(totalScore)">
-                    @FormatScore(totalScore)
-                </div>
             </header>
 
             @if (!string.IsNullOrEmpty(glossary))
@@ -70,52 +59,20 @@
                 <p class="glossary-tagline">@glossary</p>
             }
 
-            <!-- Mode chips -->
-            <div class="chip-row">
-                <span class="chip chip-mode">@(string.IsNullOrEmpty(p.Mode) ? "Unknown" : p.Mode)</span>
-                @if (!string.IsNullOrEmpty(companyDisplay))
-                {
+            @if (!string.IsNullOrEmpty(companyDisplay))
+            {
+                <div class="chip-row chip-row-minimal">
                     <span class="chip chip-company">@companyDisplay</span>
-                }
-                @if (!string.IsNullOrEmpty(p.BaseMode) && p.BaseMode != p.Mode)
-                {
-                    <span class="chip chip-base">Base: @p.BaseMode</span>
-                }
-                @if (!string.IsNullOrEmpty(p.AspectBetweenSignificators) && p.AspectBetweenSignificators != "None")
-                {
-                    <span class="chip chip-aspect @AspectDirectionHelper.AspectTypeClass(p.AspectBetweenSignificators)">
-                        @if (!string.IsNullOrEmpty(directionVis.Glyph))
-                        {
-                            <span class="chip-arrow @directionVis.CssClass">@directionVis.Glyph</span>
-                        }
-                        @p.AspectBetweenSignificators
-                        @if (!string.IsNullOrEmpty(directionVis.ShortLabel))
-                        {
-                            <span class="chip-aux">· @directionVis.ShortLabel</span>
-                        }
-                    </span>
-                }
-                @if (p.Mode == "Aspect" && p.TranslatorHouse > 0)
-                {
-                    <span class="chip chip-translation">Translation</span>
-                }
-                @if (p.MadeThroughCompany)
-                {
-                    <span class="chip chip-mtc">Made through Company</span>
-                }
-            </div>
+                </div>
+            }
 
-            <!-- Significators card -->
-            <section class="detail-card">
-                <h3 class="card-title">Significators</h3>
-                <div class="significators-grid">
+            <section class="detail-card parties-card">
+                <h3 class="card-title">Parties</h3>
+                <div class="parties-grid">
                     <div class="sig-cell">
                         <span class="sig-eyebrow">Querent</span>
                         <span class="sig-house">House @p.QuerentHouse</span>
                         <span class="sig-figure">@(string.IsNullOrEmpty(p.QuerentFigure) ? "—" : p.QuerentFigure)</span>
-                    </div>
-                    <div class="sig-arrow @directionVis.CssClass" title="@directionVis.Hint">
-                        @directionVis.Glyph
                     </div>
                     <div class="sig-cell">
                         <span class="sig-eyebrow">Quesited</span>
@@ -125,113 +82,131 @@
                 </div>
             </section>
 
-            @if (mechanism.HasStructuredCast)
+            @if (explanation.HasFormation)
             {
-                <section class="detail-card aspect-flow-card @AspectDirectionHelper.AspectTypeClass(mechanism.Cast!.AspectType)">
-                    <h3 class="card-title">Cast</h3>
-                    <div class="significators-grid">
-                        <div class="sig-cell">
-                            <span class="sig-eyebrow">Cast from</span>
-                            <span class="sig-house">House @mechanism.Cast.FromHouse</span>
-                            @if (!string.IsNullOrEmpty(mechanism.Cast.FromFigure))
-                            {
-                                <span class="sig-figure">@mechanism.Cast.FromFigure</span>
-                            }
-                        </div>
-                        <div class="sig-arrow @castVis.CssClass" title="@castVis.Hint">
-                            @castVis.Glyph
-                        </div>
-                        <div class="sig-cell">
-                            <span class="sig-eyebrow">Cast to</span>
-                            <span class="sig-house">House @mechanism.Cast.ToHouse</span>
-                            @if (!string.IsNullOrEmpty(mechanism.Cast.ToFigure))
-                            {
-                                <span class="sig-figure">@mechanism.Cast.ToFigure</span>
-                            }
-                        </div>
-                    </div>
-                    @if (!string.IsNullOrEmpty(mechanism.DirectionHint))
+                <section class="detail-card formation-card @(explanation.HasStructuredCast ? AspectDirectionHelper.AspectTypeClass(explanation.Cast!.AspectType) : "")">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⚙</span> @explanation.Title
+                    </h3>
+
+                    @if (!string.IsNullOrEmpty(explanation.Flow))
                     {
-                        <p class="cast-direction-hint">@mechanism.DirectionHint</p>
+                        <p class="formation-flow">@explanation.Flow</p>
+                    }
+
+                    @if (explanation.HasStructuredCast)
+                    {
+                        <div class="significators-grid cast-grid">
+                            <div class="sig-cell">
+                                <span class="sig-eyebrow">Cast from</span>
+                                <span class="sig-house">House @explanation.Cast!.FromHouse</span>
+                                @if (!string.IsNullOrEmpty(explanation.Cast.FromFigure))
+                                {
+                                    <span class="sig-figure">@explanation.Cast.FromFigure</span>
+                                }
+                            </div>
+                            <div class="sig-arrow @castVis.CssClass" title="@castVis.Hint">
+                                @castVis.Glyph
+                            </div>
+                            <div class="sig-cell">
+                                <span class="sig-eyebrow">Cast to</span>
+                                <span class="sig-house">House @explanation.Cast.ToHouse</span>
+                                @if (!string.IsNullOrEmpty(explanation.Cast.ToFigure))
+                                {
+                                    <span class="sig-figure">@explanation.Cast.ToFigure</span>
+                                }
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(explanation.DirectionHint))
+                        {
+                            <p class="cast-direction-hint">@explanation.DirectionHint</p>
+                        }
+                    }
+
+                    @if (explanation.Steps.Count > 0)
+                    {
+                        <ol class="mechanism-list mechanism-steps">
+                            @for (var si = 0; si < explanation.Steps.Count; si++)
+                            {
+                                <li class="mechanism-item">
+                                    <span class="mechanism-step-num">@(si + 1)</span>
+                                    <span class="mechanism-text">@HighlightTokens(explanation.Steps[si])</span>
+                                </li>
+                            }
+                        </ol>
                     }
                 </section>
             }
-            else if (listPath.HasPath)
+
+            @if (explanation.Participants.Count > 0)
             {
-                <section class="detail-card">
-                    <h3 class="card-title">Relationship path</h3>
-                    <p class="prose-text path-flow-line">@PerfectionPathDisplay.FormatFlow(listPath)</p>
+                <section class="detail-card participants-card">
+                    <h3 class="card-title">Participants</h3>
+                    <ul class="participant-list">
+                        @foreach (var part in explanation.Participants)
+                        {
+                            var fig = ResolveFigure(part.House, part.FigureName);
+                            var blurb = fig != null && part.House > 0
+                                ? FigureDisplayHelper.GetFigureInHouseText(fig, part.House)
+                                : fig?.Tagline;
+                            <li class="participant-item">
+                                <div class="participant-header">
+                                    <span class="participant-role">@part.Role</span>
+                                    @if (part.House > 0)
+                                    {
+                                        <span class="participant-house">H@versionpart.House</span>
+                                    }
+                                    <span class="participant-name">@(string.IsNullOrEmpty(part.FigureName) ? "—" : part.FigureName)</span>
+                                </div>
+                                @if (fig != null)
+                                {
+                                    <div class="participant-chips">
+                                        @if (!string.IsNullOrWhiteSpace(fig.Planet))
+                                        {
+                                            <span class="chip chip-planet">
+                                                <span class="chip-glyph">@FigureDisplayHelper.GetPlanetSymbol(fig.Planet)</span>
+                                                @fig.Planet
+                                            </span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(fig.OuterEl))
+                                        {
+                                            <span class="chip chip-element @FigureDisplayHelper.GetElementCssClass(fig.OuterEl)">
+                                                <span class="chip-glyph">@FigureDisplayHelper.GetElementSymbol(fig.OuterEl)</span>
+                                                @fig.OuterEl
+                                            </span>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(blurb))
+                                    {
+                                        <p class="participant-blurb">@blurb</p>
+                                    }
+                                }
+                            </li>
+                        }
+                    </ul>
                 </section>
             }
 
-            <!-- Translator card -->
-            @if (p.TranslatorHouse > 0)
+            @if (noteParts.InterpretationTips.Count > 0)
             {
-                <section class="detail-card">
-                    <h3 class="card-title">Translator</h3>
-                    <dl class="kv-grid">
-                        <dt>House</dt>     <dd>House @p.TranslatorHouse</dd>
-                        @if (!string.IsNullOrEmpty(p.TranslatorFigure))
+                <section class="detail-card interpretation-card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">✦</span> Reading
+                    </h3>
+                    <div class="interpretation-tips">
+                        @for (int i = 0; i < noteParts.InterpretationTips.Count; i++)
                         {
-                            <dt>Figure</dt>    <dd>@p.TranslatorFigure</dd>
+                            var tip = noteParts.InterpretationTips[i];
+                            <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
+                                <span class="tip-bullet">✦</span>
+                                <p class="tip-text">@RenderTipText(tip)</p>
+                            </div>
                         }
-                        @if (p.TranslatorIndentation != null)
-                        {
-                            <dt>Indent Index</dt>  <dd>@p.TranslatorIndentation.Index</dd>
-                            <dt>Indent Bonus</dt>  <dd>@p.TranslatorIndentation.Bonus</dd>
-                            <dt>Indent Total</dt>  <dd>@p.TranslatorIndentation.Total</dd>
-                        }
-                    </dl>
-                </section>
-            }
-
-            <!-- Company card -->
-            @if (!string.IsNullOrEmpty(p.CompanyType) && p.CompanyType != "None")
-            {
-                <section class="detail-card">
-                    <h3 class="card-title">Company</h3>
-                    <dl class="kv-grid">
-                        <dt>Type</dt> <dd>@(!string.IsNullOrEmpty(companyDisplay) ? companyDisplay : p.CompanyType)</dd>
-                        @if (!string.IsNullOrEmpty(p.CompanyTypeDescription))
-                        {
-                            <dt>Description</dt> <dd>@p.CompanyTypeDescription</dd>
-                        }
-                    </dl>
-                </section>
-            }
-
-            <!-- Indentation card -->
-            @if (p.Indentation != null)
-            {
-                <section class="detail-card">
-                    <h3 class="card-title">Indentation</h3>
-                    <div class="indent-grid">
-                        <div class="indent-cell">
-                            <span class="indent-label">Querent House</span>
-                            <span class="indent-value">@p.Indentation.QuerentHouse</span>
-                        </div>
-                        <div class="indent-cell">
-                            <span class="indent-label">Quesited House</span>
-                            <span class="indent-value">@p.Indentation.QuesitedHouse</span>
-                        </div>
-                        <div class="indent-cell">
-                            <span class="indent-label">Index</span>
-                            <span class="indent-value">@p.Indentation.Index</span>
-                        </div>
-                        <div class="indent-cell">
-                            <span class="indent-label">Bonus</span>
-                            <span class="indent-value">@p.Indentation.Bonus</span>
-                        </div>
-                        <div class="indent-cell indent-total">
-                            <span class="indent-label">Total</span>
-                            <span class="indent-value">@p.Indentation.Total</span>
-                        </div>
                     </div>
                 </section>
             }
 
-            <!-- Score breakdown -->
-            <section class="detail-card">
+            <section class="detail-card meta-card">
                 <h3 class="card-title">Score</h3>
                 <div class="score-breakdown">
                     <div class="score-cell">
@@ -247,78 +222,39 @@
                         <span class="score-cell-value @ScoreTextClass(totalScore)">@FormatScore(totalScore)</span>
                     </div>
                 </div>
-            </section>
-
-            <!-- How this formed (structured) or Mechanism fallback from notes -->
-            @if (mechanism.Steps.Count > 0)
-            {
-                <section class="detail-card mechanism-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">⚙</span> @mechanism.Title
-                    </h3>
-                    <ol class="mechanism-list mechanism-steps">
-                        @for (var si = 0; si < mechanism.Steps.Count; si++)
-                        {
-                            <li class="mechanism-item">
-                                <span class="mechanism-step-num">@(si + 1)</span>
-                                <span class="mechanism-text">@HighlightTokens(mechanism.Steps[si])</span>
-                            </li>
-                        }
-                    </ol>
-                </section>
-            }
-            else if (noteParts.Mechanisms.Count > 0)
-            {
-                <section class="detail-card mechanism-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">⚙</span> Mechanism
-                    </h3>
-                    <ul class="mechanism-list">
-                        @foreach (var mech in noteParts.Mechanisms)
-                        {
-                            <li class="mechanism-item">
-                                <span class="mechanism-bullet">›</span>
-                                <span class="mechanism-text">@HighlightTokens(mech)</span>
-                            </li>
-                        }
-                    </ul>
-                </section>
-            }
-
-            <!-- Interpretation (the "Interpretation: ..." prose pulled from notes,
-                 split into one tip-box per sentence so each idea is scannable) -->
-            @if (noteParts.InterpretationTips.Count > 0)
-            {
-                <section class="detail-card interpretation-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">✦</span> Interpretation
-                    </h3>
-                    <div class="interpretation-tips">
-                        @for (int i = 0; i < noteParts.InterpretationTips.Count; i++)
-                        {
-                            var tip = noteParts.InterpretationTips[i];
-                            <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
-                                <span class="tip-bullet">✦</span>
-                                <p class="tip-text">@RenderTipText(tip)</p>
+                @if (p.Indentation != null)
+                {
+                    <details class="meta-details">
+                        <summary>Indentation</summary>
+                        <div class="indent-grid">
+                            <div class="indent-cell">
+                                <span class="indent-label">Querent</span>
+                                <span class="indent-value">@p.Indentation.QuerentHouse</span>
                             </div>
-                        }
-                    </div>
-                </section>
-            }
-
-            <!-- Raw message (only if it adds new info beyond mechanism/interpretation) -->
-            @if (ShouldShowMessage(p, noteParts))
-            {
-                <section class="detail-card prose-card">
-                    <h3 class="card-title">Status</h3>
-                    <p class="prose-text">@p.Message</p>
-                </section>
-            }
+                            <div class="indent-cell">
+                                <span class="indent-label">Quesited</span>
+                                <span class="indent-value">@p.Indentation.QuesitedHouse</span>
+                            </div>
+                            <div class="indent-cell">
+                                <span class="indent-label">Index</span>
+                                <span class="indent-value">@p.Indentation.Index</span>
+                            </div>
+                            <div class="indent-cell">
+                                <span class="indent-label">Bonus</span>
+                                <span class="indent-value">@p.Indentation.Bonus</span>
+                            </div>
+                            <div class="indent-cell indent-total">
+                                <span class="indent-label">Total</span>
+                                <span class="indent-value">@p.Indentation.Total</span>
+                            </div>
+                        </div>
+                    </details>
+                }
+            </section>
         }
     }
     else
     {
-        // PositiveAspect / NegativeAspect
         var a = Selection.Aspect;
         if (a == null)
         {
@@ -335,9 +271,11 @@
             var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
             var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
             var aNoteParts = ParseDescription(a.Description);
-            var aMechanism = BuildAspectMechanism(a);
-            var fromFigureName = GetHouseFigureName(a.FromHouse);
-            var toFigureName = GetHouseFigureName(a.ToHouse);
+            var explanation = BuildAspectRelationshipExplanation(a);
+            var querentHouse = Analysis?.QuerentHouse ?? 0;
+            var quesitedHouse = Analysis?.QuesitedHouse ?? 0;
+            var querentFigureName = GetHouseFigureName(querentHouse);
+            var quesitedFigureName = GetHouseFigureName(quesitedHouse);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -347,120 +285,131 @@
                         <span>@a.AspectType</span>
                     </h2>
                 </div>
-                <div class="header-score-pill @(isPositive ? "score-positive" : "score-negative")">
-                    @FormatScore(totalScore)
-                </div>
             </header>
-
-            @if (!string.IsNullOrEmpty(aDirectionVis.ShortLabel))
-            {
-                <div class="direction-callout @aDirectionVis.CssClass">
-                    <span class="direction-callout-arrow">@aDirectionVis.Glyph</span>
-                    <div class="direction-callout-copy">
-                        <span class="direction-callout-label">@aDirectionVis.ShortLabel aspect</span>
-                        <span class="direction-callout-hint">@aDirectionVis.Hint</span>
-                    </div>
-                </div>
-            }
 
             @if (!string.IsNullOrEmpty(aspectGlossary))
             {
                 <p class="glossary-tagline">@aspectGlossary</p>
             }
 
-            <!-- Chips -->
-            <div class="chip-row">
-                <span class="chip @(a.IsMajorAspect ? "chip-major" : "chip-minor")">
-                    <span class="chip-arrow">@(a.IsMajorAspect ? "★" : "·")</span>
-                    @(a.IsMajorAspect ? "Major" : "Minor")
-                </span>
-                @if (!string.IsNullOrEmpty(aDirectionVis.ShortLabel))
-                {
-                    <span class="chip chip-aspect @aspectTypeClass @aDirectionVis.CssClass">
-                        <span class="chip-arrow @aDirectionVis.CssClass">@aDirectionVis.Glyph</span>
-                        @aDirectionVis.ShortLabel
-                    </span>
-                }
-                @if (a.MadeThroughCompany)
-                {
-                    <span class="chip chip-mtc">Made through Company</span>
-                }
-            </div>
-
-            <!-- Cast houses -->
-            <section class="detail-card aspect-flow-card @aspectTypeClass">
-                <h3 class="card-title">Cast</h3>
-                <div class="significators-grid">
-                    <div class="sig-cell">
-                        <span class="sig-eyebrow">Cast from</span>
-                        <span class="sig-house">House @a.FromHouse</span>
-                        @if (!string.IsNullOrEmpty(fromFigureName))
-                        {
-                            <span class="sig-figure">@fromFigureName</span>
-                        }
-                    </div>
-                    <div class="sig-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">
-                        @aDirectionVis.Glyph
-                    </div>
-                    <div class="sig-cell">
-                        <span class="sig-eyebrow">Cast to</span>
-                        <span class="sig-house">House @a.ToHouse</span>
-                        @if (!string.IsNullOrEmpty(toFigureName))
-                        {
-                            <span class="sig-figure">@toFigureName</span>
-                        }
-                    </div>
-                </div>
-                @if (!string.IsNullOrEmpty(aMechanism.DirectionHint))
-                {
-                    <p class="cast-direction-hint">@aMechanism.DirectionHint</p>
-                }
-            </section>
-
-            <!-- Score breakdown -->
-            <section class="detail-card">
-                <h3 class="card-title">Score</h3>
-                <div class="score-breakdown">
-                    <div class="score-cell">
-                        <span class="score-cell-label">Favorable</span>
-                        <span class="score-cell-value score-positive-text">+@a.FavorableScore</span>
-                    </div>
-                    <div class="score-cell">
-                        <span class="score-cell-label">Unfavorable</span>
-                        <span class="score-cell-value score-negative-text">@a.UnfavorableScore</span>
-                    </div>
-                </div>
-            </section>
-
-            @if (aMechanism.Steps.Count > 0)
+            @if (querentHouse > 0 || quesitedHouse > 0)
             {
-                <section class="detail-card mechanism-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">⚙</span> @aMechanism.Title
-                    </h3>
-                    <ol class="mechanism-list mechanism-steps">
-                        @for (var si = 0; si < aMechanism.Steps.Count; si++)
-                        {
-                            <li class="mechanism-item">
-                                <span class="mechanism-step-num">@(si + 1)</span>
-                                <span class="mechanism-text">@HighlightTokens(aMechanism.Steps[si])</span>
-                            </li>
-                        }
-                    </ol>
+                <section class="detail-card parties-card">
+                    <h3 class="card-title">Parties</h3>
+                    <div class="parties-grid">
+                        <div class="sig-cell">
+                            <span class="sig-eyebrow">Querent</span>
+                            <span class="sig-house">House @querentHouse</span>
+                            <span class="sig-figure">@(string.IsNullOrEmpty(querentFigureName) ? "—" : querentFigureName)</span>
+                        </div>
+                        <div class="sig-cell">
+                            <span class="sig-eyebrow">Quesited</span>
+                            <span class="sig-house">House @quesitedHouse</span>
+                            <span class="sig-figure">@(string.IsNullOrEmpty(quesitedFigureName) ? "—" : quesitedFigureName)</span>
+                        </div>
+                    </div>
                 </section>
             }
-            else if (aNoteParts.Mechanisms.Count > 0)
+
+            @if (explanation.HasFormation)
             {
-                <section class="detail-card mechanism-card">
+                <section class="detail-card formation-card @aspectTypeClass">
                     <h3 class="card-title">
-                        <span class="card-title-icon">⚙</span> Mechanism
+                        <span class="card-title-icon">⚙</span> @explanation.Title
                     </h3>
-                    <ul class="mechanism-list">
-                        @foreach (var mech in aNoteParts.Mechanisms)
+
+                    @if (!string.IsNullOrEmpty(explanation.Flow))
+                    {
+                        <p class="formation-flow">@explanation.Flow</p>
+                    }
+
+                    @if (explanation.HasStructuredCast)
+                    {
+                        <div class="significators-grid cast-grid">
+                            <div class="sig-cell">
+                                <span class="sig-eyebrow">Cast from</span>
+                                <span class="sig-house">House @explanation.Cast!.FromHouse</span>
+                                @if (!string.IsNullOrEmpty(explanation.Cast.FromFigure))
+                                {
+                                    <span class="sig-figure">@explanation.Cast.FromFigure</span>
+                                }
+                            </div>
+                            <div class="sig-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">
+                                @aDirectionVis.Glyph
+                            </div>
+                            <div class="sig-cell">
+                                <span class="sig-eyebrow">Cast to</span>
+                                <span class="sig-house">House @explanation.Cast.ToHouse</span>
+                                @if (!string.IsNullOrEmpty(explanation.Cast.ToFigure))
+                                {
+                                    <span class="sig-figure">@explanation.Cast.ToFigure</span>
+                                }
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(explanation.DirectionHint))
                         {
-                            <li class="mechanism-item">
-                                <span class="mechanism-bullet">›</span>
-                                <span class="mechanism-text">@HighlightTokens(mech)</span>
+                            <p class="cast-direction-hint">@explanation.DirectionHint</p>
+                        }
+                    }
+
+                    @if (explanation.Steps.Count > 0)
+                    {
+                        <ol class="mechanism-list mechanism-steps">
+                            @for (var si = 0; si < explanation.Steps.Count; si++)
+                            {
+                                <li class="mechanism-item">
+                                    <span class="mechanism-step-num">@(si + 1)</span>
+                                    <span class="mechanism-text">@HighlightTokens(explanation.Steps[si])</span>
+                                </li>
+                            }
+                        </ol>
+                    }
+                </section>
+            }
+
+            @if (explanation.Participants.Count > 0)
+            {
+                <section class="detail-card participants-card">
+                    <h3 class="card-title">Participants</h3>
+                    <ul class="participant-list">
+                        @foreach (var part in explanation.Participants)
+                        {
+                            var fig = ResolveFigure(part.House, part.FigureName);
+                            var blurb = fig != null && part.House > 0
+                                ? FigureDisplayHelper.GetFigureInHouseText(fig, part.House)
+                                : fig?.Tagline;
+                            <li class="participant-item">
+                                <div class="participant-header">
+                                    <span class="participant-role">@part.Role</span>
+                                    @if (part.House > 0)
+                                    {
+                                        <span class="participant-house">H@versionpart.House</span>
+                                    }
+                                    <span class="participant-name">@(string.IsNullOrEmpty(part.FigureName) ? "—" : part.FigureName)</span>
+                                </div>
+                                @if (fig != null)
+                                {
+                                    <div class="participant-chips">
+                                        @if (!string.IsNullOrWhiteSpace(fig.Planet))
+                                        {
+                                            <span class="chip chip-planet">
+                                                <span class="chip-glyph">@FigureDisplayHelper.GetPlanetSymbol(fig.Planet)</span>
+                                                @fig.Planet
+                                            </span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(fig.OuterEl))
+                                        {
+                                            <span class="chip chip-element @FigureDisplayHelper.GetElementCssClass(fig.OuterEl)">
+                                                <span class="chip-glyph">@FigureDisplayHelper.GetElementSymbol(fig.OuterEl)</span>
+                                                @fig.OuterEl
+                                            </span>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(blurb))
+                                    {
+                                        <p class="participant-blurb">@blurb</p>
+                                    }
+                                }
                             </li>
                         }
                     </ul>
@@ -471,7 +420,7 @@
             {
                 <section class="detail-card interpretation-card">
                     <h3 class="card-title">
-                        <span class="card-title-icon">✦</span> Interpretation
+                        <span class="card-title-icon">✦</span> Reading
                     </h3>
                     <div class="interpretation-tips">
                         @for (int i = 0; i < aNoteParts.InterpretationTips.Count; i++)
@@ -485,6 +434,20 @@
                     </div>
                 </section>
             }
+
+            <section class="detail-card meta-card">
+                <h3 class="card-title">Score</h3>
+                <div class="score-breakdown score-breakdown-two">
+                    <div class="score-cell">
+                        <span class="score-cell-label">Favorable</span>
+                        <span class="score-cell-value score-positive-text">+@a.FavorableScore</span>
+                    </div>
+                    <div class="score-cell">
+                        <span class="score-cell-label">Unfavorable</span>
+                        <span class="score-cell-value score-negative-text">@a.UnfavorableScore</span>
+                    </div>
+                </div>
+            </section>
         }
     }
 </div>
@@ -501,86 +464,100 @@
         return house?.Figure?.Name ?? string.Empty;
     }
 
-    private static PerfectionPathDisplay.ListRowPath ResolveListPath(PerfectionModel p) =>
-        PerfectionPathDisplay.ForListRow(
+    private FigureModel? ResolveFigure(int houseNumber, string figureName)
+    {
+        if (Chart?.Houses != null && houseNumber > 0)
+        {
+            var house = Chart.Houses.FirstOrDefault(h => h.HouseNumber == houseNumber);
+            if (house?.Figure != null)
+                return house.Figure;
+        }
+
+        if (Chart?.Houses == null || string.IsNullOrWhiteSpace(figureName))
+            return null;
+
+        return Chart.Houses
+            .Select(h => h.Figure)
+            .FirstOrDefault(f => f != null
+                && string.Equals(f.Name, figureName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private PerfectionMechanismHelper.MechanismExplanation BuildRelationshipExplanation(PerfectionModel p)
+    {
+        var aspectFromFigure = GetHouseFigureName(p.AspectFromHouse);
+        var aspectToFigure = GetHouseFigureName(p.AspectToHouse);
+        if (string.IsNullOrEmpty(aspectFromFigure) && !string.IsNullOrEmpty(p.PathFigure))
+            aspectFromFigure = p.PathFigure;
+        if (string.IsNullOrEmpty(aspectToFigure) && p.AspectToHouse == p.QuesitedHouse)
+            aspectToFigure = p.QuesitedFigure;
+        if (string.IsNullOrEmpty(aspectToFigure) && p.AspectToHouse == p.QuerentHouse)
+            aspectToFigure = p.QuerentFigure;
+
+        return PerfectionMechanismHelper.ExplainRelationship(
+            p.Mode,
+            p.BaseMode,
+            p.QuerentHouse,
+            p.QuesitedHouse,
+            p.QuerentFigure,
+            p.QuesitedFigure,
             p.PathFromHouse,
             p.PathToHouse,
             p.PathFigure,
             p.PathSecondaryFigure,
             p.PathActor,
+            p.TranslatorHouse,
+            p.TranslatorHouseSecondary,
+            string.IsNullOrEmpty(p.TranslatorFigure) ? p.PathFigure : p.TranslatorFigure,
             p.AspectFromHouse,
-            p.AspectToHouse);
-
-    private PerfectionMechanismHelper.MechanismExplanation BuildPerfectionMechanism(PerfectionModel p)
-    {
-        var fromHouse = p.AspectFromHouse;
-        var toHouse = p.AspectToHouse;
-        if (fromHouse <= 0 || toHouse <= 0)
-            return new PerfectionMechanismHelper.MechanismExplanation();
-
-        var fromFigure = GetHouseFigureName(fromHouse);
-        var toFigure = GetHouseFigureName(toHouse);
-        if (string.IsNullOrEmpty(fromFigure) && fromHouse == p.QuerentHouse)
-            fromFigure = p.QuerentFigure;
-        if (string.IsNullOrEmpty(toFigure) && toHouse == p.QuesitedHouse)
-            toFigure = p.QuesitedFigure;
-
-        return PerfectionMechanismHelper.ExplainAspectCast(
-            fromHouse,
-            toHouse,
-            fromFigure,
-            toFigure,
+            p.AspectToHouse,
+            aspectFromFigure,
+            aspectToFigure,
             p.AspectBetweenSignificators,
             p.AspectDirection,
-            p.QuerentHouse,
-            p.QuesitedHouse,
-            p.QuerentFigure,
-            p.QuesitedFigure,
             p.MadeThroughCompany,
             p.CompanyType,
-            p.CompanyTypeDescription,
-            p.Mode,
-            p.BaseMode);
+            p.CompanyTypeDescription);
     }
 
-    private PerfectionMechanismHelper.MechanismExplanation BuildAspectMechanism(AspectRecordModel a)
+    private PerfectionMechanismHelper.MechanismExplanation BuildAspectRelationshipExplanation(AspectRecordModel a)
     {
-        if (a.FromHouse <= 0 || a.ToHouse <= 0)
-            return new PerfectionMechanismHelper.MechanismExplanation();
-
         var querent = Analysis?.QuerentHouse ?? 0;
         var quesited = Analysis?.QuesitedHouse ?? 0;
+        var fromFig = GetHouseFigureName(a.FromHouse);
+        var toFig = GetHouseFigureName(a.ToHouse);
 
-        return PerfectionMechanismHelper.ExplainAspectCast(
-            a.FromHouse,
-            a.ToHouse,
-            GetHouseFigureName(a.FromHouse),
-            GetHouseFigureName(a.ToHouse),
-            a.AspectType,
-            a.Direction,
-            querent,
-            quesited,
-            GetHouseFigureName(querent),
-            GetHouseFigureName(quesited),
-            a.MadeThroughCompany,
-            string.Empty,
-            string.Empty,
-            "Aspect",
-            string.Empty);
+        return PerfectionMechanismHelper.ExplainRelationship(
+            mode: "Aspect",
+            baseMode: string.Empty,
+            querentHouse: querent,
+            quesitedHouse: quesited,
+            querentFigure: GetHouseFigureName(querent),
+            quesitedFigure: GetHouseFigureName(quesited),
+            pathFromHouse: a.FromHouse,
+            pathToHouse: a.ToHouse,
+            pathFigure: fromFig,
+            pathSecondaryFigure: string.Empty,
+            pathActor: string.Empty,
+            translatorHouse: 0,
+            translatorHouseSecondary: 0,
+            translatorFigure: string.Empty,
+            aspectFromHouse: a.FromHouse,
+            aspectToHouse: a.ToHouse,
+            aspectFromFigure: fromFig,
+            aspectToFigure: toFig,
+            aspectType: a.AspectType,
+            aspectDirection: a.Direction,
+            madeThroughCompany: a.MadeThroughCompany,
+            companyType: string.Empty,
+            companyTypeDescription: string.Empty);
     }
 
-    // ----- Score helpers -----
     private static string FormatScore(int n) => n > 0 ? $"+{n}" : n.ToString();
-
-    private static string ScoreClass(int n) => n > 0
-        ? "score-positive"
-        : n < 0 ? "score-negative" : "score-neutral";
 
     private static string ScoreTextClass(int n) => n > 0
         ? "score-positive-text"
         : n < 0 ? "score-negative-text" : "score-neutral-text";
 
-    // ----- Mode / company resolution -----
     private static string ResolveModeTitle(PerfectionModel p)
     {
         if (p.Mode == "None") return "No Perfection";
@@ -608,11 +585,8 @@
         _ => string.Empty
     };
 
-    // ----- Glossary -----
     private static string GetModeGlossary(PerfectionModel p)
     {
-        // If made through company, prefer the more specific company tagline; otherwise
-        // fall back to the underlying base mode tagline.
         if (p.Mode == "Company")
         {
             return "Company of Houses — a companion figure in the paired house helps perfect the matter.";
@@ -655,13 +629,6 @@
         return baseLine;
     }
 
-    // ----- Direction visualization -----
-    // (shared via AspectDirectionHelper)
-
-    // ----- Notes parsing -----
-    // InterpretationTips: each entry is one rendered "tip box" in the UI. We split
-    // the long Interpretation prose on sentence boundaries so each idea (definition,
-    // tradition, timing/practice) gets its own scannable card.
     private record NoteParts(List<string> Mechanisms, List<string> InterpretationTips);
 
     private static NoteParts ParseNotes(List<string>? notes)
@@ -674,7 +641,6 @@
         {
             if (string.IsNullOrWhiteSpace(note)) continue;
             var trimmed = note.Trim();
-            // The PerfectionCalculator always tags the prose tip with "Interpretation:".
             if (trimmed.StartsWith("Interpretation:", StringComparison.OrdinalIgnoreCase))
             {
                 var prose = trimmed.Substring("Interpretation:".Length).Trim();
@@ -693,43 +659,19 @@
         if (string.IsNullOrWhiteSpace(description))
             return new NoteParts(new List<string>(), new List<string>());
 
-        // The aspect's Description is just `string.Join(" ", notes)` from the source
-        // perfection, so we split on the "Interpretation:" marker. Mechanism sentences
-        // are recovered by splitting on the standard sentence terminator.
         var idx = description.IndexOf("Interpretation:", StringComparison.OrdinalIgnoreCase);
-        string mechanismChunk;
         string interpretation;
         if (idx >= 0)
-        {
-            mechanismChunk = description.Substring(0, idx).Trim();
             interpretation = description.Substring(idx + "Interpretation:".Length).Trim();
-        }
         else
-        {
-            mechanismChunk = description.Trim();
             interpretation = string.Empty;
-        }
 
-        var mechanisms = new List<string>();
-        if (!string.IsNullOrEmpty(mechanismChunk))
-        {
-            var parts = Regex.Split(mechanismChunk, @"(?<=\.)\s+");
-            foreach (var part in parts)
-            {
-                var p = part.Trim();
-                if (!string.IsNullOrEmpty(p)) mechanisms.Add(p);
-            }
-        }
         var tips = string.IsNullOrEmpty(interpretation)
             ? new List<string>()
             : SplitInterpretationTips(interpretation);
-        return new NoteParts(mechanisms, tips);
+        return new NoteParts(new List<string>(), tips);
     }
 
-    // Splits a long Interpretation paragraph into one tip per sentence so each
-    // idea gets its own card. Sentence boundary = period/!/? + whitespace + capital.
-    // Em-dashes inside sentences ("relocates—literally or symbolically—into a new
-    // arena") are preserved because we only split on actual sentence terminators.
     private static readonly Regex SentenceSplit = new Regex(@"(?<=[\.!?])\s+(?=[A-Z""\u201C])", RegexOptions.Compiled);
 
     private static List<string> SplitInterpretationTips(string raw)
@@ -746,17 +688,6 @@
         return result;
     }
 
-    private static bool ShouldShowMessage(PerfectionModel p, NoteParts parts)
-    {
-        if (string.IsNullOrWhiteSpace(p.Message)) return false;
-        if (parts.Mechanisms.Any(m => string.Equals(m, p.Message, StringComparison.OrdinalIgnoreCase))) return false;
-        if (parts.InterpretationTips.Any(t => string.Equals(t, p.Message, StringComparison.OrdinalIgnoreCase))) return false;
-        return true;
-    }
-
-    // Renders a single tip body with light inline styling: the leading "Mode — "
-    // (or "Dexter Trine — ") prefix on the first sentence becomes a bold lead.
-    // We re-use HighlightTokens for house numbers and figure names too.
     private static readonly Regex LeadPrefix = new Regex(@"^(?<lead>[A-Z][A-Za-z'/ ]{0,40})\s+\u2014\s+", RegexOptions.Compiled);
 
     private MarkupString RenderTipText(string text)
@@ -772,18 +703,14 @@
         return new MarkupString(encoded);
     }
 
-    // ----- Token highlighting (House N, figure names) -----
     private static readonly string[] FigureNames = new[]
     {
-        // 16 standard figures + Conjunctio spelling variant
         "Populus", "Via", "Albus", "Coniunctio", "Conjunctio",
         "Puella", "Amissio", "Fortuna Major", "Fortuna Minor",
         "Puer", "Rubeus", "Acquisitio", "Laetitia", "Tristitia",
         "Carcer", "Caput Draconis", "Cauda Draconis"
     };
 
-    // Pre-compute regex once. Match: "house 7" or "House 12" (any case), and the
-    // figure names listed above. We insert <mark> spans that render as styled tags.
     private static readonly Regex HousePattern = new Regex(@"\b[Hh]ouse\s+(\d+)\b", RegexOptions.Compiled);
     private static readonly Regex FigurePattern = new Regex(
         @"\b(" + string.Join("|", FigureNames.Select(Regex.Escape).OrderByDescending(s => s.Length)) + @")\b",
@@ -793,7 +720,6 @@
     {
         if (string.IsNullOrEmpty(text)) return new MarkupString(string.Empty);
 
-        // HTML-encode then re-apply regex, so user data can't inject markup.
         var encoded = System.Net.WebUtility.HtmlEncode(text);
 
         encoded = HousePattern.Replace(encoded, m =>
@@ -802,7 +728,6 @@
         encoded = FigurePattern.Replace(encoded, m =>
             $"<span class=\"token-figure\">{m.Value}</span>");
 
-        // Highlight italicized tokens like "(translation)", "(direct)", "(adjacent to ...)"
         encoded = Regex.Replace(encoded,
             @"\(([^)]+)\)",
             m => $"<span class=\"token-aux\">({m.Groups[1].Value})</span>");

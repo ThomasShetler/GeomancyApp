@@ -161,6 +161,36 @@ namespace GeomancyUnitTesting
             Assert.AreEqual(10, uiSquare.FromHouse);
             Assert.AreEqual(1, uiSquare.ToHouse);
             Assert.AreEqual("Sinister", uiSquare.Direction);
+            Assert.IsFalse(analysis.Denials.Any(d => d.Mode == PerfectionType.Aspect),
+                "Standalone denial aspects must not also appear under Denials.");
+        }
+
+        [TestMethod]
+        public void DenialAspect_NotDuplicatedInDenialsAndNegativeAspects()
+        {
+            // Only a translation square — no classical perfection.
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Conjunctio");
+            chart.SetHouseFigure(7, "Populus");
+            chart.SetHouseFigure(10, "Populus");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 7);
+
+            Assert.AreEqual(1, analysis.NegativeAspects.Count(a => a.AspectType == AspectType.Square));
+            Assert.AreEqual(0, analysis.Denials.Count(d => d.Mode == PerfectionType.Aspect));
+            Assert.IsTrue(analysis.Denials.Any(d => d.Mode == PerfectionType.None),
+                "Impedition remains under Denials.");
+
+            int listedUnfavorable =
+                analysis.Denials.Where(d => d.Mode != PerfectionType.Aspect)
+                    .Sum(d => PerfectionCalculator.CalculateUnfavorableScore(d))
+                + analysis.NegativeAspects.Sum(a =>
+                    a.AspectType == AspectType.Square ? (a.MadeThroughCompany ? -4 : -3)
+                    : a.AspectType == AspectType.Opposition ? (a.MadeThroughCompany ? -5 : -4)
+                    : 0);
+
+            Assert.AreEqual(listedUnfavorable, analysis.TotalUnfavorableScore);
         }
 
         [TestMethod]

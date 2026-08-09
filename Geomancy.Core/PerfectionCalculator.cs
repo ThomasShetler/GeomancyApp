@@ -1734,16 +1734,12 @@ namespace GeomancyApp
             }
             else
             {
-                // No perfections - check if we have unfavorable aspects (these are denials)
-                var unfavorableAspects = results.Where(r => r.Mode == PerfectionType.Aspect && 
-                    (r.AspectBetweenSignificators == AspectType.Square || 
-                     r.AspectBetweenSignificators == AspectType.Opposition)).ToList();
-                
-                // Also check for Company-made unfavorable aspects that deny perfection
+                // No classical perfections — company malefics deny as Denials; standalone
+                // Mode=Aspect squares/oppositions belong only in NegativeAspects (not Denials),
+                // so the UI does not list the same cast twice.
                 var unfavorableCompany = results.Where(IsCompanyMaleficAspect).ToList();
                 
                 var allDenials = new List<PerfectionResult>();
-                allDenials.AddRange(unfavorableAspects);
                 allDenials.AddRange(unfavorableCompany);
                 
                 // Always create Impedition when there are no perfections
@@ -1773,7 +1769,8 @@ namespace GeomancyApp
                     }
                 }
                 
-                // Add all denials (unfavorable aspects + impedition)
+                // Add denials (company malefics + impedition). Standalone Mode=Aspect
+                // difficulties are listed under NegativeAspects only.
                 analysis.Denials = allDenials;
                 // Always add impedition to denials (if not already there)
                 if (!analysis.Denials.Any(d => d.Mode == PerfectionType.None))
