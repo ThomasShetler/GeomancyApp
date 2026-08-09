@@ -211,23 +211,10 @@ namespace GeomancyAPI.Handlers
             foreach (var perfection in validPerfections)
             {
                 var perfectionResponse = ToPerfectionResponseWithoutScoring(perfection, houseChart, request.QuerentHouse, request.QuesitedHouse);
+                perfectionResponse.FavorableScore = PerfectionCalculator.CalculateScore(perfection);
+                perfectionResponse.UnfavorableScore = PerfectionCalculator.CalculateUnfavorableScore(perfection);
+                perfectionResponse.NetScore = perfectionResponse.FavorableScore + perfectionResponse.UnfavorableScore;
                 perfectionResponses.Add(perfectionResponse);
-            }
-
-            int totalFavorableScore = 0;
-            foreach (var perfection in validPerfections)
-            {
-                totalFavorableScore += PerfectionCalculator.CalculateScore(perfection);
-            }
-
-            int totalUnfavorableScore = PerfectionCalculator.CalculateTotalUnfavorableScore(houseChart, request.QuerentHouse, request.QuesitedHouse);
-            int aggregateNetScore = totalFavorableScore + totalUnfavorableScore;
-
-            foreach (var perfectionResponse in perfectionResponses)
-            {
-                perfectionResponse.FavorableScore = totalFavorableScore;
-                perfectionResponse.UnfavorableScore = totalUnfavorableScore;
-                perfectionResponse.NetScore = aggregateNetScore;
             }
 
             return new MultiplePerfectionsResponse
@@ -843,7 +830,7 @@ namespace GeomancyAPI.Handlers
         private static PerfectionResponse ToPerfectionResponse(PerfectionResult perfection, HouseChart houseChart, int querentHouse, int quesitedHouse)
         {
             int favorableScore = PerfectionCalculator.CalculateScore(perfection);
-            int unfavorableScore = PerfectionCalculator.CalculateTotalUnfavorableScore(houseChart, querentHouse, quesitedHouse);
+            int unfavorableScore = PerfectionCalculator.CalculateUnfavorableScore(perfection);
             int netScore = favorableScore + unfavorableScore;
 
             string modeString = perfection.Mode.ToString();

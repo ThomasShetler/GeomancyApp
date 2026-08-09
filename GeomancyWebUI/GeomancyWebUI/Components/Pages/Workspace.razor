@@ -124,6 +124,7 @@
                             <div class="perfections-list-col">
                                 <PerfectionsListTab Chart="@houseChart"
                                                     Analysis="@perfectionAnalysis"
+                                                    IsLoading="@isPerfectionLoading"
                                                     QuerentHouse="@selectedQuerentHouse"
                                                     QuesitedHouse="@selectedQuesitedHouse"
                                                     HouseOptions="@GetHouseOptions()"
@@ -366,6 +367,8 @@
     private int selectedQuerentHouse = 0;
     private int selectedQuesitedHouse = 0;
     private PerfectionAnalysisModel? perfectionAnalysis;
+    private bool isPerfectionLoading;
+    private int _perfectionRequestVersion;
     private AspectAnalysisModel? aspectAnalysis;
     private WayOfPointsAnalysisModel? wayOfPointsAnalysis;
     private bool showAspectDetails = false;
@@ -531,18 +534,12 @@
 
     private async Task OnQuerentChanged()
     {
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
+        await CalculatePerfectionAsync();
     }
 
     private async Task OnQuesitedChanged()
     {
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
+        await CalculatePerfectionAsync();
     }
 
     private void ToggleAspectAnalysisDetails() => showAspectDetails = !showAspectDetails;
@@ -553,8 +550,14 @@
         {
             perfectionAnalysis = null;
             selectedPerfection = null;
+            isPerfectionLoading = false;
             return;
         }
+
+        var requestVersion = ++_perfectionRequestVersion;
+        perfectionAnalysis = null;
+        selectedPerfection = null;
+        isPerfectionLoading = true;
 
         try
         {
@@ -564,18 +567,28 @@
                 QuerentHouse = selectedQuerentHouse,
                 QuesitedHouse = selectedQuesitedHouse
             };
-            perfectionAnalysis = await GeomancyService.AnalyzePerfectionsAsync(request);
-            // Drop any stale selection that was pointing at a previous result set.
-            selectedPerfection = null;
+            var result = await GeomancyService.AnalyzePerfectionsAsync(request);
+            if (requestVersion != _perfectionRequestVersion)
+                return;
+
+            perfectionAnalysis = result;
         }
         catch (Exception ex)
         {
+            if (requestVersion != _perfectionRequestVersion)
+                return;
+
             perfectionAnalysis = new PerfectionAnalysisModel
             {
                 Success = false,
                 Message = $"Error analyzing perfections: {ex.Message}"
             };
             selectedPerfection = null;
+        }
+        finally
+        {
+            if (requestVersion == _perfectionRequestVersion)
+                isPerfectionLoading = false;
         }
     }
 

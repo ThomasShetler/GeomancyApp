@@ -208,6 +208,21 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void AnalyzePerfections_ImpeditionOnly_ScoresUnfavorableTotal()
+        {
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Tristitia");
+            chart.SetHouseFigure(7, "Populus");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 7);
+
+            Assert.IsTrue(analysis.TotalUnfavorableScore < 0,
+                "Impedition-only charts must contribute to unfavorable totals.");
+            Assert.IsTrue(analysis.Denials.Any(d => d.Mode == PerfectionType.None));
+        }
+
+        [TestMethod]
         public void GeomanticAspects_AllAspects_UsesFigureNameHelperForRoots()
         {
             var chart = ChartWithUniqueFigures();

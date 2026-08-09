@@ -34,10 +34,16 @@
         </div>
     </div>
 
-    @if (Analysis == null || (QuerentHouse == 0 || QuesitedHouse == 0))
+    @if (QuerentHouse == 0 || QuesitedHouse == 0)
     {
         <div class="perf-empty">
             <p>Pick a Querent and Quesited house to compute perfection.</p>
+        </div>
+    }
+    else if (IsLoading || Analysis == null || !IsAnalysisCurrent)
+    {
+        <div class="perf-empty perf-loading">
+            <p>Calculating favorable and unfavorable scores…</p>
         </div>
     }
     else if (!Analysis.Success)
@@ -290,6 +296,7 @@
 @code {
     [Parameter] public HouseChartModel? Chart { get; set; }
     [Parameter] public PerfectionAnalysisModel? Analysis { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
     [Parameter] public int QuerentHouse { get; set; }
     [Parameter] public int QuesitedHouse { get; set; }
     [Parameter] public List<(int Number, string DisplayText)> HouseOptions { get; set; } = new();
@@ -297,6 +304,11 @@
     [Parameter] public EventCallback<int> OnQuerentChanged { get; set; }
     [Parameter] public EventCallback<int> OnQuesitedChanged { get; set; }
     [Parameter] public EventCallback<PerfectionSelection> OnSelect { get; set; }
+
+    private bool IsAnalysisCurrent =>
+        Analysis != null
+        && Analysis.QuerentHouse == QuerentHouse
+        && Analysis.QuesitedHouse == QuesitedHouse;
 
     private async Task OnQuerentSelectChange(ChangeEventArgs e)
     {

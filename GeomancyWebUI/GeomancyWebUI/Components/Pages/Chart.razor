@@ -410,9 +410,17 @@
                             </select>
                         </div>
                     </div>
-                    @if (perfectionAnalysis != null)
+                    @if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0
+                         && perfectionAnalysis != null && !isPerfectionLoading
+                         && perfectionAnalysis.QuerentHouse == selectedQuerentHouse
+                         && perfectionAnalysis.QuesitedHouse == selectedQuesitedHouse)
                     {
                         <PerfectionAnalysisView Analysis="@perfectionAnalysis" />
+                    }
+                    else if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0
+                             && (isPerfectionLoading || perfectionAnalysis == null))
+                    {
+                        <p class="text-muted">Calculating favorable and unfavorable scores…</p>
                     }
                 </div>
             </div>
@@ -544,6 +552,8 @@
     private int selectedQuerentHouse = 0;
     private int selectedQuesitedHouse = 0;
     private PerfectionAnalysisModel? perfectionAnalysis;
+    private bool isPerfectionLoading;
+    private int _perfectionRequestVersion;
 
     // Aspect analysis
     private AspectAnalysisModel? aspectAnalysis;
@@ -763,18 +773,12 @@
 
     private async Task OnQuerentChanged()
     {
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
+        await CalculatePerfectionAsync();
     }
 
     private async Task OnQuesitedChanged()
     {
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
+        await CalculatePerfectionAsync();
     }
 
     private async Task CalculatePerfectionAsync()
@@ -782,8 +786,13 @@
         if (houseChart == null || selectedQuerentHouse == 0 || selectedQuesitedHouse == 0)
         {
             perfectionAnalysis = null;
+            isPerfectionLoading = false;
             return;
         }
+
+        var requestVersion = ++_perfectionRequestVersion;
+        perfectionAnalysis = null;
+        isPerfectionLoading = true;
 
         try
         {
@@ -824,15 +833,27 @@
                 QuesitedHouse = selectedQuesitedHouse
             };
 
-            perfectionAnalysis = await GeomancyService.AnalyzePerfectionsAsync(request);
+            var result = await GeomancyService.AnalyzePerfectionsAsync(request);
+            if (requestVersion != _perfectionRequestVersion)
+                return;
+
+            perfectionAnalysis = result;
         }
         catch (Exception ex)
         {
+            if (requestVersion != _perfectionRequestVersion)
+                return;
+
             perfectionAnalysis = new PerfectionAnalysisModel
             {
                 Success = false,
                 Message = $"Error analyzing perfections: {ex.Message}"
             };
+        }
+        finally
+        {
+            if (requestVersion == _perfectionRequestVersion)
+                isPerfectionLoading = false;
         }
     }
 
@@ -848,11 +869,6 @@
             house1Figure.FootLine = figure.FootLine;
         }
         await GenerateChartAsync();
-        // Recalculate perfection if both houses are selected
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
     }
 
     private async Task OnHouse2Changed(FigureModel figure)
@@ -865,10 +881,6 @@
             house2Figure.FootLine = figure.FootLine;
         }
         await GenerateChartAsync();
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
     }
 
     private async Task OnHouse3Changed(FigureModel figure)
@@ -881,10 +893,6 @@
             house3Figure.FootLine = figure.FootLine;
         }
         await GenerateChartAsync();
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
     }
 
     private async Task OnHouse4Changed(FigureModel figure)
@@ -897,10 +905,6 @@
             house4Figure.FootLine = figure.FootLine;
         }
         await GenerateChartAsync();
-        if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
-        {
-            await CalculatePerfectionAsync();
-        }
     }
 
     private async Task GenerateChartAsync()
@@ -979,6 +983,11 @@
                 
                 // Load way of points analysis
                 await LoadWayOfPointsAsync();
+
+                if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
+                {
+                    await CalculatePerfectionAsync();
+                }
             }
         }
         catch (Exception ex)

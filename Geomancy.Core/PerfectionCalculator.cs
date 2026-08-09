@@ -1603,7 +1603,15 @@ namespace GeomancyApp
         /// </summary>
         public static PerfectionAnalysis AnalyzePerfections(HouseChart chart, int querentHouse, int quesitedHouse)
         {
-            var results = FindAll(chart, querentHouse, quesitedHouse).ToList();
+            // Use the full engine result set (including impedition) — FindAll drops Mode=None rows.
+            var results = Find(chart, querentHouse, quesitedHouse, true) ?? new List<PerfectionResult>();
+            foreach (var pr in results)
+            {
+                if (pr.QuerentHouse <= 0)
+                    pr.QuerentHouse = querentHouse;
+                if (pr.QuesitedHouse <= 0)
+                    pr.QuesitedHouse = quesitedHouse;
+            }
             
             var analysis = new PerfectionAnalysis
             {
