@@ -153,17 +153,42 @@ namespace GeomancyApp
 
         /// <summary>
         /// One-line hover text: prefer tagline, else a short mechanism sentence.
+        /// Optionally prefix with the concrete house pair (e.g. H7 with H8).
         /// </summary>
-        public static string CompanyHoverText(string tagline, string mechanismSummary)
+        public static string CompanyHoverText(string tagline, string mechanismSummary, int significatorHouse = 0, int companionHouse = 0)
         {
+            var body = string.Empty;
             if (!string.IsNullOrWhiteSpace(tagline))
-                return tagline.Trim();
-            if (!string.IsNullOrWhiteSpace(mechanismSummary))
+                body = tagline.Trim();
+            else if (!string.IsNullOrWhiteSpace(mechanismSummary))
             {
                 var m = mechanismSummary.Trim();
-                return m.Length > 180 ? m.Substring(0, 177) + "..." : m;
+                body = m.Length > 180 ? m.Substring(0, 177) + "..." : m;
             }
-            return "Company of Houses — a paired-house companion can help form the link.";
+            else
+            {
+                body = "Company of Houses — a paired-house companion can help form the link.";
+            }
+
+            if (significatorHouse is >= 1 and <= 12 && companionHouse is >= 1 and <= 12
+                && significatorHouse != companionHouse)
+            {
+                return $"H{significatorHouse} with H{companionHouse} — {body}";
+            }
+
+            return body;
+        }
+
+        public static string AspectGlossary(string aspectType, string direction) =>
+            GeomanticAspects.GlossaryLine(aspectType, direction ?? string.Empty);
+
+        public static string AspectRelationLabel(int fromHouse, int toHouse, string aspectType, string direction)
+        {
+            if (fromHouse <= 0 || toHouse <= 0) return string.Empty;
+            var described = GeomanticAspects.DescribeAspect(fromHouse, toHouse, aspectType, direction);
+            if (!string.IsNullOrEmpty(described))
+                return GeomanticAspects.ShortLabel(aspectType, direction);
+            return string.Empty;
         }
     }
 }

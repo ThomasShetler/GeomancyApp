@@ -19,7 +19,7 @@ namespace GeomancyWebUI.Client.Helpers
       if (!string.IsNullOrEmpty(aspectType)
           && aspectType.Equals("Opposition", StringComparison.OrdinalIgnoreCase))
       {
-        return new DirectionVis("↔", "dir-opposition", "Opposition", "Six houses apart — confrontation or denial.");
+        return new DirectionVis("↔", "dir-opposition", "Opposition", "Five houses between / opposite seats — confrontation or denial; not dexter or sinister.");
       }
 
       if (!string.IsNullOrEmpty(directionField))

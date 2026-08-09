@@ -4,10 +4,10 @@
       "id": "CompanyOfHouses",
       "name": "Company of Houses",
       "tagline": "Company — a paired house companion can speak for friends, kin, or partners woven into the question.",
-      "mechanism_summary": "Classical geomancy pairs houses 1–2, 3–4, 5–6, 7–8, 9–10, and 11–12. When the figure in a significator's house is in company with the figure in its paired house, that companion can act as a second significator and complete occupation, conjunction, translation, mutation, or an aspect with the other party.",
-      "co_reads": "Treat company as an auxiliary voice in the room — not a replacement for the querent or quesited, but a helper whose dignity and company type tell you how tightly the helper is bound to the significator.",
+      "mechanism_summary": "Classical geomancy pairs only the odd–even neighbors 1–2, 3–4, 5–6, 7–8, 9–10, and 11–12. Company is never read between 2–3 or 10–11. When the figure in a significator's house is in company with the figure in its paired house, that companion can act as a second significator and complete occupation, conjunction, translation, mutation, or an aspect with the other party.",
+      "co_reads": "Treat company as an auxiliary voice in the room — not a replacement for the querent or quesited, but a helper whose dignity and company type tell you how tightly the helper is bound to the significator. Always name the concrete pair (for example H7 with H8).",
       "interpretation_paragraphs": [
-        "Company of Houses — Odd and even houses sit as fixed pairs on the geomantic wheel. When those two figures qualify as company, the companion can perfect the matter on behalf of (or alongside) the significator it sits beside.",
+        "Company of Houses — Greer's Table 6-2 binds figures across fixed odd–even house pairs only. Do not invent company between consecutive even–odd seats such as 2–3 or 10–11.",
         "Always name which side is in company (querent's pair or quesited's pair) and which company type binds them. The type is how tightly the helper matches the significator — from identical Simple company down to surface-level Capitular company.",
         "Company does not invent a new classical mode by itself; it opens a door so another mode (occupation, conjunction, aspect, and so on) can form through the companion figure."
       ]
@@ -34,20 +34,56 @@
         "short_label": "Demi-Simple",
         "list_label": "Co. Demi",
         "tagline": "Demi-Simple — companions share a planetary patron without being the same figure.",
-        "detection_rule": "Paired figures share the same planet, or a Dragon's Head/Tail keeps special company with Jupiter/Venus or Saturn/Mars respectively.",
-        "mechanism_summary": "Company Demi-Simple is detected when the paired figures are not identical, but answer to the same planetary ruler — or when Caput/Cauda Draconis keep their traditional planetary company (Caput with Jupiter or Venus; Cauda with Saturn or Mars). The bond is temperamental kinship, not identity.",
+        "detection_rule": "Paired figures share the same planet from Greer Table 6-2 (Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon), or Caput/Cauda keep special company with Jupiter/Venus or Saturn/Mars respectively.",
+        "mechanism_summary": "Company Demi-Simple follows Table 6-2 planetary groups: Saturn (Carcer, Tristitia), Jupiter (Acquisitio, Laetitia), Mars (Puer, Rubeus), Sun (Fortuna Major, Fortuna Minor), Venus (Amissio, Puella), Mercury (Albus, Conjunctio), Moon (Populus, Via). Caput Draconis also keeps demi-simple company with Jupiter or Venus; Cauda Draconis with Saturn or Mars. The bond is temperamental kinship, not identity.",
         "co_reads": "Read Demi-Simple company as friends, allies, or co-workers united by shared temperament. Help arrives from a related nature, not a clone of the significator — so the companion can shade the outcome with its own figure story.",
         "interpretation_paragraphs": [
           "Company Demi-Simple — The companions pull in the same planetary direction without being the same figure. Expect cooperation by affinity: similar aims, shared style, or a helper who 'gets' the significator.",
-          "Because the figures differ, always read both: the significator's house names the principal, while the companion's figure shows the flavor of the help or interference.",
-          "Special node cases matter: Caput with Jupiter/Venus leans toward openings and attraction; Cauda with Saturn/Mars leans toward endings, contraction, or sharp decisive force. Name the planet (or node pairing) when you tell the story."
+          "Table 6-2 groups: Saturn — Carcer & Tristitia; Jupiter — Acquisitio & Laetitia; Mars — Puer & Rubeus; Sun — Fortuna Major & Fortuna Minor; Venus — Amissio & Puella; Mercury — Albus & Conjunctio; Moon — Populus & Via.",
+          "Special node cases: Caput with Jupiter/Venus leans toward openings and attraction; Cauda with Saturn/Mars leans toward endings, contraction, or sharp decisive force. Name the planet (or node pairing) when you tell the story."
         ],
         "variants": [
           {
-            "id": "DemiSimpleSamePlanet",
-            "name": "Demi-Simple · same planet",
-            "tagline": "Both figures answer to the same planetary patron.",
-            "mechanism_summary": "Detected when each figure's planet field matches (for example two Venus figures that are not the same named figure)."
+            "id": "DemiSimpleSaturn",
+            "name": "Demi-Simple · Saturn",
+            "tagline": "Carcer and Tristitia answer to Saturn.",
+            "mechanism_summary": "Table 6-2 Saturn group — restriction, delay, endings, and sober structure."
+          },
+          {
+            "id": "DemiSimpleJupiter",
+            "name": "Demi-Simple · Jupiter",
+            "tagline": "Acquisitio and Laetitia answer to Jupiter.",
+            "mechanism_summary": "Table 6-2 Jupiter group — increase, openings, and expansive good fortune."
+          },
+          {
+            "id": "DemiSimpleMars",
+            "name": "Demi-Simple · Mars",
+            "tagline": "Puer and Rubeus answer to Mars.",
+            "mechanism_summary": "Table 6-2 Mars group — heat, contest, and cutting decisive force."
+          },
+          {
+            "id": "DemiSimpleSun",
+            "name": "Demi-Simple · Sun",
+            "tagline": "Fortuna Major and Fortuna Minor answer to the Sun.",
+            "mechanism_summary": "Table 6-2 Sun group — vitality, recognition, and the rising or setting of fortune."
+          },
+          {
+            "id": "DemiSimpleVenus",
+            "name": "Demi-Simple · Venus",
+            "tagline": "Amissio and Puella answer to Venus.",
+            "mechanism_summary": "Table 6-2 Venus group — attraction, harmony, pleasure, and relational soft power."
+          },
+          {
+            "id": "DemiSimpleMercury",
+            "name": "Demi-Simple · Mercury",
+            "tagline": "Albus and Conjunctio answer to Mercury.",
+            "mechanism_summary": "Table 6-2 Mercury group — messages, bargaining, wit, and joining of minds."
+          },
+          {
+            "id": "DemiSimpleMoon",
+            "name": "Demi-Simple · Moon",
+            "tagline": "Populus and Via answer to the Moon.",
+            "mechanism_summary": "Table 6-2 Moon group — crowds, paths, changeability, and collective motion."
           },
           {
             "id": "DemiSimpleCaputJupiterVenus",
@@ -69,13 +105,63 @@
         "short_label": "Compound",
         "list_label": "Co. Comp.",
         "tagline": "Compound — companions are structural opposites yoked together.",
-        "detection_rule": "Paired figures form a classical opposite pair (each line flipped), such as Via/Populus or Caput/Cauda.",
-        "mechanism_summary": "Company Compound is detected when the paired figures are opposites on the geomantic table — every binary line inverted. The engine treats them as complementary partners forced into the same arena: each completes the other while importing a contrary aim.",
+        "detection_rule": "Paired figures form one of Greer Table 6-2's eight opposite pairs: Puer/Puella, Amissio/Acquisitio, Albus/Rubeus, Populus/Via, Fortuna Major/Fortuna Minor, Conjunctio/Carcer, Tristitia/Laetitia, Caput Draconis/Cauda Draconis.",
+        "mechanism_summary": "Company Compound is detected when the paired figures are one of the eight Table 6-2 opposite pairs (each line flipped). The engine treats them as complementary partners forced into the same arena: each completes the other while importing a contrary aim.",
         "co_reads": "Read Compound company as cooperation with friction — spouses, rivals-turned-partners, or balances that work because they pull differently. The companion can perfect the matter and still color it with tension.",
         "interpretation_paragraphs": [
-          "Company Compound — The companion is the figure's structural inverse. Help or mediation arrives from the other pole of the same axis.",
-          "In practice this often describes relationships that need both sides: give-and-take, push-and-pull, or a helper whose contrary nature still makes the link possible.",
+          "Company Compound — The companion is the figure's structural inverse from Table 6-2. Help or mediation arrives from the other pole of the same axis.",
+          "The eight opposite pairs are: Puer ↔ Puella; Amissio ↔ Acquisitio; Albus ↔ Rubeus; Populus ↔ Via; Fortuna Major ↔ Fortuna Minor; Conjunctio ↔ Carcer; Tristitia ↔ Laetitia; Caput Draconis ↔ Cauda Draconis.",
           "When a Compound companion completes a favorable mode, do not ignore the contrary figure's dignity — the yes may come through a challenging intermediary."
+        ],
+        "variants": [
+          {
+            "id": "CompoundPuerPuella",
+            "name": "Compound · Puer / Puella",
+            "tagline": "Martial youth opposite Venusian grace.",
+            "mechanism_summary": "Table 6-2 opposite pair — heat and contest yoked to harmony and attraction."
+          },
+          {
+            "id": "CompoundAmissioAcquisitio",
+            "name": "Compound · Amissio / Acquisitio",
+            "tagline": "Loss opposite gain.",
+            "mechanism_summary": "Table 6-2 opposite pair — depletion and taking set against increase and acquisition."
+          },
+          {
+            "id": "CompoundAlbusRubeus",
+            "name": "Compound · Albus / Rubeus",
+            "tagline": "Pale counsel opposite inflamed passion.",
+            "mechanism_summary": "Table 6-2 opposite pair — cool deliberation yoked to heated, risky force."
+          },
+          {
+            "id": "CompoundPopulusVia",
+            "name": "Compound · Populus / Via",
+            "tagline": "Crowd opposite path.",
+            "mechanism_summary": "Table 6-2 opposite pair — collective standing water against a single road in motion."
+          },
+          {
+            "id": "CompoundFortunae",
+            "name": "Compound · Fortuna Major / Fortuna Minor",
+            "tagline": "Greater fortune opposite lesser fortune.",
+            "mechanism_summary": "Table 6-2 opposite pair — arriving strength set against departing or unstable luck."
+          },
+          {
+            "id": "CompoundConjunctioCarcer",
+            "name": "Compound · Conjunctio / Carcer",
+            "tagline": "Joining opposite enclosure.",
+            "mechanism_summary": "Table 6-2 opposite pair — meeting and bargain yoked to confinement and delay."
+          },
+          {
+            "id": "CompoundTristitiaLaetitia",
+            "name": "Compound · Tristitia / Laetitia",
+            "tagline": "Sorrow opposite joy.",
+            "mechanism_summary": "Table 6-2 opposite pair — downward heaviness set against upward gladness."
+          },
+          {
+            "id": "CompoundNodes",
+            "name": "Compound · Caput / Cauda Draconis",
+            "tagline": "North Node opposite South Node.",
+            "mechanism_summary": "Table 6-2 opposite pair — openings and intake yoked to release and emptying."
+          }
         ]
       },
       {
@@ -88,7 +174,7 @@
         "mechanism_summary": "Company Capitular is the weakest company bond: the pair matches only on the topmost Fire line (initiative and outward face). The engine accepts it as real company, but shallower than identity, planet, or opposite bonds.",
         "co_reads": "Read Capitular company as acquaintances joined by occasion, office, or shared cause rather than deep temperament. The helper can still open a mode, yet the connection is surface-level and situational.",
         "interpretation_paragraphs": [
-          "Company Capitular — Only the head line matches. Treat the companion as a situational ally: present, useful, but not deeply kindred.",
+          "Company Capitular — Only the head / Fire line matches. Treat the companion as a situational ally: present, useful, but not deeply kindred.",
           "This often describes people brought together by role, timing, or a common project rather than lasting affinity. Weight other chart witnesses when judging how reliable that help will be.",
           "Because Capitular is the weakest company type, a perfection made only through it can feel thinner or more contingent than Simple or Demi-Simple company of the same mode."
         ]

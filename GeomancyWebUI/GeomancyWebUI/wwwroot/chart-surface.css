@@ -421,6 +421,25 @@ marker#aspect-arrow-end .aspect-arrowhead {
 .house-chart-link-label.link-path { fill: var(--accent-color, #b39ddb); }
 .house-chart-link-label.link-company { fill: #ffc107; font-size: 18px; }
 
+.house-chart-intermediate {
+    fill: rgba(255, 255, 255, 0.12);
+    stroke: rgba(180, 200, 220, 0.55);
+    stroke-width: 1.5;
+    opacity: 0.9;
+}
+
+.house-chart-intermediate.aspect-sextile { stroke: #26a69a; }
+.house-chart-intermediate.aspect-trine { stroke: #42a5f5; }
+.house-chart-intermediate.aspect-square { stroke: #ef5350; }
+.house-chart-intermediate.aspect-opposition { stroke: #ab47bc; }
+
+.house-chart-intermediate-label {
+    fill: rgba(220, 230, 240, 0.75);
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+}
+
 .house-card-container.house-chart-slot-highlight .figure-container,
 .house-card-container.house-chart-slot-cast .figure-container {
     box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.75), 0 0 18px rgba(66, 165, 245, 0.35);
@@ -435,6 +454,12 @@ marker#aspect-arrow-end .aspect-arrowhead {
 .house-card-container.house-chart-slot-quesited .figure-container {
     box-shadow: 0 0 0 3px rgba(255, 167, 38, 0.85), 0 0 16px rgba(255, 167, 38, 0.3);
     border-radius: 10px;
+}
+
+.house-card-container.house-chart-slot-intermediate .figure-container {
+    box-shadow: 0 0 0 2px rgba(176, 190, 197, 0.45);
+    border-radius: 10px;
+    opacity: 0.92;
 }
 
 .house-card-container.house-chart-slot-querent.house-chart-slot-cast .figure-container,

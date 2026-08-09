@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using GeomancyApp;
 using GeomancyWebUI.Client.Models;
 
 namespace GeomancyWebUI.Client.Helpers
@@ -23,20 +25,10 @@ namespace GeomancyWebUI.Client.Helpers
             {
                 var a = selection.Aspect;
                 if (a.FromHouse > 0 && a.ToHouse > 0 && a.FromHouse != a.ToHouse)
-                {
-                    links.Add(new ChartAspectLink
-                    {
-                        FromHouse = a.FromHouse,
-                        ToHouse = a.ToHouse,
-                        AspectType = a.AspectType ?? string.Empty,
-                        Direction = a.Direction ?? string.Empty,
-                        Kind = "aspect",
-                        Label = a.AspectType
-                    });
-                }
+                    links.Add(BuildAspectLink(a.FromHouse, a.ToHouse, a.AspectType, a.Direction));
 
                 if (a.MadeThroughCompany)
-                    TryAddCompanyPair(links, querent, quesited, a.FromHouse);
+                    TryAddCompanyPair(links, querent, quesited, a.FromHouse, a.CompanyType);
             }
             else if (selection.Perfection != null)
             {
@@ -51,15 +43,11 @@ namespace GeomancyWebUI.Client.Helpers
 
                 if (hasAspect)
                 {
-                    links.Add(new ChartAspectLink
-                    {
-                        FromHouse = p.AspectFromHouse,
-                        ToHouse = p.AspectToHouse,
-                        AspectType = p.AspectBetweenSignificators,
-                        Direction = p.AspectDirection ?? string.Empty,
-                        Kind = "aspect",
-                        Label = p.AspectBetweenSignificators
-                    });
+                    links.Add(BuildAspectLink(
+                        p.AspectFromHouse,
+                        p.AspectToHouse,
+                        p.AspectBetweenSignificators,
+                        p.AspectDirection));
                 }
                 else if (p.PathFromHouse > 0 && p.PathToHouse > 0 && p.PathFromHouse != p.PathToHouse)
                 {
@@ -67,10 +55,9 @@ namespace GeomancyWebUI.Client.Helpers
                     {
                         FromHouse = p.PathFromHouse,
                         ToHouse = p.PathToHouse,
-                        AspectType = string.Empty,
-                        Direction = string.Empty,
                         Kind = "path",
-                        Label = string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == "None" ? p.Mode : p.BaseMode
+                        Label = string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == "None" ? p.Mode : p.BaseMode,
+                        Description = $"{(string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == "None" ? p.Mode : p.BaseMode)} path H{p.PathFromHouse} → H{p.PathToHouse}."
                     });
                 }
 
@@ -78,7 +65,7 @@ namespace GeomancyWebUI.Client.Helpers
                 {
                     var companionHint = p.AspectFromHouse > 0 ? p.AspectFromHouse
                         : (p.PathFromHouse > 0 ? p.PathFromHouse : p.PathToHouse);
-                    TryAddCompanyPair(links, querent, quesited, companionHint);
+                    TryAddCompanyPair(links, querent, quesited, companionHint, p.CompanyType);
                 }
             }
 
@@ -115,7 +102,29 @@ namespace GeomancyWebUI.Client.Helpers
                 || (overlay.QuerentHouse is >= 1 and <= 12)
                 || (overlay.QuesitedHouse is >= 1 and <= 12));
 
-        private static void TryAddCompanyPair(List<ChartAspectLink> links, int querent, int quesited, int companionHint)
+        private static ChartAspectLink BuildAspectLink(int from, int to, string? aspectType, string? direction)
+        {
+            var type = aspectType ?? string.Empty;
+            var dir = direction ?? string.Empty;
+            return new ChartAspectLink
+            {
+                FromHouse = from,
+                ToHouse = to,
+                AspectType = type,
+                Direction = dir,
+                Kind = "aspect",
+                Label = GeomanticAspects.ShortLabel(type, dir),
+                Description = GeomanticAspects.DescribeAspect(from, to, type, dir),
+                IntermediateHouses = GeomanticAspects.IntermediateHouses(from, to)
+            };
+        }
+
+        private static void TryAddCompanyPair(
+            List<ChartAspectLink> links,
+            int querent,
+            int quesited,
+            int companionHint,
+            string? companyType)
         {
             int? pairOf = null;
             if (companionHint == PairedHouse(querent) && querent > 0)
@@ -135,12 +144,22 @@ namespace GeomancyWebUI.Client.Helpers
                     || (l.FromHouse == companion && l.ToHouse == pairOf))))
                 return;
 
+            var shortCo = PerfectionDetailCopy.FormatCompanyShort(companyType ?? string.Empty);
+            var label = string.IsNullOrEmpty(shortCo)
+                ? $"H{pairOf}↔H{companion}"
+                : $"H{pairOf}↔H{companion} · {shortCo}";
+
             links.Add(new ChartAspectLink
             {
                 FromHouse = pairOf.Value,
                 ToHouse = companion,
                 Kind = "company-pair",
-                Label = "Company"
+                Label = label,
+                Description = PerfectionDetailCopy.CompanyHoverText(
+                    $"{PerfectionDetailCopy.FormatCompanyType(companyType ?? string.Empty)} — odd–even paired houses only (not 2–3 or 10–11).",
+                    string.Empty,
+                    pairOf.Value,
+                    companion)
             });
         }
 
@@ -148,15 +167,6 @@ namespace GeomancyWebUI.Client.Helpers
         {
             if (house < 1 || house > 12) return 0;
             return house % 2 == 1 ? house + 1 : house - 1;
-        }
-
-        private static bool Any(
-            this List<ChartAspectLink> links,
-            Func<ChartAspectLink, bool> predicate)
-        {
-            foreach (var l in links)
-                if (predicate(l)) return true;
-            return false;
         }
     }
 }

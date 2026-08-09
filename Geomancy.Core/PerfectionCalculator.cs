@@ -1056,14 +1056,16 @@ namespace GeomancyApp
             // Cauda carries malefic, releasing energy and is grouped in company
             // with Saturn (Carcer, Tristitia) and Mars (Puer, Rubeus): all three
             // share the temperament of restriction, ending, or sharp action.
-            if (name1.Equals("Cauda", StringComparison.OrdinalIgnoreCase))
+            if (name1.Equals("Cauda", StringComparison.OrdinalIgnoreCase)
+                || name1.StartsWith("Cauda", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet2.Equals("Saturn", StringComparison.OrdinalIgnoreCase))
                     return "Company Demi-Simple (Cauda Draconis with Saturn) — the South Node keeps company with Saturn's figures because both rule release, contraction, and endings. Read the helper as a sober, slow-moving force that closes doors as much as it opens them.";
                 if (planet2.Equals("Mars", StringComparison.OrdinalIgnoreCase))
                     return "Company Demi-Simple (Cauda Draconis with Mars) — the South Node and Mars share the same scorching, cutting temperament. Read the helper as a sharp, decisive ally whose aid arrives quickly but can wound as easily as it heals.";
             }
-            if (name2.Equals("Cauda", StringComparison.OrdinalIgnoreCase))
+            if (name2.Equals("Cauda", StringComparison.OrdinalIgnoreCase)
+                || name2.StartsWith("Cauda", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet1.Equals("Saturn", StringComparison.OrdinalIgnoreCase))
                     return "Company Demi-Simple (Cauda Draconis with Saturn) — the South Node keeps company with Saturn's figures because both rule release, contraction, and endings. Read the helper as a sober, slow-moving force that closes doors as much as it opens them.";
@@ -1075,14 +1077,16 @@ namespace GeomancyApp
             // Caput carries benefic, opening energy and is grouped in company
             // with Jupiter (Acquisitio, Laetitia) and Venus (Amissio, Puella):
             // all three share the temperament of growth, gain, and welcome.
-            if (name1.Equals("Caput", StringComparison.OrdinalIgnoreCase))
+            if (name1.Equals("Caput", StringComparison.OrdinalIgnoreCase)
+                || name1.StartsWith("Caput", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet2.Equals("Jupiter", StringComparison.OrdinalIgnoreCase))
                     return "Company Demi-Simple (Caput Draconis with Jupiter) — the North Node sides with Jupiter's figures because both signify increase, openings, and good fortune. Read the helper as a generous, expansive ally bringing growth, opportunity, or a welcome new chapter.";
                 if (planet2.Equals("Venus", StringComparison.OrdinalIgnoreCase))
                     return "Company Demi-Simple (Caput Draconis with Venus) — the North Node sides with Venus's figures because both speak of attraction, harmony, and fresh starts. Read the helper as a kindly, magnetic ally whose presence smooths relationships and softens edges.";
             }
-            if (name2.Equals("Caput", StringComparison.OrdinalIgnoreCase))
+            if (name2.Equals("Caput", StringComparison.OrdinalIgnoreCase)
+                || name2.StartsWith("Caput", StringComparison.OrdinalIgnoreCase))
             {
                 if (planet1.Equals("Jupiter", StringComparison.OrdinalIgnoreCase))
                     return "Company Demi-Simple (Caput Draconis with Jupiter) — the North Node sides with Jupiter's figures because both signify increase, openings, and good fortune. Read the helper as a generous, expansive ally bringing growth, opportunity, or a welcome new chapter.";
@@ -1113,13 +1117,13 @@ namespace GeomancyApp
 
             // Special handling for Cauda Draconis (South node of the Moon)
             // It's in company with Saturn and Mars figures
-            if (name1.Equals("Cauda", StringComparison.OrdinalIgnoreCase))
+            if (IsCauda(name1))
             {
                 if (planet2.Equals("Saturn", StringComparison.OrdinalIgnoreCase) ||
                     planet2.Equals("Mars", StringComparison.OrdinalIgnoreCase))
                     return true;
             }
-            if (name2.Equals("Cauda", StringComparison.OrdinalIgnoreCase))
+            if (IsCauda(name2))
             {
                 if (planet1.Equals("Saturn", StringComparison.OrdinalIgnoreCase) ||
                     planet1.Equals("Mars", StringComparison.OrdinalIgnoreCase))
@@ -1128,13 +1132,13 @@ namespace GeomancyApp
 
             // Special handling for Caput Draconis (North node of the Moon)
             // It's in company with Jupiter and Venus figures
-            if (name1.Equals("Caput", StringComparison.OrdinalIgnoreCase))
+            if (IsCaput(name1))
             {
                 if (planet2.Equals("Jupiter", StringComparison.OrdinalIgnoreCase) ||
                     planet2.Equals("Venus", StringComparison.OrdinalIgnoreCase))
                     return true;
             }
-            if (name2.Equals("Caput", StringComparison.OrdinalIgnoreCase))
+            if (IsCaput(name2))
             {
                 if (planet1.Equals("Jupiter", StringComparison.OrdinalIgnoreCase) ||
                     planet1.Equals("Venus", StringComparison.OrdinalIgnoreCase))
@@ -1143,6 +1147,14 @@ namespace GeomancyApp
 
             return false;
         }
+
+        private static bool IsCauda(string rootName) =>
+            !string.IsNullOrEmpty(rootName)
+            && rootName.StartsWith("Cauda", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsCaput(string rootName) =>
+            !string.IsNullOrEmpty(rootName)
+            && rootName.StartsWith("Caput", StringComparison.OrdinalIgnoreCase);
 
         // Helper method to check if two figures are opposite (company compound)
         private static bool AreOppositeFigures(GeomanticFigure figure1, GeomanticFigure figure2)

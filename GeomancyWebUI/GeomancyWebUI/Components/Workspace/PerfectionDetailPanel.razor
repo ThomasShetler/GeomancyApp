@@ -35,9 +35,14 @@
             var modeTitle = ResolveModeTitle(p);
             var companyDisplay = GetCompanyTypeDisplay(p);
             var companyEntry = LookupCompanyType(p.CompanyType);
+            var companyPair = ResolveCompanyPairHouses(p);
             var companyHover = companyEntry == null
                 ? string.Empty
-                : PerfectionDetailCopy.CompanyHoverText(companyEntry.Tagline, companyEntry.MechanismSummary);
+                : PerfectionDetailCopy.CompanyHoverText(
+                    companyEntry.Tagline,
+                    companyEntry.MechanismSummary,
+                    companyPair.Item1,
+                    companyPair.Item2);
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
             var explanation = BuildRelationshipExplanation(p);
@@ -52,6 +57,13 @@
                 p.BaseMode,
                 p.AspectBetweenSignificators,
                 p.AspectDirection);
+            var pathRelationHint = listPath.HasPath
+                ? GeomanticAspects.DescribeAspect(
+                    listPath.FromHouse,
+                    listPath.ToHouse,
+                    p.AspectBetweenSignificators,
+                    p.AspectDirection)
+                : string.Empty;
             var aspectEmphasized = IsAspectRelationship(p);
 
             <header class="perf-detail-header">
@@ -154,7 +166,7 @@
                                     <span class="house-relation-arrow">↔</span>
                                     @if (!string.IsNullOrEmpty(pathRelation))
                                     {
-                                        <span class="house-relation-label">@pathRelation</span>
+                                        <span class="house-relation-label" title="@pathRelationHint">@pathRelation</span>
                                     }
                                 </div>
                                 @RenderHouseRelationCell(listPath.ToHouse, "To")
@@ -350,10 +362,15 @@
                     ? "Via Company"
                     : PerfectionDetailCopy.FormatCompanyType(a.CompanyType))
                 : string.Empty;
+            var companyPair = a.MadeThroughCompany
+                ? ResolveCompanyPairHousesForAspect(a, Analysis?.QuerentHouse ?? 0, Analysis?.QuesitedHouse ?? 0)
+                : (sig: 0, companion: 0);
             var companyHover = a.MadeThroughCompany
                 ? PerfectionDetailCopy.CompanyHoverText(
                     companyEntry?.Tagline ?? CompanyTypesDirectory?.Overview?.Tagline ?? string.Empty,
-                    companyEntry?.MechanismSummary ?? CompanyTypesDirectory?.Overview?.MechanismSummary ?? string.Empty)
+                    companyEntry?.MechanismSummary ?? CompanyTypesDirectory?.Overview?.MechanismSummary ?? string.Empty,
+                    companyPair.Item1,
+                    companyPair.Item2)
                 : string.Empty;
             var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
             var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
@@ -378,6 +395,8 @@
                 string.Empty,
                 a.AspectType,
                 a.Direction);
+            var pathRelationHint = GeomanticAspects.DescribeAspect(
+                a.FromHouse, a.ToHouse, a.AspectType, a.Direction);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
@@ -450,7 +469,7 @@
                                     <span class="house-relation-arrow">↔</span>
                                     @if (!string.IsNullOrEmpty(pathRelation))
                                     {
-                                        <span class="house-relation-label">@pathRelation</span>
+                                        <span class="house-relation-label" title="@pathRelationHint">@pathRelation</span>
                                     }
                                 </div>
                                 @RenderHouseRelationCell(listPath.ToHouse, "To")
@@ -720,10 +739,12 @@
 
             if (!string.IsNullOrEmpty(type) && !type.Equals("None", StringComparison.OrdinalIgnoreCase))
             {
-                if (!string.IsNullOrEmpty(dir)
-                    && !dir.Equals("None", StringComparison.OrdinalIgnoreCase)
-                    && !dir.Equals("Opposition", StringComparison.OrdinalIgnoreCase))
-                    return $"{dir} {type}";
+                var described = GeomanticAspects.DescribeAspect(fromHouse, toHouse, type, dir);
+                if (!string.IsNullOrEmpty(described))
+                    return GeomanticAspects.ShortLabel(type, dir);
+                var shortLabel = GeomanticAspects.ShortLabel(type, dir);
+                if (!string.IsNullOrEmpty(shortLabel))
+                    return shortLabel;
                 return type;
             }
         }
@@ -744,14 +765,49 @@
         var (aspect, direction) = GeomanticAspects.GetAspectWithDirection(fromHouse, toHouse);
         if (aspect != AspectType.None)
         {
-            if (!string.IsNullOrEmpty(direction)
-                && direction != "None"
-                && direction != "Opposition")
-                return $"{direction} {aspect}";
-            return aspect.ToString();
+            var shortLabel = GeomanticAspects.ShortLabel(aspect, direction);
+            return string.IsNullOrEmpty(shortLabel) ? aspect.ToString() : shortLabel;
         }
 
         return "House link";
+    }
+
+    private (int sig, int companion) ResolveCompanyPairHouses(PerfectionModel p)
+    {
+        if (string.IsNullOrWhiteSpace(p.CompanyType)
+            || p.CompanyType.Equals("None", StringComparison.OrdinalIgnoreCase))
+            return (0, 0);
+
+        var hint = p.AspectFromHouse > 0 ? p.AspectFromHouse
+            : (p.PathFromHouse > 0 ? p.PathFromHouse : p.PathToHouse);
+        return ResolveCompanyPairFromHint(p.QuerentHouse, p.QuesitedHouse, hint, p.PathActor);
+    }
+
+    private static (int sig, int companion) ResolveCompanyPairHousesForAspect(
+        AspectRecordModel a, int querentHouse, int quesitedHouse)
+    {
+        if (!a.MadeThroughCompany) return (0, 0);
+        return ResolveCompanyPairFromHint(querentHouse, quesitedHouse, a.FromHouse, string.Empty);
+    }
+
+    private static (int sig, int companion) ResolveCompanyPairFromHint(
+        int querentHouse, int quesitedHouse, int companionHint, string? pathActor)
+    {
+        static int Pair(int h) => h < 1 || h > 12 ? 0 : (h % 2 == 1 ? h + 1 : h - 1);
+
+        if (companionHint == Pair(querentHouse) && querentHouse > 0)
+            return (querentHouse, companionHint);
+        if (companionHint == Pair(quesitedHouse) && quesitedHouse > 0)
+            return (quesitedHouse, companionHint);
+        if (querentHouse > 0 && (companionHint == querentHouse
+            || string.Equals(pathActor, "Q.", StringComparison.OrdinalIgnoreCase)))
+            return (querentHouse, Pair(querentHouse));
+        if (quesitedHouse > 0 && (companionHint == quesitedHouse
+            || (pathActor ?? string.Empty).StartsWith("Qst", StringComparison.OrdinalIgnoreCase)))
+            return (quesitedHouse, Pair(quesitedHouse));
+        if (querentHouse > 0)
+            return (querentHouse, Pair(querentHouse));
+        return (0, 0);
     }
 
     private static bool AreAdjacentHouses(int a, int b)
@@ -902,27 +958,8 @@
         _             => string.Empty
     };
 
-    private static string GetAspectGlossary(string aspectType, string direction)
-    {
-        var baseLine = aspectType?.Trim().ToLowerInvariant() switch
-        {
-            "sextile"    => "Sextile — a mild favorable aspect created across the house wheel.",
-            "trine"      => "Trine — a strong favorable aspect of easy agreement and flow.",
-            "square"     => "Square — a challenging ninety-degree aspect of friction or tests.",
-            "opposition" => "Opposition — a six-house separation read as confrontation or denial.",
-            "conjunction" => "Conjunction — side-by-side houses showing immediate proximity.",
-            _            => string.Empty
-        };
-        if (string.IsNullOrEmpty(baseLine)) return string.Empty;
-        if (!string.IsNullOrEmpty(direction))
-        {
-            if (direction.Contains("Dexter", StringComparison.OrdinalIgnoreCase))
-                return baseLine + " Dexter casts backward on the wheel and tends to act more forcefully.";
-            if (direction.Contains("Sinister", StringComparison.OrdinalIgnoreCase))
-                return baseLine + " Sinister casts forward on the wheel and tends to unfold more gradually.";
-        }
-        return baseLine;
-    }
+    private static string GetAspectGlossary(string aspectType, string direction) =>
+        GeomanticAspects.GlossaryLine(aspectType, direction ?? string.Empty);
 
     private record NoteParts(List<string> Mechanisms, List<string> InterpretationTips);
 

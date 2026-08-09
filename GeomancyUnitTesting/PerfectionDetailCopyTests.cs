@@ -54,5 +54,33 @@ namespace GeomancyUnitTesting
 
             Assert.AreEqual("Simple — the companion is the same figure as its partner.", hover);
         }
+
+        [TestMethod]
+        public void CompanyHoverText_PrefixesHousePair()
+        {
+            var hover = PerfectionDetailCopy.CompanyHoverText(
+                "Compound — companions are structural opposites yoked together.",
+                string.Empty,
+                7,
+                8);
+
+            StringAssert.StartsWith(hover, "H7 with H8 — ");
+            StringAssert.Contains(hover, "Compound");
+        }
+
+        [TestMethod]
+        public void CompanyPairLabel_UsesFormatCompanyShort()
+        {
+            Assert.AreEqual("Co. Comp.", PerfectionDetailCopy.FormatCompanyShort("Compound"));
+            Assert.AreEqual("Co. Demi", PerfectionDetailCopy.FormatCompanyShort("DemiSimple"));
+        }
+
+        [TestMethod]
+        public void AspectGlossary_Opposition_UsesGreerFiveHouses()
+        {
+            var line = PerfectionDetailCopy.AspectGlossary("Opposition", "Opposition");
+            StringAssert.Contains(line, "five houses");
+            StringAssert.Contains(line, "not dexter");
+        }
     }
 }

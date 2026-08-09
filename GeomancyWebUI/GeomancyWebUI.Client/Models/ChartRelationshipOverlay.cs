@@ -12,6 +12,10 @@ namespace GeomancyWebUI.Client.Models
         /// <summary>aspect | path | company-pair</summary>
         public string Kind { get; set; } = "aspect";
         public string? Label { get; set; }
+        /// <summary>Greer-style description for tooltips.</summary>
+        public string? Description { get; set; }
+        /// <summary>Houses strictly between endpoints along the cast arc.</summary>
+        public IReadOnlyList<int> IntermediateHouses { get; set; } = Array.Empty<int>();
     }
 
     /// <summary>
