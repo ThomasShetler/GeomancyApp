@@ -3,6 +3,7 @@
 @using GeomancyApp
 @using GeomancyWebUI.Client.Components
 @using GeomancyWebUI.Client.Components.Workspace
+@using GeomancyWebUI.Client.Helpers
 @using GeomancyWebUI.Client.Models
 @using GeomancyWebUI.Client.Services
 @using GeomancyWebUI.Components
@@ -124,7 +125,9 @@ else
                               OnHouse2Changed="OnHouse2Changed"
                               OnHouse3Changed="OnHouse3Changed"
                               OnHouse4Changed="OnHouse4Changed"
-                              View="@chartView" />
+                              View="@chartView"
+                              RelationshipOverlay="@chartRelationshipOverlay"
+                              HighlightedHouseNumbers="@chartHighlightHouses" />
             </div>
 
             <div class="mobile-mother-inputs"
@@ -554,6 +557,8 @@ else
     private SlotSelection? selectedSlot;
     private PerfectionSelection? selectedPerfection;
     private WayOfPointsSelection? selectedWayOfPoints;
+    private ChartRelationshipOverlay? chartRelationshipOverlay;
+    private HashSet<int>? chartHighlightHouses;
 
     // ----- Reference directories -----
     private List<HouseDirectoryEntry> housesDirectory = new();
@@ -730,7 +735,28 @@ else
     private void OnPerfectionSelected(PerfectionSelection selection)
     {
         selectedPerfection = selection;
+        RefreshChartRelationshipOverlay();
         panelMode = MobilePanelMode.Detail;
+        if (ChartRelationshipOverlayBuilder.HasDrawableGeometry(chartRelationshipOverlay))
+        {
+            chartView = ChartSurfaceView.House;
+            chartCollapsed = false;
+        }
+    }
+
+    private void ClearPerfectionChartOverlay()
+    {
+        chartRelationshipOverlay = null;
+        chartHighlightHouses = null;
+    }
+
+    private void RefreshChartRelationshipOverlay()
+    {
+        chartRelationshipOverlay = ChartRelationshipOverlayBuilder.FromSelection(
+            selectedPerfection, perfectionAnalysis);
+        chartHighlightHouses = ChartRelationshipOverlayBuilder.HighlightHouses(chartRelationshipOverlay);
+        if (chartHighlightHouses.Count == 0)
+            chartHighlightHouses = null;
     }
 
     private void OnWayOfPointsSelected(WayOfPointsSelection selection)
@@ -743,6 +769,7 @@ else
     {
         selectedQuerentHouse = n;
         selectedPerfection = null;
+        ClearPerfectionChartOverlay();
         await OnQuerentChanged();
     }
 
@@ -750,6 +777,7 @@ else
     {
         selectedQuesitedHouse = n;
         selectedPerfection = null;
+        ClearPerfectionChartOverlay();
         await OnQuesitedChanged();
     }
 
@@ -790,6 +818,7 @@ else
         {
             perfectionAnalysis = null;
             selectedPerfection = null;
+        ClearPerfectionChartOverlay();
             isPerfectionLoading = false;
             return;
         }
@@ -797,6 +826,7 @@ else
         var requestVersion = ++_perfectionRequestVersion;
         perfectionAnalysis = null;
         selectedPerfection = null;
+        ClearPerfectionChartOverlay();
         isPerfectionLoading = true;
 
         try
@@ -824,6 +854,7 @@ else
                 Message = $"Error analyzing perfections: {ex.Message}"
             };
             selectedPerfection = null;
+        ClearPerfectionChartOverlay();
         }
         finally
         {
