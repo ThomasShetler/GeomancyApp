@@ -340,6 +340,7 @@ namespace GeomancyApp
             {
                 AspectType = result.AspectBetweenSignificators,
                 MadeThroughCompany = result.MadeThroughCompany,
+                CompanyType = result.CompanyType,
                 Description = string.Join(" ", result.Notes),
                 FromHouse = result.AspectFromHouse,
                 ToHouse = result.AspectToHouse,

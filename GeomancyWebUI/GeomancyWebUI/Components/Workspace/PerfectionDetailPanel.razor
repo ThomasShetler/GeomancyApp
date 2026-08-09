@@ -35,6 +35,9 @@
             var modeTitle = ResolveModeTitle(p);
             var companyDisplay = GetCompanyTypeDisplay(p);
             var companyEntry = LookupCompanyType(p.CompanyType);
+            var companyHover = companyEntry == null
+                ? string.Empty
+                : PerfectionDetailCopy.CompanyHoverText(companyEntry.Tagline, companyEntry.MechanismSummary);
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
             var explanation = BuildRelationshipExplanation(p);
@@ -49,11 +52,12 @@
                 p.BaseMode,
                 p.AspectBetweenSignificators,
                 p.AspectDirection);
+            var aspectEmphasized = IsAspectRelationship(p);
 
             <header class="perf-detail-header">
                 <div class="header-titles">
                     <p class="kind-eyebrow @(isDenial ? "is-denial" : "is-perfection")">@headerEyebrow</p>
-                    <h2 class="kind-title kind-title-with-icon">
+                    <h2 class="kind-title kind-title-with-icon @(aspectEmphasized ? AspectDirectionHelper.AspectTypeClass(p.AspectBetweenSignificators) : "")">
                         <PerfectionIcon Mode="@p.Mode"
                                         AspectType="@p.AspectBetweenSignificators"
                                         CompanyType="@p.CompanyType"
@@ -71,46 +75,10 @@
             @if (!string.IsNullOrEmpty(companyDisplay))
             {
                 <div class="chip-row chip-row-minimal">
-                    <span class="chip chip-company">@companyDisplay</span>
+                    <span class="chip chip-company"
+                          title="@companyHover"
+                          aria-label="@($"{companyDisplay}. {companyHover}")">@companyDisplay</span>
                 </div>
-            }
-
-            @if (companyEntry != null)
-            {
-                <section class="detail-card interpretation-card company-glossary-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">⧉</span> @companyEntry.Name
-                    </h3>
-                    @if (!string.IsNullOrEmpty(companyEntry.Tagline))
-                    {
-                        <p class="company-type-tagline">@companyEntry.Tagline</p>
-                    }
-                    @if (!string.IsNullOrEmpty(companyEntry.MechanismSummary))
-                    {
-                        <p class="company-type-mechanism">
-                            <strong>How it forms.</strong> @companyEntry.MechanismSummary
-                        </p>
-                    }
-                    @if (companyEntry.InterpretationParagraphs.Count > 0)
-                    {
-                        <div class="interpretation-tips">
-                            @for (var i = 0; i < companyEntry.InterpretationParagraphs.Count; i++)
-                            {
-                                var tip = companyEntry.InterpretationParagraphs[i];
-                                <div class="interpretation-tip @(i == 0 ? "tip-lead" : "tip-context")">
-                                    <span class="tip-bullet">⧉</span>
-                                    <p class="tip-text">@HighlightTokens(tip)</p>
-                                </div>
-                            }
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(companyEntry.CoReads))
-                    {
-                        <p class="interpretation-footer">
-                            <strong>In the reading:</strong> @companyEntry.CoReads
-                        </p>
-                    }
-                </section>
             }
 
             <section class="detail-card parties-card">
@@ -376,7 +344,17 @@
             var headerEyebrow = isPositive ? "Positive Aspect" : "Negative Aspect";
             var totalScore = isPositive ? a.FavorableScore : a.UnfavorableScore;
             var aspectGlossary = GetAspectGlossary(a.AspectType, a.Direction);
-            var companyOverview = a.MadeThroughCompany ? CompanyTypesDirectory?.Overview : null;
+            var companyEntry = a.MadeThroughCompany ? LookupCompanyType(a.CompanyType) : null;
+            var companyDisplay = a.MadeThroughCompany
+                ? (string.IsNullOrEmpty(PerfectionDetailCopy.FormatCompanyType(a.CompanyType))
+                    ? "Via Company"
+                    : PerfectionDetailCopy.FormatCompanyType(a.CompanyType))
+                : string.Empty;
+            var companyHover = a.MadeThroughCompany
+                ? PerfectionDetailCopy.CompanyHoverText(
+                    companyEntry?.Tagline ?? CompanyTypesDirectory?.Overview?.Tagline ?? string.Empty,
+                    companyEntry?.MechanismSummary ?? CompanyTypesDirectory?.Overview?.MechanismSummary ?? string.Empty)
+                : string.Empty;
             var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
             var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
             var aNoteParts = ParseDescription(a.Description);
@@ -403,7 +381,9 @@
 
             <header class="perf-detail-header">
                 <div class="header-titles">
-                    <p class="kind-eyebrow @(isPositive ? "is-positive" : "is-negative")">@headerEyebrow</p>
+                    <p class="kind-eyebrow @(isPositive ? "is-positive" : "is-negative")">
+                        @(a.MadeThroughCompany ? $"{headerEyebrow} · via company" : headerEyebrow)
+                    </p>
                     <h2 class="kind-title kind-title-with-icon @aspectTypeClass">
                         <PerfectionIcon AspectType="@a.AspectType" Large="true" />
                         <span>@a.AspectType</span>
@@ -416,29 +396,13 @@
                 <p class="glossary-tagline">@aspectGlossary</p>
             }
 
-            @if (companyOverview != null && (!string.IsNullOrEmpty(companyOverview.Tagline) || !string.IsNullOrEmpty(companyOverview.MechanismSummary)))
+            @if (!string.IsNullOrEmpty(companyDisplay))
             {
-                <section class="detail-card interpretation-card company-glossary-card">
-                    <h3 class="card-title">
-                        <span class="card-title-icon">⧉</span> @(string.IsNullOrEmpty(companyOverview.Name) ? "Company of Houses" : companyOverview.Name)
-                    </h3>
-                    @if (!string.IsNullOrEmpty(companyOverview.Tagline))
-                    {
-                        <p class="company-type-tagline">@companyOverview.Tagline</p>
-                    }
-                    @if (!string.IsNullOrEmpty(companyOverview.MechanismSummary))
-                    {
-                        <p class="company-type-mechanism">
-                            <strong>How it forms.</strong> @companyOverview.MechanismSummary
-                        </p>
-                    }
-                    @if (!string.IsNullOrEmpty(companyOverview.CoReads))
-                    {
-                        <p class="interpretation-footer">
-                            <strong>In the reading:</strong> @companyOverview.CoReads
-                        </p>
-                    }
-                </section>
+                <div class="chip-row chip-row-minimal">
+                    <span class="chip chip-company"
+                          title="@companyHover"
+                          aria-label="@($"{companyDisplay}. {companyHover}")">@companyDisplay</span>
+                </div>
             }
 
             @if (querentHouse > 0 || quesitedHouse > 0)
@@ -898,65 +862,45 @@
         ? "score-positive-text"
         : n < 0 ? "score-negative-text" : "score-neutral-text";
 
-    private string ResolveModeTitle(PerfectionModel p)
+    private string ResolveModeTitle(PerfectionModel p) =>
+        PerfectionDetailCopy.ResolveModeTitle(
+            p.Mode,
+            p.BaseMode,
+            p.CompanyType,
+            p.AspectBetweenSignificators);
+
+    private static bool IsAspectRelationship(PerfectionModel p) =>
+        string.Equals(p.Mode, "Aspect", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(p.BaseMode, "Aspect", StringComparison.OrdinalIgnoreCase)
+        || (!string.IsNullOrWhiteSpace(p.AspectBetweenSignificators)
+            && !p.AspectBetweenSignificators.Equals("None", StringComparison.OrdinalIgnoreCase)
+            && (string.Equals(p.Mode, "Company", StringComparison.OrdinalIgnoreCase)
+                || p.MadeThroughCompany));
+
+    private string GetCompanyTypeDisplay(PerfectionModel p) =>
+        PerfectionDetailCopy.FormatCompanyType(p.CompanyType);
+
+    private string GetModeGlossary(PerfectionModel p) =>
+        PerfectionDetailCopy.ResolvePrimaryGlossary(
+            p.Mode,
+            p.BaseMode,
+            p.AspectBetweenSignificators,
+            p.AspectDirection,
+            GetAspectGlossary,
+            GetClassicalModeGlossary);
+
+    private static string GetClassicalModeGlossary(string key) => key switch
     {
-        if (p.Mode == "None") return "No Perfection";
-        if (p.Mode == "Impedition") return "Impedition";
-        if (p.Mode == "Company")
-        {
-            var display = GetCompanyTypeDisplay(p);
-            if (!string.IsNullOrEmpty(p.BaseMode))
-            {
-                return string.IsNullOrEmpty(display)
-                    ? $"Company · {p.BaseMode}"
-                    : $"{display} · {p.BaseMode}";
-            }
-            return string.IsNullOrEmpty(display) ? "Company" : display;
-        }
-        return string.IsNullOrEmpty(p.Mode) ? "Perfection" : p.Mode;
-    }
-
-    private string GetCompanyTypeDisplay(PerfectionModel p)
-    {
-        var entry = LookupCompanyType(p.CompanyType);
-        if (entry != null && !string.IsNullOrEmpty(entry.Name))
-            return entry.Name;
-
-        return p.CompanyType switch
-        {
-            "Simple" => "Company Simple",
-            "DemiSimple" => "Company Demi-Simple",
-            "Compound" => "Company Compound",
-            "Capitular" => "Company Capitular",
-            _ => string.Empty
-        };
-    }
-
-    private string GetModeGlossary(PerfectionModel p)
-    {
-        if (p.Mode == "Company")
-        {
-            var overview = CompanyTypesDirectory?.Overview;
-            if (overview != null && !string.IsNullOrEmpty(overview.Tagline))
-                return overview.Tagline;
-
-            return "Company of Houses — a companion figure in the paired house helps perfect the matter.";
-        }
-        var key = string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == p.Mode
-            ? p.Mode
-            : p.BaseMode;
-        return key switch
-        {
-            "Occupation"  => "Occupation — one figure sits in both significator houses, the strongest classical link.",
-            "Conjunction" => "Conjunction — one significator passes next door to the other for direct contact.",
-            "Aspect"      => "Aspect — a significator moves so Sextile, Trine, Square, or Opposition forms.",
-            "Translation" => "Translation — a third figure touches both houses beside the significators.",
-            "Mutation"    => "Mutation — both significators leap to new houses that sit side by side.",
-            "Impedition"  => "Impedition — no classical perfection path joins the querent and quesited.",
-            "None"        => "No classical perfection — the wheel offers no recognized link between them.",
-            _             => string.Empty
-        };
-    }
+        "Occupation"  => "Occupation — one figure sits in both significator houses, the strongest classical link.",
+        "Conjunction" => "Conjunction — one significator passes next door to the other for direct contact.",
+        "Aspect"      => "Aspect — a significator moves so Sextile, Trine, Square, or Opposition forms.",
+        "Translation" => "Translation — a third figure touches both houses beside the significators.",
+        "Mutation"    => "Mutation — both significators leap to new houses that sit side by side.",
+        "Impedition"  => "Impedition — no classical perfection path joins the querent and quesited.",
+        "Company"     => "Company of Houses — a companion figure in the paired house helps form the link.",
+        "None"        => "No classical perfection — the wheel offers no recognized link between them.",
+        _             => string.Empty
+    };
 
     private static string GetAspectGlossary(string aspectType, string direction)
     {

@@ -440,6 +440,7 @@ namespace GeomancyAPI.Handlers
                     ToHouse = a.ToHouse,
                     Description = a.Description,
                     MadeThroughCompany = a.MadeThroughCompany,
+                    CompanyType = a.CompanyType.ToString(),
                     IsMajorAspect = a.IsMajorAspect,
                     FavorableScore = CalculateAspectScore(aspectType, a.MadeThroughCompany),
                     UnfavorableScore = 0
@@ -457,6 +458,7 @@ namespace GeomancyAPI.Handlers
                     ToHouse = a.ToHouse,
                     Description = a.Description,
                     MadeThroughCompany = a.MadeThroughCompany,
+                    CompanyType = a.CompanyType.ToString(),
                     IsMajorAspect = a.IsMajorAspect,
                     FavorableScore = 0,
                     UnfavorableScore = CalculateAspectUnfavorableScore(aspectType, a.MadeThroughCompany)

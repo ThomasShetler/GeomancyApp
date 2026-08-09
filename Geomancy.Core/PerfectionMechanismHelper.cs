@@ -250,6 +250,10 @@ namespace GeomancyApp
                 Direction = NormalizeDirection(direction, aspectType)
             };
 
+            explanation.Title = string.IsNullOrEmpty(aspectType)
+                ? "How this formed"
+                : $"How this {aspectType} formed";
+
             explanation.Flow = PerfectionPathDisplay.FormatFlow(
                 PerfectionPathDisplay.ForListRow(
                     aspectFromHouse,
@@ -259,11 +263,17 @@ namespace GeomancyApp
                     string.Empty));
 
             bool isCompanyAspect = madeThroughCompany
-                || string.Equals(mode, "Company", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(baseMode, "Aspect", StringComparison.OrdinalIgnoreCase)
-                   && madeThroughCompany;
+                || string.Equals(mode, "Company", StringComparison.OrdinalIgnoreCase);
 
-            if (isCompanyAspect || madeThroughCompany)
+            var dirLabel = string.IsNullOrEmpty(explanation.Cast.Direction)
+                ? aspectType
+                : $"{explanation.Cast.Direction} {aspectType}";
+
+            // Lead with the aspect cast — company is a supporting condition, not the headline.
+            explanation.Steps.Add(
+                $"{fromFigure} in House {aspectFromHouse} casts a {dirLabel} to House {aspectToHouse} ({toFigure}).");
+
+            if (isCompanyAspect)
             {
                 AddCompanyPairingStep(explanation, querentHouse, quesitedHouse, querentFigure, quesitedFigure,
                     aspectFromHouse, fromFigure, companyType, companyTypeDescription);
@@ -275,13 +285,6 @@ namespace GeomancyApp
                     $"{fromFigure} also appears in House {aspectFromHouse} (translation of the significator), away from its home house.");
             }
 
-            var dirLabel = string.IsNullOrEmpty(explanation.Cast.Direction)
-                ? aspectType
-                : $"{explanation.Cast.Direction} {aspectType}";
-
-            explanation.Steps.Add(
-                $"{fromFigure} in House {aspectFromHouse} casts a {dirLabel} to House {aspectToHouse} ({toFigure}).");
-
             explanation.DirectionHint = DirectionHintText(explanation.Cast.Direction);
 
             explanation.Participants = BuildParticipants(
@@ -289,7 +292,7 @@ namespace GeomancyApp
                 aspectFromHouse, aspectToHouse, fromFigure, string.Empty, string.Empty,
                 0, 0, string.Empty,
                 aspectFromHouse, aspectToHouse, fromFigure, toFigure,
-                "Aspect", isCompanyAspect || madeThroughCompany);
+                "Aspect", isCompanyAspect);
 
             return explanation;
         }

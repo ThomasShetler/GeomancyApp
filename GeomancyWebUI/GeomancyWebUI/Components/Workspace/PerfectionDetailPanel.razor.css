@@ -130,6 +130,7 @@
     background: rgba(255, 193, 7, 0.10);
     border-color: rgba(255, 193, 7, 0.4);
     color: #ffc107;
+    cursor: help;
 }
 
 .chip-base {
@@ -636,40 +637,6 @@
     font-size: 0.85rem;
     line-height: 1.4;
     font-style: italic;
-}
-
-.company-glossary-card .company-type-tagline {
-    margin: 0;
-    font-size: 0.82rem;
-    color: var(--text-secondary);
-    font-style: italic;
-    line-height: 1.4;
-}
-
-.company-glossary-card .company-type-mechanism {
-    margin: 0;
-    font-size: 0.82rem;
-    color: var(--text-primary);
-    line-height: 1.45;
-    padding: 0.5rem 0.6rem;
-    background: color-mix(in srgb, var(--accent-color) 6%, transparent);
-    border-radius: 4px;
-}
-
-.company-glossary-card .company-type-mechanism strong {
-    color: var(--accent-color);
-}
-
-.company-glossary-card .interpretation-footer {
-    margin: 0.4rem 0 0;
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
-    padding: 0.4rem 0.55rem;
-}
-
-.company-glossary-card .interpretation-footer strong {
-    color: var(--text-primary);
 }
 
 /* ============================================================

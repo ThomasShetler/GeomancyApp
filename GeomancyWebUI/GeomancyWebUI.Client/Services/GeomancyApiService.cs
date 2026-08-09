@@ -176,6 +176,7 @@ namespace GeomancyWebUI.Client.Services
                     ToHouse = a.ToHouse,
                     Description = a.Description ?? string.Empty,
                     MadeThroughCompany = a.MadeThroughCompany,
+                    CompanyType = a.CompanyType ?? string.Empty,
                     IsMajorAspect = a.IsMajorAspect,
                     FavorableScore = a.FavorableScore,
                     UnfavorableScore = a.UnfavorableScore
@@ -186,13 +187,14 @@ namespace GeomancyWebUI.Client.Services
                     Direction = a.Direction ?? string.Empty,
                     FromHouse = a.FromHouse,
                     ToHouse = a.ToHouse,
-                      Description = a.Description ?? string.Empty,
-                      MadeThroughCompany = a.MadeThroughCompany,
-                      IsMajorAspect = a.IsMajorAspect,
-                      FavorableScore = a.FavorableScore,
-                      UnfavorableScore = a.UnfavorableScore
-                  }).ToList() ?? new List<AspectRecordModel>(),
-                  TotalFavorableScore = apiResponse.TotalFavorableScore,
+                    Description = a.Description ?? string.Empty,
+                    MadeThroughCompany = a.MadeThroughCompany,
+                    CompanyType = a.CompanyType ?? string.Empty,
+                    IsMajorAspect = a.IsMajorAspect,
+                    FavorableScore = a.FavorableScore,
+                    UnfavorableScore = a.UnfavorableScore
+                }).ToList() ?? new List<AspectRecordModel>(),
+                TotalFavorableScore = apiResponse.TotalFavorableScore,
                 TotalUnfavorableScore = apiResponse.TotalUnfavorableScore,
                 NetScore = apiResponse.NetScore,
                 QuerentHouse = apiResponse.QuerentHouse,
@@ -871,6 +873,7 @@ namespace GeomancyWebUI.Client.Services
             public int ToHouse { get; set; }
             public string? Description { get; set; }
             public bool MadeThroughCompany { get; set; }
+            public string? CompanyType { get; set; }
             public bool IsMajorAspect { get; set; }
             public int FavorableScore { get; set; }
             public int UnfavorableScore { get; set; }

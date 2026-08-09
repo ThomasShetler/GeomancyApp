@@ -65,6 +65,11 @@ namespace GeomancyApp
         public int ToHouse { get; set; }
         public string Description { get; set; } // Full description from notes
         public bool MadeThroughCompany { get; set; }
+        /// <summary>
+        /// When <see cref="MadeThroughCompany"/> is true, the company bond type
+        /// (Simple / DemiSimple / Compound / Capitular). None for standalone casts.
+        /// </summary>
+        public CompanyType CompanyType { get; set; } = CompanyType.None;
         public bool IsMajorAspect { get; set; } // True for Dexter aspects and Opposition (high energy/dominant)
     }
 

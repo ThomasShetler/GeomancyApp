@@ -59,6 +59,7 @@ namespace GeomancyWebUI.Client.Models
         public int ToHouse { get; set; }
         public string Description { get; set; } = string.Empty;
         public bool MadeThroughCompany { get; set; }
+        public string CompanyType { get; set; } = string.Empty;
         public bool IsMajorAspect { get; set; }
         public int FavorableScore { get; set; }
         public int UnfavorableScore { get; set; }

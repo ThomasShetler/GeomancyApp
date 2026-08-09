@@ -330,6 +330,7 @@ namespace GeomancyAPI.Models
         public int ToHouse { get; set; }
         public string Description { get; set; }
         public bool MadeThroughCompany { get; set; }
+        public string CompanyType { get; set; }
         public bool IsMajorAspect { get; set; }
         public int FavorableScore { get; set; }
         public int UnfavorableScore { get; set; }

@@ -191,6 +191,10 @@ namespace GeomancyUnitTesting
             Assert.AreEqual(2, explanation.Cast.FromHouse);
             Assert.AreEqual(10, explanation.Cast.ToHouse);
             Assert.AreNotEqual(1, explanation.Cast.FromHouse);
+            Assert.AreEqual("How this Trine formed", explanation.Title);
+            Assert.IsTrue(explanation.Steps.Count >= 2);
+            Assert.IsTrue(explanation.Steps[0].IndexOf("Trine", System.StringComparison.OrdinalIgnoreCase) >= 0,
+                "Aspect cast must lead the formation steps.");
             Assert.IsTrue(explanation.Steps.Any(s => s.Contains("Compound")));
             Assert.IsTrue(explanation.Steps.Any(s =>
                 s.Contains("Cauda Draconis") && s.Contains("House 2") && s.Contains("House 10")));

@@ -444,6 +444,7 @@ namespace GeomancyWebUI.Services
                 ToHouse = src.ToHouse,
                 Description = src.Description ?? string.Empty,
                 MadeThroughCompany = src.MadeThroughCompany,
+                CompanyType = src.CompanyType ?? string.Empty,
                 IsMajorAspect = src.IsMajorAspect,
                 FavorableScore = src.FavorableScore,
                 UnfavorableScore = src.UnfavorableScore,

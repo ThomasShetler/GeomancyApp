@@ -1,3 +1,4 @@
+@using GeomancyApp
 @using GeomancyWebUI.Client.Helpers
 
 <li class="compact-perf-row @RowClass @(IsSelected ? "is-selected" : "")"
@@ -72,6 +73,7 @@
     [Parameter] public string? AspectType { get; set; }
     [Parameter] public string? AspectDirection { get; set; }
     [Parameter] public string? CompanyType { get; set; }
+    [Parameter] public bool MadeThroughCompany { get; set; }
 
     [Parameter] public int FromHouse { get; set; }
     [Parameter] public int ToHouse { get; set; }
@@ -125,7 +127,10 @@
     {
         if (RowVariant == "aspect-positive" || RowVariant == "aspect-negative")
         {
-            return AspectDirectionHelper.AspectTypeAbbrev(AspectType);
+            return PerfectionDetailCopy.AspectListLabel(
+                AspectType ?? string.Empty,
+                MadeThroughCompany || HasCompanyType,
+                CompanyType ?? string.Empty);
         }
 
         if (RowVariant == "denial")
@@ -136,13 +141,11 @@
 
         if (Mode == "Company")
         {
-            var company = GetCompanyShort(CompanyType);
-            var label = !string.IsNullOrEmpty(company) ? company : "Company";
-            if (!string.IsNullOrEmpty(BaseMode) && BaseMode != "Company")
-                label += $" · {BaseMode}";
-            if (!string.IsNullOrEmpty(AspectType) && AspectType != "None")
-                label += $" · {AspectDirectionHelper.AspectTypeAbbrev(AspectType)}";
-            return label;
+            return PerfectionDetailCopy.ResolveModeTitle(
+                Mode,
+                BaseMode ?? string.Empty,
+                CompanyType ?? string.Empty,
+                AspectType ?? string.Empty);
         }
 
         if (Mode == "Aspect" && !string.IsNullOrEmpty(AspectType) && AspectType != "None")
@@ -151,12 +154,7 @@
         return string.IsNullOrEmpty(Mode) ? "Perfection" : Mode;
     }
 
-    private static string GetCompanyShort(string? companyType) => companyType switch
-    {
-        "Simple" => "Co. Simple",
-        "DemiSimple" => "Co. Demi",
-        "Compound" => "Co. Compound",
-        "Capitular" => "Co. Cap.",
-        _ => string.Empty
-    };
+    private bool HasCompanyType =>
+        !string.IsNullOrWhiteSpace(CompanyType)
+        && !string.Equals(CompanyType, "None", StringComparison.OrdinalIgnoreCase);
 }

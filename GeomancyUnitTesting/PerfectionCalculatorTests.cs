@@ -290,8 +290,29 @@ namespace GeomancyUnitTesting
                 a.FromHouse == 2 && a.ToHouse == 5 && a.AspectType == AspectType.Square);
             Assert.IsNotNull(neg, "Company square must appear under NegativeAspects.");
             Assert.IsTrue(neg.MadeThroughCompany);
+            Assert.AreEqual(CompanyType.Simple, neg.CompanyType,
+                "Collapsed company malefic must retain CompanyType for accurate UI labeling.");
             Assert.AreEqual(-4, analysis.TotalUnfavorableScore,
                 "Company square scores -4 (-3 base, -1 company) once via NegativeAspects.");
+        }
+
+        [TestMethod]
+        public void StandaloneNegativeAspect_DoesNotClaimCompany()
+        {
+            // Translation square only (quesited Populus H7 also in H10 → square to H1).
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Conjunctio");
+            chart.SetHouseFigure(7, "Populus");
+            chart.SetHouseFigure(10, "Populus");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 7);
+            var sq = analysis.NegativeAspects.FirstOrDefault(a => a.AspectType == AspectType.Square);
+
+            Assert.IsNotNull(sq, "Expected a standalone translation square.");
+            Assert.IsFalse(sq.MadeThroughCompany);
+            Assert.AreEqual(CompanyType.None, sq.CompanyType);
+            Assert.AreEqual("Sq", PerfectionDetailCopy.AspectListLabel(sq.AspectType.ToString(), sq.MadeThroughCompany, sq.CompanyType.ToString()));
         }
 
         [TestMethod]

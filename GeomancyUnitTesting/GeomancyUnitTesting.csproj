@@ -58,6 +58,7 @@
     <Compile Include="PerfectionCalculatorTests.cs" />
     <Compile Include="PerfectionMechanismHelperTests.cs" />
     <Compile Include="PerfectionPathDisplayTests.cs" />
+    <Compile Include="PerfectionDetailCopyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
