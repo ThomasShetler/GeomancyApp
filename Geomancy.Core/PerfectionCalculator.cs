@@ -349,12 +349,33 @@ namespace GeomancyApp
             };
         }
 
+        /// <summary>
+        /// Standalone translation aspects (Mode=Aspect) that belong in Positive/NegativeAspects lists.
+        /// Company-mediated aspects stay under Perfections / Denials instead.
+        /// </summary>
         private static bool IsStandaloneCastAspect(PerfectionResult result)
         {
             return result.Mode == PerfectionType.Aspect
                 && result.AspectBetweenSignificators != AspectType.None
                 && result.AspectFromHouse > 0
                 && result.AspectToHouse > 0;
+        }
+
+        /// <summary>
+        /// Company-mediated square/opposition that should surface as a difficulty row
+        /// when other perfections exist (otherwise it is listed under Denials).
+        /// </summary>
+        private static bool IsCompanyMaleficAspect(PerfectionResult result)
+        {
+            if (result == null || result.Mode != PerfectionType.Company)
+                return false;
+            if (result.AspectFromHouse <= 0 || result.AspectToHouse <= 0)
+                return false;
+            if (result.AspectBetweenSignificators != AspectType.Square
+                && result.AspectBetweenSignificators != AspectType.Opposition)
+                return false;
+
+            return result.BaseMode == PerfectionType.Aspect || result.MadeThroughCompany;
         }
 
         private static string PerfectionDedupKey(PerfectionResult result)
@@ -1702,7 +1723,10 @@ namespace GeomancyApp
             // Separate perfections and denials
             if (hasPerfections)
             {
-                analysis.Perfections = DeduplicatePerfections(results.Where(r => IsActualPerfection(r)));
+                // Favorable Mode=Aspect rows belong only in PositiveAspects (UI + scoring).
+                // Keeping them in Perfections would double-count totals against PositiveAspects.
+                analysis.Perfections = DeduplicatePerfections(results.Where(r =>
+                    IsActualPerfection(r) && r.Mode != PerfectionType.Aspect));
                 
                 // Unfavorable aspects that appear alongside perfections are "difficulties" - 
                 // they're still in results for scoring but not in Perfections list
@@ -1716,9 +1740,7 @@ namespace GeomancyApp
                      r.AspectBetweenSignificators == AspectType.Opposition)).ToList();
                 
                 // Also check for Company-made unfavorable aspects that deny perfection
-                var unfavorableCompany = results.Where(r => r.Mode == PerfectionType.Company &&
-                    (r.AspectBetweenSignificators == AspectType.Square || 
-                     r.AspectBetweenSignificators == AspectType.Opposition)).ToList();
+                var unfavorableCompany = results.Where(IsCompanyMaleficAspect).ToList();
                 
                 var allDenials = new List<PerfectionResult>();
                 allDenials.AddRange(unfavorableAspects);
@@ -1761,24 +1783,30 @@ namespace GeomancyApp
                 analysis.Perfections = new List<PerfectionResult>(); // Empty - no perfections
             }
 
-            // Extract all aspects from results and categorize them
+            // Extract cast aspects for the aspect lists (never company favorables —
+            // those live under Perfections → By Company).
             foreach (var result in results)
             {
-                if (!IsStandaloneCastAspect(result))
-                    continue;
-
-                var aspectRecord = BuildAspectRecord(result);
-
-                // Categorize as positive or negative
-                if (result.AspectBetweenSignificators == AspectType.Sextile || 
-                    result.AspectBetweenSignificators == AspectType.Trine)
+                if (IsStandaloneCastAspect(result))
                 {
-                    analysis.PositiveAspects.Add(aspectRecord);
+                    var aspectRecord = BuildAspectRecord(result);
+
+                    if (result.AspectBetweenSignificators == AspectType.Sextile ||
+                        result.AspectBetweenSignificators == AspectType.Trine)
+                    {
+                        analysis.PositiveAspects.Add(aspectRecord);
+                    }
+                    else if (result.AspectBetweenSignificators == AspectType.Square ||
+                             result.AspectBetweenSignificators == AspectType.Opposition)
+                    {
+                        analysis.NegativeAspects.Add(aspectRecord);
+                    }
                 }
-                else if (result.AspectBetweenSignificators == AspectType.Square || 
-                         result.AspectBetweenSignificators == AspectType.Opposition)
+                else if (hasPerfections && IsCompanyMaleficAspect(result))
                 {
-                    analysis.NegativeAspects.Add(aspectRecord);
+                    // Company squares/oppositions alongside real perfections are difficulties,
+                    // not Denials (Denials are used only when nothing perfects).
+                    analysis.NegativeAspects.Add(BuildAspectRecord(result));
                 }
             }
 

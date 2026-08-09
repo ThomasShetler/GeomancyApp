@@ -204,6 +204,67 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void FavorableStandaloneAspect_ListedOnceInPositiveAspectsNotPerfections()
+        {
+            // Q Via H1 also at H3; casts sinister sextile to X Populus H5.
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Conjunctio");
+            chart.SetHouseFigure(3, "Via");
+            chart.SetHouseFigure(5, "Populus");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 5);
+
+            Assert.IsFalse(analysis.Perfections.Any(p => p.Mode == PerfectionType.Aspect),
+                "Favorable Mode=Aspect must not also appear under Perfections.");
+            Assert.AreEqual(1, analysis.PositiveAspects.Count);
+            Assert.AreEqual(3, analysis.PositiveAspects[0].FromHouse);
+            Assert.AreEqual(5, analysis.PositiveAspects[0].ToHouse);
+            Assert.AreEqual(3, analysis.TotalFavorableScore,
+                "Favorable aspect must be scored once (+3), not double-counted via Perfections.");
+            Assert.AreEqual(analysis.TotalFavorableScore + analysis.TotalUnfavorableScore, analysis.NetScore);
+        }
+
+        [TestMethod]
+        public void CompanyMaleficAspect_SurfacesInNegativeAspectsWhenOtherPerfectionsExist()
+        {
+            // Q Via H1 in simple company with Via H2 (square to X H5); Caput translates H12↔H6.
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Via");
+            chart.SetHouseFigure(5, "Populus");
+            chart.SetHouseFigure(6, "Caput Draconis");
+            chart.SetHouseFigure(12, "Caput Draconis");
+
+            var engineResults = PerfectionCalculator.Find(chart, 1, 5, returnAllModes: true);
+            var companySquare = engineResults.FirstOrDefault(r =>
+                r.Mode == PerfectionType.Company
+                && r.AspectBetweenSignificators == AspectType.Square
+                && r.AspectFromHouse == 2 && r.AspectToHouse == 5);
+            var translation = engineResults.FirstOrDefault(r => r.Mode == PerfectionType.Translation);
+
+            Assert.IsNotNull(companySquare, "Expected company-mediated square from H2 to H5.");
+            Assert.IsNotNull(translation, "Expected Caput translation so other perfections exist.");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 5);
+
+            Assert.IsTrue(analysis.Perfections.Any(p => p.Mode == PerfectionType.Translation));
+            Assert.IsFalse(analysis.Perfections.Any(p =>
+                p.Mode == PerfectionType.Company && p.AspectBetweenSignificators == AspectType.Square),
+                "Unfavorable company aspects are not perfections.");
+            Assert.IsFalse(analysis.Denials.Any(d =>
+                d.Mode == PerfectionType.Company && d.AspectBetweenSignificators == AspectType.Square),
+                "With other perfections present, company malefics are difficulties not Denials.");
+
+            var neg = analysis.NegativeAspects.FirstOrDefault(a =>
+                a.FromHouse == 2 && a.ToHouse == 5 && a.AspectType == AspectType.Square);
+            Assert.IsNotNull(neg, "Company square must appear under NegativeAspects.");
+            Assert.IsTrue(neg.MadeThroughCompany);
+            Assert.AreEqual(-4, analysis.TotalUnfavorableScore,
+                "Company square scores -4 (-3 base, -1 company) once via NegativeAspects.");
+        }
+
+        [TestMethod]
         public void AnalyzePerfections_TotalsMatchListedRowScores()
         {
             var chart = ChartWithUniqueFigures();
