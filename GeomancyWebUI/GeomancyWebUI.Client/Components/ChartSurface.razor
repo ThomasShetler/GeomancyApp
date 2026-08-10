@@ -112,10 +112,11 @@
                     <g class="house-participation-fills" pointer-events="none">
                         @foreach (var h in participating)
                         {
-                            @if (HouseChartGeometry.TryGetHouseFillPoints(h, out var fL, out var fR, out var fO))
+                            @if (HouseChartGeometry.TryGetHouseFillPolygon(h, out var fillPts) && fillPts.Count >= 3)
                             {
                                 var fillClass = GetHouseFillClass(h);
-                                <polygon points="@($"{fL.X:0.##},{fL.Y:0.##} {fR.X:0.##},{fR.Y:0.##} {fO.X:0.##},{fO.Y:0.##}")"
+                                var pts = string.Join(" ", fillPts.Select(p => $"{p.X:0.##},{p.Y:0.##}"));
+                                <polygon points="@pts"
                                          class="house-participation-fill @fillClass" />
                             }
                         }
@@ -576,17 +577,28 @@
 
     private HashSet<int> GetParticipatingHouses()
     {
+        // Fill the actual house triangles for roles + link endpoints only —
+        // not intermediate houses along an aspect arc (those read as muddy bands).
         var set = new HashSet<int>();
-        if (HighlightedHouseNumbers != null)
+        if (RelationshipOverlay == null)
         {
-            foreach (var h in HighlightedHouseNumbers)
-                set.Add(h);
+            if (HighlightedHouseNumbers != null)
+            {
+                foreach (var h in HighlightedHouseNumbers)
+                    set.Add(h);
+            }
+            return set;
         }
 
-        if (RelationshipOverlay != null)
+        if (RelationshipOverlay.QuerentHouse is >= 1 and <= 12)
+            set.Add(RelationshipOverlay.QuerentHouse);
+        if (RelationshipOverlay.QuesitedHouse is >= 1 and <= 12)
+            set.Add(RelationshipOverlay.QuesitedHouse);
+
+        foreach (var link in RelationshipOverlay.Links)
         {
-            foreach (var h in ChartRelationshipOverlayBuilder.HighlightHouses(RelationshipOverlay))
-                set.Add(h);
+            if (link.FromHouse is >= 1 and <= 12) set.Add(link.FromHouse);
+            if (link.ToHouse is >= 1 and <= 12) set.Add(link.ToHouse);
         }
 
         return set;

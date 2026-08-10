@@ -448,27 +448,33 @@ marker#aspect-arrow-end .aspect-arrowhead {
 }
 
 .house-participation-fill {
-    stroke: none;
-    opacity: 0.16;
+    fill-opacity: 0.34;
+    stroke-opacity: 0.85;
+    stroke-width: 2.5;
+    stroke-linejoin: round;
 }
 
 .house-participation-fill.is-participant {
-    fill: #90caf9;
+    fill: #64b5f6;
+    stroke: #90caf9;
 }
 
 .house-participation-fill.is-company {
     fill: #ffc107;
-    opacity: 0.18;
+    stroke: #ffd54f;
+    fill-opacity: 0.38;
 }
 
 .house-participation-fill.is-querent {
     fill: #66bb6a;
-    opacity: 0.22;
+    stroke: #81c784;
+    fill-opacity: 0.42;
 }
 
 .house-participation-fill.is-quesited {
     fill: #ffa726;
-    opacity: 0.22;
+    stroke: #ffb74d;
+    fill-opacity: 0.42;
 }
 
 .house-role-tag {

@@ -22,6 +22,12 @@ namespace GeomancyWebUI.Client.Helpers
         private static readonly double EdgeB = CenterX;                          // 500
         private static readonly double EdgeC = InnerMax - InnerHalf * 2.0 / 6.0; // ~666.67
 
+        /// <summary>Equal-third boundaries along each inner-square edge (length 500).</summary>
+        private const double Third0 = InnerMin;                    // 250
+        private const double Third1 = InnerMin + 500.0 / 3.0;      // ~416.67
+        private const double Third2 = InnerMin + 1000.0 / 3.0;     // ~583.33
+        private const double Third3 = InnerMax;                    // 750
+
         private static readonly IReadOnlyDictionary<int, Point> Anchors = new Dictionary<int, Point>
         {
             [1] = new(150, 550),
@@ -75,43 +81,109 @@ namespace GeomancyWebUI.Client.Helpers
         }
 
         /// <summary>
-        /// Soft fill triangle for a house: rim span between neighbors + outer apex on the diamond.
+        /// Polygon for the house cell: the third of the inner-square rim facing the house,
+        /// opened out to the chart's outer diamond / square so the fill matches the figure's triangle.
         /// </summary>
-        public static bool TryGetHouseFillPoints(int house, out Point left, out Point right, out Point outer)
+        public static bool TryGetHouseFillPolygon(int house, out IReadOnlyList<Point> points)
         {
-            left = right = outer = default;
-            if (house < 1 || house > 12) return false;
-            if (!NumberAnchors.TryGetValue(house, out var mid)
-                || !NumberAnchors.TryGetValue(PrevHouse(house), out var prev)
-                || !NumberAnchors.TryGetValue(NextHouse(house), out var next)
-                || !Anchors.TryGetValue(house, out var fig))
+            points = Array.Empty<Point>();
+            if (house < 1 || house > 12 || !Anchors.TryGetValue(house, out var fig))
                 return false;
 
-            left = Midpoint(prev, mid);
-            right = Midpoint(mid, next);
-            outer = ProjectOntoDiamond(fig);
-            outer = new Point(
-                outer.X + (CenterX - outer.X) * 0.04,
-                outer.Y + (CenterY - outer.Y) * 0.04);
+            if (!TryGetRimSegment(house, out var rimA, out var rimB))
+                return false;
+
+            // Mid-side angular houses: tip at the diamond cardinal point for a clean triangle.
+            if (house is 1 or 4 or 7 or 10)
+            {
+                var tip = house switch
+                {
+                    10 => new Point(CenterX, 0),
+                    4 => new Point(CenterX, 1000),
+                    1 => new Point(0, CenterY),
+                    _ => new Point(1000, CenterY)
+                };
+                points = new[] { rimA, rimB, tip };
+                return true;
+            }
+
+            // Cadent / succedent: trapezoid — rim segment + both endpoints projected to the outer envelope.
+            var outerA = ProjectOntoOuterEnvelope(rimA);
+            var outerB = ProjectOntoOuterEnvelope(rimB);
+            // If the figure sits past the diamond (corner pocket), include its outer tip.
+            var figOuter = ProjectOntoOuterEnvelope(fig);
+            if (DistanceSq(figOuter, outerA) > 400 && DistanceSq(figOuter, outerB) > 400)
+                points = new[] { rimA, rimB, outerB, figOuter, outerA };
+            else
+                points = new[] { rimA, rimB, outerB, outerA };
             return true;
         }
 
-        private static int PrevHouse(int house) => house == 1 ? 12 : house - 1;
-        private static int NextHouse(int house) => house == 12 ? 1 : house + 1;
-
-        private static Point Midpoint(Point a, Point b) =>
-            new((a.X + b.X) / 2.0, (a.Y + b.Y) / 2.0);
-
-        private static Point ProjectOntoDiamond(Point figure)
+        /// <summary>Legacy 3-point helper for callers that only need a triangle approximation.</summary>
+        public static bool TryGetHouseFillPoints(int house, out Point left, out Point right, out Point outer)
         {
-            var dx = figure.X - CenterX;
-            var dy = figure.Y - CenterY;
-            var scale = Math.Abs(dx) + Math.Abs(dy);
-            if (scale < 1e-6)
-                return new Point(CenterX, CenterY - 500);
+            left = right = outer = default;
+            if (!TryGetHouseFillPolygon(house, out var pts) || pts.Count < 3)
+                return false;
+            left = pts[0];
+            right = pts[1];
+            outer = pts[pts.Count - 1];
+            return true;
+        }
 
-            var t = 500.0 / scale;
-            return new Point(CenterX + t * dx, CenterY + t * dy);
+        /// <summary>
+        /// Inner-square rim segment for a house (exact thirds on the rim stroke).
+        /// Top L→R: 11,10,9 · Right T→B: 8,7,6 · Bottom R→L: 5,4,3 · Left B→T: 2,1,12.
+        /// </summary>
+        private static bool TryGetRimSegment(int house, out Point a, out Point b)
+        {
+            a = b = default;
+            switch (house)
+            {
+                case 11: a = new(Third0, InnerMin); b = new(Third1, InnerMin); return true;
+                case 10: a = new(Third1, InnerMin); b = new(Third2, InnerMin); return true;
+                case 9: a = new(Third2, InnerMin); b = new(Third3, InnerMin); return true;
+                case 8: a = new(InnerMax, Third0); b = new(InnerMax, Third1); return true;
+                case 7: a = new(InnerMax, Third1); b = new(InnerMax, Third2); return true;
+                case 6: a = new(InnerMax, Third2); b = new(InnerMax, Third3); return true;
+                case 5: a = new(Third3, InnerMax); b = new(Third2, InnerMax); return true;
+                case 4: a = new(Third2, InnerMax); b = new(Third1, InnerMax); return true;
+                case 3: a = new(Third1, InnerMax); b = new(Third0, InnerMax); return true;
+                case 2: a = new(InnerMin, Third3); b = new(InnerMin, Third2); return true;
+                case 1: a = new(InnerMin, Third2); b = new(InnerMin, Third1); return true;
+                case 12: a = new(InnerMin, Third1); b = new(InnerMin, Third0); return true;
+                default: return false;
+            }
+        }
+
+        private static double DistanceSq(Point p, Point q)
+        {
+            var dx = p.X - q.X;
+            var dy = p.Y - q.Y;
+            return dx * dx + dy * dy;
+        }
+
+        /// <summary>
+        /// Ray from chart center through <paramref name="through"/> onto the outer envelope
+        /// (farther of diamond |dx|+|dy|=500 and outer square L∞=500).
+        /// </summary>
+        private static Point ProjectOntoOuterEnvelope(Point through)
+        {
+            var dx = through.X - CenterX;
+            var dy = through.Y - CenterY;
+            if (Math.Abs(dx) < 1e-6 && Math.Abs(dy) < 1e-6)
+                return new Point(CenterX, 0);
+
+            var l1 = Math.Abs(dx) + Math.Abs(dy);
+            var diamond = new Point(CenterX + dx * (500.0 / l1), CenterY + dy * (500.0 / l1));
+
+            var linf = Math.Max(Math.Abs(dx), Math.Abs(dy));
+            var square = new Point(CenterX + dx * (500.0 / linf), CenterY + dy * (500.0 / linf));
+
+            // Prefer the farther hit so corner houses fill out to the outer square.
+            var eD = (diamond.X - CenterX) * (diamond.X - CenterX) + (diamond.Y - CenterY) * (diamond.Y - CenterY);
+            var eS = (square.X - CenterX) * (square.X - CenterX) + (square.Y - CenterY) * (square.Y - CenterY);
+            return eS >= eD ? square : diamond;
         }
 
         /// <summary>
