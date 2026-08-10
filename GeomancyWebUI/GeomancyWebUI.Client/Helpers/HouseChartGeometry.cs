@@ -32,10 +32,16 @@ namespace GeomancyWebUI.Client.Helpers
         };
 
         /// <summary>
-        /// Points on the inner-square rim facing each house — used for house numbers
-        /// and relationship overlay endpoints (so arcs avoid the figures).
+        /// Connection endpoints on the inner-square rim (arcs hit here, away from figures).
         /// </summary>
-        private static readonly IReadOnlyDictionary<int, Point> LinkAnchors = BuildLinkAnchors();
+        private static readonly IReadOnlyDictionary<int, Point> LinkAnchors =
+            BuildProjectedAnchors(insetTowardCenter: 0.02);
+
+        /// <summary>
+        /// House numbers sit further inward so arc strokes don't cover the digits.
+        /// </summary>
+        private static readonly IReadOnlyDictionary<int, Point> NumberAnchors =
+            BuildProjectedAnchors(insetTowardCenter: 0.22);
 
         public static bool TryGetAnchor(int house, out Point point)
         {
@@ -53,19 +59,70 @@ namespace GeomancyWebUI.Client.Helpers
             return false;
         }
 
-        private static IReadOnlyDictionary<int, Point> BuildLinkAnchors()
+        public static bool TryGetNumberAnchor(int house, out Point point)
+        {
+            if (house >= 1 && house <= 12 && NumberAnchors.TryGetValue(house, out point))
+                return true;
+            point = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Soft fill triangle for a house: inner-rim span + outer apex on the diamond.
+        /// </summary>
+        public static bool TryGetHouseFillPoints(int house, out Point left, out Point right, out Point outer)
+        {
+            left = right = outer = default;
+            if (house < 1 || house > 12) return false;
+            if (!LinkAnchors.TryGetValue(house, out var mid)
+                || !LinkAnchors.TryGetValue(PrevHouse(house), out var prev)
+                || !LinkAnchors.TryGetValue(NextHouse(house), out var next)
+                || !Anchors.TryGetValue(house, out var fig))
+                return false;
+
+            left = Midpoint(prev, mid);
+            right = Midpoint(mid, next);
+            outer = ProjectOntoDiamond(fig);
+            // Pull apex slightly inward so the stroke of the diamond stays visible.
+            outer = new Point(
+                outer.X + (CenterX - outer.X) * 0.04,
+                outer.Y + (CenterY - outer.Y) * 0.04);
+            return true;
+        }
+
+        /// <summary>
+        /// Seat for a Querent/Quesited tag, between the rim number and the figure.
+        /// </summary>
+        public static bool TryGetRoleTagPoint(int house, out Point point)
+        {
+            point = default;
+            if (!TryGetLinkAnchor(house, out var link) || !TryGetAnchor(house, out var fig))
+                return false;
+            point = new Point(
+                link.X + (fig.X - link.X) * 0.32,
+                link.Y + (fig.Y - link.Y) * 0.32);
+            return true;
+        }
+
+        private static int PrevHouse(int house) => house == 1 ? 12 : house - 1;
+        private static int NextHouse(int house) => house == 12 ? 1 : house + 1;
+
+        private static Point Midpoint(Point a, Point b) =>
+            new((a.X + b.X) / 2.0, (a.Y + b.Y) / 2.0);
+
+        private static IReadOnlyDictionary<int, Point> BuildProjectedAnchors(double insetTowardCenter)
         {
             var map = new Dictionary<int, Point>(12);
             foreach (var (house, fig) in Anchors)
-                map[house] = ProjectOntoInnerSquare(fig);
+                map[house] = ProjectOntoInnerSquare(fig, insetTowardCenter);
             return map;
         }
 
         /// <summary>
         /// Ray from chart center through the figure hits the inner square;
-        /// nudge slightly inward so numbers sit just inside the rim.
+        /// <paramref name="insetTowardCenter"/> pulls the point inward from the rim.
         /// </summary>
-        private static Point ProjectOntoInnerSquare(Point figure)
+        private static Point ProjectOntoInnerSquare(Point figure, double insetTowardCenter)
         {
             var dx = figure.X - CenterX;
             var dy = figure.Y - CenterY;
@@ -77,10 +134,22 @@ namespace GeomancyWebUI.Client.Helpers
             var hitX = CenterX + t * dx;
             var hitY = CenterY + t * dy;
 
-            const double inset = 0.08;
             return new Point(
-                hitX + (CenterX - hitX) * inset,
-                hitY + (CenterY - hitY) * inset);
+                hitX + (CenterX - hitX) * insetTowardCenter,
+                hitY + (CenterY - hitY) * insetTowardCenter);
+        }
+
+        /// <summary>Ray from center through the figure onto the outer diamond (|dx|+|dy|=500).</summary>
+        private static Point ProjectOntoDiamond(Point figure)
+        {
+            var dx = figure.X - CenterX;
+            var dy = figure.Y - CenterY;
+            var scale = Math.Abs(dx) + Math.Abs(dy);
+            if (scale < 1e-6)
+                return new Point(CenterX, CenterY - 500);
+
+            var t = 500.0 / scale;
+            return new Point(CenterX + t * dx, CenterY + t * dy);
         }
 
         /// <summary>

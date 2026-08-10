@@ -428,8 +428,56 @@ marker#aspect-arrow-end .aspect-arrowhead {
     font-weight: 600;
     font-family: var(--font-ui, system-ui, sans-serif);
     opacity: 0.85;
+    paint-order: stroke;
+    stroke: var(--bg-primary, #1a1a1a);
+    stroke-width: 4px;
     pointer-events: none;
     user-select: none;
+}
+
+.house-number-querent {
+    fill: #81c784;
+    font-weight: 700;
+    opacity: 1;
+}
+
+.house-number-quesited {
+    fill: #ffb74d;
+    font-weight: 700;
+    opacity: 1;
+}
+
+.house-role-fill {
+    stroke: none;
+    opacity: 0.22;
+}
+
+.house-role-fill-querent {
+    fill: #66bb6a;
+}
+
+.house-role-fill-quesited {
+    fill: #ffa726;
+}
+
+.house-role-tag {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-ui, system-ui, sans-serif);
+    paint-order: stroke;
+    stroke: var(--bg-primary, #1a1a1a);
+    stroke-width: 3.5px;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    user-select: none;
+}
+
+.house-role-tag-querent {
+    fill: #81c784;
+}
+
+.house-role-tag-quesited {
+    fill: #ffb74d;
 }
 
 .house-chart-intermediate {
@@ -488,6 +536,14 @@ marker#aspect-arrow-end .aspect-arrowhead {
     border: none !important;
     box-shadow: none !important;
     gap: 0 !important;
+}
+
+.traditional-house-chart-container .house-card-container.house-chart-slot-querent .figure-lines {
+    filter: drop-shadow(0 0 5px rgba(102, 187, 106, 0.95));
+}
+
+.traditional-house-chart-container .house-card-container.house-chart-slot-quesited .figure-lines {
+    filter: drop-shadow(0 0 5px rgba(255, 167, 38, 0.95));
 }
 
 .traditional-house-chart-container .house-card-container .figure-label,
