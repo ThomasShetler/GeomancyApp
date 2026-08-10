@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace GeomancyApp
 {
@@ -181,6 +182,7 @@ namespace GeomancyApp
 
         /// <summary>
         /// Short structural reason the company bond qualifies (paren from engine description, or type default).
+        /// Prefer <see cref="CompanyMechanismFormationClause"/> for reader-facing "paired under" wording.
         /// </summary>
         public static string CompanyFormationReason(string companyType, string companyTypeDescription)
         {
@@ -206,6 +208,123 @@ namespace GeomancyApp
                 _ => string.Empty
             };
         }
+
+        /// <summary>
+        /// Binding planet for Demi-Simple from engine description paren text.
+        /// Handles "same planet: Jupiter" and "Caput Draconis with Jupiter".
+        /// </summary>
+        public static string ExtractCompanyBondPlanet(string companyTypeDescription)
+        {
+            var reason = CompanyFormationReason("DemiSimple", companyTypeDescription);
+            if (string.IsNullOrEmpty(reason))
+                return string.Empty;
+
+            const string samePlanetPrefix = "same planet:";
+            if (reason.StartsWith(samePlanetPrefix, StringComparison.OrdinalIgnoreCase))
+                return reason.Substring(samePlanetPrefix.Length).Trim();
+
+            var withIdx = reason.LastIndexOf(" with ", StringComparison.OrdinalIgnoreCase);
+            if (withIdx > 0 && withIdx + 6 < reason.Length)
+                return reason.Substring(withIdx + 6).Trim();
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Compact mechanism clause: "paired under Jupiter", "identical figures", etc.
+        /// </summary>
+        public static string CompanyMechanismFormationClause(string companyType, string companyTypeDescription)
+        {
+            var key = (companyType ?? string.Empty).Trim();
+            if (key.Equals("DemiSimple", StringComparison.OrdinalIgnoreCase)
+                || key.IndexOf("Demi", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                var planet = ExtractCompanyBondPlanet(companyTypeDescription);
+                if (!string.IsNullOrEmpty(planet))
+                    return $"paired under {planet}";
+                return "paired under the same planetary patron";
+            }
+
+            if (key.Equals("Simple", StringComparison.OrdinalIgnoreCase))
+                return "identical figures";
+            if (key.Equals("Compound", StringComparison.OrdinalIgnoreCase))
+                return "opposite figures (Table 6-2)";
+            if (key.Equals("Capitular", StringComparison.OrdinalIgnoreCase))
+                return "the same Fire / head line only";
+
+            var fallback = CompanyFormationReason(companyType, companyTypeDescription);
+            return string.IsNullOrEmpty(fallback) ? string.Empty : fallback;
+        }
+
+        /// <summary>
+        /// "This chart" sentence naming houses, figures, querent/quesited role, and Demi planet bond.
+        /// </summary>
+        public static string CompanyThisChartSentence(
+            int significatorHouse,
+            string significatorFigure,
+            string significatorRole,
+            int companionHouse,
+            string companionFigure,
+            string companyType,
+            string companyTypeDescription)
+        {
+            if (significatorHouse is < 1 or > 12 || companionHouse is < 1 or > 12
+                || significatorHouse == companionHouse)
+                return string.Empty;
+
+            var sigFig = string.IsNullOrWhiteSpace(significatorFigure) ? "its figure" : significatorFigure.Trim();
+            var coFig = string.IsNullOrWhiteSpace(companionFigure) ? "its companion" : companionFigure.Trim();
+            var role = string.IsNullOrWhiteSpace(significatorRole) ? "significator" : significatorRole.Trim().ToLowerInvariant();
+
+            var key = (companyType ?? string.Empty).Trim();
+            if (key.Equals("DemiSimple", StringComparison.OrdinalIgnoreCase)
+                || key.IndexOf("Demi", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                var planet = ExtractCompanyBondPlanet(companyTypeDescription);
+                var under = string.IsNullOrEmpty(planet) ? "the same planetary patron" : planet;
+                return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it are both paired under {under}.";
+            }
+
+            if (key.Equals("Simple", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it hold the same figure.";
+            }
+
+            if (key.Equals("Compound", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it are Table 6-2 opposite figures.";
+            }
+
+            if (key.Equals("Capitular", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it share only the Fire / head line.";
+            }
+
+            var clause = CompanyMechanismFormationClause(companyType, companyTypeDescription);
+            if (string.IsNullOrEmpty(clause))
+                return $"House {significatorHouse} ({sigFig}), the {role}, is in company with House {companionHouse} ({coFig}).";
+            return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it qualify as {clause}.";
+        }
+
+        /// <summary>
+        /// Greer Table 6-2 planetary groups for Demi-Simple company (planet → figures).
+        /// </summary>
+        public static IReadOnlyList<(string Planet, string Figures)> DemiSimplePlanetTable { get; } =
+            new List<(string, string)>
+            {
+                ("Saturn", "Carcer, Tristitia"),
+                ("Jupiter", "Acquisitio, Laetitia"),
+                ("Mars", "Puer, Rubeus"),
+                ("Sun", "Fortuna Major, Fortuna Minor"),
+                ("Venus", "Amissio, Puella"),
+                ("Mercury", "Albus, Conjunctio"),
+                ("Moon", "Populus, Via"),
+                ("Caput Draconis", "with Jupiter or Venus"),
+                ("Cauda Draconis", "with Saturn or Mars"),
+            };
+
+        public static string DemiSimpleHowFormsIntro =>
+            "Paired figures share the same planet from Greer Table 6-2, or Caput/Cauda keep special company with Jupiter/Venus or Saturn/Mars:";
 
         /// <summary>
         /// Interpretive sentence after the em dash in CompanyTypeDescription, if present.

@@ -199,7 +199,8 @@ namespace GeomancyUnitTesting
             Assert.IsTrue(explanation.Steps.Any(s =>
                 s.Contains("Cauda Draconis") && s.Contains("House 2") && s.Contains("House 10")));
             Assert.IsTrue(explanation.Steps.Any(s =>
-                    s.IndexOf("formed as", StringComparison.OrdinalIgnoreCase) >= 0
+                    s.IndexOf("paired under", StringComparison.OrdinalIgnoreCase) >= 0
+                    || s.IndexOf("formed as", StringComparison.OrdinalIgnoreCase) >= 0
                     || s.IndexOf("opposite figures", StringComparison.OrdinalIgnoreCase) >= 0),
                 "Steps should explain how the company type is formed.");
         }

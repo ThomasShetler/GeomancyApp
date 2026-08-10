@@ -188,6 +188,40 @@
     color: var(--text-primary);
 }
 
+.company-planet-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+}
+
+.company-planet-table th,
+.company-planet-table td {
+    text-align: left;
+    padding: 0.28rem 0.4rem;
+    border-bottom: 1px solid rgba(255, 193, 7, 0.18);
+    vertical-align: top;
+}
+
+.company-planet-table th {
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255, 193, 7, 0.85);
+    font-weight: 700;
+}
+
+.company-planet-table td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-primary);
+    width: 38%;
+}
+
+.company-planet-table td:last-child {
+    color: var(--text-secondary);
+}
+
 .chip-base {
     background: var(--bg-secondary);
     color: var(--text-secondary);

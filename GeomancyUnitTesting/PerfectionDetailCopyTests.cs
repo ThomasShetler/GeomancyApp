@@ -87,6 +87,39 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void DemiSimple_MechanismClause_PairedUnderPlanet()
+        {
+            Assert.AreEqual("Jupiter",
+                PerfectionDetailCopy.ExtractCompanyBondPlanet(
+                    "Company Demi-Simple (Caput Draconis with Jupiter) — reading."));
+            Assert.AreEqual("paired under Jupiter",
+                PerfectionDetailCopy.CompanyMechanismFormationClause(
+                    "DemiSimple",
+                    "Company Demi-Simple (Caput Draconis with Jupiter) — reading."));
+            Assert.AreEqual("paired under Mercury",
+                PerfectionDetailCopy.CompanyMechanismFormationClause(
+                    "DemiSimple",
+                    "Company Demi-Simple (same planet: Mercury) — reading."));
+        }
+
+        [TestMethod]
+        public void DemiSimple_ThisChart_NamesHousesRoleAndPlanet()
+        {
+            var text = PerfectionDetailCopy.CompanyThisChartSentence(
+                5, "Laetitia", "Quesited",
+                6, "Caput Draconis",
+                "DemiSimple",
+                "Company Demi-Simple (Caput Draconis with Jupiter) — reading.");
+
+            StringAssert.Contains(text, "House 5");
+            StringAssert.Contains(text, "Laetitia");
+            StringAssert.Contains(text, "quesited");
+            StringAssert.Contains(text, "House 6");
+            StringAssert.Contains(text, "Caput Draconis");
+            StringAssert.Contains(text, "paired under Jupiter");
+        }
+
+        [TestMethod]
         public void FormatCompanyPairLabel_IncludesFigures()
         {
             Assert.AreEqual("H7 · Caput Draconis ↔ H8 · Cauda Draconis",

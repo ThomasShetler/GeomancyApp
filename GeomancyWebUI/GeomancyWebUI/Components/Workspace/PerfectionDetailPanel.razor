@@ -88,6 +88,8 @@
                     GetHouseFigureName(companyPair.Item2),
                     p.CompanyType,
                     p.CompanyTypeDescription,
+                    p.QuerentHouse,
+                    p.QuesitedHouse,
                     CompanyTypesDirectory?.Overview)
             }
 
@@ -417,6 +419,8 @@
                     GetHouseFigureName(companyPair.Item2),
                     a.CompanyType,
                     string.Empty,
+                    Analysis?.QuerentHouse ?? 0,
+                    Analysis?.QuesitedHouse ?? 0,
                     CompanyTypesDirectory?.Overview)
             }
 
@@ -692,6 +696,8 @@
         string companionFigure,
         string companyTypeKey,
         string companyTypeDescription,
+        int querentHouse,
+        int quesitedHouse,
         CompanyTypeOverview? overview) => __builder =>
     {
         var typeKey = !string.IsNullOrWhiteSpace(companyTypeKey)
@@ -703,19 +709,25 @@
         if (string.IsNullOrEmpty(typeName))
             typeName = "Company of Houses";
 
+        var isDemi = typeKey.Equals("DemiSimple", StringComparison.OrdinalIgnoreCase)
+            || typeKey.IndexOf("Demi", StringComparison.OrdinalIgnoreCase) >= 0;
+
         var pairLabel = PerfectionDetailCopy.FormatCompanyPairLabel(
             sigHouse, companionHouse, sigFigure, companionFigure);
-        var formationReason = PerfectionDetailCopy.CompanyFormationReason(typeKey, companyTypeDescription);
+        var sigRole = sigHouse == querentHouse && querentHouse > 0
+            ? "Querent"
+            : (sigHouse == quesitedHouse && quesitedHouse > 0 ? "Quesited" : "Significator");
+        var thisChart = PerfectionDetailCopy.CompanyThisChartSentence(
+            sigHouse, sigFigure, sigRole, companionHouse, companionFigure, typeKey, companyTypeDescription);
         var reading = PerfectionDetailCopy.CompanyFormationReading(companyTypeDescription);
         var tagline = !string.IsNullOrWhiteSpace(companyEntry?.Tagline)
             ? companyEntry!.Tagline.Trim()
             : (!string.IsNullOrWhiteSpace(overview?.Tagline) ? overview!.Tagline.Trim() : string.Empty);
-        var howFormed = !string.IsNullOrWhiteSpace(companyEntry?.DetectionRule)
-            ? companyEntry!.DetectionRule.Trim()
-            : (!string.IsNullOrEmpty(formationReason)
-                ? $"Detected when the paired figures qualify as {formationReason}."
+        var howFormed = isDemi
+            ? PerfectionDetailCopy.DemiSimpleHowFormsIntro
+            : (!string.IsNullOrWhiteSpace(companyEntry?.DetectionRule)
+                ? companyEntry!.DetectionRule.Trim()
                 : string.Empty);
-        // Prefer chart-specific engine reading, then databank mechanism, then overview.
         var mechanism = !string.IsNullOrWhiteSpace(reading)
             ? reading
             : (!string.IsNullOrWhiteSpace(companyEntry?.MechanismSummary)
@@ -741,18 +753,41 @@
             {
                 <p class="company-cover-tagline">@tagline</p>
             }
-            @if (!string.IsNullOrEmpty(howFormed))
+            @if (!string.IsNullOrEmpty(howFormed) || isDemi)
             {
                 <div class="company-cover-block">
                     <span class="company-cover-label">How this type forms</span>
-                    <p class="company-cover-text">@howFormed</p>
+                    @if (!string.IsNullOrEmpty(howFormed))
+                    {
+                        <p class="company-cover-text">@howFormed</p>
+                    }
+                    @if (isDemi)
+                    {
+                        <table class="company-planet-table">
+                            <thead>
+                                <tr>
+                                    <th>Planet</th>
+                                    <th>Figures</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in PerfectionDetailCopy.DemiSimplePlanetTable)
+                                {
+                                    <tr>
+                                        <td>@row.Planet</td>
+                                        <td>@row.Figures</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
                 </div>
             }
-            @if (!string.IsNullOrEmpty(formationReason))
+            @if (!string.IsNullOrEmpty(thisChart))
             {
                 <div class="company-cover-block">
                     <span class="company-cover-label">This chart</span>
-                    <p class="company-cover-text">Paired figures qualify as @formationReason.</p>
+                    <p class="company-cover-text">@thisChart</p>
                 </div>
             }
             @if (!string.IsNullOrEmpty(mechanism))
