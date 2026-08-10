@@ -120,6 +120,32 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void Compound_ThisChart_NamesOppositePairWorking()
+        {
+            var text = PerfectionDetailCopy.CompanyThisChartSentence(
+                1, "Amissio", "Querent",
+                2, "Acquisitio",
+                "Compound",
+                "Company Compound (opposite figures) — reading.");
+
+            StringAssert.Contains(text, "House 1");
+            StringAssert.Contains(text, "Amissio");
+            StringAssert.Contains(text, "querent");
+            StringAssert.Contains(text, "House 2");
+            StringAssert.Contains(text, "Acquisitio");
+            StringAssert.Contains(text, "Amissio ↔ Acquisitio");
+        }
+
+        [TestMethod]
+        public void Compound_MatchOppositePair_IncludesNodes()
+        {
+            var match = PerfectionDetailCopy.MatchCompoundOppositePair("Caput Draconis", "Cauda Draconis");
+            Assert.IsNotNull(match);
+            Assert.AreEqual("Cauda Draconis", match.Value.Left);
+            Assert.AreEqual("Caput Draconis", match.Value.Right);
+        }
+
+        [TestMethod]
         public void FormatCompanyPairLabel_IncludesFigures()
         {
             Assert.AreEqual("H7 · Caput Draconis ↔ H8 · Cauda Draconis",

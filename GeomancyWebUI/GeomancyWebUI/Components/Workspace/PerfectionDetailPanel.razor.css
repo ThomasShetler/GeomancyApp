@@ -222,6 +222,16 @@
     color: var(--text-secondary);
 }
 
+.company-planet-table tr.is-active-pair td {
+    color: var(--text-primary);
+    font-weight: 700;
+    background: rgba(255, 193, 7, 0.12);
+}
+
+.company-planet-table tr.is-active-pair td:last-child {
+    color: var(--text-primary);
+}
+
 .chip-base {
     background: var(--bg-secondary);
     color: var(--text-secondary);

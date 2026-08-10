@@ -290,8 +290,15 @@ namespace GeomancyApp
                 return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it hold the same figure.";
             }
 
-            if (key.Equals("Compound", StringComparison.OrdinalIgnoreCase))
+            if (key.Equals("Compound", StringComparison.OrdinalIgnoreCase)
+                || key.IndexOf("Compound", StringComparison.OrdinalIgnoreCase) >= 0)
             {
+                var pair = MatchCompoundOppositePair(sigFig, coFig);
+                if (pair != null)
+                {
+                    return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it match the {pair.Value.Left} ↔ {pair.Value.Right} opposite pair on Table 6-2.";
+                }
+
                 return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it are Table 6-2 opposite figures.";
             }
 
@@ -341,7 +348,7 @@ namespace GeomancyApp
             };
 
         public static string CompoundHowFormsIntro =>
-            "Company Compound exists between these opposite figure pairs (Table 6-2):";
+            "Company Compound exists between these opposite figure pairs (Greer Table 6-2):";
 
         public static bool IsDemiSimpleCompanyType(string companyTypeKey) =>
             !string.IsNullOrWhiteSpace(companyTypeKey)
@@ -351,6 +358,35 @@ namespace GeomancyApp
         public static bool IsCompoundCompanyType(string companyTypeKey) =>
             !string.IsNullOrWhiteSpace(companyTypeKey)
             && companyTypeKey.IndexOf("Compound", StringComparison.OrdinalIgnoreCase) >= 0;
+
+        /// <summary>
+        /// Resolve which Table 6-2 opposite row these two figures occupy (order-insensitive).
+        /// </summary>
+        public static (string Left, string Right)? MatchCompoundOppositePair(string figureA, string figureB)
+        {
+            var a = FigureNameHelper.Root(figureA ?? string.Empty);
+            var b = FigureNameHelper.Root(figureB ?? string.Empty);
+            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
+                return null;
+
+            foreach (var row in CompoundOppositePairs)
+            {
+                if ((row.Left.Equals(a, StringComparison.OrdinalIgnoreCase)
+                        && row.Right.Equals(b, StringComparison.OrdinalIgnoreCase))
+                    || (row.Left.Equals(b, StringComparison.OrdinalIgnoreCase)
+                        && row.Right.Equals(a, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return row;
+                }
+            }
+
+            return null;
+        }
+
+        public static bool IsCompoundPairRowActive(string left, string right, string figureA, string figureB) =>
+            MatchCompoundOppositePair(figureA, figureB) is { } matched
+            && matched.Left.Equals(left, StringComparison.OrdinalIgnoreCase)
+            && matched.Right.Equals(right, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Interpretive sentence after the em dash in CompanyTypeDescription, if present.

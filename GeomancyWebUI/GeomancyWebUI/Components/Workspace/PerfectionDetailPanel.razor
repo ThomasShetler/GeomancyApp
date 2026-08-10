@@ -709,8 +709,14 @@
         if (string.IsNullOrEmpty(typeName))
             typeName = "Company of Houses";
 
-        var isDemi = PerfectionDetailCopy.IsDemiSimpleCompanyType(typeKey);
-        var isCompound = PerfectionDetailCopy.IsCompoundCompanyType(typeKey);
+        var isDemi = PerfectionDetailCopy.IsDemiSimpleCompanyType(typeKey)
+            || PerfectionDetailCopy.IsDemiSimpleCompanyType(companyEntry?.Id ?? string.Empty);
+        var isCompound = PerfectionDetailCopy.IsCompoundCompanyType(typeKey)
+            || PerfectionDetailCopy.IsCompoundCompanyType(companyEntry?.Id ?? string.Empty)
+            || PerfectionDetailCopy.IsCompoundCompanyType(typeName);
+        var effectiveTypeKey = isCompound
+            ? "Compound"
+            : (isDemi ? "DemiSimple" : typeKey);
 
         var pairLabel = PerfectionDetailCopy.FormatCompanyPairLabel(
             sigHouse, companionHouse, sigFigure, companionFigure);
@@ -718,7 +724,7 @@
             ? "Querent"
             : (sigHouse == quesitedHouse && quesitedHouse > 0 ? "Quesited" : "Significator");
         var thisChart = PerfectionDetailCopy.CompanyThisChartSentence(
-            sigHouse, sigFigure, sigRole, companionHouse, companionFigure, typeKey, companyTypeDescription);
+            sigHouse, sigFigure, sigRole, companionHouse, companionFigure, effectiveTypeKey, companyTypeDescription);
         var reading = PerfectionDetailCopy.CompanyFormationReading(companyTypeDescription);
         var tagline = !string.IsNullOrWhiteSpace(companyEntry?.Tagline)
             ? companyEntry!.Tagline.Trim()
@@ -737,6 +743,9 @@
                 : (!string.IsNullOrWhiteSpace(overview?.MechanismSummary)
                     ? overview!.MechanismSummary.Trim()
                     : string.Empty));
+        var activeCompound = isCompound
+            ? PerfectionDetailCopy.MatchCompoundOppositePair(sigFigure, companionFigure)
+            : null;
 
         <section class="detail-card company-cover-card">
             <h3 class="card-title">
@@ -795,7 +804,10 @@
                             <tbody>
                                 @foreach (var row in PerfectionDetailCopy.CompoundOppositePairs)
                                 {
-                                    <tr>
+                                    var rowActive = activeCompound != null
+                                        && row.Left.Equals(activeCompound.Value.Left, StringComparison.OrdinalIgnoreCase)
+                                        && row.Right.Equals(activeCompound.Value.Right, StringComparison.OrdinalIgnoreCase);
+                                    <tr class="@(rowActive ? "is-active-pair" : null)">
                                         <td>@row.Left</td>
                                         <td>@row.Right</td>
                                     </tr>

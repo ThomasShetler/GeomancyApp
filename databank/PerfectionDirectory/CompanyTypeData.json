@@ -105,7 +105,7 @@
         "short_label": "Compound",
         "list_label": "Co. Comp.",
         "tagline": "Compound — companions are structural opposites yoked together.",
-        "detection_rule": "Paired figures form one of Greer Table 6-2's eight opposite pairs: Puer/Puella, Amissio/Acquisitio, Albus/Rubeus, Populus/Via, Fortuna Major/Fortuna Minor, Conjunctio/Carcer, Tristitia/Laetitia, Caput Draconis/Cauda Draconis.",
+        "detection_rule": "Company Compound exists between Greer Table 6-2's eight opposite pairs (see figure / opposite table).",
         "mechanism_summary": "Company Compound is detected when the paired figures are one of the eight Table 6-2 opposite pairs (each line flipped). The engine treats them as complementary partners forced into the same arena: each completes the other while importing a contrary aim.",
         "co_reads": "Read Compound company as cooperation with friction — spouses, rivals-turned-partners, or balances that work because they pull differently. The companion can perfect the matter and still color it with tension.",
         "interpretation_paragraphs": [
