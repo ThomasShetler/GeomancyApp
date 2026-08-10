@@ -133,6 +133,7 @@ namespace GeomancyUnitTesting
             StringAssert.Contains(text, "querent");
             StringAssert.Contains(text, "House 2");
             StringAssert.Contains(text, "Acquisitio");
+            StringAssert.Contains(text, "compound opposite figures");
             StringAssert.Contains(text, "Amissio ↔ Acquisitio");
         }
 

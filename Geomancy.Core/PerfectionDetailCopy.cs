@@ -203,7 +203,7 @@ namespace GeomancyApp
             {
                 "Simple" => "same figure",
                 "DemiSimple" => "same planetary patron (or Caput/Cauda node rule)",
-                "Compound" => "opposite figures (Table 6-2)",
+                "Compound" => "compound opposite figures",
                 "Capitular" => "same Fire / head line only",
                 _ => string.Empty
             };
@@ -248,7 +248,7 @@ namespace GeomancyApp
             if (key.Equals("Simple", StringComparison.OrdinalIgnoreCase))
                 return "identical figures";
             if (key.Equals("Compound", StringComparison.OrdinalIgnoreCase))
-                return "opposite figures (Table 6-2)";
+                return "compound opposite figures";
             if (key.Equals("Capitular", StringComparison.OrdinalIgnoreCase))
                 return "the same Fire / head line only";
 
@@ -296,10 +296,10 @@ namespace GeomancyApp
                 var pair = MatchCompoundOppositePair(sigFig, coFig);
                 if (pair != null)
                 {
-                    return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it match the {pair.Value.Left} ↔ {pair.Value.Right} opposite pair on Table 6-2.";
+                    return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it are compound opposite figures ({pair.Value.Left} ↔ {pair.Value.Right}).";
                 }
 
-                return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it are Table 6-2 opposite figures.";
+                return $"House {significatorHouse} ({sigFig}), the {role}, and House {companionHouse} ({coFig}) next to it are compound opposite figures.";
             }
 
             if (key.Equals("Capitular", StringComparison.OrdinalIgnoreCase))
@@ -348,7 +348,7 @@ namespace GeomancyApp
             };
 
         public static string CompoundHowFormsIntro =>
-            "Company Compound exists between these opposite figure pairs (Greer Table 6-2):";
+            "Company Compound exists between these opposite figure pairs:";
 
         public static bool IsDemiSimpleCompanyType(string companyTypeKey) =>
             !string.IsNullOrWhiteSpace(companyTypeKey)
@@ -360,7 +360,7 @@ namespace GeomancyApp
             && companyTypeKey.IndexOf("Compound", StringComparison.OrdinalIgnoreCase) >= 0;
 
         /// <summary>
-        /// Resolve which Table 6-2 opposite row these two figures occupy (order-insensitive).
+        /// Resolve which compound opposite row these two figures occupy (order-insensitive).
         /// </summary>
         public static (string Left, string Right)? MatchCompoundOppositePair(string figureA, string figureB)
         {

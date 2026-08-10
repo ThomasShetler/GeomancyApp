@@ -105,11 +105,11 @@
         "short_label": "Compound",
         "list_label": "Co. Comp.",
         "tagline": "Compound — companions are structural opposites yoked together.",
-        "detection_rule": "Company Compound exists between Greer Table 6-2's eight opposite pairs (see figure / opposite table).",
-        "mechanism_summary": "Company Compound is detected when the paired figures are one of the eight Table 6-2 opposite pairs (each line flipped). The engine treats them as complementary partners forced into the same arena: each completes the other while importing a contrary aim.",
+        "detection_rule": "Company Compound exists between these eight opposite figure pairs (see figure / opposite table).",
+        "mechanism_summary": "Company Compound is detected when the paired figures are structural opposites — every binary line flipped. The engine treats them as complementary partners forced into the same arena: each completes the other while importing a contrary aim.",
         "co_reads": "Read Compound company as cooperation with friction — spouses, rivals-turned-partners, or balances that work because they pull differently. The companion can perfect the matter and still color it with tension.",
         "interpretation_paragraphs": [
-          "Company Compound — The companion is the figure's structural inverse from Table 6-2. Help or mediation arrives from the other pole of the same axis.",
+          "Company Compound — The companion is the figure's structural inverse. Help or mediation arrives from the other pole of the same axis.",
           "The eight opposite pairs are: Puer ↔ Puella; Amissio ↔ Acquisitio; Albus ↔ Rubeus; Populus ↔ Via; Fortuna Major ↔ Fortuna Minor; Conjunctio ↔ Carcer; Tristitia ↔ Laetitia; Caput Draconis ↔ Cauda Draconis.",
           "When a Compound companion completes a favorable mode, do not ignore the contrary figure's dignity — the yes may come through a challenging intermediary."
         ],
@@ -118,49 +118,49 @@
             "id": "CompoundPuerPuella",
             "name": "Compound · Puer / Puella",
             "tagline": "Martial youth opposite Venusian grace.",
-            "mechanism_summary": "Table 6-2 opposite pair — heat and contest yoked to harmony and attraction."
+            "mechanism_summary": "Opposite pair — heat and contest yoked to harmony and attraction."
           },
           {
             "id": "CompoundAmissioAcquisitio",
             "name": "Compound · Amissio / Acquisitio",
             "tagline": "Loss opposite gain.",
-            "mechanism_summary": "Table 6-2 opposite pair — depletion and taking set against increase and acquisition."
+            "mechanism_summary": "Opposite pair — depletion and taking set against increase and acquisition."
           },
           {
             "id": "CompoundAlbusRubeus",
             "name": "Compound · Albus / Rubeus",
             "tagline": "Pale counsel opposite inflamed passion.",
-            "mechanism_summary": "Table 6-2 opposite pair — cool deliberation yoked to heated, risky force."
+            "mechanism_summary": "Opposite pair — cool deliberation yoked to heated, risky force."
           },
           {
             "id": "CompoundPopulusVia",
             "name": "Compound · Populus / Via",
             "tagline": "Crowd opposite path.",
-            "mechanism_summary": "Table 6-2 opposite pair — collective standing water against a single road in motion."
+            "mechanism_summary": "Opposite pair — collective standing water against a single road in motion."
           },
           {
             "id": "CompoundFortunae",
             "name": "Compound · Fortuna Major / Fortuna Minor",
             "tagline": "Greater fortune opposite lesser fortune.",
-            "mechanism_summary": "Table 6-2 opposite pair — arriving strength set against departing or unstable luck."
+            "mechanism_summary": "Opposite pair — arriving strength set against departing or unstable luck."
           },
           {
             "id": "CompoundConjunctioCarcer",
             "name": "Compound · Conjunctio / Carcer",
             "tagline": "Joining opposite enclosure.",
-            "mechanism_summary": "Table 6-2 opposite pair — meeting and bargain yoked to confinement and delay."
+            "mechanism_summary": "Opposite pair — meeting and bargain yoked to confinement and delay."
           },
           {
             "id": "CompoundTristitiaLaetitia",
             "name": "Compound · Tristitia / Laetitia",
             "tagline": "Sorrow opposite joy.",
-            "mechanism_summary": "Table 6-2 opposite pair — downward heaviness set against upward gladness."
+            "mechanism_summary": "Opposite pair — downward heaviness set against upward gladness."
           },
           {
             "id": "CompoundNodes",
             "name": "Compound · Caput / Cauda Draconis",
             "tagline": "North Node opposite South Node.",
-            "mechanism_summary": "Table 6-2 opposite pair — openings and intake yoked to release and emptying."
+            "mechanism_summary": "Opposite pair — openings and intake yoked to release and emptying."
           }
         ]
       },
