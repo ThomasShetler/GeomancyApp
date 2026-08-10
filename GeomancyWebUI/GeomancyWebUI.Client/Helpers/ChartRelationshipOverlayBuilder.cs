@@ -33,6 +33,12 @@ namespace GeomancyWebUI.Client.Helpers
                     TryAddCompanyFigureTranslationPath(
                         links, querent, quesited, a.FromHouse, a.ToHouse, a.CompanyType, string.Empty);
                 }
+                else
+                {
+                    TryGetSignificatorFigures(analysis, out var qFig, out var xFig);
+                    TryAddTranslatedAspectHomePath(
+                        links, querent, quesited, a.FromHouse, a.ToHouse, qFig, xFig, string.Empty);
+                }
             }
             else if (selection.Perfection != null)
             {
@@ -90,6 +96,18 @@ namespace GeomancyWebUI.Client.Helpers
                             p.CompanyType,
                             p.PathActor);
                     }
+                }
+                else if (hasAspect)
+                {
+                    TryAddTranslatedAspectHomePath(
+                        links,
+                        querent,
+                        quesited,
+                        p.AspectFromHouse,
+                        p.AspectToHouse,
+                        p.QuerentFigure,
+                        p.QuesitedFigure,
+                        p.PathFigure);
                 }
             }
 
@@ -363,6 +381,95 @@ namespace GeomancyWebUI.Client.Helpers
                 Description =
                     $"Company figure from H{companion} also appears in H{aspectFrom}, and from there aspects H{aspectTo}."
             });
+        }
+
+        /// <summary>
+        /// Non-company translated aspect: link the cast seat back to the significator home
+        /// whose figure is casting (e.g. Sin Sq H10→H1 with quesited figure in H10 → path H10↔H6).
+        /// </summary>
+        private static void TryAddTranslatedAspectHomePath(
+            List<ChartAspectLink> links,
+            int querent,
+            int quesited,
+            int aspectFrom,
+            int aspectTo,
+            string? querentFigure,
+            string? quesitedFigure,
+            string? castFigure)
+        {
+            if (aspectFrom < 1 || aspectFrom > 12)
+                return;
+            if (aspectFrom == querent || aspectFrom == quesited)
+                return;
+
+            var (home, role) = ResolveTranslatedAspectHome(
+                castFigure, aspectTo, querent, quesited, querentFigure, quesitedFigure);
+            if (home <= 0 || home == aspectFrom)
+                return;
+
+            var label = role switch
+            {
+                "querent" => "Q.",
+                "quesited" => "Qst.",
+                _ => "Home"
+            };
+            var figNote = string.IsNullOrWhiteSpace(castFigure) ? "This figure" : castFigure.Trim();
+            TryAddPathLink(
+                links,
+                aspectFrom,
+                home,
+                label,
+                $"{figNote} in H{aspectFrom} reflects the {role} significator in H{home}.");
+        }
+
+        private static (int homeHouse, string role) ResolveTranslatedAspectHome(
+            string? castFigure,
+            int aspectToHouse,
+            int querentHouse,
+            int quesitedHouse,
+            string? querentFigure,
+            string? quesitedFigure)
+        {
+            var castRoot = FigureNameHelper.Root(castFigure ?? string.Empty);
+            var qRoot = FigureNameHelper.Root(querentFigure ?? string.Empty);
+            var xRoot = FigureNameHelper.Root(quesitedFigure ?? string.Empty);
+
+            if (!string.IsNullOrEmpty(castRoot) && castRoot.Equals(qRoot, StringComparison.OrdinalIgnoreCase)
+                && querentHouse > 0)
+                return (querentHouse, "querent");
+
+            if (!string.IsNullOrEmpty(castRoot) && castRoot.Equals(xRoot, StringComparison.OrdinalIgnoreCase)
+                && quesitedHouse > 0)
+                return (quesitedHouse, "quesited");
+
+            // Cast toward one significator usually means the other side's figure has moved.
+            if (aspectToHouse == quesitedHouse && querentHouse > 0)
+                return (querentHouse, "querent");
+            if (aspectToHouse == querentHouse && quesitedHouse > 0)
+                return (quesitedHouse, "quesited");
+
+            return (0, string.Empty);
+        }
+
+        private static void TryGetSignificatorFigures(
+            PerfectionAnalysisModel? analysis,
+            out string querentFigure,
+            out string quesitedFigure)
+        {
+            querentFigure = string.Empty;
+            quesitedFigure = string.Empty;
+            if (analysis == null)
+                return;
+
+            foreach (var p in analysis.Perfections.Concat(analysis.Denials))
+            {
+                if (string.IsNullOrEmpty(querentFigure) && !string.IsNullOrEmpty(p.QuerentFigure))
+                    querentFigure = p.QuerentFigure;
+                if (string.IsNullOrEmpty(quesitedFigure) && !string.IsNullOrEmpty(p.QuesitedFigure))
+                    quesitedFigure = p.QuesitedFigure;
+                if (!string.IsNullOrEmpty(querentFigure) && !string.IsNullOrEmpty(quesitedFigure))
+                    return;
+            }
         }
 
         /// <summary>

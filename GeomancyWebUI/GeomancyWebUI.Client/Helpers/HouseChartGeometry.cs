@@ -22,12 +22,6 @@ namespace GeomancyWebUI.Client.Helpers
         private static readonly double EdgeB = CenterX;                          // 500
         private static readonly double EdgeC = InnerMax - InnerHalf * 2.0 / 6.0; // ~666.67
 
-        /// <summary>Equal-third boundaries along each inner-square edge (length 500).</summary>
-        private const double Third0 = InnerMin;                    // 250
-        private const double Third1 = InnerMin + 500.0 / 3.0;      // ~416.67
-        private const double Third2 = InnerMin + 1000.0 / 3.0;     // ~583.33
-        private const double Third3 = InnerMax;                    // 750
-
         private static readonly IReadOnlyDictionary<int, Point> Anchors = new Dictionary<int, Point>
         {
             [1] = new(150, 550),
@@ -81,21 +75,35 @@ namespace GeomancyWebUI.Client.Helpers
         }
 
         /// <summary>
-        /// House-cell triangle: the inner-square rim third for this house, tipped on the
-        /// outer square through the figure seat. Figure-ray tips are unique per house, so
-        /// neighbors meet on an edge instead of stacking on a shared outer corner.
+        /// House-cell triangle matching the chart grid: diamond lobes for 1/4/7/10,
+        /// and the outer-corner pockets (split by the corner rays) for the other eight.
         /// </summary>
         public static bool TryGetHouseFillPolygon(int house, out IReadOnlyList<Point> points)
         {
             points = Array.Empty<Point>();
-            if (house < 1 || house > 12 || !Anchors.TryGetValue(house, out var fig))
+            if (house < 1 || house > 12)
                 return false;
 
-            if (!TryGetRimSegment(house, out var rimA, out var rimB))
-                return false;
-
-            points = new[] { rimA, rimB, ProjectOntoOuterSquare(fig) };
-            return true;
+            // Chart lines: inner square 250..750, diamond tips at mid-sides, corner rays
+            // to outer corners. Cardinals own a full diamond lobe; the other houses own
+            // one half of an outside-diamond corner pocket.
+            points = house switch
+            {
+                10 => new[] { new Point(InnerMin, InnerMin), new Point(InnerMax, InnerMin), new Point(CenterX, 0) },
+                7 => new[] { new Point(InnerMax, InnerMin), new Point(InnerMax, InnerMax), new Point(1000, CenterY) },
+                4 => new[] { new Point(InnerMin, InnerMax), new Point(InnerMax, InnerMax), new Point(CenterX, 1000) },
+                1 => new[] { new Point(InnerMin, InnerMin), new Point(InnerMin, InnerMax), new Point(0, CenterY) },
+                11 => new[] { new Point(CenterX, 0), new Point(0, 0), new Point(InnerMin, InnerMin) },
+                12 => new[] { new Point(0, CenterY), new Point(0, 0), new Point(InnerMin, InnerMin) },
+                9 => new[] { new Point(CenterX, 0), new Point(1000, 0), new Point(InnerMax, InnerMin) },
+                8 => new[] { new Point(1000, 0), new Point(1000, CenterY), new Point(InnerMax, InnerMin) },
+                6 => new[] { new Point(1000, CenterY), new Point(1000, 1000), new Point(InnerMax, InnerMax) },
+                5 => new[] { new Point(1000, 1000), new Point(CenterX, 1000), new Point(InnerMax, InnerMax) },
+                3 => new[] { new Point(CenterX, 1000), new Point(0, 1000), new Point(InnerMin, InnerMax) },
+                2 => new[] { new Point(0, 1000), new Point(0, CenterY), new Point(InnerMin, InnerMax) },
+                _ => Array.Empty<Point>()
+            };
+            return points.Count >= 3;
         }
 
         /// <summary>Legacy 3-point helper for callers that only need a triangle approximation.</summary>
@@ -108,47 +116,6 @@ namespace GeomancyWebUI.Client.Helpers
             right = pts[1];
             outer = pts[2];
             return true;
-        }
-
-        /// <summary>
-        /// Inner-square rim segment for a house (exact thirds on the rim stroke).
-        /// Top L→R: 11,10,9 · Right T→B: 8,7,6 · Bottom R→L: 5,4,3 · Left B→T: 2,1,12.
-        /// </summary>
-        private static bool TryGetRimSegment(int house, out Point a, out Point b)
-        {
-            a = b = default;
-            switch (house)
-            {
-                case 11: a = new(Third0, InnerMin); b = new(Third1, InnerMin); return true;
-                case 10: a = new(Third1, InnerMin); b = new(Third2, InnerMin); return true;
-                case 9: a = new(Third2, InnerMin); b = new(Third3, InnerMin); return true;
-                case 8: a = new(InnerMax, Third0); b = new(InnerMax, Third1); return true;
-                case 7: a = new(InnerMax, Third1); b = new(InnerMax, Third2); return true;
-                case 6: a = new(InnerMax, Third2); b = new(InnerMax, Third3); return true;
-                case 5: a = new(Third3, InnerMax); b = new(Third2, InnerMax); return true;
-                case 4: a = new(Third2, InnerMax); b = new(Third1, InnerMax); return true;
-                case 3: a = new(Third1, InnerMax); b = new(Third0, InnerMax); return true;
-                case 2: a = new(InnerMin, Third3); b = new(InnerMin, Third2); return true;
-                case 1: a = new(InnerMin, Third2); b = new(InnerMin, Third1); return true;
-                case 12: a = new(InnerMin, Third1); b = new(InnerMin, Third0); return true;
-                default: return false;
-            }
-        }
-
-        /// <summary>
-        /// Ray from chart center through <paramref name="through"/> onto the outer square (L∞ = 500).
-        /// </summary>
-        private static Point ProjectOntoOuterSquare(Point through)
-        {
-            var dx = through.X - CenterX;
-            var dy = through.Y - CenterY;
-            if (Math.Abs(dx) < 1e-6 && Math.Abs(dy) < 1e-6)
-                return new Point(CenterX, 0);
-
-            var linf = Math.Max(Math.Abs(dx), Math.Abs(dy));
-            return new Point(
-                CenterX + dx * (500.0 / linf),
-                CenterY + dy * (500.0 / linf));
         }
 
         /// <summary>
