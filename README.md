@@ -11,7 +11,7 @@
 
 **Live app:** <https://geofancy.up.railway.app>
 
-> **Official release (v1.0.7).** Geofancy is a production-ready web workspace with a live geomancy wiki, classical house reference, licensed Greer's references, interactive casting walkthroughs, and the full perfections and Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
+> **Official release (v1.0.8).** Geofancy is a production-ready web workspace with house-chart relationship overlays, a live perfections & aspects wiki, classical house reference, licensed Greer's references, interactive casting walkthroughs, and the full Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
 
 ---
 
@@ -31,9 +31,10 @@ It is meant for both the working practitioner and the serious student.
 - **Two workspaces.** Wide desktop layout and mobile-first flow with chart drawer, mothers casting shell, and walkthrough that opens your chart on `/mobile` when you finish on a phone.
 - **Original corpus.** Figure, house, court, and slot text written from primary sources and practice — now aligned to classical house doctrine with Read When, Reading Craft, and misreading guards.
 - **Greer's references.** Optional licensed overlay from *The Art and Practice of Geomancy* (2009) in Court & Houses — Off, Alongside, Override, or Greer only — with attribution and Critical Context flags.
-- **Geomancy Wiki.** Live figure and house glossaries, filterable house index, classical articles, casting how-tos, and interactive shield walkthrough.
+- **Geomancy Wiki.** Live figure and house glossaries, filterable house index, perfections & aspects method page, casting how-tos, and interactive shield walkthrough.
 - **Mothers casting walkthrough.** Desktop side-panel dot casting aligned to the shield chart; mobile parity with scrollable figure detail during stage review.
-- **Live perfections engine.** Querent / Quesited selection with every perfection, modifier, and aspect populated with practitioner-facing tips.
+- **Live perfections engine.** Querent / Quesited selection with relationship overlays on the house chart, company glossary, and practitioner-facing tips.
+- **House-chart overlays.** Company pairs, translation spokes, mutation passes, and chart-accurate house fills when you select a perfection or aspect.
 - **Way of Points analyzer.** Trace elemental paths, path types, break conditions, and Classic Way of Points / Way of the Light.
 - **House & court inspector.** Scope-labeled detail panels with house summary cards, elemental analysis, traditional imagery, and fully cited sources.
 - **Share, export & restore.** Seed URLs, JSON export, and locally saved Mothers with a restore prompt on return visits.

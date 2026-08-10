@@ -1,5 +1,29 @@
 # Releases
 
+## v1.0.8 — Chart relationship overlays & perfections wiki
+
+**Released:** August 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Feature release after **v1.0.7** — house-chart relationship drawing, perfection reading UX, a live perfections & aspects wiki, scoring fixes, and Railway resilience under Blazor Server load.
+
+### Highlights
+
+- **House-chart relationship overlays.** Selecting a perfection or aspect draws company pairs, company-pass arcs, translation spokes (Qrt / Qst), mutation passes, and house figure glows on the 12-house chart; arcs snap to inner-rim house numbers.
+- **House cell fills from chart geometry.** Highlights use the real chart-line triangles (cardinal diamond lobes and corner pockets) so fills match the drawn house cells.
+- **Perfection detail & company glossary.** Relationship-reading panel with Greer-aligned company/aspect geometry tables, this-chart working, and databank-backed Company of Houses copy on hover and in detail.
+- **Perfections & aspects wiki.** Live method page at `/wiki/methods/perfections-and-aspects` covering modes, aspects, scoring, and expanded company types from `CompanyTypeData.json`.
+- **Scoring & list accuracy.** Company malefics always surface under Negative Aspects (not only Denials); aspect lists and totals aligned to engine cast geometry; overlays clear when leaving Perfections or Way of Points.
+- **Way of Points chart highlights.** Path selection lights Judge, Witnesses, and houses on the shield chart.
+- **Railway responsiveness.** Health probe `/alive` (not prerendered `/`), InteractiveServer prerender off, higher ThreadPool floors, shorter disconnected-circuit retention, and short CSS cache TTL so static assets and `/_blazor/negotiate` stop timing out at the edge.
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.8.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production; `web-app` = integration / testing.
+
+---
+
 ## v1.0.7 — Classical house reference & wiki revamp
 
 **Released:** July 2026  
