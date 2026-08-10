@@ -110,5 +110,59 @@ namespace GeomancyUnitTesting
             Assert.IsNotNull(company);
             Assert.AreEqual(CompanyType.Simple, company.CompanyType);
         }
+
+        [TestMethod]
+        public void Compound_AllNonSharedPlanetOppositePairs_DetectAsCompound()
+        {
+            // Opposite pairs that do NOT share a planet (otherwise Demi-Simple wins by priority).
+            var pairs = new[]
+            {
+                ("Puer", "Puella"),
+                ("Amissio", "Acquisitio"),
+                ("Albus", "Rubeus"),
+                ("Conjunctio", "Carcer"),
+                ("Tristitia", "Laetitia"),
+                ("Cauda Draconis", "Caput Draconis"),
+            };
+
+            foreach (var (left, right) in pairs)
+            {
+                var chart = ChartWithUniqueFigures();
+                chart.SetHouseFigure(1, left);
+                chart.SetHouseFigure(2, right);
+                chart.SetHouseFigure(6, "Populus");
+                // Keep quesited pair from also forming company that could confuse the assert.
+                chart.SetHouseFigure(5, "Fortuna Major");
+
+                var company = PerfectionCalculator.Find(chart, 1, 6, returnAllModes: true)
+                    .FirstOrDefault(r => r.Mode == PerfectionType.Company
+                        && r.CompanyType == CompanyType.Compound);
+
+                Assert.IsNotNull(company, $"Expected Compound for {left}/{right} on querent pair H1–H2.");
+            }
+        }
+
+        [TestMethod]
+        public void OppositeSamePlanetPairs_PreferDemiSimpleOverCompound()
+        {
+            // Greer lists these as opposites AND same-planet; engine priority is Demi first.
+            foreach (var (left, right) in new[] { ("Populus", "Via"), ("Fortuna Major", "Fortuna Minor") })
+            {
+                var chart = ChartWithUniqueFigures();
+                chart.SetHouseFigure(1, left);
+                chart.SetHouseFigure(2, right);
+                chart.SetHouseFigure(6, "Puer");
+                chart.SetHouseFigure(5, "Albus");
+
+                var company = PerfectionCalculator.Find(chart, 1, 6, returnAllModes: true)
+                    .FirstOrDefault(r => r.Mode == PerfectionType.Company
+                        && (r.PathFromHouse == 2 || r.AspectFromHouse == 2
+                            || (r.Notes != null && r.Notes.Exists(n => n.Contains("house 2")))));
+
+                Assert.IsNotNull(company, $"Expected company for {left}/{right}.");
+                Assert.AreEqual(CompanyType.DemiSimple, company.CompanyType,
+                    $"{left}/{right} share a planet, so Demi-Simple should win over Compound.");
+            }
+        }
     }
 }

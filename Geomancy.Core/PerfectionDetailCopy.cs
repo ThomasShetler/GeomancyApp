@@ -325,6 +325,34 @@ namespace GeomancyApp
             "Paired figures share the same planet from Greer Table 6-2 (Caput with Jupiter/Venus; Cauda with Saturn/Mars):";
 
         /// <summary>
+        /// Greer Table 6-2 opposite pairs for Company Compound.
+        /// </summary>
+        public static IReadOnlyList<(string Left, string Right)> CompoundOppositePairs { get; } =
+            new List<(string, string)>
+            {
+                ("Puer", "Puella"),
+                ("Amissio", "Acquisitio"),
+                ("Albus", "Rubeus"),
+                ("Populus", "Via"),
+                ("Fortuna Major", "Fortuna Minor"),
+                ("Conjunctio", "Carcer"),
+                ("Tristitia", "Laetitia"),
+                ("Cauda Draconis", "Caput Draconis"),
+            };
+
+        public static string CompoundHowFormsIntro =>
+            "Company Compound exists between these opposite figure pairs (Table 6-2):";
+
+        public static bool IsDemiSimpleCompanyType(string companyTypeKey) =>
+            !string.IsNullOrWhiteSpace(companyTypeKey)
+            && (companyTypeKey.Equals("DemiSimple", StringComparison.OrdinalIgnoreCase)
+                || companyTypeKey.IndexOf("Demi", StringComparison.OrdinalIgnoreCase) >= 0);
+
+        public static bool IsCompoundCompanyType(string companyTypeKey) =>
+            !string.IsNullOrWhiteSpace(companyTypeKey)
+            && companyTypeKey.IndexOf("Compound", StringComparison.OrdinalIgnoreCase) >= 0;
+
+        /// <summary>
         /// Interpretive sentence after the em dash in CompanyTypeDescription, if present.
         /// </summary>
         public static string CompanyFormationReading(string companyTypeDescription)

@@ -168,9 +168,9 @@
                                     {
                                         <span class="house-relation-label" title="@pathRelationHint">@pathRelation</span>
                                     }
-                                </div>
+                        </div>
                                 @RenderHouseRelationCell(listPath.ToHouse, "To")
-                            </div>
+                        </div>
                         </div>
                     }
 
@@ -185,10 +185,10 @@
                                 {
                                     <span class="sig-figure">@explanation.Cast.FromFigure</span>
                                 }
-                            </div>
+                    </div>
                             <div class="sig-arrow @castVis.CssClass" title="@castVis.Hint">
                                 @castVis.Glyph
-                            </div>
+                    </div>
                             <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast to</span>
                                 <span class="sig-house">House @explanation.Cast.ToHouse</span>
@@ -197,8 +197,8 @@
                                 {
                                     <span class="sig-figure">@explanation.Cast.ToFigure</span>
                                 }
-                            </div>
-                        </div>
+                    </div>
+                </div>
                         @if (!string.IsNullOrEmpty(explanation.DirectionHint))
                         {
                             <p class="cast-direction-hint">@explanation.DirectionHint</p>
@@ -209,8 +209,8 @@
                     {
                         <ol class="mechanism-list mechanism-steps">
                             @for (var si = 0; si < explanation.Steps.Count; si++)
-                            {
-                                <li class="mechanism-item">
+                        {
+                            <li class="mechanism-item">
                                     <span class="mechanism-step-num">@(si + 1)</span>
                                     <span class="mechanism-text">@HighlightTokens(explanation.Steps[si])</span>
                                 </li>
@@ -338,7 +338,7 @@
                         </div>
                     </details>
                 }
-            </section>
+                </section>
         }
     }
     else
@@ -433,12 +433,12 @@
                             <span class="sig-eyebrow">Querent</span>
                             <span class="sig-house">House @querentHouse</span>
                             <span class="sig-figure">@(string.IsNullOrEmpty(querentFigureName) ? "—" : querentFigureName)</span>
-                        </div>
+                    </div>
                         <div class="sig-cell">
                             <span class="sig-eyebrow">Quesited</span>
                             <span class="sig-house">House @quesitedHouse</span>
                             <span class="sig-figure">@(string.IsNullOrEmpty(quesitedFigureName) ? "—" : quesitedFigureName)</span>
-                        </div>
+                </div>
                     </div>
                 </section>
             }
@@ -470,8 +470,8 @@
                                     @if (!string.IsNullOrEmpty(pathRelation))
                                     {
                                         <span class="house-relation-label" title="@pathRelationHint">@pathRelation</span>
-                                    }
-                                </div>
+                }
+            </div>
                                 @RenderHouseRelationCell(listPath.ToHouse, "To")
                             </div>
                         </div>
@@ -480,28 +480,28 @@
                     @if (explanation.HasStructuredCast)
                     {
                         <div class="significators-grid cast-grid">
-                            <div class="sig-cell">
+                    <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast from</span>
                                 <span class="sig-house">House @explanation.Cast!.FromHouse</span>
                                 <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(explanation.Cast.FromHouse)</span>
                                 @if (!string.IsNullOrEmpty(explanation.Cast.FromFigure))
                                 {
                                     <span class="sig-figure">@explanation.Cast.FromFigure</span>
-                                }
-                            </div>
-                            <div class="sig-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">
-                                @aDirectionVis.Glyph
-                            </div>
-                            <div class="sig-cell">
+                        }
+                    </div>
+                    <div class="sig-arrow @aDirectionVis.CssClass" title="@aDirectionVis.Hint">
+                        @aDirectionVis.Glyph
+                    </div>
+                    <div class="sig-cell">
                                 <span class="sig-eyebrow">Cast to</span>
                                 <span class="sig-house">House @explanation.Cast.ToHouse</span>
                                 <span class="sig-house-sub">@FigureDisplayHelper.GetHouseName(explanation.Cast.ToHouse)</span>
                                 @if (!string.IsNullOrEmpty(explanation.Cast.ToFigure))
                                 {
                                     <span class="sig-figure">@explanation.Cast.ToFigure</span>
-                                }
-                            </div>
-                        </div>
+                        }
+                    </div>
+                </div>
                         @if (!string.IsNullOrEmpty(explanation.DirectionHint))
                         {
                             <p class="cast-direction-hint">@explanation.DirectionHint</p>
@@ -520,7 +520,7 @@
                             }
                         </ol>
                     }
-                </section>
+            </section>
             }
 
             @if (explanation.Participants.Count > 0)
@@ -709,8 +709,8 @@
         if (string.IsNullOrEmpty(typeName))
             typeName = "Company of Houses";
 
-        var isDemi = typeKey.Equals("DemiSimple", StringComparison.OrdinalIgnoreCase)
-            || typeKey.IndexOf("Demi", StringComparison.OrdinalIgnoreCase) >= 0;
+        var isDemi = PerfectionDetailCopy.IsDemiSimpleCompanyType(typeKey);
+        var isCompound = PerfectionDetailCopy.IsCompoundCompanyType(typeKey);
 
         var pairLabel = PerfectionDetailCopy.FormatCompanyPairLabel(
             sigHouse, companionHouse, sigFigure, companionFigure);
@@ -725,9 +725,11 @@
             : (!string.IsNullOrWhiteSpace(overview?.Tagline) ? overview!.Tagline.Trim() : string.Empty);
         var howFormed = isDemi
             ? PerfectionDetailCopy.DemiSimpleHowFormsIntro
-            : (!string.IsNullOrWhiteSpace(companyEntry?.DetectionRule)
-                ? companyEntry!.DetectionRule.Trim()
-                : string.Empty);
+            : (isCompound
+                ? PerfectionDetailCopy.CompoundHowFormsIntro
+                : (!string.IsNullOrWhiteSpace(companyEntry?.DetectionRule)
+                    ? companyEntry!.DetectionRule.Trim()
+                    : string.Empty));
         var mechanism = !string.IsNullOrWhiteSpace(reading)
             ? reading
             : (!string.IsNullOrWhiteSpace(companyEntry?.MechanismSummary)
@@ -753,7 +755,7 @@
             {
                 <p class="company-cover-tagline">@tagline</p>
             }
-            @if (!string.IsNullOrEmpty(howFormed) || isDemi)
+            @if (!string.IsNullOrEmpty(howFormed) || isDemi || isCompound)
             {
                 <div class="company-cover-block">
                     <span class="company-cover-label">How this type forms</span>
@@ -776,6 +778,26 @@
                                     <tr>
                                         <td>@row.Planet</td>
                                         <td>@row.Figures</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else if (isCompound)
+                    {
+                        <table class="company-planet-table">
+                            <thead>
+                                <tr>
+                                    <th>Figure</th>
+                                    <th>Opposite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in PerfectionDetailCopy.CompoundOppositePairs)
+                                {
+                                    <tr>
+                                        <td>@row.Left</td>
+                                        <td>@row.Right</td>
                                     </tr>
                                 }
                             </tbody>
@@ -1062,17 +1084,17 @@
             GetClassicalModeGlossary);
 
     private static string GetClassicalModeGlossary(string key) => key switch
-    {
-        "Occupation"  => "Occupation — one figure sits in both significator houses, the strongest classical link.",
-        "Conjunction" => "Conjunction — one significator passes next door to the other for direct contact.",
-        "Aspect"      => "Aspect — a significator moves so Sextile, Trine, Square, or Opposition forms.",
-        "Translation" => "Translation — a third figure touches both houses beside the significators.",
-        "Mutation"    => "Mutation — both significators leap to new houses that sit side by side.",
-        "Impedition"  => "Impedition — no classical perfection path joins the querent and quesited.",
+        {
+            "Occupation"  => "Occupation — one figure sits in both significator houses, the strongest classical link.",
+            "Conjunction" => "Conjunction — one significator passes next door to the other for direct contact.",
+            "Aspect"      => "Aspect — a significator moves so Sextile, Trine, Square, or Opposition forms.",
+            "Translation" => "Translation — a third figure touches both houses beside the significators.",
+            "Mutation"    => "Mutation — both significators leap to new houses that sit side by side.",
+            "Impedition"  => "Impedition — no classical perfection path joins the querent and quesited.",
         "Company"     => "Company of Houses — a companion figure in the paired house helps form the link.",
-        "None"        => "No classical perfection — the wheel offers no recognized link between them.",
-        _             => string.Empty
-    };
+            "None"        => "No classical perfection — the wheel offers no recognized link between them.",
+            _             => string.Empty
+        };
 
     private static string GetAspectGlossary(string aspectType, string direction) =>
         GeomanticAspects.GlossaryLine(aspectType, direction ?? string.Empty);
