@@ -1,6 +1,9 @@
 @page "/wiki/methods/perfections-and-aspects"
 @rendermode InteractiveServer
 @using GeomancyApp
+@using GeomancyWebUI.Client.Models
+@using GeomancyWebUI.Client.Services
+@inject IGeomancyService GeomancyService
 
 <PageSeo Title="Perfections &amp; Aspects"
           Description="Classical geomantic perfections, company of houses, aspects, denials, and how Geofancy scores them."
@@ -85,23 +88,185 @@
 
     <section class="wiki-casting-section" id="company">
         <h2 class="wiki-casting-section-title">Company of houses</h2>
-        <p class="wiki-casting-section-lead">
-            Classical geomancy pairs only the odd–even neighbors <strong>1–2, 3–4, 5–6, 7–8, 9–10, and 11–12</strong>.
-            Company is never read between 2–3 or 10–11. When the figure in a significator’s house is in company with
-            the figure in its paired house, that companion can act as a second significator and complete another mode
-            (including an aspect) with the other party.
-        </p>
-        <ul class="wiki-sixteen-figures-list">
-            <li><strong>Simple</strong> — companion is the same figure (strongest bond).</li>
-            <li><strong>Demi-Simple</strong> — companions share a planetary patron (Greer Table 6-2 groups).</li>
-            <li><strong>Compound</strong> — opposite figure pairs (e.g. Via/Populus).</li>
-            <li><strong>Capitular</strong> — same Fire (head) line only, when the figures otherwise differ.</li>
-        </ul>
-        <p class="wiki-casting-section-lead">
-            Company does not invent a new mode by itself; it opens a door so occupation, conjunction, translation,
-            mutation, or an aspect can form through the companion. Favorable company paths appear under Perfections;
-            company-mediated squares and oppositions appear under − Aspects.
-        </p>
+
+        @if (_companyLoading)
+        {
+            <p class="wiki-loading">Loading company reference…</p>
+        }
+        else
+        {
+            <p class="wiki-casting-section-lead">
+                @(string.IsNullOrWhiteSpace(_companyOverview?.Tagline)
+                    ? "A paired-house companion can speak for friends, kin, or partners woven into the question."
+                    : _companyOverview!.Tagline)
+            </p>
+            <p class="wiki-casting-section-lead">
+                @(string.IsNullOrWhiteSpace(_companyOverview?.MechanismSummary)
+                    ? "Classical geomancy pairs only the odd–even neighbors 1–2, 3–4, 5–6, 7–8, 9–10, and 11–12. Company is never read between 2–3 or 10–11."
+                    : _companyOverview!.MechanismSummary)
+            </p>
+            @if (!string.IsNullOrWhiteSpace(_companyOverview?.CoReads))
+            {
+                <div class="wiki-casting-callout">@_companyOverview!.CoReads</div>
+            }
+            @if (_companyOverview?.InterpretationParagraphs is { Count: > 0 } overviewParas)
+            {
+                @foreach (var para in overviewParas)
+                {
+                    <p class="wiki-casting-section-lead">@para</p>
+                }
+            }
+
+            <h3 class="wiki-casting-subsection-title">Valid pairs only</h3>
+            <p class="wiki-casting-section-lead">
+                Company is checked on these six odd–even seats — never on consecutive even–odd neighbors such as 2–3 or 10–11:
+            </p>
+            <div class="wiki-casting-callout">
+                <table class="wiki-simple-table" aria-label="Company house pairs">
+                    <thead>
+                        <tr>
+                            <th>Pair</th>
+                            <th>Houses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1st / 2nd</td><td>House 1 with House 2</td></tr>
+                        <tr><td>3rd / 4th</td><td>House 3 with House 4</td></tr>
+                        <tr><td>5th / 6th</td><td>House 5 with House 6</td></tr>
+                        <tr><td>7th / 8th</td><td>House 7 with House 8</td></tr>
+                        <tr><td>9th / 10th</td><td>House 9 with House 10</td></tr>
+                        <tr><td>11th / 12th</td><td>House 11 with House 12</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="wiki-casting-section-lead">
+                Always name which side is in company (querent’s pair or quesited’s pair) and the concrete pair
+                (for example <strong>H7 with H8</strong>). The companion is an auxiliary voice — not a replacement
+                for the significator — whose company type tells you how tightly the helper is bound.
+            </p>
+
+            <h3 class="wiki-casting-subsection-title">How company opens a mode</h3>
+            <p class="wiki-casting-section-lead">
+                Company does not invent a new classical mode by itself. It opens a door so occupation, conjunction,
+                translation, mutation, or an aspect can form through the companion figure. In Geofancy:
+            </p>
+            <ul class="wiki-sixteen-figures-list">
+                <li>Favorable company paths appear under <strong>Perfections</strong> (By Company).</li>
+                <li>Company-mediated squares and oppositions appear under <strong>− Aspects</strong>.</li>
+                <li>The chart overlay draws the company pair (odd–even seats) and, when the companion figure also
+                    sits elsewhere casting an aspect, a company-pass link from the companion seat to that cast house.</li>
+            </ul>
+
+            <h3 class="wiki-casting-subsection-title">The four company types</h3>
+            <p class="wiki-casting-section-lead">
+                Detection runs strongest-first: Simple → Demi-Simple → Compound → Capitular. A pair that already
+                qualifies as a stronger type is not also labeled with a weaker one.
+            </p>
+
+            @foreach (var entry in _companyTypes)
+            {
+                <article class="wiki-company-type-card" id="@($"company-{entry.Id.ToLowerInvariant()}")">
+                    <h4 class="wiki-company-type-title">
+                        @entry.Name
+                        @if (!string.IsNullOrWhiteSpace(entry.ListLabel))
+                        {
+                            <span class="wiki-company-type-chip">@entry.ListLabel</span>
+                        }
+                    </h4>
+                    @if (!string.IsNullOrWhiteSpace(entry.Tagline))
+                    {
+                        <p class="wiki-casting-section-lead"><em>@entry.Tagline</em></p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(entry.DetectionRule))
+                    {
+                        <p class="wiki-casting-section-lead"><strong>Detection:</strong> @entry.DetectionRule</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(entry.MechanismSummary))
+                    {
+                        <p class="wiki-casting-section-lead">@entry.MechanismSummary</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(entry.CoReads))
+                    {
+                        <div class="wiki-casting-callout">@entry.CoReads</div>
+                    }
+                    @foreach (var para in entry.InterpretationParagraphs)
+                    {
+                        <p class="wiki-casting-section-lead">@para</p>
+                    }
+
+                    @if (string.Equals(entry.Id, "DemiSimple", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <p class="wiki-casting-section-lead">@PerfectionDetailCopy.DemiSimpleHowFormsIntro</p>
+                        <div class="wiki-casting-callout">
+                            <table class="wiki-simple-table" aria-label="Demi-Simple planetary groups">
+                                <thead>
+                                    <tr>
+                                        <th>Planet</th>
+                                        <th>Figures</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in PerfectionDetailCopy.DemiSimplePlanetTable)
+                                    {
+                                        <tr>
+                                            <td>@row.Planet</td>
+                                            <td>@row.Figures</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    @if (string.Equals(entry.Id, "Compound", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <p class="wiki-casting-section-lead">@PerfectionDetailCopy.CompoundHowFormsIntro</p>
+                        <div class="wiki-casting-callout">
+                            <table class="wiki-simple-table" aria-label="Compound opposite pairs">
+                                <thead>
+                                    <tr>
+                                        <th>Figure</th>
+                                        <th>Opposite</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pair in PerfectionDetailCopy.CompoundOppositePairs)
+                                    {
+                                        <tr>
+                                            <td>@pair.Left</td>
+                                            <td>@pair.Right</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    @if (entry.Variants is { Count: > 0 })
+                    {
+                        <details class="wiki-company-variants">
+                            <summary>@entry.Variants.Count variant notes</summary>
+                            <ul class="wiki-sixteen-figures-list">
+                                @foreach (var v in entry.Variants)
+                                {
+                                    <li>
+                                        <strong>@v.Name</strong>
+                                        @if (!string.IsNullOrWhiteSpace(v.Tagline))
+                                        {
+                                            <span> — @v.Tagline</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(v.MechanismSummary))
+                                        {
+                                            <div class="wiki-company-variant-note">@v.MechanismSummary</div>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </details>
+                    }
+                </article>
+            }
+        }
     </section>
 
     <section class="wiki-casting-section" id="aspects">
@@ -190,3 +355,41 @@
         </p>
     </section>
 </WikiArticleShell>
+
+@code {
+    private bool _companyLoading = true;
+    private CompanyTypeOverview? _companyOverview;
+    private List<CompanyTypeEntry> _companyTypes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var directory = await GeomancyService.GetCompanyTypesDirectoryAsync();
+            _companyOverview = directory?.Overview;
+            _companyTypes = directory?.CompanyTypes?
+                .OrderBy(e => CompanyTypeSortKey(e.Id))
+                .ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList()
+                ?? new List<CompanyTypeEntry>();
+        }
+        catch
+        {
+            _companyOverview = null;
+            _companyTypes = new List<CompanyTypeEntry>();
+        }
+        finally
+        {
+            _companyLoading = false;
+        }
+    }
+
+    private static int CompanyTypeSortKey(string? id) => id switch
+    {
+        "Simple" => 0,
+        "DemiSimple" => 1,
+        "Compound" => 2,
+        "Capitular" => 3,
+        _ => 9
+    };
+}

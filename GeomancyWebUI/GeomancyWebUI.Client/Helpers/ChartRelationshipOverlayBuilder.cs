@@ -208,13 +208,13 @@ namespace GeomancyWebUI.Client.Helpers
 
             if (querent > 0 && t1 != querent)
             {
-                TryAddPathLink(links, t1, querent, "Trans.",
+                TryAddPathLink(links, t1, querent, "Qrt",
                     $"{figNote} in H{t1} touches the querent in H{querent}.");
             }
 
             if (quesited > 0 && t2 != quesited)
             {
-                TryAddPathLink(links, t2, quesited, "Trans.",
+                TryAddPathLink(links, t2, quesited, "Qst",
                     $"{figNote} in H{t2} touches the quesited in H{quesited}.");
             }
 
