@@ -37,6 +37,21 @@
     min-width: 0;
 }
 
+.perf-wiki-link {
+    margin: 0;
+    font-size: 0.82rem;
+    flex-shrink: 0;
+}
+
+.perf-wiki-link a {
+    color: var(--accent-color, #c9a227);
+    text-decoration: none;
+}
+
+.perf-wiki-link a:hover {
+    text-decoration: underline;
+}
+
 .perf-empty {
     flex: 1 1 auto;
     display: flex;

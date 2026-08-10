@@ -181,7 +181,8 @@ Production **`master`** shipped **v0.2.2** (workspace, share/export, WoP, mobile
 | `/wiki/how-to/shield-chart/interactive` | Live | Full **`ChartCastingWalkthrough`** host |
 | `/wiki/how-to/generate-figures/interactive` | Redirect | Server redirect → shield interactive |
 | `/wiki/how-to/house-chart`, `/wiki/how-to/use-the-app` | Draft | `WikiPlaceholderBody` outlines only |
-| `/wiki/methods/perfections-and-aspects`, `/wiki/methods/way-of-points` | Draft | Outlines only |
+| `/wiki/methods/perfections-and-aspects` | Live | Classical modes, company, aspects, denials, scoring |
+| `/wiki/methods/way-of-points` | Draft | Outlines only |
 
 **New wiki components:** `WikiArticleShell`, `WikiFigureHeader` (Pattern mini-card), `WikiFigureDataPanel`, `ShieldChartStructureGuide`, `ShieldChartSectionDemo`, **`wiki.css`** (~2,400 lines).
 

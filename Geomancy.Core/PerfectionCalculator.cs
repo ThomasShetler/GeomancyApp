@@ -1743,16 +1743,9 @@ namespace GeomancyApp
             }
             else
             {
-                // No classical perfections — company malefics deny as Denials; standalone
-                // Mode=Aspect squares/oppositions belong only in NegativeAspects (not Denials),
-                // so the UI does not list the same cast twice.
-                var unfavorableCompany = results.Where(IsCompanyMaleficAspect).ToList();
-                
-                var allDenials = new List<PerfectionResult>();
-                allDenials.AddRange(unfavorableCompany);
-                
-                // Always create Impedition when there are no perfections
-                // (whether there are negative aspects or not)
+                // No classical perfections — Impedition is the denial. Company-mediated
+                // squares/oppositions and standalone Mode=Aspect casts belong under
+                // NegativeAspects (below), so the - Aspects chip and list stay in sync.
                 var impeditionResult = results.FirstOrDefault(r => r.Mode == PerfectionType.None);
                 if (impeditionResult == null)
                 {
@@ -1777,15 +1770,8 @@ namespace GeomancyApp
                         AddInterpretationTip(impeditionResult, chart, querentHouse, quesitedHouse);
                     }
                 }
-                
-                // Add denials (company malefics + impedition). Standalone Mode=Aspect
-                // difficulties are listed under NegativeAspects only.
-                analysis.Denials = allDenials;
-                // Always add impedition to denials (if not already there)
-                if (!analysis.Denials.Any(d => d.Mode == PerfectionType.None))
-                {
-                    analysis.Denials.Add(impeditionResult);
-                }
+
+                analysis.Denials = new List<PerfectionResult> { impeditionResult };
                 analysis.Perfections = new List<PerfectionResult>(); // Empty - no perfections
             }
 
@@ -1808,10 +1794,10 @@ namespace GeomancyApp
                         analysis.NegativeAspects.Add(aspectRecord);
                     }
                 }
-                else if (hasPerfections && IsCompanyMaleficAspect(result))
+                else if (IsCompanyMaleficAspect(result))
                 {
-                    // Company squares/oppositions alongside real perfections are difficulties,
-                    // not Denials (Denials are used only when nothing perfects).
+                    // Company squares/oppositions always surface as negative aspects
+                    // (whether or not anything else perfects). Denials keep Impedition only.
                     analysis.NegativeAspects.Add(BuildAspectRecord(result));
                 }
             }
@@ -1825,8 +1811,9 @@ namespace GeomancyApp
 
             foreach (var denial in analysis.Denials)
             {
-                // Unfavorable Mode=Aspect rows are listed under Negative Aspects; avoid double-counting.
-                if (denial.Mode == PerfectionType.Aspect)
+                // Aspect geometry (standalone Mode=Aspect or company malefics) is scored via
+                // NegativeAspects — Denials keep Impedition and non-aspect denial modes only.
+                if (denial.Mode == PerfectionType.Aspect || IsCompanyMaleficAspect(denial))
                     continue;
 
                 analysis.TotalFavorableScore += CalculateScore(denial);

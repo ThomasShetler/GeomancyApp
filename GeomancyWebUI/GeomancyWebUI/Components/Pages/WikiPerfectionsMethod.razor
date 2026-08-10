@@ -1,41 +1,192 @@
 @page "/wiki/methods/perfections-and-aspects"
 @rendermode InteractiveServer
+@using GeomancyApp
 
 <PageSeo Title="Perfections &amp; Aspects"
-          Description="Classical perfections, company of houses, denials, and aspect scoring in geomancy (method article in progress)."
+          Description="Classical geomantic perfections, company of houses, aspects, denials, and how Geofancy scores them."
           CanonicalPath="/wiki/methods/perfections-and-aspects"
-          NoIndex="true" />
+          Keywords="geomantic perfection, occupation conjunction translation mutation, company of houses, geomantic aspects, impedition"
+          OgType="article" />
 
 <WikiArticleShell Title="Perfections &amp; Aspects"
-                  Lead="How significators perfect by classical modes, company, aspects, and denials — and how Geofancy scores them."
+                  Lead="How significators perfect by classical modes, company, and aspects — and how Geofancy lists and scores them in the workspace."
                   ParentHref="/wiki"
-                  ParentLabel="Wiki"
-                  ShowDraftBadge="true">
-    <WikiPlaceholderBody Sections="@_sections"
-                         RelatedHint="Run a live analysis in the workspace under Perfections &amp; Aspects after choosing querent and quesited houses." />
-</WikiArticleShell>
+                  ParentLabel="Wiki">
 
-@code {
-    private static readonly IReadOnlyList<WikiPlaceholderBody.WikiOutlineSection> _sections = new[]
-    {
-        new WikiPlaceholderBody.WikiOutlineSection("Classical modes", new[]
-        {
-            "Occupation — same house",
-            "Conjunction — adjacent houses meeting",
-            "Translation — carrier figure moves perfection",
-            "Mutation — exchange at a distance"
-        }),
-        new WikiPlaceholderBody.WikiOutlineSection("Company of houses", new[]
-        {
-            "Simple, Demi-Simple, Compound, Capitular",
-            "Aspect-mediated company when significators aspect across the wheel"
-        }),
-        new WikiPlaceholderBody.WikiOutlineSection("Aspects & denials", new[]
-        {
-            "Sextile, trine, square, opposition with Dexter and Sinister direction",
-            "Positive and negative aspect lists separate from mode perfections",
-            "Impedition and net favorable / unfavorable scoring"
-        }),
-        new WikiPlaceholderBody.WikiOutlineSection("In Geofancy", null, "Full interpretive notes appear in the perfection detail panel when you select any row in the list.")
-    };
-}
+    <section class="wiki-casting-section" id="overview">
+        <h2 class="wiki-casting-section-title">What this analysis answers</h2>
+        <p class="wiki-casting-section-lead">
+            After you pick a <strong>querent</strong> house and a <strong>quesited</strong> house, Geofancy asks whether the
+            chart shows a classical link between those two significators. The result is not a single yes/no —
+            it is a structured list of modes, aspects, and denials, each with a score that rolls into a net verdict.
+        </p>
+        <div class="wiki-casting-callout">
+            Open a live chart in the <a href="/workspace">Workspace</a> under
+            <strong>Perfections &amp; Aspects</strong>. Selecting a row draws the geometry on the house chart;
+            this page explains what those rows mean.
+        </div>
+    </section>
+
+    <section class="wiki-casting-section" id="how-calculated">
+        <h2 class="wiki-casting-section-title">How Geofancy calculates</h2>
+        <p class="wiki-casting-section-lead">
+            The engine walks the twelve-house chart looking for classical perfection modes, company-mediated
+            paths, and cast aspects. Results are then sorted into four UI buckets:
+        </p>
+        <ul class="wiki-sixteen-figures-list">
+            <li><strong>Perfections</strong> — classical modes that affirm a link (Occupation, Conjunction, Translation, Mutation, and favorable company paths).</li>
+            <li><strong>Denials</strong> — Impedition when nothing classical perfects.</li>
+            <li><strong>+ Aspects</strong> — favorable cast aspects (Sextile, Trine), including company-mediated benefics listed under company when they perfect.</li>
+            <li><strong>− Aspects</strong> — challenging cast aspects (Square, Opposition), whether standalone or via company.</li>
+        </ul>
+        <p class="wiki-casting-section-lead">
+            Favorable Mode=Aspect rows live only under <strong>+ Aspects</strong> (not duplicated under Perfections).
+            Company-mediated squares and oppositions always live under <strong>− Aspects</strong>, even when the chart
+            also shows Impedition. That keeps the − Aspects chip aligned with the aspect geometry you see on the chart.
+        </p>
+    </section>
+
+    <section class="wiki-casting-section" id="classical-modes">
+        <h2 class="wiki-casting-section-title">Classical modes of perfection</h2>
+        <p class="wiki-casting-section-lead">
+            These modes follow traditional geomantic doctrine: the significators (or a carrier figure) must actually
+            meet on the house wheel. Static house pairs alone are not enough.
+        </p>
+
+        <h3 class="wiki-casting-subsection-title">Occupation</h3>
+        <p class="wiki-casting-section-lead">
+            The same figure stands in both the querent’s house and the quesited’s house. Medieval and Renaissance
+            handbooks treat this as the clearest classical link — direct and concentrated. Temper the reading with
+            the figure’s dignity: a fortunate occupant usually reads as welcome fulfillment; a difficult one can
+            still grant the outcome in a form that feels costly.
+        </p>
+
+        <h3 class="wiki-casting-subsection-title">Conjunction</h3>
+        <p class="wiki-casting-section-lead">
+            One significator has passed into a house immediately beside the other’s home house — literal proximity:
+            meetings, messages, or someone stepping one door closer on the wheel. Nearly as affirmative as occupation,
+            though it normally costs motion or initiative.
+        </p>
+
+        <h3 class="wiki-casting-subsection-title">Translation of light</h3>
+        <p class="wiki-casting-section-lead">
+            A third figure appears in houses adjacent to both significators, carrying light between them like a courier.
+            Read the translator’s character: favorable brokers vs sharp intermediaries. Geometry insists that
+            intermediaries — not solitary willpower — close the gap.
+        </p>
+
+        <h3 class="wiki-casting-subsection-title">Mutation</h3>
+        <p class="wiki-casting-section-lead">
+            Both significators have sprung into neighboring houses elsewhere on the chart, so the matter perfects only
+            after each party relocates into a new arena. Watch the new houses — they name the environment that hosts
+            the breakthrough.
+        </p>
+    </section>
+
+    <section class="wiki-casting-section" id="company">
+        <h2 class="wiki-casting-section-title">Company of houses</h2>
+        <p class="wiki-casting-section-lead">
+            Classical geomancy pairs only the odd–even neighbors <strong>1–2, 3–4, 5–6, 7–8, 9–10, and 11–12</strong>.
+            Company is never read between 2–3 or 10–11. When the figure in a significator’s house is in company with
+            the figure in its paired house, that companion can act as a second significator and complete another mode
+            (including an aspect) with the other party.
+        </p>
+        <ul class="wiki-sixteen-figures-list">
+            <li><strong>Simple</strong> — companion is the same figure (strongest bond).</li>
+            <li><strong>Demi-Simple</strong> — companions share a planetary patron (Greer Table 6-2 groups).</li>
+            <li><strong>Compound</strong> — opposite figure pairs (e.g. Via/Populus).</li>
+            <li><strong>Capitular</strong> — same Fire (head) line only, when the figures otherwise differ.</li>
+        </ul>
+        <p class="wiki-casting-section-lead">
+            Company does not invent a new mode by itself; it opens a door so occupation, conjunction, translation,
+            mutation, or an aspect can form through the companion. Favorable company paths appear under Perfections;
+            company-mediated squares and oppositions appear under − Aspects.
+        </p>
+    </section>
+
+    <section class="wiki-casting-section" id="aspects">
+        <h2 class="wiki-casting-section-title">Aspects</h2>
+        <p class="wiki-casting-section-lead">
+            @PerfectionDetailCopy.AspectHowFormsIntro
+            Aspects require <strong>movement</strong> — a significator (or company figure) casting from a translated seat.
+            A static opposition between home houses alone does not become a cast aspect row.
+        </p>
+
+        <div class="wiki-casting-callout">
+            <table class="wiki-simple-table" aria-label="Aspect geometry">
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Houses between</th>
+                        <th>Reading</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in PerfectionDetailCopy.AspectGeometryTable)
+                    {
+                        <tr>
+                            <td>@row.Aspect</td>
+                            <td>@row.HousesBetween</td>
+                            <td>@row.Reading</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="wiki-casting-subsection-title">Dexter and Sinister</h3>
+        <p class="wiki-casting-section-lead">
+            @GeomanticAspects.GlossaryLine(AspectType.Trine, "Dexter")
+        </p>
+        <p class="wiki-casting-section-lead">
+            @GeomanticAspects.GlossaryLine(AspectType.Trine, "Sinister")
+        </p>
+        <p class="wiki-casting-section-lead">
+            Opposition is not dexter or sinister — it spans opposite seats and reads as confrontation or denial.
+        </p>
+
+        <h3 class="wiki-casting-subsection-title">Translated casts and the home seat</h3>
+        <p class="wiki-casting-section-lead">
+            When a figure casts from a house that is not its querent/quesited home, Geofancy still ties that cast back
+            to the significator whose figure is moving. The chart overlay draws the aspect arc and a home link to the
+            reflected significator seat (for example a quesited figure casting from House 10 back to House 6).
+        </p>
+    </section>
+
+    <section class="wiki-casting-section" id="denials-scoring">
+        <h2 class="wiki-casting-section-title">Denials and scoring</h2>
+        <p class="wiki-casting-section-lead">
+            <strong>Impedition</strong> appears under Denials when none of the major perfecting modes fire. The chart
+            warns that indirect forces, wrong timing, or missing allies block the story you asked about — reformulate,
+            shift conditions, or cast again rather than forcing a static pattern.
+        </p>
+        <p class="wiki-casting-section-lead">
+            Geofancy’s net score sums favorable and unfavorable row scores from the lists you see:
+        </p>
+        <ul class="wiki-sixteen-figures-list">
+            <li>Classical perfections contribute favorable (and sometimes mixed) mode scores.</li>
+            <li>Sextile / Trine list rows score about <strong>+3</strong> (−1 if made through company).</li>
+            <li>Square list rows score about <strong>−3</strong> (−1 extra if through company → −4).</li>
+            <li>Opposition list rows score about <strong>−4</strong> (−1 extra if through company → −5).</li>
+            <li>Impedition contributes its own unfavorable weight under Denials.</li>
+        </ul>
+        <div class="wiki-casting-callout">
+            The verdict chip (Favorable / Mixed / Unfavorable) follows the net score of the listed rows — not a separate hidden formula.
+            If − Aspects shows a company square, that row’s score is already in the total; it is not double-counted under Denials.
+        </div>
+    </section>
+
+    <section class="wiki-casting-section" id="in-geofancy">
+        <h2 class="wiki-casting-section-title">In the workspace</h2>
+        <p class="wiki-casting-section-lead">
+            Select any row to open formation steps, participants, and chart overlays. Aspect and company covers reuse
+            the same geometry tables and company-type notes shown here. Leaving the Perfections &amp; Aspects tab
+            clears the overlay so the chart stays clean when you move on.
+        </p>
+        <p class="wiki-casting-section-lead">
+            Further figure and house reference:
+            <a href="/wiki/glossary/figures">Figure Glossary</a>,
+            <a href="/wiki/glossary/houses">House Glossary</a>.
+        </p>
+    </section>
+</WikiArticleShell>

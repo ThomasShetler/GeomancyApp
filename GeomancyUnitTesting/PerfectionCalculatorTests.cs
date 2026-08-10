@@ -297,6 +297,31 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void CompanyMaleficAspect_SurfacesInNegativeAspectsWhenNothingPerfects()
+        {
+            // Q Via H1 simple company with Via H2; X Populus H5 — company square, no classical perfection.
+            var chart = ChartWithUniqueFigures();
+            chart.SetHouseFigure(1, "Via");
+            chart.SetHouseFigure(2, "Via");
+            chart.SetHouseFigure(5, "Populus");
+
+            var analysis = PerfectionCalculator.AnalyzePerfections(chart, 1, 5);
+
+            Assert.AreEqual(0, analysis.Perfections.Count);
+            Assert.IsTrue(analysis.Denials.Any(d => d.Mode == PerfectionType.None),
+                "Impedition remains under Denials.");
+            Assert.IsFalse(analysis.Denials.Any(d =>
+                d.Mode == PerfectionType.Company && d.AspectBetweenSignificators == AspectType.Square),
+                "Company malefics must not live under Denials when listed as negative aspects.");
+
+            var neg = analysis.NegativeAspects.FirstOrDefault(a =>
+                a.AspectType == AspectType.Square && a.MadeThroughCompany);
+            Assert.IsNotNull(neg, "Company square must appear under NegativeAspects even with no perfections.");
+            Assert.IsTrue(analysis.TotalUnfavorableScore <= -4,
+                "Unfavorable total must include the company square (-4) plus Impedition.");
+        }
+
+        [TestMethod]
         public void StandaloneNegativeAspect_DoesNotClaimCompany()
         {
             // Translation square only (quesited Populus H7 also in H10 → square to H1).
