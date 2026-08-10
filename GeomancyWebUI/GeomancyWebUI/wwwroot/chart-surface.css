@@ -447,6 +447,30 @@ marker#aspect-arrow-end .aspect-arrowhead {
     opacity: 1;
 }
 
+.house-participation-fill {
+    stroke: none;
+    opacity: 0.16;
+}
+
+.house-participation-fill.is-participant {
+    fill: #90caf9;
+}
+
+.house-participation-fill.is-company {
+    fill: #ffc107;
+    opacity: 0.18;
+}
+
+.house-participation-fill.is-querent {
+    fill: #66bb6a;
+    opacity: 0.22;
+}
+
+.house-participation-fill.is-quesited {
+    fill: #ffa726;
+    opacity: 0.22;
+}
+
 .house-role-tag {
     font-size: 13px;
     font-weight: 700;
@@ -531,6 +555,17 @@ marker#aspect-arrow-end .aspect-arrowhead {
 
 .traditional-house-chart-container .house-card-container.house-chart-slot-quesited .figure-lines {
     filter: drop-shadow(0 0 5px rgba(255, 167, 38, 0.95));
+}
+
+.traditional-house-chart-container .house-card-container.house-chart-slot-highlight .figure-lines,
+.traditional-house-chart-container .house-card-container.house-chart-slot-cast .figure-lines,
+.traditional-house-chart-container .house-card-container.house-chart-slot-company .figure-lines {
+    filter: drop-shadow(0 0 4px rgba(144, 202, 249, 0.85));
+}
+
+.traditional-house-chart-container .house-card-container.house-chart-slot-querent.house-chart-slot-cast .figure-lines,
+.traditional-house-chart-container .house-card-container.house-chart-slot-quesited.house-chart-slot-cast .figure-lines {
+    filter: drop-shadow(0 0 6px rgba(102, 187, 106, 0.95));
 }
 
 .traditional-house-chart-container .house-card-container .figure-label,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace GeomancyWebUI.Client.Helpers
@@ -71,6 +72,46 @@ namespace GeomancyWebUI.Client.Helpers
                 num.X + (fig.X - num.X) * 0.38,
                 num.Y + (fig.Y - num.Y) * 0.38);
             return true;
+        }
+
+        /// <summary>
+        /// Soft fill triangle for a house: rim span between neighbors + outer apex on the diamond.
+        /// </summary>
+        public static bool TryGetHouseFillPoints(int house, out Point left, out Point right, out Point outer)
+        {
+            left = right = outer = default;
+            if (house < 1 || house > 12) return false;
+            if (!NumberAnchors.TryGetValue(house, out var mid)
+                || !NumberAnchors.TryGetValue(PrevHouse(house), out var prev)
+                || !NumberAnchors.TryGetValue(NextHouse(house), out var next)
+                || !Anchors.TryGetValue(house, out var fig))
+                return false;
+
+            left = Midpoint(prev, mid);
+            right = Midpoint(mid, next);
+            outer = ProjectOntoDiamond(fig);
+            outer = new Point(
+                outer.X + (CenterX - outer.X) * 0.04,
+                outer.Y + (CenterY - outer.Y) * 0.04);
+            return true;
+        }
+
+        private static int PrevHouse(int house) => house == 1 ? 12 : house - 1;
+        private static int NextHouse(int house) => house == 12 ? 1 : house + 1;
+
+        private static Point Midpoint(Point a, Point b) =>
+            new((a.X + b.X) / 2.0, (a.Y + b.Y) / 2.0);
+
+        private static Point ProjectOntoDiamond(Point figure)
+        {
+            var dx = figure.X - CenterX;
+            var dy = figure.Y - CenterY;
+            var scale = Math.Abs(dx) + Math.Abs(dy);
+            if (scale < 1e-6)
+                return new Point(CenterX, CenterY - 500);
+
+            var t = 500.0 / scale;
+            return new Point(CenterX + t * dx, CenterY + t * dy);
         }
 
         /// <summary>
