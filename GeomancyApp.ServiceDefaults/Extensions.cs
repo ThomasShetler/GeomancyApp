@@ -17,7 +17,12 @@ public static class Extensions
 {
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
-        builder.ConfigureOpenTelemetry();
+        // Skip OpenTelemetry instrumentation unless an exporter endpoint is configured.
+        // Otherwise Railway pays AspNetCore/HttpClient/Runtime instrumentation cost for nothing.
+        if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
+        {
+            builder.ConfigureOpenTelemetry();
+        }
 
         builder.AddDefaultHealthChecks();
 
@@ -31,12 +36,6 @@ public static class Extensions
             // Turn on service discovery by default
             http.AddServiceDiscovery();
         });
-
-        // Uncomment the following to restrict the allowed schemes for service discovery.
-        // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
-        // {
-        //     options.AllowedSchemes = ["https"];
-        // });
 
         return builder;
     }

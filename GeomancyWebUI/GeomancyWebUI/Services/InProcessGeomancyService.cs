@@ -16,19 +16,25 @@ namespace GeomancyWebUI.Services
     /// </summary>
     public class InProcessGeomancyService : IGeomancyService
     {
-        private List<HouseDirectoryEntry>? _housesDirectoryCache;
-        private List<CourtDirectoryEntry>? _courtsDirectoryCache;
-        private List<WayOfPointsElementEntry>? _wayOfPointsElementsCache;
-        private List<WayOfPointsPathTypeEntry>? _wayOfPointsPathTypesCache;
-        private CompanyTypeDirectory? _companyTypesCache;
-        private List<GreerFigureModel>? _greerFiguresCache;
-        private GreerHouseDirectory? _greerHousesCache;
+        // Process-wide caches: Scoped service was remapping large JSON directories on
+        // every Blazor circuit, which made each /workspace open feel stuck.
+        private static readonly object ProcessDirectoryGate = new();
+        private static List<HouseDirectoryEntry>? ProcessHouses;
+        private static List<CourtDirectoryEntry>? ProcessCourts;
+        private static List<WayOfPointsElementEntry>? ProcessWayOfPointsElements;
+        private static List<WayOfPointsPathTypeEntry>? ProcessWayOfPointsPathTypes;
+        private static CompanyTypeDirectory? ProcessCompanyTypes;
+        private static List<GreerFigureModel>? ProcessGreerFigures;
+        private static GreerHouseDirectory? ProcessGreerHouses;
 
         public Task<HouseChartModel> GenerateChartAsync(GenerateFourFiguresRequest request)
         {
             var contractsRequest = ToContractsFourFiguresRequest(request);
-            var response = Handlers.GenerateHouseChart(contractsRequest);
-            return Task.FromResult(MapToHouseChartModel(response));
+            return Task.Run(() =>
+            {
+                var response = Handlers.GenerateHouseChart(contractsRequest);
+                return MapToHouseChartModel(response);
+            });
         }
 
         public Task<FigureModel> GetFigureAsync(int headLine, int neckLine, int bodyLine, int footLine)
@@ -71,137 +77,179 @@ namespace GeomancyWebUI.Services
         public Task<PerfectionAnalysisModel> AnalyzePerfectionsAsync(PerfectionRequestModel request)
         {
             var contractsRequest = ToContractsPerfectionRequest(request);
-            var response = Handlers.AnalyzePerfections(contractsRequest);
-
-            var model = new PerfectionAnalysisModel
+            return Task.Run(() =>
             {
-                Success = response.Success,
-                Message = response.Message ?? string.Empty,
-                Perfections = response.Perfections?.Select(MapToPerfectionModel).ToList()
+                var response = Handlers.AnalyzePerfections(contractsRequest);
+                return new PerfectionAnalysisModel
+                {
+                    Success = response.Success,
+                    Message = response.Message ?? string.Empty,
+                    Perfections = response.Perfections?.Select(MapToPerfectionModel).ToList()
+                                  ?? new List<PerfectionModel>(),
+                    Denials = response.Denials?.Select(MapToPerfectionModel).ToList()
                               ?? new List<PerfectionModel>(),
-                Denials = response.Denials?.Select(MapToPerfectionModel).ToList()
-                          ?? new List<PerfectionModel>(),
-                PositiveAspects = response.PositiveAspects?.Select(MapToAspectRecordModel).ToList()
-                                  ?? new List<AspectRecordModel>(),
-                NegativeAspects = response.NegativeAspects?.Select(MapToAspectRecordModel).ToList()
-                                  ?? new List<AspectRecordModel>(),
-                TotalFavorableScore = response.TotalFavorableScore,
-                TotalUnfavorableScore = response.TotalUnfavorableScore,
-                NetScore = response.NetScore,
-                QuerentHouse = response.QuerentHouse,
-                QuesitedHouse = response.QuesitedHouse,
-            };
-            return Task.FromResult(model);
+                    PositiveAspects = response.PositiveAspects?.Select(MapToAspectRecordModel).ToList()
+                                      ?? new List<AspectRecordModel>(),
+                    NegativeAspects = response.NegativeAspects?.Select(MapToAspectRecordModel).ToList()
+                                      ?? new List<AspectRecordModel>(),
+                    TotalFavorableScore = response.TotalFavorableScore,
+                    TotalUnfavorableScore = response.TotalUnfavorableScore,
+                    NetScore = response.NetScore,
+                    QuerentHouse = response.QuerentHouse,
+                    QuesitedHouse = response.QuesitedHouse,
+                };
+            });
         }
 
-        public async Task<AspectAnalysisModel> GetAspectAnalysisAsync(GenerateFourFiguresRequest request)
+        public Task<AspectAnalysisModel> GetAspectAnalysisAsync(GenerateFourFiguresRequest request)
         {
-            // Mirror the HTTP service's behaviour: derive figure names from the four
-            // mothers, then call the figures-by-name aspect-analysis handler.
-            var figure1 = await GetFigureAsync(request.House1.HeadLine, request.House1.NeckLine, request.House1.BodyLine, request.House1.FootLine);
-            var figure2 = await GetFigureAsync(request.House2.HeadLine, request.House2.NeckLine, request.House2.BodyLine, request.House2.FootLine);
-            var figure3 = await GetFigureAsync(request.House3.HeadLine, request.House3.NeckLine, request.House3.BodyLine, request.House3.FootLine);
-            var figure4 = await GetFigureAsync(request.House4.HeadLine, request.House4.NeckLine, request.House4.BodyLine, request.House4.FootLine);
-
-            var response = Handlers.GetAspectAnalysisFromFigures(figure1.Name, figure2.Name, figure3.Name, figure4.Name);
-            return MapToAspectAnalysisModel(response);
+            // One chart build — avoid the old 4× GetFigure + rebuild-by-name path.
+            var contractsRequest = ToContractsFourFiguresRequest(request);
+            return Task.Run(() =>
+            {
+                var response = Handlers.GetAspectAnalysis(contractsRequest);
+                return MapToAspectAnalysisModel(response);
+            });
         }
 
         public Task<WayOfPointsAnalysisModel> CalculateWayOfPointsAsync(GenerateFourFiguresRequest request)
         {
             var contractsRequest = ToContractsFourFiguresRequest(request);
-            var response = Handlers.CalculateWayOfPoints(contractsRequest);
-
-            var model = new WayOfPointsAnalysisModel
+            return Task.Run(() =>
             {
-                Success = response.Success,
-                Message = response.Message ?? string.Empty,
-                FireWay = MapToWayOfPointsResultModel(response.FireWay),
-                AirWay = MapToWayOfPointsResultModel(response.AirWay),
-                WaterWay = MapToWayOfPointsResultModel(response.WaterWay),
-                EarthWay = MapToWayOfPointsResultModel(response.EarthWay),
-            };
-            return Task.FromResult(model);
+                var response = Handlers.CalculateWayOfPoints(contractsRequest);
+                return new WayOfPointsAnalysisModel
+                {
+                    Success = response.Success,
+                    Message = response.Message ?? string.Empty,
+                    FireWay = MapToWayOfPointsResultModel(response.FireWay),
+                    AirWay = MapToWayOfPointsResultModel(response.AirWay),
+                    WaterWay = MapToWayOfPointsResultModel(response.WaterWay),
+                    EarthWay = MapToWayOfPointsResultModel(response.EarthWay),
+                };
+            });
         }
 
         public Task<List<HouseDirectoryEntry>> GetHousesDirectoryAsync()
         {
-            if (_housesDirectoryCache != null) return Task.FromResult(_housesDirectoryCache);
-
-            var entries = Handlers.GetHousesDirectory();
-            _housesDirectoryCache = entries?.Select(MapToHouseDirectoryEntry).ToList()
+            if (ProcessHouses != null) return Task.FromResult(ProcessHouses);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
+                {
+                    if (ProcessHouses != null) return ProcessHouses;
+                    var entries = Handlers.GetHousesDirectory();
+                    ProcessHouses = entries?.Select(MapToHouseDirectoryEntry).ToList()
                                     ?? new List<HouseDirectoryEntry>();
-            return Task.FromResult(_housesDirectoryCache);
+                    return ProcessHouses;
+                }
+            });
         }
 
         public Task<List<CourtDirectoryEntry>> GetCourtsDirectoryAsync()
         {
-            if (_courtsDirectoryCache != null) return Task.FromResult(_courtsDirectoryCache);
-
-            var entries = Handlers.GetCourtsDirectory();
-            _courtsDirectoryCache = entries?.Select(MapToCourtDirectoryEntry).ToList()
+            if (ProcessCourts != null) return Task.FromResult(ProcessCourts);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
+                {
+                    if (ProcessCourts != null) return ProcessCourts;
+                    var entries = Handlers.GetCourtsDirectory();
+                    ProcessCourts = entries?.Select(MapToCourtDirectoryEntry).ToList()
                                     ?? new List<CourtDirectoryEntry>();
-            return Task.FromResult(_courtsDirectoryCache);
+                    return ProcessCourts;
+                }
+            });
         }
 
         public Task<List<WayOfPointsElementEntry>> GetWayOfPointsElementsDirectoryAsync()
         {
-            if (_wayOfPointsElementsCache != null) return Task.FromResult(_wayOfPointsElementsCache);
-
-            var entries = Handlers.GetWayOfPointsElementsDirectory();
-            _wayOfPointsElementsCache = entries?.Select(MapToWayOfPointsElementEntry).ToList()
-                                        ?? new List<WayOfPointsElementEntry>();
-            return Task.FromResult(_wayOfPointsElementsCache);
+            if (ProcessWayOfPointsElements != null) return Task.FromResult(ProcessWayOfPointsElements);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
+                {
+                    if (ProcessWayOfPointsElements != null) return ProcessWayOfPointsElements;
+                    var entries = Handlers.GetWayOfPointsElementsDirectory();
+                    ProcessWayOfPointsElements = entries?.Select(MapToWayOfPointsElementEntry).ToList()
+                                                 ?? new List<WayOfPointsElementEntry>();
+                    return ProcessWayOfPointsElements;
+                }
+            });
         }
 
         public Task<List<WayOfPointsPathTypeEntry>> GetWayOfPointsPathTypesDirectoryAsync()
         {
-            if (_wayOfPointsPathTypesCache != null) return Task.FromResult(_wayOfPointsPathTypesCache);
-
-            var entries = Handlers.GetWayOfPointsPathTypesDirectory();
-            _wayOfPointsPathTypesCache = entries?.Select(MapToWayOfPointsPathTypeEntry).ToList()
-                                         ?? new List<WayOfPointsPathTypeEntry>();
-            return Task.FromResult(_wayOfPointsPathTypesCache);
+            if (ProcessWayOfPointsPathTypes != null) return Task.FromResult(ProcessWayOfPointsPathTypes);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
+                {
+                    if (ProcessWayOfPointsPathTypes != null) return ProcessWayOfPointsPathTypes;
+                    var entries = Handlers.GetWayOfPointsPathTypesDirectory();
+                    ProcessWayOfPointsPathTypes = entries?.Select(MapToWayOfPointsPathTypeEntry).ToList()
+                                                  ?? new List<WayOfPointsPathTypeEntry>();
+                    return ProcessWayOfPointsPathTypes;
+                }
+            });
         }
 
         public Task<CompanyTypeDirectory> GetCompanyTypesDirectoryAsync()
         {
-            if (_companyTypesCache != null) return Task.FromResult(_companyTypesCache);
-
-            var directory = Handlers.GetCompanyTypesDirectory();
-            _companyTypesCache = directory == null
-                ? new CompanyTypeDirectory()
-                : new CompanyTypeDirectory
+            if (ProcessCompanyTypes != null) return Task.FromResult(ProcessCompanyTypes);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
                 {
-                    Overview = directory.Overview == null ? null : MapToCompanyTypeOverview(directory.Overview),
-                    CompanyTypes = directory.CompanyTypes?.Select(MapToCompanyTypeEntry).ToList()
-                                   ?? new List<CompanyTypeEntry>()
-                };
-            return Task.FromResult(_companyTypesCache);
+                    if (ProcessCompanyTypes != null) return ProcessCompanyTypes;
+                    var directory = Handlers.GetCompanyTypesDirectory();
+                    ProcessCompanyTypes = directory == null
+                        ? new CompanyTypeDirectory()
+                        : new CompanyTypeDirectory
+                        {
+                            Overview = directory.Overview == null ? null : MapToCompanyTypeOverview(directory.Overview),
+                            CompanyTypes = directory.CompanyTypes?.Select(MapToCompanyTypeEntry).ToList()
+                                           ?? new List<CompanyTypeEntry>()
+                        };
+                    return ProcessCompanyTypes;
+                }
+            });
         }
 
         public Task<List<GreerFigureModel>> GetGreerFiguresDirectoryAsync()
         {
-            if (_greerFiguresCache != null) return Task.FromResult(_greerFiguresCache);
-
-            var entries = Handlers.GetGreerFiguresDirectory();
-            _greerFiguresCache = entries?.Select(MapToGreerFigureModel).ToList()
-                                 ?? new List<GreerFigureModel>();
-            return Task.FromResult(_greerFiguresCache);
+            if (ProcessGreerFigures != null) return Task.FromResult(ProcessGreerFigures);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
+                {
+                    if (ProcessGreerFigures != null) return ProcessGreerFigures;
+                    var entries = Handlers.GetGreerFiguresDirectory();
+                    ProcessGreerFigures = entries?.Select(MapToGreerFigureModel).ToList()
+                                          ?? new List<GreerFigureModel>();
+                    return ProcessGreerFigures;
+                }
+            });
         }
 
         public Task<GreerHouseDirectory> GetGreerHousesDirectoryAsync()
         {
-            if (_greerHousesCache != null) return Task.FromResult(_greerHousesCache);
-
-            var directory = Handlers.GetGreerHousesDirectory();
-            _greerHousesCache = directory == null
-                ? new GreerHouseDirectory()
-                : new GreerHouseDirectory
+            if (ProcessGreerHouses != null) return Task.FromResult(ProcessGreerHouses);
+            return Task.Run(() =>
+            {
+                lock (ProcessDirectoryGate)
                 {
-                    Houses = directory.Houses?.Select(MapToGreerHouseEntry).ToList() ?? new List<GreerHouseEntry>()
-                };
-            return Task.FromResult(_greerHousesCache);
+                    if (ProcessGreerHouses != null) return ProcessGreerHouses;
+                    var directory = Handlers.GetGreerHousesDirectory();
+                    ProcessGreerHouses = directory == null
+                        ? new GreerHouseDirectory()
+                        : new GreerHouseDirectory
+                        {
+                            Houses = directory.Houses?.Select(MapToGreerHouseEntry).ToList() ?? new List<GreerHouseEntry>()
+                        };
+                    return ProcessGreerHouses;
+                }
+            });
         }
 
         private static GreerFigureModel MapToGreerFigureModel(ContractModels.GreerFigureResponse src) =>

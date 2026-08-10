@@ -403,51 +403,31 @@
 
         try
         {
-            await GenerateChartAsync();
+            // Chart first — don't block first paint on directories / Lot / WoP analysis.
+            await GenerateChartAsync(loadSupplementalAnalyses: false);
         }
         catch (Exception ex)
         {
             errorMessage = $"Error initializing workspace chart: {ex.Message}";
         }
 
+        // Court & Houses is the default tab — load only what it needs, in parallel.
         try
         {
-            housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
-            courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
-            greerFigures = await GeomancyService.GetGreerFiguresDirectoryAsync();
-            greerHousesDirectory = await GeomancyService.GetGreerHousesDirectoryAsync();
+            var housesTask = GeomancyService.GetHousesDirectoryAsync();
+            var courtsTask = GeomancyService.GetCourtsDirectoryAsync();
+            var greerFiguresTask = GeomancyService.GetGreerFiguresDirectoryAsync();
+            var greerHousesTask = GeomancyService.GetGreerHousesDirectoryAsync();
+            await Task.WhenAll(housesTask, courtsTask, greerFiguresTask, greerHousesTask);
+            housesDirectory = await housesTask;
+            courtsDirectory = await courtsTask;
+            greerFigures = await greerFiguresTask;
+            greerHousesDirectory = await greerHousesTask;
         }
         catch (Exception ex)
         {
-            // Non-fatal: directory data is supplemental. Surface a small notice but allow page to function.
             errorMessage = string.IsNullOrEmpty(errorMessage)
                 ? $"Reference directory unavailable: {ex.Message}"
-                : errorMessage;
-        }
-
-        try
-        {
-            wayOfPointsElements = await GeomancyService.GetWayOfPointsElementsDirectoryAsync();
-            wayOfPointsPathTypes = await GeomancyService.GetWayOfPointsPathTypesDirectoryAsync();
-        }
-        catch (Exception ex)
-        {
-            // Non-fatal: WayOfPoints directory data is supplemental — the
-            // tab will fall back to inline glyphs/labels if the API call
-            // fails (e.g. legacy API server without the new endpoints).
-            errorMessage = string.IsNullOrEmpty(errorMessage)
-                ? $"Way of Points directory unavailable: {ex.Message}"
-                : errorMessage;
-        }
-
-        try
-        {
-            companyTypesDirectory = await GeomancyService.GetCompanyTypesDirectoryAsync();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = string.IsNullOrEmpty(errorMessage)
-                ? $"Company types directory unavailable: {ex.Message}"
                 : errorMessage;
         }
     }
@@ -510,7 +490,7 @@
         greerReferenceMode = mode;
     }
 
-    private void SelectTab(WorkspaceTab tab)
+    private async Task SelectTab(WorkspaceTab tab)
     {
         if (activeTab == tab)
             return;
@@ -522,6 +502,39 @@
             ClearWayOfPointsSelectionAndHighlight();
 
         activeTab = tab;
+        await EnsureTabDataAsync(tab);
+    }
+
+    private async Task EnsureTabDataAsync(WorkspaceTab tab)
+    {
+        try
+        {
+            if (tab == WorkspaceTab.PerfectionsAndAspects && companyTypesDirectory == null)
+            {
+                companyTypesDirectory = await GeomancyService.GetCompanyTypesDirectoryAsync();
+            }
+
+            if (tab == WorkspaceTab.WayOfPoints)
+            {
+                if (wayOfPointsElements == null || wayOfPointsElements.Count == 0)
+                    wayOfPointsElements = await GeomancyService.GetWayOfPointsElementsDirectoryAsync();
+                if (wayOfPointsPathTypes == null || wayOfPointsPathTypes.Count == 0)
+                    wayOfPointsPathTypes = await GeomancyService.GetWayOfPointsPathTypesDirectoryAsync();
+                if (wayOfPointsAnalysis == null)
+                    await LoadWayOfPointsAsync();
+            }
+
+            if (tab == WorkspaceTab.LotsAndOther && aspectAnalysis == null)
+            {
+                await LoadAspectAnalysisAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = string.IsNullOrEmpty(errorMessage)
+                ? $"Tab data unavailable: {ex.Message}"
+                : errorMessage;
+        }
     }
 
     private void OnPerfectionSelected(PerfectionSelection selection)
@@ -710,7 +723,7 @@
     }
 
     // ----- Chart generation (copied from Chart.razor and trimmed to what /workspace needs) -----
-    private async Task GenerateChartAsync()
+    private async Task GenerateChartAsync(bool loadSupplementalAnalyses = true)
     {
         errorMessage = string.Empty;
 
@@ -732,9 +745,16 @@
                     selectedSlot = ResolveSelection(selectedSlot);
                 }
 
-                // Refresh analysis tabs in parallel; failures are non-fatal.
-                await LoadAspectAnalysisAsync();
-                await LoadWayOfPointsAsync();
+                // Invalidate tab analyses; reload only what the active tab needs (or all on cast).
+                aspectAnalysis = null;
+                wayOfPointsAnalysis = null;
+                ClearWayOfPointsSelectionAndHighlight();
+
+                if (loadSupplementalAnalyses)
+                {
+                    await EnsureTabDataAsync(activeTab);
+                }
+
                 if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
                 {
                     await CalculatePerfectionAsync();

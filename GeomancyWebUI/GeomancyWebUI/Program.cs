@@ -14,7 +14,7 @@ builder.AddServiceDefaults();
 // + parallel static asset requests then queue until Railway's ~15s edge timeout
 // (502 on CSS/JS/negotiate while HTML sometimes still returns 200).
 ThreadPool.GetMinThreads(out var minWorkers, out var minIo);
-const int minThreadsFloor = 64;
+const int minThreadsFloor = 32;
 if (minWorkers < minThreadsFloor || minIo < minThreadsFloor)
 {
     ThreadPool.SetMinThreads(
@@ -139,6 +139,11 @@ try
     _ = GeomancyAPI.Services.CompanyTypeDirectoryLoader.GetDirectory();
     _ = GeomancyAPI.Services.HouseDirectoryLoader.GetHouses();
     _ = GeomancyAPI.Services.HouseDirectoryLoader.GetCourts();
+    _ = GeomancyAPI.Services.WayOfPointsDirectoryLoader.GetElements();
+    _ = GeomancyAPI.Services.WayOfPointsDirectoryLoader.GetPathTypes();
+    _ = GeomancyAPI.Services.GreerHouseDirectoryLoader.GetDirectory();
+    _ = GeomancyApp.GreerFigureCorpusLoader.LoadFigures();
+    _ = GeomancyAPI.Handlers.GeomancyHandlers.GetAllFigures();
 }
 catch (Exception ex)
 {

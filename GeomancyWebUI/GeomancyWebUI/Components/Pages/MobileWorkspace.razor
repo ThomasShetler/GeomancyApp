@@ -540,7 +540,7 @@ else
                      or WorkspaceTab.PerfectionsAndAspects
                      or WorkspaceTab.WayOfPoints;
 
-    private void SwitchTab(WorkspaceTab tab)
+    private async Task SwitchTab(WorkspaceTab tab)
     {
         if (activeTab != tab)
         {
@@ -558,6 +558,39 @@ else
         // analysis. Collapse the chart drawer so the panel gets full height;
         // they can pull it back as an overlay any time via the handle.
         chartCollapsed = true;
+        await EnsureTabDataAsync(tab);
+    }
+
+    private async Task EnsureTabDataAsync(WorkspaceTab tab)
+    {
+        try
+        {
+            if (tab == WorkspaceTab.PerfectionsAndAspects && companyTypesDirectory == null)
+            {
+                companyTypesDirectory = await GeomancyService.GetCompanyTypesDirectoryAsync();
+            }
+
+            if (tab == WorkspaceTab.WayOfPoints)
+            {
+                if (wayOfPointsElements == null || wayOfPointsElements.Count == 0)
+                    wayOfPointsElements = await GeomancyService.GetWayOfPointsElementsDirectoryAsync();
+                if (wayOfPointsPathTypes == null || wayOfPointsPathTypes.Count == 0)
+                    wayOfPointsPathTypes = await GeomancyService.GetWayOfPointsPathTypesDirectoryAsync();
+                if (wayOfPointsAnalysis == null)
+                    await LoadWayOfPointsAsync();
+            }
+
+            if (tab == WorkspaceTab.LotsAndOther && aspectAnalysis == null)
+            {
+                await LoadAspectAnalysisAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = string.IsNullOrEmpty(errorMessage)
+                ? $"Tab data unavailable: {ex.Message}"
+                : errorMessage;
+        }
     }
 
     private void ShowList() => panelMode = MobilePanelMode.List;
@@ -616,7 +649,7 @@ else
 
         try
         {
-            await GenerateChartAsync();
+            await GenerateChartAsync(loadSupplementalAnalyses: false);
         }
         catch (Exception ex)
         {
@@ -625,38 +658,20 @@ else
 
         try
         {
-            housesDirectory = await GeomancyService.GetHousesDirectoryAsync();
-            courtsDirectory = await GeomancyService.GetCourtsDirectoryAsync();
-            greerFigures = await GeomancyService.GetGreerFiguresDirectoryAsync();
-            greerHousesDirectory = await GeomancyService.GetGreerHousesDirectoryAsync();
+            var housesTask = GeomancyService.GetHousesDirectoryAsync();
+            var courtsTask = GeomancyService.GetCourtsDirectoryAsync();
+            var greerFiguresTask = GeomancyService.GetGreerFiguresDirectoryAsync();
+            var greerHousesTask = GeomancyService.GetGreerHousesDirectoryAsync();
+            await Task.WhenAll(housesTask, courtsTask, greerFiguresTask, greerHousesTask);
+            housesDirectory = await housesTask;
+            courtsDirectory = await courtsTask;
+            greerFigures = await greerFiguresTask;
+            greerHousesDirectory = await greerHousesTask;
         }
         catch (Exception ex)
         {
             errorMessage = string.IsNullOrEmpty(errorMessage)
                 ? $"Reference directory unavailable: {ex.Message}"
-                : errorMessage;
-        }
-
-        try
-        {
-            wayOfPointsElements = await GeomancyService.GetWayOfPointsElementsDirectoryAsync();
-            wayOfPointsPathTypes = await GeomancyService.GetWayOfPointsPathTypesDirectoryAsync();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = string.IsNullOrEmpty(errorMessage)
-                ? $"Way of Points directory unavailable: {ex.Message}"
-                : errorMessage;
-        }
-
-        try
-        {
-            companyTypesDirectory = await GeomancyService.GetCompanyTypesDirectoryAsync();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = string.IsNullOrEmpty(errorMessage)
-                ? $"Company types directory unavailable: {ex.Message}"
                 : errorMessage;
         }
     }
@@ -927,7 +942,7 @@ else
         ClearWayOfPointsSelectionAndHighlight();
     }
 
-    private async Task GenerateChartAsync()
+    private async Task GenerateChartAsync(bool loadSupplementalAnalyses = true)
     {
         errorMessage = string.Empty;
 
@@ -948,8 +963,15 @@ else
                     selectedSlot = ResolveSelection(selectedSlot);
                 }
 
-                await LoadAspectAnalysisAsync();
-                await LoadWayOfPointsAsync();
+                aspectAnalysis = null;
+                wayOfPointsAnalysis = null;
+                ClearWayOfPointsSelectionAndHighlight();
+
+                if (loadSupplementalAnalyses)
+                {
+                    await EnsureTabDataAsync(activeTab);
+                }
+
                 if (selectedQuerentHouse > 0 && selectedQuesitedHouse > 0)
                 {
                     await CalculatePerfectionAsync();

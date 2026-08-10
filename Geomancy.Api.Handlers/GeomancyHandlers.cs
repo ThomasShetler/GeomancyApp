@@ -284,12 +284,28 @@ namespace GeomancyAPI.Handlers
             };
         }
 
+        public static AspectAnalysisResponse GetAspectAnalysis(GenerateFourFiguresRequest request)
+        {
+            var houseChart = new HouseChart();
+            houseChart.SetFirstFourHousesAndCalculate(
+                request.House1.HeadLine, request.House1.NeckLine, request.House1.BodyLine, request.House1.FootLine,
+                request.House2.HeadLine, request.House2.NeckLine, request.House2.BodyLine, request.House2.FootLine,
+                request.House3.HeadLine, request.House3.NeckLine, request.House3.BodyLine, request.House3.FootLine,
+                request.House4.HeadLine, request.House4.NeckLine, request.House4.BodyLine, request.House4.FootLine
+            );
+            return BuildAspectAnalysisResponse(houseChart);
+        }
+
         public static AspectAnalysisResponse GetAspectAnalysisFromFigures(
             string firstMother, string secondMother, string thirdMother, string fourthMother)
         {
             ValidateMotherNames(firstMother, secondMother, thirdMother, fourthMother);
-
             var houseChart = BuildChartFromMotherNames(firstMother, secondMother, thirdMother, fourthMother);
+            return BuildAspectAnalysisResponse(houseChart);
+        }
+
+        private static AspectAnalysisResponse BuildAspectAnalysisResponse(HouseChart houseChart)
+        {
             var aspectReport = ChartAspectAnalysis.Evaluate(houseChart);
 
             var aspectList = aspectReport.Details.Select(d => new AspectDetail
