@@ -366,33 +366,33 @@
 
 .house-chart-link {
     fill: none;
-    stroke-width: 5;
+    stroke-width: 3.5;
     stroke-linecap: round;
-    opacity: 0.92;
+    opacity: 0.88;
 }
 
 .house-chart-link.link-path {
     stroke: var(--accent-color, #7c5cbf);
-    stroke-dasharray: 10 8;
-    stroke-width: 4;
+    stroke-dasharray: 8 7;
+    stroke-width: 3;
 }
 
 .house-chart-link.link-company {
     stroke: #ffc107;
-    stroke-width: 3.5;
-    stroke-dasharray: 4 6;
-    opacity: 0.85;
+    stroke-width: 2.75;
+    stroke-dasharray: 3 5;
+    opacity: 0.8;
 }
 
 .house-chart-link.aspect-sextile { stroke: #26a69a; }
 .house-chart-link.aspect-trine { stroke: #42a5f5; }
 .house-chart-link.aspect-square { stroke: #ef5350; }
-.house-chart-link.aspect-opposition { stroke: #ab47bc; stroke-width: 6; }
+.house-chart-link.aspect-opposition { stroke: #ab47bc; stroke-width: 4.5; }
 .house-chart-link.aspect-conjunction { stroke: #ffa726; }
 .house-chart-link.aspect-generic { stroke: var(--accent-color, #7c5cbf); }
 
-.house-chart-link.dir-dexter { stroke-width: 6; }
-.house-chart-link.dir-sinister { stroke-dasharray: 14 7; }
+.house-chart-link.dir-dexter { stroke-width: 4.5; }
+.house-chart-link.dir-sinister { stroke-dasharray: 11 6; }
 
 .aspect-arrowhead {
     fill: currentColor;
@@ -405,12 +405,13 @@ marker#aspect-arrow-end .aspect-arrowhead {
 }
 
 .house-chart-link-label {
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 700;
     paint-order: stroke;
     stroke: var(--bg-primary, #1a1a1a);
-    stroke-width: 6px;
+    stroke-width: 4px;
     pointer-events: none;
+    opacity: 0.95;
 }
 
 .house-chart-link-label.aspect-sextile { fill: #26a69a; }
@@ -419,47 +420,48 @@ marker#aspect-arrow-end .aspect-arrowhead {
 .house-chart-link-label.aspect-opposition { fill: #ce93d8; }
 .house-chart-link-label.aspect-conjunction { fill: #ffa726; }
 .house-chart-link-label.link-path { fill: var(--accent-color, #b39ddb); }
-.house-chart-link-label.link-company { fill: #ffc107; font-size: 18px; }
+.house-chart-link-label.link-company { fill: #ffc107; font-size: 14px; }
 
 .house-chart-intermediate {
-    fill: rgba(255, 255, 255, 0.12);
+    fill: rgba(255, 255, 255, 0.35);
     stroke: rgba(180, 200, 220, 0.55);
-    stroke-width: 1.5;
-    opacity: 0.9;
+    stroke-width: 1;
+    opacity: 0.7;
 }
 
-.house-chart-intermediate.aspect-sextile { stroke: #26a69a; }
-.house-chart-intermediate.aspect-trine { stroke: #42a5f5; }
-.house-chart-intermediate.aspect-square { stroke: #ef5350; }
-.house-chart-intermediate.aspect-opposition { stroke: #ab47bc; }
+.house-chart-intermediate.aspect-sextile { stroke: #26a69a; fill: rgba(38, 166, 154, 0.35); }
+.house-chart-intermediate.aspect-trine { stroke: #42a5f5; fill: rgba(66, 165, 245, 0.35); }
+.house-chart-intermediate.aspect-square { stroke: #ef5350; fill: rgba(239, 83, 80, 0.35); }
+.house-chart-intermediate.aspect-opposition { stroke: #ab47bc; fill: rgba(171, 71, 188, 0.35); }
 
 .house-chart-intermediate-label {
-    fill: rgba(220, 230, 240, 0.75);
-    font-size: 14px;
-    font-weight: 600;
-    pointer-events: none;
+    display: none;
 }
 
 .house-card-container.house-chart-slot-highlight .figure-container,
 .house-card-container.house-chart-slot-cast .figure-container {
-    box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.75), 0 0 18px rgba(66, 165, 245, 0.35);
+    box-shadow: 0 0 0 2px rgba(66, 165, 245, 0.7), 0 0 12px rgba(66, 165, 245, 0.25);
     border-radius: 10px;
 }
 
 .house-card-container.house-chart-slot-querent .figure-container {
-    box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.85), 0 0 16px rgba(102, 187, 106, 0.3);
+    box-shadow: 0 0 0 2px rgba(102, 187, 106, 0.8), 0 0 12px rgba(102, 187, 106, 0.25);
     border-radius: 10px;
 }
 
 .house-card-container.house-chart-slot-quesited .figure-container {
-    box-shadow: 0 0 0 3px rgba(255, 167, 38, 0.85), 0 0 16px rgba(255, 167, 38, 0.3);
+    box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.8), 0 0 12px rgba(255, 167, 38, 0.25);
+    border-radius: 10px;
+}
+
+.house-card-container.house-chart-slot-company .figure-container {
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.55);
     border-radius: 10px;
 }
 
 .house-card-container.house-chart-slot-intermediate .figure-container {
-    box-shadow: 0 0 0 2px rgba(176, 190, 197, 0.45);
-    border-radius: 10px;
-    opacity: 0.92;
+    box-shadow: none;
+    opacity: 1;
 }
 
 .house-card-container.house-chart-slot-querent.house-chart-slot-cast .figure-container,

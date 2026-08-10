@@ -122,10 +122,12 @@
                                  && HouseChartGeometry.TryGetAnchor(link.ToHouse, out var to))
                             {
                                 var css = LinkCssClass(link);
-                                var path = HouseChartGeometry.ArcPath(from, to, link.Kind == "company-pair" ? 0.12 : 0.28);
-                                var mid = HouseChartGeometry.ArcControl(from, to, link.Kind == "company-pair" ? 0.12 : 0.28);
+                                var pull = link.Kind == "company-pair" ? 0.18 : 0.48;
+                                var path = HouseChartGeometry.ArcPath(from, to, pull);
+                                var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, link.Kind == "company-pair" ? 0.08 : 0.14);
                                 var useArrow = link.Kind == "aspect"
                                     && !string.Equals(link.AspectType, "Opposition", StringComparison.OrdinalIgnoreCase);
+                                var midCount = link.Kind == "aspect" ? (link.IntermediateHouses?.Count ?? 0) : 0;
                                 <g class="house-chart-link-group">
                                     <path d="@path"
                                           class="house-chart-link @css"
@@ -135,18 +137,16 @@
                                             <title>@link.Description</title>
                                         }
                                     </path>
-                                    @if (link.Kind == "aspect" && link.IntermediateHouses is { Count: > 0 })
+                                    @if (midCount > 0)
                                     {
-                                        @foreach (var midHouse in link.IntermediateHouses)
+                                        @for (var ti = 0; ti < midCount; ti++)
                                         {
-                                            @if (HouseChartGeometry.TryGetAnchor(midHouse, out var tick))
-                                            {
-                                                <circle cx="@tick.X.ToString("0.##")"
-                                                        cy="@tick.Y.ToString("0.##")"
-                                                        r="11"
-                                                        class="house-chart-intermediate @css" />
-                                                @((MarkupString)$"<text x=\"{tick.X:0.##}\" y=\"{tick.Y + 4:0.##}\" class=\"house-chart-intermediate-label\" text-anchor=\"middle\">{midHouse}</text>")
-                                            }
+                                            var t = (ti + 1) / (double)(midCount + 1);
+                                            var tick = HouseChartGeometry.PointOnArc(from, to, t, pull);
+                                            <circle cx="@tick.X.ToString("0.##")"
+                                                    cy="@tick.Y.ToString("0.##")"
+                                                    r="4.5"
+                                                    class="house-chart-intermediate @css" />
                                         }
                                     }
                                     @if (!string.IsNullOrEmpty(link.Label))
@@ -154,7 +154,7 @@
                                         var titleXml = string.IsNullOrEmpty(link.Description)
                                             ? string.Empty
                                             : $"<title>{System.Net.WebUtility.HtmlEncode(link.Description)}</title>";
-                                        @((MarkupString)$"<text x=\"{mid.X:0.##}\" y=\"{mid.Y:0.##}\" class=\"house-chart-link-label {css}\" text-anchor=\"middle\" dominant-baseline=\"middle\">{titleXml}{System.Net.WebUtility.HtmlEncode(link.Label)}</text>")
+                                        @((MarkupString)$"<text x=\"{labelAt.X:0.##}\" y=\"{labelAt.Y:0.##}\" class=\"house-chart-link-label {css}\" text-anchor=\"middle\" dominant-baseline=\"middle\">{titleXml}{System.Net.WebUtility.HtmlEncode(link.Label)}</text>")
                                     }
                                 </g>
                             }
@@ -512,8 +512,8 @@
                     l.Kind == "aspect" && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
                 parts.Add("house-chart-slot-cast");
             if (RelationshipOverlay.Links.Any(l =>
-                    l.Kind == "aspect" && l.IntermediateHouses != null && l.IntermediateHouses.Contains(houseNumber)))
-                parts.Add("house-chart-slot-intermediate");
+                    l.Kind == "company-pair" && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
+                parts.Add("house-chart-slot-company");
         }
 
         return string.Join(' ', parts);

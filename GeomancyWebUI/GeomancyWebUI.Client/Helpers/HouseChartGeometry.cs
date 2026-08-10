@@ -38,7 +38,7 @@ namespace GeomancyWebUI.Client.Helpers
         /// Quadratic control point pulled toward chart center so links read as chart arcs
         /// rather than chords through figure cards.
         /// </summary>
-        public static Point ArcControl(Point from, Point to, double pull = 0.28)
+        public static Point ArcControl(Point from, Point to, double pull = 0.42)
         {
             const double cx = 500;
             const double cy = 500;
@@ -49,10 +49,35 @@ namespace GeomancyWebUI.Client.Helpers
                 my + (cy - my) * pull);
         }
 
-        public static string ArcPath(Point from, Point to, double pull = 0.28)
+        public static string ArcPath(Point from, Point to, double pull = 0.42)
         {
             var c = ArcControl(from, to, pull);
             return $"M {from.X:0.##},{from.Y:0.##} Q {c.X:0.##},{c.Y:0.##} {to.X:0.##},{to.Y:0.##}";
+        }
+
+        /// <summary>
+        /// Point on the quadratic arc at parameter t (0..1), used for label / tick placement.
+        /// </summary>
+        public static Point PointOnArc(Point from, Point to, double t, double pull = 0.42)
+        {
+            var c = ArcControl(from, to, pull);
+            var u = 1.0 - t;
+            return new Point(
+                u * u * from.X + 2 * u * t * c.X + t * t * to.X,
+                u * u * from.Y + 2 * u * t * c.Y + t * t * to.Y);
+        }
+
+        /// <summary>
+        /// Label seat nudged slightly toward chart center from the arc midpoint.
+        /// </summary>
+        public static Point LabelPoint(Point from, Point to, double pull = 0.42, double inward = 0.12)
+        {
+            var mid = PointOnArc(from, to, 0.5, pull);
+            const double cx = 500;
+            const double cy = 500;
+            return new Point(
+                mid.X + (cx - mid.X) * inward,
+                mid.Y + (cy - mid.Y) * inward);
         }
     }
 }

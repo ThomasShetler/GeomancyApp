@@ -102,6 +102,25 @@ namespace GeomancyWebUI.Client.Helpers
                 || (overlay.QuerentHouse is >= 1 and <= 12)
                 || (overlay.QuesitedHouse is >= 1 and <= 12));
 
+        /// <summary>
+        /// Auto-switch to the 12-house chart only for aspect casts / company pairs.
+        /// Classical modes (translation, mutation, conjunction, occupation) stay on shield.
+        /// </summary>
+        public static bool ShouldAutoSwitchToHouseChart(ChartRelationshipOverlay? overlay)
+        {
+            if (overlay?.Links == null || overlay.Links.Count == 0)
+                return false;
+
+            foreach (var link in overlay.Links)
+            {
+                if (string.Equals(link.Kind, "aspect", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(link.Kind, "company-pair", StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
+
         private static ChartAspectLink BuildAspectLink(int from, int to, string? aspectType, string? direction)
         {
             var type = aspectType ?? string.Empty;
@@ -145,9 +164,9 @@ namespace GeomancyWebUI.Client.Helpers
                 return;
 
             var shortCo = PerfectionDetailCopy.FormatCompanyShort(companyType ?? string.Empty);
-            var label = string.IsNullOrEmpty(shortCo)
-                ? $"H{pairOf}↔H{companion}"
-                : $"H{pairOf}↔H{companion} · {shortCo}";
+            // Keep the on-chart label short; houses are already connected by the arc.
+            var label = string.IsNullOrEmpty(shortCo) ? "Co." : shortCo;
+            var pairDesc = PerfectionDetailCopy.FormatCompanyPairLabel(pairOf.Value, companion);
 
             links.Add(new ChartAspectLink
             {
@@ -156,7 +175,9 @@ namespace GeomancyWebUI.Client.Helpers
                 Kind = "company-pair",
                 Label = label,
                 Description = PerfectionDetailCopy.CompanyHoverText(
-                    $"{PerfectionDetailCopy.FormatCompanyType(companyType ?? string.Empty)} — odd–even paired houses only (not 2–3 or 10–11).",
+                    string.IsNullOrEmpty(pairDesc)
+                        ? $"{PerfectionDetailCopy.FormatCompanyType(companyType ?? string.Empty)} — odd–even paired houses only."
+                        : $"{pairDesc}. {PerfectionDetailCopy.FormatCompanyType(companyType ?? string.Empty)} — odd–even paired houses only.",
                     string.Empty,
                     pairOf.Value,
                     companion)

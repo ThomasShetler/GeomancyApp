@@ -737,7 +737,7 @@ else
         selectedPerfection = selection;
         RefreshChartRelationshipOverlay();
         panelMode = MobilePanelMode.Detail;
-        if (ChartRelationshipOverlayBuilder.HasDrawableGeometry(chartRelationshipOverlay))
+        if (ChartRelationshipOverlayBuilder.ShouldAutoSwitchToHouseChart(chartRelationshipOverlay))
         {
             chartView = ChartSurfaceView.House;
             chartCollapsed = false;

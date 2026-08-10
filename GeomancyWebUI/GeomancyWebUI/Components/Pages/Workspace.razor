@@ -512,8 +512,8 @@
     {
         selectedPerfection = selection;
         RefreshChartRelationshipOverlay();
-        // Aspects / formation paths are house-chart geometry — show the square chart.
-        if (ChartRelationshipOverlayBuilder.HasDrawableGeometry(chartRelationshipOverlay)
+        // Aspects and company pairs are house-chart geometry — classical modes stay on shield.
+        if (ChartRelationshipOverlayBuilder.ShouldAutoSwitchToHouseChart(chartRelationshipOverlay)
             && chartView != ChartSurfaceView.House)
         {
             chartView = ChartSurfaceView.House;
