@@ -312,19 +312,17 @@ namespace GeomancyApp
         public static IReadOnlyList<(string Planet, string Figures)> DemiSimplePlanetTable { get; } =
             new List<(string, string)>
             {
-                ("Saturn", "Carcer, Tristitia"),
-                ("Jupiter", "Acquisitio, Laetitia"),
-                ("Mars", "Puer, Rubeus"),
+                ("Saturn", "Carcer, Tristitia, Cauda Draconis"),
+                ("Jupiter", "Acquisitio, Laetitia, Caput Draconis"),
+                ("Mars", "Puer, Rubeus, Cauda Draconis"),
                 ("Sun", "Fortuna Major, Fortuna Minor"),
-                ("Venus", "Amissio, Puella"),
+                ("Venus", "Amissio, Puella, Caput Draconis"),
                 ("Mercury", "Albus, Conjunctio"),
                 ("Moon", "Populus, Via"),
-                ("Caput Draconis", "with Jupiter or Venus"),
-                ("Cauda Draconis", "with Saturn or Mars"),
             };
 
         public static string DemiSimpleHowFormsIntro =>
-            "Paired figures share the same planet from Greer Table 6-2, or Caput/Cauda keep special company with Jupiter/Venus or Saturn/Mars:";
+            "Paired figures share the same planet from Greer Table 6-2 (Caput with Jupiter/Venus; Cauda with Saturn/Mars):";
 
         /// <summary>
         /// Interpretive sentence after the em dash in CompanyTypeDescription, if present.
