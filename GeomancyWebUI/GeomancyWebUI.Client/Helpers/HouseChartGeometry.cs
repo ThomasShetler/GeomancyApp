@@ -81,8 +81,9 @@ namespace GeomancyWebUI.Client.Helpers
         }
 
         /// <summary>
-        /// Polygon for the house cell: the third of the inner-square rim facing the house,
-        /// opened out to the chart's outer diamond / square so the fill matches the figure's triangle.
+        /// House-cell triangle: the inner-square rim third for this house, tipped on the
+        /// outer square through the figure seat. Figure-ray tips are unique per house, so
+        /// neighbors meet on an edge instead of stacking on a shared outer corner.
         /// </summary>
         public static bool TryGetHouseFillPolygon(int house, out IReadOnlyList<Point> points)
         {
@@ -93,29 +94,7 @@ namespace GeomancyWebUI.Client.Helpers
             if (!TryGetRimSegment(house, out var rimA, out var rimB))
                 return false;
 
-            // Mid-side angular houses: tip at the diamond cardinal point for a clean triangle.
-            if (house is 1 or 4 or 7 or 10)
-            {
-                var tip = house switch
-                {
-                    10 => new Point(CenterX, 0),
-                    4 => new Point(CenterX, 1000),
-                    1 => new Point(0, CenterY),
-                    _ => new Point(1000, CenterY)
-                };
-                points = new[] { rimA, rimB, tip };
-                return true;
-            }
-
-            // Cadent / succedent: trapezoid — rim segment + both endpoints projected to the outer envelope.
-            var outerA = ProjectOntoOuterEnvelope(rimA);
-            var outerB = ProjectOntoOuterEnvelope(rimB);
-            // If the figure sits past the diamond (corner pocket), include its outer tip.
-            var figOuter = ProjectOntoOuterEnvelope(fig);
-            if (DistanceSq(figOuter, outerA) > 400 && DistanceSq(figOuter, outerB) > 400)
-                points = new[] { rimA, rimB, outerB, figOuter, outerA };
-            else
-                points = new[] { rimA, rimB, outerB, outerA };
+            points = new[] { rimA, rimB, ProjectOntoOuterSquare(fig) };
             return true;
         }
 
@@ -127,7 +106,7 @@ namespace GeomancyWebUI.Client.Helpers
                 return false;
             left = pts[0];
             right = pts[1];
-            outer = pts[pts.Count - 1];
+            outer = pts[2];
             return true;
         }
 
@@ -156,34 +135,20 @@ namespace GeomancyWebUI.Client.Helpers
             }
         }
 
-        private static double DistanceSq(Point p, Point q)
-        {
-            var dx = p.X - q.X;
-            var dy = p.Y - q.Y;
-            return dx * dx + dy * dy;
-        }
-
         /// <summary>
-        /// Ray from chart center through <paramref name="through"/> onto the outer envelope
-        /// (farther of diamond |dx|+|dy|=500 and outer square L∞=500).
+        /// Ray from chart center through <paramref name="through"/> onto the outer square (L∞ = 500).
         /// </summary>
-        private static Point ProjectOntoOuterEnvelope(Point through)
+        private static Point ProjectOntoOuterSquare(Point through)
         {
             var dx = through.X - CenterX;
             var dy = through.Y - CenterY;
             if (Math.Abs(dx) < 1e-6 && Math.Abs(dy) < 1e-6)
                 return new Point(CenterX, 0);
 
-            var l1 = Math.Abs(dx) + Math.Abs(dy);
-            var diamond = new Point(CenterX + dx * (500.0 / l1), CenterY + dy * (500.0 / l1));
-
             var linf = Math.Max(Math.Abs(dx), Math.Abs(dy));
-            var square = new Point(CenterX + dx * (500.0 / linf), CenterY + dy * (500.0 / linf));
-
-            // Prefer the farther hit so corner houses fill out to the outer square.
-            var eD = (diamond.X - CenterX) * (diamond.X - CenterX) + (diamond.Y - CenterY) * (diamond.Y - CenterY);
-            var eS = (square.X - CenterX) * (square.X - CenterX) + (square.Y - CenterY) * (square.Y - CenterY);
-            return eS >= eD ? square : diamond;
+            return new Point(
+                CenterX + dx * (500.0 / linf),
+                CenterY + dy * (500.0 / linf));
         }
 
         /// <summary>
