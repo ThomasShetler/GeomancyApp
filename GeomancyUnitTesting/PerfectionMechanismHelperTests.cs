@@ -135,6 +135,8 @@ namespace GeomancyUnitTesting
             Assert.AreEqual(expectedDirection, explanation.Cast.Direction);
             Assert.IsTrue(explanation.Steps.Any(s =>
                 s.Contains("translation of the significator") || s.Contains("House 3")));
+            Assert.IsTrue(explanation.Steps.Any(s =>
+                s.Contains("House 1") && s.Contains("querent") && s.Contains("home seat")));
             Assert.IsTrue(explanation.Steps.Any(s => s.Contains("Sextile")));
         }
 

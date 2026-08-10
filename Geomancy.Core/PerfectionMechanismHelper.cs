@@ -285,8 +285,19 @@ namespace GeomancyApp
             }
             else if (aspectFromHouse != querentHouse && aspectFromHouse != quesitedHouse)
             {
-                explanation.Steps.Add(
-                    $"{fromFigure} also appears in House {aspectFromHouse} (translation of the significator), away from its home house.");
+                var (homeHouse, homeRole) = ResolveTranslatedSignificatorHome(
+                    fromFigure, aspectToHouse,
+                    querentHouse, quesitedHouse, querentFigure, quesitedFigure);
+                if (homeHouse > 0)
+                {
+                    explanation.Steps.Add(
+                        $"{fromFigure} also appears in House {aspectFromHouse} (translation of the significator), away from its home seat House {homeHouse} ({homeRole}).");
+                }
+                else
+                {
+                    explanation.Steps.Add(
+                        $"{fromFigure} also appears in House {aspectFromHouse} (translation of the significator), away from its significator home seat.");
+                }
             }
 
             explanation.DirectionHint = DirectionHintText(explanation.Cast.Direction);
@@ -696,6 +707,35 @@ namespace GeomancyApp
                 "Capitular" => "Capitular",
                 _ => companyType
             };
+        }
+
+        private static (int homeHouse, string role) ResolveTranslatedSignificatorHome(
+            string castFigure,
+            int aspectToHouse,
+            int querentHouse,
+            int quesitedHouse,
+            string querentFigure,
+            string quesitedFigure)
+        {
+            var castRoot = FigureNameHelper.Root(castFigure ?? string.Empty);
+            var qRoot = FigureNameHelper.Root(querentFigure ?? string.Empty);
+            var xRoot = FigureNameHelper.Root(quesitedFigure ?? string.Empty);
+
+            if (!string.IsNullOrEmpty(castRoot) && castRoot.Equals(qRoot, StringComparison.OrdinalIgnoreCase)
+                && querentHouse > 0)
+                return (querentHouse, "querent");
+
+            if (!string.IsNullOrEmpty(castRoot) && castRoot.Equals(xRoot, StringComparison.OrdinalIgnoreCase)
+                && quesitedHouse > 0)
+                return (quesitedHouse, "quesited");
+
+            // Cast toward the other party usually means this side's significator has moved.
+            if (aspectToHouse == quesitedHouse && querentHouse > 0)
+                return (querentHouse, "querent");
+            if (aspectToHouse == querentHouse && quesitedHouse > 0)
+                return (quesitedHouse, "quesited");
+
+            return (0, string.Empty);
         }
 
         private static string NormalizeDirection(string direction, string aspectType)
