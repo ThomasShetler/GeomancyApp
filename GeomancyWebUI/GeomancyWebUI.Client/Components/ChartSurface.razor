@@ -137,10 +137,11 @@
                                  && HouseChartGeometry.TryGetNumberAnchor(link.ToHouse, out var to))
                             {
                                 var css = LinkCssClass(link);
+                                var isCompanyLink = link.Kind is "company-pair" or "company-pass";
                                 // Endpoints snap to house numbers — light pull keeps arcs in the open center.
-                                var pull = link.Kind == "company-pair" ? 0.12 : 0.32;
+                                var pull = isCompanyLink ? 0.12 : 0.32;
                                 var path = HouseChartGeometry.ArcPath(from, to, pull);
-                                var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, link.Kind == "company-pair" ? 0.06 : 0.10);
+                                var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, isCompanyLink ? 0.06 : 0.10);
                                 var useArrow = link.Kind == "aspect"
                                     && !string.Equals(link.AspectType, "Opposition", StringComparison.OrdinalIgnoreCase);
                                 var midCount = link.Kind == "aspect" ? (link.IntermediateHouses?.Count ?? 0) : 0;
@@ -557,7 +558,8 @@
                     l.Kind == "aspect" && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
                 parts.Add("house-chart-slot-cast");
             if (RelationshipOverlay.Links.Any(l =>
-                    l.Kind == "company-pair" && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
+                    (l.Kind == "company-pair" || l.Kind == "company-pass")
+                    && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
                 parts.Add("house-chart-slot-company");
         }
 
@@ -599,7 +601,8 @@
             if (houseNumber == RelationshipOverlay.QuesitedHouse)
                 return "is-quesited";
             if (RelationshipOverlay.Links.Any(l =>
-                    l.Kind == "company-pair" && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
+                    (l.Kind == "company-pair" || l.Kind == "company-pass")
+                    && (l.FromHouse == houseNumber || l.ToHouse == houseNumber)))
                 return "is-company";
         }
 
@@ -608,7 +611,8 @@
 
     private static string LinkCssClass(ChartAspectLink link)
     {
-        if (string.Equals(link.Kind, "company-pair", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(link.Kind, "company-pair", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(link.Kind, "company-pass", StringComparison.OrdinalIgnoreCase))
             return "link-company";
         if (string.Equals(link.Kind, "path", StringComparison.OrdinalIgnoreCase))
             return "link-path";

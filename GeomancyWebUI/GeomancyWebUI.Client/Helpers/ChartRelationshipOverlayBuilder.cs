@@ -28,7 +28,11 @@ namespace GeomancyWebUI.Client.Helpers
                     links.Add(BuildAspectLink(a.FromHouse, a.ToHouse, a.AspectType, a.Direction));
 
                 if (a.MadeThroughCompany)
+                {
                     TryAddCompanyPair(links, querent, quesited, a.FromHouse, a.ToHouse, a.CompanyType, string.Empty);
+                    TryAddCompanyFigureTranslationPath(
+                        links, querent, quesited, a.FromHouse, a.ToHouse, a.CompanyType, string.Empty);
+                }
             }
             else if (selection.Perfection != null)
             {
@@ -65,14 +69,27 @@ namespace GeomancyWebUI.Client.Helpers
 
                 if (p.MadeThroughCompany || string.Equals(p.Mode, "Company", StringComparison.OrdinalIgnoreCase))
                 {
+                    var fromHint = p.AspectFromHouse > 0 ? p.AspectFromHouse : p.PathFromHouse;
+                    var toHint = p.AspectToHouse > 0 ? p.AspectToHouse : p.PathToHouse;
                     TryAddCompanyPair(
                         links,
                         querent,
                         quesited,
-                        p.AspectFromHouse > 0 ? p.AspectFromHouse : p.PathFromHouse,
-                        p.AspectToHouse > 0 ? p.AspectToHouse : p.PathToHouse,
+                        fromHint,
+                        toHint,
                         p.CompanyType,
                         p.PathActor);
+                    if (hasAspect)
+                    {
+                        TryAddCompanyFigureTranslationPath(
+                            links,
+                            querent,
+                            quesited,
+                            p.AspectFromHouse,
+                            p.AspectToHouse,
+                            p.CompanyType,
+                            p.PathActor);
+                    }
                 }
             }
 
@@ -128,6 +145,7 @@ namespace GeomancyWebUI.Client.Helpers
             {
                 if (string.Equals(link.Kind, "aspect", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(link.Kind, "company-pair", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(link.Kind, "company-pass", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(link.Kind, "path", StringComparison.OrdinalIgnoreCase))
                     return true;
             }
@@ -300,6 +318,50 @@ namespace GeomancyWebUI.Client.Helpers
                     string.Empty,
                     sig,
                     companion)
+            });
+        }
+
+        /// <summary>
+        /// When the company figure casts from a translated seat (not the companion house itself),
+        /// draw companion → cast-from so the chart shows why that aspect belongs to the company bond.
+        /// Example: H11↔H12 company, Laetitia also in H5 casting Dex Tr to H1 → path H12 → H5.
+        /// </summary>
+        private static void TryAddCompanyFigureTranslationPath(
+            List<ChartAspectLink> links,
+            int querent,
+            int quesited,
+            int aspectFrom,
+            int aspectTo,
+            string? companyType,
+            string? pathActor)
+        {
+            if (aspectFrom < 1 || aspectFrom > 12 || aspectTo < 1 || aspectTo > 12)
+                return;
+
+            var (sig, companion) = ResolveCompanyPair(querent, quesited, aspectFrom, aspectTo, pathActor);
+            if (companion <= 0 || sig <= 0)
+                return;
+
+            // Direct cast from the companion seat — company pair + aspect already tell the story.
+            if (aspectFrom == companion || aspectFrom == sig)
+                return;
+
+            var shortCo = PerfectionDetailCopy.FormatCompanyShort(companyType ?? string.Empty);
+            var label = string.IsNullOrEmpty(shortCo) ? "Co. fig." : shortCo;
+            if (links.Any(l =>
+                    (l.Kind == "path" || l.Kind == "company-pass")
+                    && ((l.FromHouse == companion && l.ToHouse == aspectFrom)
+                        || (l.FromHouse == aspectFrom && l.ToHouse == companion))))
+                return;
+
+            links.Add(new ChartAspectLink
+            {
+                FromHouse = companion,
+                ToHouse = aspectFrom,
+                Kind = "company-pass",
+                Label = label,
+                Description =
+                    $"Company figure from H{companion} also appears in H{aspectFrom}, and from there aspects H{aspectTo}."
             });
         }
 
