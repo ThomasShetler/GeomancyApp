@@ -167,8 +167,11 @@ namespace GeomancyApp
             else
             {
                 if (isCompany)
+                {
                     AddCompanyContextSteps(explanation, querentHouse, quesitedHouse, querentFigure, quesitedFigure,
                         pathFromHouse, pathToHouse, pathFigure, pathActor, companyType, companyTypeDescription);
+                    AddCompanyFormationReasonStep(explanation, companyType, companyTypeDescription);
+                }
 
                 switch (effectiveMode)
                 {
@@ -277,6 +280,7 @@ namespace GeomancyApp
             {
                 AddCompanyPairingStep(explanation, querentHouse, quesitedHouse, querentFigure, quesitedFigure,
                     aspectFromHouse, fromFigure, companyType, companyTypeDescription);
+                AddCompanyFormationReasonStep(explanation, companyType, companyTypeDescription);
                 AddCompanyCastRoleStep(explanation, aspectFromHouse, querentHouse, quesitedHouse);
             }
             else if (aspectFromHouse != querentHouse && aspectFromHouse != quesitedHouse)
@@ -435,8 +439,10 @@ namespace GeomancyApp
                 if (companionHouse > 0 && companionHouse != quesitedHouse)
                 {
                     var xFig = string.IsNullOrWhiteSpace(quesitedFigure) ? "the quesited figure" : quesitedFigure.Trim();
+                    var reason = PerfectionDetailCopy.CompanyFormationReason(companyType, companyTypeDescription);
+                    var reasonClause = string.IsNullOrEmpty(reason) ? string.Empty : $" — formed as {reason}";
                     explanation.Steps.Add(
-                        $"House {quesitedHouse} ({xFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}).");
+                        $"House {quesitedHouse} ({xFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}){reasonClause}.");
                     return;
                 }
             }
@@ -447,8 +453,10 @@ namespace GeomancyApp
                 if (companionHouse > 0 && companionHouse != querentHouse)
                 {
                     var qFig = string.IsNullOrWhiteSpace(querentFigure) ? "the querent figure" : querentFigure.Trim();
+                    var reason = PerfectionDetailCopy.CompanyFormationReason(companyType, companyTypeDescription);
+                    var reasonClause = string.IsNullOrEmpty(reason) ? string.Empty : $" — formed as {reason}";
                     explanation.Steps.Add(
-                        $"House {querentHouse} ({qFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}).");
+                        $"House {querentHouse} ({qFig}) is in {typeLabel} company with House {companionHouse} ({companionFigure}){reasonClause}.");
                     return;
                 }
             }
@@ -582,14 +590,18 @@ namespace GeomancyApp
             if (castFromHouse == querentPair && querentHouse > 0)
             {
                 var qFig = string.IsNullOrWhiteSpace(querentFigure) ? "the querent figure" : querentFigure.Trim();
+                var reason = PerfectionDetailCopy.CompanyFormationReason(companyType, companyTypeDescription);
+                var reasonClause = string.IsNullOrEmpty(reason) ? string.Empty : $" — formed as {reason}";
                 explanation.Steps.Add(
-                    $"House {querentHouse} ({qFig}) is in {typeLabel} company with House {castFromHouse} ({castFromFigure}).");
+                    $"House {querentHouse} ({qFig}) is in {typeLabel} company with House {castFromHouse} ({castFromFigure}){reasonClause}.");
             }
             else if (castFromHouse == quesitedPair && quesitedHouse > 0)
             {
                 var xFig = string.IsNullOrWhiteSpace(quesitedFigure) ? "the quesited figure" : quesitedFigure.Trim();
+                var reason = PerfectionDetailCopy.CompanyFormationReason(companyType, companyTypeDescription);
+                var reasonClause = string.IsNullOrEmpty(reason) ? string.Empty : $" — formed as {reason}";
                 explanation.Steps.Add(
-                    $"House {quesitedHouse} ({xFig}) is in {typeLabel} company with House {castFromHouse} ({castFromFigure}).");
+                    $"House {quesitedHouse} ({xFig}) is in {typeLabel} company with House {castFromHouse} ({castFromFigure}){reasonClause}.");
             }
             else if (castFromHouse == querentHouse || castFromHouse == quesitedHouse)
             {
@@ -708,8 +720,27 @@ namespace GeomancyApp
             if (string.Equals(direction, "Sinister", StringComparison.OrdinalIgnoreCase))
                 return "Sinister casts forward on the house wheel and tends to unfold more gradually.";
             if (string.Equals(direction, "Opposition", StringComparison.OrdinalIgnoreCase))
-                return "Opposition is six houses apart — confrontation or denial.";
+                return "Opposition — five houses between / opposite seats; not dexter or sinister.";
             return string.Empty;
+        }
+
+        private static void AddCompanyFormationReasonStep(
+            MechanismExplanation explanation,
+            string companyType,
+            string companyTypeDescription)
+        {
+            var reason = PerfectionDetailCopy.CompanyFormationReason(companyType, companyTypeDescription);
+            if (string.IsNullOrEmpty(reason))
+                return;
+
+            // Avoid duplicating if the pairing step already embedded the same clause.
+            if (explanation.Steps.Exists(s =>
+                    s.IndexOf(reason, StringComparison.OrdinalIgnoreCase) >= 0))
+                return;
+
+            var typeLabel = CompanyTypeLabel(companyType, companyTypeDescription);
+            explanation.Steps.Add(
+                $"Company {typeLabel} is formed here because the paired figures qualify as {reason}.");
         }
 
         private static int PairedHouse(int house)

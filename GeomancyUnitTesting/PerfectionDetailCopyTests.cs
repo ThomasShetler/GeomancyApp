@@ -76,6 +76,24 @@ namespace GeomancyUnitTesting
         }
 
         [TestMethod]
+        public void CompanyFormationReason_FromDescriptionParen()
+        {
+            Assert.AreEqual("opposite figures",
+                PerfectionDetailCopy.CompanyFormationReason(
+                    "Compound",
+                    "Company Compound (opposite figures) — complementary partners."));
+            Assert.AreEqual("same figure",
+                PerfectionDetailCopy.CompanyFormationReason("Simple", string.Empty));
+        }
+
+        [TestMethod]
+        public void FormatCompanyPairLabel_IncludesFigures()
+        {
+            Assert.AreEqual("H7 · Caput Draconis ↔ H8 · Cauda Draconis",
+                PerfectionDetailCopy.FormatCompanyPairLabel(7, 8, "Caput Draconis", "Cauda Draconis"));
+        }
+
+        [TestMethod]
         public void AspectGlossary_Opposition_UsesGreerFiveHouses()
         {
             var line = PerfectionDetailCopy.AspectGlossary("Opposition", "Opposition");

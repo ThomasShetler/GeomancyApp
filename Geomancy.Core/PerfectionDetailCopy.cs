@@ -179,6 +179,71 @@ namespace GeomancyApp
             return body;
         }
 
+        /// <summary>
+        /// Short structural reason the company bond qualifies (paren from engine description, or type default).
+        /// </summary>
+        public static string CompanyFormationReason(string companyType, string companyTypeDescription)
+        {
+            if (!string.IsNullOrWhiteSpace(companyTypeDescription))
+            {
+                var d = companyTypeDescription.Trim();
+                var open = d.IndexOf('(');
+                var close = d.IndexOf(')');
+                if (open >= 0 && close > open)
+                {
+                    var reason = d.Substring(open + 1, close - open - 1).Trim();
+                    if (!string.IsNullOrEmpty(reason))
+                        return reason;
+                }
+            }
+
+            return companyType switch
+            {
+                "Simple" => "same figure",
+                "DemiSimple" => "same planetary patron (or Caput/Cauda node rule)",
+                "Compound" => "opposite figures (Table 6-2)",
+                "Capitular" => "same Fire / head line only",
+                _ => string.Empty
+            };
+        }
+
+        /// <summary>
+        /// Interpretive sentence after the em dash in CompanyTypeDescription, if present.
+        /// </summary>
+        public static string CompanyFormationReading(string companyTypeDescription)
+        {
+            if (string.IsNullOrWhiteSpace(companyTypeDescription))
+                return string.Empty;
+
+            var d = companyTypeDescription.Trim();
+            var idx = d.IndexOf(" \u2014 ", StringComparison.Ordinal); // " — "
+            if (idx < 0)
+                idx = d.IndexOf(" - ", StringComparison.Ordinal);
+            if (idx < 0 || idx + 3 >= d.Length)
+                return string.Empty;
+
+            return d.Substring(idx + 3).Trim();
+        }
+
+        public static string FormatCompanyPairLabel(
+            int significatorHouse,
+            int companionHouse,
+            string significatorFigure = null,
+            string companionFigure = null)
+        {
+            if (significatorHouse is < 1 or > 12 || companionHouse is < 1 or > 12
+                || significatorHouse == companionHouse)
+                return string.Empty;
+
+            var left = $"H{significatorHouse}";
+            if (!string.IsNullOrWhiteSpace(significatorFigure))
+                left += $" · {significatorFigure.Trim()}";
+            var right = $"H{companionHouse}";
+            if (!string.IsNullOrWhiteSpace(companionFigure))
+                right += $" · {companionFigure.Trim()}";
+            return $"{left} ↔ {right}";
+        }
+
         public static string AspectGlossary(string aspectType, string direction) =>
             GeomanticAspects.GlossaryLine(aspectType, direction ?? string.Empty);
 

@@ -36,13 +36,6 @@
             var companyDisplay = GetCompanyTypeDisplay(p);
             var companyEntry = LookupCompanyType(p.CompanyType);
             var companyPair = ResolveCompanyPairHouses(p);
-            var companyHover = companyEntry == null
-                ? string.Empty
-                : PerfectionDetailCopy.CompanyHoverText(
-                    companyEntry.Tagline,
-                    companyEntry.MechanismSummary,
-                    companyPair.Item1,
-                    companyPair.Item2);
             var glossary = GetModeGlossary(p);
             var noteParts = ParseNotes(p.Notes);
             var explanation = BuildRelationshipExplanation(p);
@@ -84,13 +77,18 @@
                 <p class="glossary-tagline">@glossary</p>
             }
 
-            @if (!string.IsNullOrEmpty(companyDisplay))
+            @if (!string.IsNullOrEmpty(companyDisplay) || companyPair.Item1 > 0)
             {
-                <div class="chip-row chip-row-minimal">
-                    <span class="chip chip-company"
-                          title="@companyHover"
-                          aria-label="@($"{companyDisplay}. {companyHover}")">@companyDisplay</span>
-                </div>
+                @RenderCompanyCover(
+                    companyDisplay,
+                    companyEntry,
+                    companyPair.Item1,
+                    companyPair.Item2,
+                    GetHouseFigureName(companyPair.Item1),
+                    GetHouseFigureName(companyPair.Item2),
+                    p.CompanyType,
+                    p.CompanyTypeDescription,
+                    CompanyTypesDirectory?.Overview)
             }
 
             <section class="detail-card parties-card">
@@ -364,14 +362,7 @@
                 : string.Empty;
             var companyPair = a.MadeThroughCompany
                 ? ResolveCompanyPairHousesForAspect(a, Analysis?.QuerentHouse ?? 0, Analysis?.QuesitedHouse ?? 0)
-                : (sig: 0, companion: 0);
-            var companyHover = a.MadeThroughCompany
-                ? PerfectionDetailCopy.CompanyHoverText(
-                    companyEntry?.Tagline ?? CompanyTypesDirectory?.Overview?.Tagline ?? string.Empty,
-                    companyEntry?.MechanismSummary ?? CompanyTypesDirectory?.Overview?.MechanismSummary ?? string.Empty,
-                    companyPair.Item1,
-                    companyPair.Item2)
-                : string.Empty;
+                : (0, 0);
             var aDirectionVis = AspectDirectionHelper.Resolve(a.Direction, a.AspectType);
             var aspectTypeClass = AspectDirectionHelper.AspectTypeClass(a.AspectType);
             var aNoteParts = ParseDescription(a.Description);
@@ -415,13 +406,18 @@
                 <p class="glossary-tagline">@aspectGlossary</p>
             }
 
-            @if (!string.IsNullOrEmpty(companyDisplay))
+            @if (a.MadeThroughCompany)
             {
-                <div class="chip-row chip-row-minimal">
-                    <span class="chip chip-company"
-                          title="@companyHover"
-                          aria-label="@($"{companyDisplay}. {companyHover}")">@companyDisplay</span>
-                </div>
+                @RenderCompanyCover(
+                    companyDisplay,
+                    companyEntry,
+                    companyPair.Item1,
+                    companyPair.Item2,
+                    GetHouseFigureName(companyPair.Item1),
+                    GetHouseFigureName(companyPair.Item2),
+                    a.CompanyType,
+                    string.Empty,
+                    CompanyTypesDirectory?.Overview)
             }
 
             @if (querentHouse > 0 || quesitedHouse > 0)
@@ -687,6 +683,88 @@
         return string.Empty;
     }
 
+    private RenderFragment RenderCompanyCover(
+        string companyDisplay,
+        CompanyTypeEntry? companyEntry,
+        int sigHouse,
+        int companionHouse,
+        string sigFigure,
+        string companionFigure,
+        string companyTypeKey,
+        string companyTypeDescription,
+        CompanyTypeOverview? overview) => __builder =>
+    {
+        var typeKey = !string.IsNullOrWhiteSpace(companyTypeKey)
+            ? companyTypeKey.Trim()
+            : (companyEntry?.Id ?? string.Empty);
+        var typeName = !string.IsNullOrEmpty(companyDisplay)
+            ? companyDisplay
+            : (companyEntry?.Name ?? PerfectionDetailCopy.FormatCompanyType(typeKey));
+        if (string.IsNullOrEmpty(typeName))
+            typeName = "Company of Houses";
+
+        var pairLabel = PerfectionDetailCopy.FormatCompanyPairLabel(
+            sigHouse, companionHouse, sigFigure, companionFigure);
+        var formationReason = PerfectionDetailCopy.CompanyFormationReason(typeKey, companyTypeDescription);
+        var reading = PerfectionDetailCopy.CompanyFormationReading(companyTypeDescription);
+        var tagline = !string.IsNullOrWhiteSpace(companyEntry?.Tagline)
+            ? companyEntry!.Tagline.Trim()
+            : (!string.IsNullOrWhiteSpace(overview?.Tagline) ? overview!.Tagline.Trim() : string.Empty);
+        var howFormed = !string.IsNullOrWhiteSpace(companyEntry?.DetectionRule)
+            ? companyEntry!.DetectionRule.Trim()
+            : (!string.IsNullOrEmpty(formationReason)
+                ? $"Detected when the paired figures qualify as {formationReason}."
+                : string.Empty);
+        // Prefer chart-specific engine reading, then databank mechanism, then overview.
+        var mechanism = !string.IsNullOrWhiteSpace(reading)
+            ? reading
+            : (!string.IsNullOrWhiteSpace(companyEntry?.MechanismSummary)
+                ? companyEntry!.MechanismSummary.Trim()
+                : (!string.IsNullOrWhiteSpace(overview?.MechanismSummary)
+                    ? overview!.MechanismSummary.Trim()
+                    : string.Empty));
+
+        <section class="detail-card company-cover-card">
+            <h3 class="card-title">
+                <span class="card-title-icon">⚭</span> Company of Houses
+            </h3>
+            @if (!string.IsNullOrEmpty(pairLabel))
+            {
+                <p class="company-cover-pair">@pairLabel</p>
+            }
+            else
+            {
+                <p class="company-cover-pair company-cover-pair-muted">Odd–even paired houses only (1–2, 3–4, … 11–12)</p>
+            }
+            <p class="company-cover-type">@typeName</p>
+            @if (!string.IsNullOrEmpty(tagline))
+            {
+                <p class="company-cover-tagline">@tagline</p>
+            }
+            @if (!string.IsNullOrEmpty(howFormed))
+            {
+                <div class="company-cover-block">
+                    <span class="company-cover-label">How this type forms</span>
+                    <p class="company-cover-text">@howFormed</p>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(formationReason))
+            {
+                <div class="company-cover-block">
+                    <span class="company-cover-label">This chart</span>
+                    <p class="company-cover-text">Paired figures qualify as @formationReason.</p>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(mechanism))
+            {
+                <div class="company-cover-block">
+                    <span class="company-cover-label">What it means</span>
+                    <p class="company-cover-text">@mechanism</p>
+                </div>
+            }
+        </section>
+    };
+
     private RenderFragment RenderHouseRelationCell(int houseNumber, string eyebrow) => __builder =>
     {
         var entry = FindHouseEntry(houseNumber);
@@ -774,8 +852,11 @@
 
     private (int sig, int companion) ResolveCompanyPairHouses(PerfectionModel p)
     {
-        if (string.IsNullOrWhiteSpace(p.CompanyType)
-            || p.CompanyType.Equals("None", StringComparison.OrdinalIgnoreCase))
+        var hasCompany = p.MadeThroughCompany
+            || string.Equals(p.Mode, "Company", StringComparison.OrdinalIgnoreCase)
+            || (!string.IsNullOrWhiteSpace(p.CompanyType)
+                && !p.CompanyType.Equals("None", StringComparison.OrdinalIgnoreCase));
+        if (!hasCompany)
             return (0, 0);
 
         var hint = p.AspectFromHouse > 0 ? p.AspectFromHouse
@@ -908,7 +989,7 @@
             aspectType: a.AspectType,
             aspectDirection: a.Direction,
             madeThroughCompany: a.MadeThroughCompany,
-            companyType: string.Empty,
+            companyType: a.CompanyType ?? string.Empty,
             companyTypeDescription: string.Empty);
     }
 
