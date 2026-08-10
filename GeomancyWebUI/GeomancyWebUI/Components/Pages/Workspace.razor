@@ -78,7 +78,8 @@
                               OnHouse4Changed="OnHouse4Changed"
                               View="@chartView"
                               RelationshipOverlay="@chartRelationshipOverlay"
-                              HighlightedHouseNumbers="@chartHighlightHouses" />
+                              HighlightedHouseNumbers="@chartHighlightHouses"
+                              HighlightedCourt="@chartHighlightCourt" />
             </div>
         </section>
 
@@ -90,7 +91,7 @@
                     <button type="button"
                             role="tab"
                             class="workspace-tab-btn @(activeTab == tab.Id ? "active" : "")"
-                            @onclick="() => activeTab = tab.Id">
+                            @onclick="() => SelectTab(tab.Id)">
                         @tab.Label
                     </button>
                 }
@@ -360,6 +361,7 @@
     private WayOfPointsSelection? selectedWayOfPoints;
     private ChartRelationshipOverlay? chartRelationshipOverlay;
     private HashSet<int>? chartHighlightHouses;
+    private HashSet<ChartHighlightCourt>? chartHighlightCourt;
 
     // ----- Reference directories -----
     private List<HouseDirectoryEntry> housesDirectory = new();
@@ -508,8 +510,23 @@
         greerReferenceMode = mode;
     }
 
+    private void SelectTab(WorkspaceTab tab)
+    {
+        if (activeTab == tab)
+            return;
+
+        // Leaving a tab clears that tab's chart selection so overlays don't linger.
+        if (activeTab == WorkspaceTab.PerfectionsAndAspects)
+            ClearPerfectionSelectionAndOverlay();
+        if (activeTab == WorkspaceTab.WayOfPoints)
+            ClearWayOfPointsSelectionAndHighlight();
+
+        activeTab = tab;
+    }
+
     private void OnPerfectionSelected(PerfectionSelection selection)
     {
+        ClearWayOfPointsSelectionAndHighlight();
         selectedPerfection = selection;
         RefreshChartRelationshipOverlay();
         // Aspects and company pairs are house-chart geometry — classical modes stay on shield.
@@ -524,6 +541,13 @@
     {
         chartRelationshipOverlay = null;
         chartHighlightHouses = null;
+        chartHighlightCourt = null;
+    }
+
+    private void ClearPerfectionSelectionAndOverlay()
+    {
+        selectedPerfection = null;
+        ClearPerfectionChartOverlay();
     }
 
     private void RefreshChartRelationshipOverlay()
@@ -531,13 +555,32 @@
         chartRelationshipOverlay = ChartRelationshipOverlayBuilder.FromSelection(
             selectedPerfection, perfectionAnalysis);
         chartHighlightHouses = ChartRelationshipOverlayBuilder.HighlightHouses(chartRelationshipOverlay);
+        chartHighlightCourt = null;
         if (chartHighlightHouses.Count == 0)
             chartHighlightHouses = null;
     }
 
     private void OnWayOfPointsSelected(WayOfPointsSelection selection)
     {
+        ClearPerfectionSelectionAndOverlay();
         selectedWayOfPoints = selection;
+        RefreshWayOfPointsChartHighlight();
+        if (chartView != ChartSurfaceView.Shield)
+            chartView = ChartSurfaceView.Shield;
+    }
+
+    private void ClearWayOfPointsSelectionAndHighlight()
+    {
+        selectedWayOfPoints = null;
+        chartHighlightCourt = null;
+        chartHighlightHouses = null;
+    }
+
+    private void RefreshWayOfPointsChartHighlight()
+    {
+        WayOfPointsChartHighlight.Apply(selectedWayOfPoints, out var houses, out var court);
+        chartHighlightHouses = houses.Count > 0 ? houses : null;
+        chartHighlightCourt = court.Count > 0 ? court : null;
     }
 
     private async Task OnQuerentSelectChanged(int n)
@@ -663,7 +706,7 @@
             wayOfPointsAnalysis = null;
         }
         // Drop any stale selection that was pointing at the previous chart's analysis.
-        selectedWayOfPoints = null;
+        ClearWayOfPointsSelectionAndHighlight();
     }
 
     // ----- Chart generation (copied from Chart.razor and trimmed to what /workspace needs) -----

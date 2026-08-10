@@ -127,7 +127,8 @@ else
                               OnHouse4Changed="OnHouse4Changed"
                               View="@chartView"
                               RelationshipOverlay="@chartRelationshipOverlay"
-                              HighlightedHouseNumbers="@chartHighlightHouses" />
+                              HighlightedHouseNumbers="@chartHighlightHouses"
+                              HighlightedCourt="@chartHighlightCourt" />
             </div>
 
             <div class="mobile-mother-inputs"
@@ -541,6 +542,14 @@ else
 
     private void SwitchTab(WorkspaceTab tab)
     {
+        if (activeTab != tab)
+        {
+            if (activeTab == WorkspaceTab.PerfectionsAndAspects)
+                ClearPerfectionSelectionAndOverlay();
+            if (activeTab == WorkspaceTab.WayOfPoints)
+                ClearWayOfPointsSelectionAndHighlight();
+        }
+
         activeTab = tab;
         // Always return to the list view when switching tabs so the user
         // doesn't land on an unrelated tab's detail snapshot.
@@ -559,6 +568,7 @@ else
     private WayOfPointsSelection? selectedWayOfPoints;
     private ChartRelationshipOverlay? chartRelationshipOverlay;
     private HashSet<int>? chartHighlightHouses;
+    private HashSet<ChartHighlightCourt>? chartHighlightCourt;
 
     // ----- Reference directories -----
     private List<HouseDirectoryEntry> housesDirectory = new();
@@ -734,6 +744,7 @@ else
 
     private void OnPerfectionSelected(PerfectionSelection selection)
     {
+        ClearWayOfPointsSelectionAndHighlight();
         selectedPerfection = selection;
         RefreshChartRelationshipOverlay();
         panelMode = MobilePanelMode.Detail;
@@ -748,6 +759,13 @@ else
     {
         chartRelationshipOverlay = null;
         chartHighlightHouses = null;
+        chartHighlightCourt = null;
+    }
+
+    private void ClearPerfectionSelectionAndOverlay()
+    {
+        selectedPerfection = null;
+        ClearPerfectionChartOverlay();
     }
 
     private void RefreshChartRelationshipOverlay()
@@ -755,14 +773,33 @@ else
         chartRelationshipOverlay = ChartRelationshipOverlayBuilder.FromSelection(
             selectedPerfection, perfectionAnalysis);
         chartHighlightHouses = ChartRelationshipOverlayBuilder.HighlightHouses(chartRelationshipOverlay);
+        chartHighlightCourt = null;
         if (chartHighlightHouses.Count == 0)
             chartHighlightHouses = null;
     }
 
     private void OnWayOfPointsSelected(WayOfPointsSelection selection)
     {
+        ClearPerfectionSelectionAndOverlay();
         selectedWayOfPoints = selection;
+        RefreshWayOfPointsChartHighlight();
         panelMode = MobilePanelMode.Detail;
+        chartView = ChartSurfaceView.Shield;
+        chartCollapsed = false;
+    }
+
+    private void ClearWayOfPointsSelectionAndHighlight()
+    {
+        selectedWayOfPoints = null;
+        chartHighlightCourt = null;
+        chartHighlightHouses = null;
+    }
+
+    private void RefreshWayOfPointsChartHighlight()
+    {
+        WayOfPointsChartHighlight.Apply(selectedWayOfPoints, out var houses, out var court);
+        chartHighlightHouses = houses.Count > 0 ? houses : null;
+        chartHighlightCourt = court.Count > 0 ? court : null;
     }
 
     private async Task OnQuerentSelectChanged(int n)
@@ -887,7 +924,7 @@ else
         {
             wayOfPointsAnalysis = null;
         }
-        selectedWayOfPoints = null;
+        ClearWayOfPointsSelectionAndHighlight();
     }
 
     private async Task GenerateChartAsync()
