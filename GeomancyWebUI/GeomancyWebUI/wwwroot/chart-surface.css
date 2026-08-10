@@ -422,6 +422,16 @@ marker#aspect-arrow-end .aspect-arrowhead {
 .house-chart-link-label.link-path { fill: var(--accent-color, #b39ddb); }
 .house-chart-link-label.link-company { fill: #ffc107; font-size: 14px; }
 
+.house-number {
+    fill: var(--text-secondary, #b0b0b0);
+    font-size: 20px;
+    font-weight: 600;
+    font-family: var(--font-ui, system-ui, sans-serif);
+    opacity: 0.85;
+    pointer-events: none;
+    user-select: none;
+}
+
 .house-chart-intermediate {
     fill: rgba(255, 255, 255, 0.35);
     stroke: rgba(180, 200, 220, 0.55);

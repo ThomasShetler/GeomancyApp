@@ -118,13 +118,14 @@
                         </defs>
                         @foreach (var link in RelationshipOverlay.Links)
                         {
-                            @if (HouseChartGeometry.TryGetAnchor(link.FromHouse, out var from)
-                                 && HouseChartGeometry.TryGetAnchor(link.ToHouse, out var to))
+                            @if (HouseChartGeometry.TryGetLinkAnchor(link.FromHouse, out var from)
+                                 && HouseChartGeometry.TryGetLinkAnchor(link.ToHouse, out var to))
                             {
                                 var css = LinkCssClass(link);
-                                var pull = link.Kind == "company-pair" ? 0.18 : 0.48;
+                                // Endpoints sit on the inner rim — lighter pull keeps arcs in the open center.
+                                var pull = link.Kind == "company-pair" ? 0.12 : 0.32;
                                 var path = HouseChartGeometry.ArcPath(from, to, pull);
-                                var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, link.Kind == "company-pair" ? 0.08 : 0.14);
+                                var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, link.Kind == "company-pair" ? 0.06 : 0.10);
                                 var useArrow = link.Kind == "aspect"
                                     && !string.Equals(link.AspectType, "Opposition", StringComparison.OrdinalIgnoreCase);
                                 var midCount = link.Kind == "aspect" ? (link.IntermediateHouses?.Count ?? 0) : 0;
@@ -164,64 +165,75 @@
 
                 <foreignObject x="500" y="200" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(10)">
-                        <FigureContainer Figure="@GetHouseFigure(10)" Label="10" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(10)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="150" y="550" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(1)">
-                        <FigureContainer Figure="@House1Figure" Label="1" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
+                        <FigureContainer Figure="@House1Figure" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse1Changed" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="850" y="550" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(7)">
-                        <FigureContainer Figure="@GetHouseFigure(7)" Label="7" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(7)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="500" y="900" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(4)">
-                        <FigureContainer Figure="@House4Figure" Label="4" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
+                        <FigureContainer Figure="@House4Figure" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse4Changed" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="250" y="150" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(11)">
-                        <FigureContainer Figure="@GetHouseFigure(11)" Label="11" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(11)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="100" y="300" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(12)">
-                        <FigureContainer Figure="@GetHouseFigure(12)" Label="12" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(12)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="750" y="150" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(9)">
-                        <FigureContainer Figure="@GetHouseFigure(9)" Label="9" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(9)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="920" y="286" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(8)">
-                        <FigureContainer Figure="@GetHouseFigure(8)" Label="8" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(8)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="920" y="814" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(6)">
-                        <FigureContainer Figure="@GetHouseFigure(6)" Label="6" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(6)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="750" y="935" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(5)">
-                        <FigureContainer Figure="@GetHouseFigure(5)" Label="5" IsInteractive="false" ShowFigureName="true" />
+                        <FigureContainer Figure="@GetHouseFigure(5)" IsInteractive="false" ShowFigureName="true" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="80" y="814" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(2)">
-                        <FigureContainer Figure="@House2Figure" Label="2" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
+                        <FigureContainer Figure="@House2Figure" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse2Changed" />
                     </div></div>
                 </foreignObject>
                 <foreignObject x="250" y="935" width="1" height="1">
                     <div class="house-anchor"><div class="house-card-container @GetHouseChartSlotClass(3)">
-                        <FigureContainer Figure="@House3Figure" Label="3" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
+                        <FigureContainer Figure="@House3Figure" IsInteractive="@InteractiveMothers" ShowFigureName="true" OnFigureChanged="OnHouse3Changed" />
                     </div></div>
                 </foreignObject>
+
+                @* House numbers on the inner-square rim (same points as overlay endpoints). *@
+                <g class="house-numbers" pointer-events="none">
+                    @for (var h = 1; h <= 12; h++)
+                    {
+                        @if (HouseChartGeometry.TryGetLinkAnchor(h, out var numAt))
+                        {
+                            @((MarkupString)$"<text x=\"{numAt.X:0.##}\" y=\"{numAt.Y:0.##}\" class=\"house-number\" text-anchor=\"middle\" dominant-baseline=\"middle\">{h}</text>")
+                        }
+                    }
+                </g>
             </svg>
         </div>
     }

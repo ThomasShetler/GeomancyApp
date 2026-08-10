@@ -10,6 +10,11 @@ namespace GeomancyWebUI.Client.Helpers
     {
         public readonly record struct Point(double X, double Y);
 
+        private const double CenterX = 500;
+        private const double CenterY = 500;
+        /// <summary>Half-side of the inner square (250..750).</summary>
+        private const double InnerHalf = 250;
+
         private static readonly IReadOnlyDictionary<int, Point> Anchors = new Dictionary<int, Point>
         {
             [1] = new(150, 550),
@@ -26,6 +31,12 @@ namespace GeomancyWebUI.Client.Helpers
             [12] = new(100, 300),
         };
 
+        /// <summary>
+        /// Points on the inner-square rim facing each house — used for house numbers
+        /// and relationship overlay endpoints (so arcs avoid the figures).
+        /// </summary>
+        private static readonly IReadOnlyDictionary<int, Point> LinkAnchors = BuildLinkAnchors();
+
         public static bool TryGetAnchor(int house, out Point point)
         {
             if (house >= 1 && house <= 12 && Anchors.TryGetValue(house, out point))
@@ -34,19 +45,55 @@ namespace GeomancyWebUI.Client.Helpers
             return false;
         }
 
+        public static bool TryGetLinkAnchor(int house, out Point point)
+        {
+            if (house >= 1 && house <= 12 && LinkAnchors.TryGetValue(house, out point))
+                return true;
+            point = default;
+            return false;
+        }
+
+        private static IReadOnlyDictionary<int, Point> BuildLinkAnchors()
+        {
+            var map = new Dictionary<int, Point>(12);
+            foreach (var (house, fig) in Anchors)
+                map[house] = ProjectOntoInnerSquare(fig);
+            return map;
+        }
+
+        /// <summary>
+        /// Ray from chart center through the figure hits the inner square;
+        /// nudge slightly inward so numbers sit just inside the rim.
+        /// </summary>
+        private static Point ProjectOntoInnerSquare(Point figure)
+        {
+            var dx = figure.X - CenterX;
+            var dy = figure.Y - CenterY;
+            var scale = Math.Max(Math.Abs(dx), Math.Abs(dy));
+            if (scale < 1e-6)
+                return new Point(CenterX, CenterY - InnerHalf);
+
+            var t = InnerHalf / scale;
+            var hitX = CenterX + t * dx;
+            var hitY = CenterY + t * dy;
+
+            const double inset = 0.08;
+            return new Point(
+                hitX + (CenterX - hitX) * inset,
+                hitY + (CenterY - hitY) * inset);
+        }
+
         /// <summary>
         /// Quadratic control point pulled toward chart center so links read as chart arcs
         /// rather than chords through figure cards.
         /// </summary>
         public static Point ArcControl(Point from, Point to, double pull = 0.42)
         {
-            const double cx = 500;
-            const double cy = 500;
             var mx = (from.X + to.X) / 2.0;
             var my = (from.Y + to.Y) / 2.0;
             return new Point(
-                mx + (cx - mx) * pull,
-                my + (cy - my) * pull);
+                mx + (CenterX - mx) * pull,
+                my + (CenterY - my) * pull);
         }
 
         public static string ArcPath(Point from, Point to, double pull = 0.42)
@@ -73,11 +120,9 @@ namespace GeomancyWebUI.Client.Helpers
         public static Point LabelPoint(Point from, Point to, double pull = 0.42, double inward = 0.12)
         {
             var mid = PointOnArc(from, to, 0.5, pull);
-            const double cx = 500;
-            const double cy = 500;
             return new Point(
-                mid.X + (cx - mid.X) * inward,
-                mid.Y + (cy - mid.Y) * inward);
+                mid.X + (CenterX - mid.X) * inward,
+                mid.Y + (CenterY - mid.Y) * inward);
         }
     }
 }
