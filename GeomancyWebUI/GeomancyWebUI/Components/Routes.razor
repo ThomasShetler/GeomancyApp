@@ -1,7 +1,10 @@
 @* One interactive boundary for the whole app shell (layout + pages) so Scoped
    services like ThemeService are not split across separate islands. Do not use
-   a wrapper with ChildContent + @rendermode — RenderFragment cannot cross that boundary. *@
-@rendermode @(new InteractiveServerRenderMode(prerender: true))
+   a wrapper with ChildContent + @rendermode — RenderFragment cannot cross that boundary.
+   prerender:false — server prerender of the full InteractiveServer tree was starving
+   Kestrel under concurrent loads (static CSS/JS and /_blazor/negotiate timing out at
+   Railway's ~15s edge limit). *@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
     <Found Context="routeData">

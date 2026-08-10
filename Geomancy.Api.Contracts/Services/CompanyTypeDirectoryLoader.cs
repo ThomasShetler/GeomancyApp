@@ -65,16 +65,37 @@ namespace GeomancyAPI.Services
             lock (Gate)
             {
                 if (_directory != null) return;
-                var path = ResolveDataFile(FileName);
-                var json = File.ReadAllText(path);
-                var file = JsonConvert.DeserializeObject<CompanyTypeFile>(json);
-                _directory = new CompanyTypeDirectoryResponse
+                try
                 {
-                    Overview = file?.CompanyTypeData?.Overview,
-                    CompanyTypes = file?.CompanyTypeData?.CompanyTypes ?? new List<CompanyTypeEntryResponse>()
-                };
+                    var path = ResolveDataFile(FileName);
+                    if (path == null)
+                    {
+                        _directory = EmptyDirectory();
+                        return;
+                    }
+
+                    var json = File.ReadAllText(path);
+                    var file = JsonConvert.DeserializeObject<CompanyTypeFile>(json);
+                    _directory = new CompanyTypeDirectoryResponse
+                    {
+                        Overview = file?.CompanyTypeData?.Overview,
+                        CompanyTypes = file?.CompanyTypeData?.CompanyTypes ?? new List<CompanyTypeEntryResponse>()
+                    };
+                }
+                catch
+                {
+                    // Fail soft: wiki/workspace can render without glossary copy.
+                    _directory = EmptyDirectory();
+                }
             }
         }
+
+        private static CompanyTypeDirectoryResponse EmptyDirectory() =>
+            new CompanyTypeDirectoryResponse
+            {
+                Overview = null,
+                CompanyTypes = new List<CompanyTypeEntryResponse>()
+            };
 
         private static string ResolveDataFile(string fileName)
         {
@@ -82,17 +103,15 @@ namespace GeomancyAPI.Services
             var beside = Path.Combine(baseDir, DatabankRoot, DirectoryFolderName, fileName);
             if (File.Exists(beside)) return beside;
 
+            // Cap parent walks — never scan all the way to filesystem root on PaaS.
             var dir = new DirectoryInfo(baseDir);
-            while (dir != null)
+            for (var depth = 0; dir != null && depth < 8; depth++, dir = dir.Parent)
             {
                 var candidate = Path.Combine(dir.FullName, DatabankRoot, DirectoryFolderName, fileName);
                 if (File.Exists(candidate)) return candidate;
-                dir = dir.Parent;
             }
 
-            throw new FileNotFoundException(
-                $"Could not locate {fileName}. Expected '{beside}' (copied via csproj <Content>) " +
-                "or a parent folder named '" + DatabankRoot + "/" + DirectoryFolderName + "'.");
+            return null;
         }
     }
 }

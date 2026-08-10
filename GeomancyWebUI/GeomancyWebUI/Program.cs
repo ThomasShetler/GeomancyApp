@@ -1,12 +1,26 @@
+using System.Threading;
 using GeomancyWebUI.Components;
 using GeomancyWebUI.Client.Services;
 using GeomancyWebUI.Services;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+// Small PaaS containers often start with a tiny ThreadPool minimum; Blazor Server
+// + parallel static asset requests then queue until Railway's ~15s edge timeout
+// (502 on CSS/JS/negotiate while HTML sometimes still returns 200).
+ThreadPool.GetMinThreads(out var minWorkers, out var minIo);
+const int minThreadsFloor = 64;
+if (minWorkers < minThreadsFloor || minIo < minThreadsFloor)
+{
+    ThreadPool.SetMinThreads(
+        Math.Max(minWorkers, minThreadsFloor),
+        Math.Max(minIo, minThreadsFloor));
+}
 
 // Railway (and most PaaS) terminates TLS at the edge and forwards plain HTTP to
 // the container. Without this, ASP.NET Core sees Request.Scheme="http" and
@@ -29,6 +43,15 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+// Drop disconnected circuits quickly so refresh storms / phone tabs don't pin
+// memory and thread-pool work on a single Railway instance.
+builder.Services.Configure<CircuitOptions>(options =>
+{
+    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(20);
+    options.DisconnectedCircuitMaxRetained = 32;
+    options.JSInteropDefaultCallTimeout = TimeSpan.FromSeconds(30);
+});
 
 // Newtonsoft is required so the [JsonProperty("snake_case")] attributes on the
 // reference-directory DTOs serialize the way the WASM client expects.
@@ -84,8 +107,10 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-// Non-fingerprinted wwwroot files (clipboard.js, theme.js, app.css) are easy for
-// phones and Railway edge caches to keep across deploys. Force revalidation.
+// Non-fingerprinted wwwroot files are easy for phones to keep across deploys,
+// but Cache-Control: no-cache on *every* CSS caused a request stampede that
+// queued behind Blazor circuits and produced 15s 502s on Railway. Allow a short
+// browser cache; must-revalidate still picks up deploys within minutes.
 app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = ctx =>
@@ -94,7 +119,7 @@ app.UseStaticFiles(new StaticFileOptions
         if (path is "/clipboard.js" or "/theme.js"
             || path.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
         {
-            ctx.Context.Response.Headers.CacheControl = "no-cache, must-revalidate";
+            ctx.Context.Response.Headers.CacheControl = "public, max-age=120, must-revalidate";
         }
     }
 });
@@ -106,5 +131,18 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(GeomancyWebUI.Client._Imports).Assembly);
+
+// Warm static databank so first user request / health traffic isn't racing
+// cold File.ReadAllText under Blazor circuit startup.
+try
+{
+    _ = GeomancyAPI.Services.CompanyTypeDirectoryLoader.GetDirectory();
+    _ = GeomancyAPI.Services.HouseDirectoryLoader.GetHouses();
+    _ = GeomancyAPI.Services.HouseDirectoryLoader.GetCourts();
+}
+catch (Exception ex)
+{
+    app.Logger.LogWarning(ex, "Databank warmup failed; endpoints will retry on demand.");
+}
 
 app.Run();

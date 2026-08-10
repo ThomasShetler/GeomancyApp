@@ -10,5 +10,7 @@ dockerfilePath = "Dockerfile"
 [deploy]
 # Railway sets $PORT; the Dockerfile already binds ASPNETCORE_URLS to it.
 # No restartPolicy override - the platform default (ON_FAILURE) is fine.
-healthcheckPath = "/"
+# Probe /alive (ASP.NET liveness), not "/" — the home page is InteractiveServer
+# and can hang under circuit load, which made Railway report "failed to respond".
+healthcheckPath = "/alive"
 healthcheckTimeout = 30
