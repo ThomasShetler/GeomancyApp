@@ -350,6 +350,136 @@ namespace GeomancyApp
         public static string CompoundHowFormsIntro =>
             "Company Compound exists between these opposite figure pairs:";
 
+        /// <summary>
+        /// Greer house-count geometry for classical aspects (houses between cast seats).
+        /// </summary>
+        public static IReadOnlyList<(string Aspect, int HousesBetween, string Reading)> AspectGeometryTable { get; } =
+            new List<(string, int, string)>
+            {
+                ("Sextile", 1, "Mild favorable aspect"),
+                ("Square", 2, "Challenging aspect of friction or tests"),
+                ("Trine", 3, "Strong favorable aspect of easy agreement"),
+                ("Opposition", 5, "Unfavorable aspect of confrontation or denial"),
+            };
+
+        public static string AspectHowFormsIntro =>
+            "Geomantic aspects are house-wheel relationships counted by how many houses sit between the cast seats (not by figure affinity):";
+
+        /// <summary>
+        /// Resolve which geometry table row matches this aspect type.
+        /// </summary>
+        public static (string Aspect, int HousesBetween, string Reading)? MatchAspectGeometryRow(string aspectType)
+        {
+            var label = FormatAspectType(aspectType);
+            if (string.IsNullOrEmpty(label))
+                return null;
+
+            foreach (var row in AspectGeometryTable)
+            {
+                if (row.Aspect.Equals(label, StringComparison.OrdinalIgnoreCase))
+                    return row;
+            }
+
+            return null;
+        }
+
+        public static bool IsAspectGeometryRowActive(string rowAspect, string aspectType) =>
+            MatchAspectGeometryRow(aspectType) is { } matched
+            && matched.Aspect.Equals(rowAspect, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// "This chart" sentence naming cast houses, figures, aspect geometry, and significator roles.
+        /// </summary>
+        public static string AspectThisChart(
+            int fromHouse,
+            string fromFigure,
+            int toHouse,
+            string toFigure,
+            string aspectType,
+            string direction,
+            int querentHouse = 0,
+            int quesitedHouse = 0)
+        {
+            if (fromHouse is < 1 or > 12 || toHouse is < 1 or > 12)
+                return string.Empty;
+
+            var aspectLabel = FormatAspectType(aspectType);
+            if (string.IsNullOrEmpty(aspectLabel))
+                return string.Empty;
+
+            var fromFig = string.IsNullOrWhiteSpace(fromFigure) ? "its figure" : fromFigure.Trim();
+            var toFig = string.IsNullOrWhiteSpace(toFigure) ? "its figure" : toFigure.Trim();
+
+            var dir = (direction ?? string.Empty).Trim();
+            bool dexter = dir.IndexOf("Dexter", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool sinister = dir.IndexOf("Sinister", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool opposition = aspectLabel.Equals("Opposition", StringComparison.OrdinalIgnoreCase)
+                || dir.Equals("Opposition", StringComparison.OrdinalIgnoreCase);
+            bool conjunction = aspectLabel.Equals("Conjunction", StringComparison.OrdinalIgnoreCase);
+
+            string titledAspect;
+            if (opposition || conjunction)
+                titledAspect = aspectLabel;
+            else if (dexter)
+                titledAspect = $"Dexter {aspectLabel}";
+            else if (sinister)
+                titledAspect = $"Sinister {aspectLabel}";
+            else
+                titledAspect = aspectLabel;
+
+            var fromRole = AspectSeatRoleClause(fromHouse, querentHouse, quesitedHouse);
+            var toRole = AspectSeatRoleClause(toHouse, querentHouse, quesitedHouse);
+
+            var cast = $"{fromFig} in House {fromHouse}{fromRole} casts a {titledAspect} to {toFig} in House {toHouse}{toRole}";
+
+            if (conjunction)
+                return $"{cast}: both occupy the same house seat.";
+
+            var geometry = GeomanticAspects.DescribeAspect(fromHouse, toHouse, aspectType, direction);
+            // DescribeAspect already includes type/houses; prefer the between + direction clause after the em dash.
+            var dashIdx = geometry.IndexOf(" — ", StringComparison.Ordinal);
+            var geometryTail = dashIdx >= 0 && dashIdx + 3 < geometry.Length
+                ? geometry.Substring(dashIdx + 3).Trim()
+                : geometry;
+
+            var intermediates = GeomanticAspects.IntermediateHouses(fromHouse, toHouse);
+            string betweenDetail = string.Empty;
+            if (intermediates.Count > 0)
+            {
+                betweenDetail = intermediates.Count == 1
+                    ? $" (House {intermediates[0]} between them)"
+                    : $" (Houses {string.Join(", ", intermediates)} between them)";
+            }
+
+            if (!string.IsNullOrEmpty(geometryTail))
+            {
+                geometryTail = geometryTail.TrimEnd('.');
+                // Avoid duplicating the parenthetical if DescribeAspect already named houses.
+                if (!string.IsNullOrEmpty(betweenDetail)
+                    && geometryTail.IndexOf("between H", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return $"{cast}: {geometryTail}.";
+                }
+
+                return $"{cast}: {geometryTail}{betweenDetail}.";
+            }
+
+            return $"{cast}{betweenDetail}.";
+        }
+
+        private static string AspectSeatRoleClause(int house, int querentHouse, int quesitedHouse)
+        {
+            if (house > 0 && house == querentHouse && house == quesitedHouse)
+                return " (querent and quesited)";
+            if (house > 0 && house == querentHouse)
+                return " (querent)";
+            if (house > 0 && house == quesitedHouse)
+                return " (quesited)";
+            if (querentHouse > 0 || quesitedHouse > 0)
+                return " (translated seat)";
+            return string.Empty;
+        }
+
         public static bool IsDemiSimpleCompanyType(string companyTypeKey) =>
             !string.IsNullOrWhiteSpace(companyTypeKey)
             && (companyTypeKey.Equals("DemiSimple", StringComparison.OrdinalIgnoreCase)

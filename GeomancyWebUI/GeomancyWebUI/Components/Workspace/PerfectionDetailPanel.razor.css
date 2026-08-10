@@ -137,6 +137,16 @@
     background: linear-gradient(180deg, rgba(255, 193, 7, 0.08), var(--bg-secondary));
 }
 
+.aspect-cover-card {
+    border-color: rgba(66, 165, 245, 0.35);
+    background: linear-gradient(180deg, rgba(66, 165, 245, 0.08), var(--bg-secondary));
+}
+
+.aspect-cover-card.aspect-sextile { border-color: rgba(76, 175, 80, 0.45); }
+.aspect-cover-card.aspect-trine { border-color: rgba(76, 175, 80, 0.55); }
+.aspect-cover-card.aspect-square { border-color: rgba(244, 67, 54, 0.45); }
+.aspect-cover-card.aspect-opposition { border-color: rgba(156, 39, 176, 0.45); }
+
 .company-cover-pair {
     margin: 0;
     font-size: 1.05rem;

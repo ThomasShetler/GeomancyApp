@@ -93,6 +93,35 @@
                     CompanyTypesDirectory?.Overview)
             }
 
+            @if (aspectEmphasized
+                && p.AspectFromHouse > 0
+                && p.AspectToHouse > 0
+                && !string.IsNullOrWhiteSpace(p.AspectBetweenSignificators)
+                && !p.AspectBetweenSignificators.Equals("None", StringComparison.OrdinalIgnoreCase))
+            {
+                var aspectFromFig = GetHouseFigureName(p.AspectFromHouse);
+                var aspectToFig = GetHouseFigureName(p.AspectToHouse);
+                if (string.IsNullOrEmpty(aspectFromFig) && p.AspectFromHouse == p.QuerentHouse)
+                    aspectFromFig = p.QuerentFigure;
+                if (string.IsNullOrEmpty(aspectFromFig) && p.AspectFromHouse == p.QuesitedHouse)
+                    aspectFromFig = p.QuesitedFigure;
+                if (string.IsNullOrEmpty(aspectToFig) && p.AspectToHouse == p.QuesitedHouse)
+                    aspectToFig = p.QuesitedFigure;
+                if (string.IsNullOrEmpty(aspectToFig) && p.AspectToHouse == p.QuerentHouse)
+                    aspectToFig = p.QuerentFigure;
+                if (string.IsNullOrEmpty(aspectFromFig))
+                    aspectFromFig = p.PathFigure;
+                @RenderAspectCover(
+                    p.AspectBetweenSignificators,
+                    p.AspectDirection,
+                    p.AspectFromHouse,
+                    aspectFromFig,
+                    p.AspectToHouse,
+                    aspectToFig,
+                    p.QuerentHouse,
+                    p.QuesitedHouse)
+            }
+
             <section class="detail-card parties-card">
                 <h3 class="card-title">Parties</h3>
                 <div class="parties-grid">
@@ -424,6 +453,16 @@
                     CompanyTypesDirectory?.Overview)
             }
 
+            @RenderAspectCover(
+                a.AspectType,
+                a.Direction,
+                a.FromHouse,
+                GetHouseFigureName(a.FromHouse),
+                a.ToHouse,
+                GetHouseFigureName(a.ToHouse),
+                Analysis?.QuerentHouse ?? 0,
+                Analysis?.QuesitedHouse ?? 0)
+
             @if (querentHouse > 0 || quesitedHouse > 0)
             {
                 <section class="detail-card parties-card">
@@ -686,6 +725,76 @@
 
         return string.Empty;
     }
+
+    private RenderFragment RenderAspectCover(
+        string aspectType,
+        string direction,
+        int fromHouse,
+        string fromFigure,
+        int toHouse,
+        string toFigure,
+        int querentHouse,
+        int quesitedHouse) => __builder =>
+    {
+        var typeLabel = PerfectionDetailCopy.FormatAspectType(aspectType);
+        if (string.IsNullOrEmpty(typeLabel) || fromHouse <= 0 || toHouse <= 0)
+            return;
+
+        var shortLabel = GeomanticAspects.ShortLabel(aspectType, direction);
+        var typeLine = !string.IsNullOrEmpty(shortLabel) && !shortLabel.Equals(typeLabel, StringComparison.OrdinalIgnoreCase)
+            ? $"{typeLabel} · {shortLabel}"
+            : typeLabel;
+
+        var thisChart = PerfectionDetailCopy.AspectThisChart(
+            fromHouse, fromFigure, toHouse, toFigure, aspectType, direction, querentHouse, quesitedHouse);
+        var meaning = PerfectionDetailCopy.AspectGlossary(aspectType, direction);
+        var typeClass = AspectDirectionHelper.AspectTypeClass(aspectType);
+
+        <section class="detail-card company-cover-card aspect-cover-card @typeClass">
+            <h3 class="card-title">
+                <span class="card-title-icon">◈</span> Aspect formation
+            </h3>
+            <p class="company-cover-type">@typeLine</p>
+            <div class="company-cover-block">
+                <span class="company-cover-label">How aspects form</span>
+                <p class="company-cover-text">@PerfectionDetailCopy.AspectHowFormsIntro</p>
+                <table class="company-planet-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Houses between</th>
+                            <th>Reading</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in PerfectionDetailCopy.AspectGeometryTable)
+                        {
+                            var rowActive = PerfectionDetailCopy.IsAspectGeometryRowActive(row.Aspect, aspectType);
+                            <tr class="@(rowActive ? "is-active-pair" : null)">
+                                <td>@row.Aspect</td>
+                                <td>@row.HousesBetween</td>
+                                <td>@row.Reading</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (!string.IsNullOrEmpty(thisChart))
+            {
+                <div class="company-cover-block">
+                    <span class="company-cover-label">This chart</span>
+                    <p class="company-cover-text">@thisChart</p>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(meaning))
+            {
+                <div class="company-cover-block">
+                    <span class="company-cover-label">What it means</span>
+                    <p class="company-cover-text">@meaning</p>
+                </div>
+            }
+        </section>
+    };
 
     private RenderFragment RenderCompanyCover(
         string companyDisplay,

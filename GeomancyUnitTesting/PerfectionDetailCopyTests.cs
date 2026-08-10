@@ -160,5 +160,46 @@ namespace GeomancyUnitTesting
             StringAssert.Contains(line, "five houses");
             StringAssert.Contains(line, "not dexter");
         }
+
+        [TestMethod]
+        public void AspectGeometryTable_HasFourGreerRows()
+        {
+            Assert.AreEqual(4, PerfectionDetailCopy.AspectGeometryTable.Count);
+            Assert.AreEqual(1, PerfectionDetailCopy.MatchAspectGeometryRow("Sextile")?.HousesBetween);
+            Assert.AreEqual(2, PerfectionDetailCopy.MatchAspectGeometryRow("Square")?.HousesBetween);
+            Assert.AreEqual(3, PerfectionDetailCopy.MatchAspectGeometryRow("Trine")?.HousesBetween);
+            Assert.AreEqual(5, PerfectionDetailCopy.MatchAspectGeometryRow("Opposition")?.HousesBetween);
+        }
+
+        [TestMethod]
+        public void AspectGeometryRow_ActiveMatcher()
+        {
+            Assert.IsTrue(PerfectionDetailCopy.IsAspectGeometryRowActive("Sextile", "Sextile"));
+            Assert.IsTrue(PerfectionDetailCopy.IsAspectGeometryRowActive("Trine", "Trine"));
+            Assert.IsTrue(PerfectionDetailCopy.IsAspectGeometryRowActive("Square", "Square"));
+            Assert.IsTrue(PerfectionDetailCopy.IsAspectGeometryRowActive("Opposition", "Opposition"));
+            Assert.IsFalse(PerfectionDetailCopy.IsAspectGeometryRowActive("Sextile", "Trine"));
+        }
+
+        [TestMethod]
+        public void AspectThisChart_NamesHousesFiguresAndDexterSextile()
+        {
+            var text = PerfectionDetailCopy.AspectThisChart(
+                fromHouse: 1,
+                fromFigure: "Laetitia",
+                toHouse: 3,
+                toFigure: "Amissio",
+                aspectType: "Sextile",
+                direction: "Dexter",
+                querentHouse: 1,
+                quesitedHouse: 5);
+
+            StringAssert.Contains(text, "House 1");
+            StringAssert.Contains(text, "Laetitia");
+            StringAssert.Contains(text, "House 3");
+            StringAssert.Contains(text, "Amissio");
+            StringAssert.Contains(text, "Dexter Sextile");
+            StringAssert.Contains(text, "querent");
+        }
     }
 }
