@@ -14,6 +14,12 @@ namespace GeomancyWebUI.Client.Helpers
         private const double CenterY = 500;
         /// <summary>Half-side of the inner square (250..750).</summary>
         private const double InnerHalf = 250;
+        private const double InnerMin = CenterX - InnerHalf; // 250
+        private const double InnerMax = CenterX + InnerHalf; // 750
+        /// <summary>Centers of the three equal edge thirds (symmetric house seats).</summary>
+        private static readonly double EdgeA = InnerMin + InnerHalf * 2.0 / 6.0; // ~333.33
+        private static readonly double EdgeB = CenterX;                          // 500
+        private static readonly double EdgeC = InnerMax - InnerHalf * 2.0 / 6.0; // ~666.67
 
         private static readonly IReadOnlyDictionary<int, Point> Anchors = new Dictionary<int, Point>
         {
@@ -32,28 +38,14 @@ namespace GeomancyWebUI.Client.Helpers
         };
 
         /// <summary>
-        /// Connection endpoints on the inner-square rim (arcs hit here, away from figures).
-        /// </summary>
-        private static readonly IReadOnlyDictionary<int, Point> LinkAnchors =
-            BuildProjectedAnchors(insetTowardCenter: 0.02);
-
-        /// <summary>
-        /// House numbers sit further inward so arc strokes don't cover the digits.
+        /// Symmetric seats for house numbers and overlay endpoints (padded in from the rim).
         /// </summary>
         private static readonly IReadOnlyDictionary<int, Point> NumberAnchors =
-            BuildProjectedAnchors(insetTowardCenter: 0.22);
+            BuildSymmetricRimAnchors(padFromRim: 44);
 
         public static bool TryGetAnchor(int house, out Point point)
         {
             if (house >= 1 && house <= 12 && Anchors.TryGetValue(house, out point))
-                return true;
-            point = default;
-            return false;
-        }
-
-        public static bool TryGetLinkAnchor(int house, out Point point)
-        {
-            if (house >= 1 && house <= 12 && LinkAnchors.TryGetValue(house, out point))
                 return true;
             point = default;
             return false;
@@ -68,88 +60,45 @@ namespace GeomancyWebUI.Client.Helpers
         }
 
         /// <summary>
-        /// Soft fill triangle for a house: inner-rim span + outer apex on the diamond.
-        /// </summary>
-        public static bool TryGetHouseFillPoints(int house, out Point left, out Point right, out Point outer)
-        {
-            left = right = outer = default;
-            if (house < 1 || house > 12) return false;
-            if (!LinkAnchors.TryGetValue(house, out var mid)
-                || !LinkAnchors.TryGetValue(PrevHouse(house), out var prev)
-                || !LinkAnchors.TryGetValue(NextHouse(house), out var next)
-                || !Anchors.TryGetValue(house, out var fig))
-                return false;
-
-            left = Midpoint(prev, mid);
-            right = Midpoint(mid, next);
-            outer = ProjectOntoDiamond(fig);
-            // Pull apex slightly inward so the stroke of the diamond stays visible.
-            outer = new Point(
-                outer.X + (CenterX - outer.X) * 0.04,
-                outer.Y + (CenterY - outer.Y) * 0.04);
-            return true;
-        }
-
-        /// <summary>
-        /// Seat for a Querent/Quesited tag, between the rim number and the figure.
+        /// Seat for a Querent/Quesited tag, between the house number and the figure.
         /// </summary>
         public static bool TryGetRoleTagPoint(int house, out Point point)
         {
             point = default;
-            if (!TryGetLinkAnchor(house, out var link) || !TryGetAnchor(house, out var fig))
+            if (!TryGetNumberAnchor(house, out var num) || !TryGetAnchor(house, out var fig))
                 return false;
             point = new Point(
-                link.X + (fig.X - link.X) * 0.32,
-                link.Y + (fig.Y - link.Y) * 0.32);
+                num.X + (fig.X - num.X) * 0.38,
+                num.Y + (fig.Y - num.Y) * 0.38);
             return true;
         }
 
-        private static int PrevHouse(int house) => house == 1 ? 12 : house - 1;
-        private static int NextHouse(int house) => house == 12 ? 1 : house + 1;
-
-        private static Point Midpoint(Point a, Point b) =>
-            new((a.X + b.X) / 2.0, (a.Y + b.Y) / 2.0);
-
-        private static IReadOnlyDictionary<int, Point> BuildProjectedAnchors(double insetTowardCenter)
-        {
-            var map = new Dictionary<int, Point>(12);
-            foreach (var (house, fig) in Anchors)
-                map[house] = ProjectOntoInnerSquare(fig, insetTowardCenter);
-            return map;
-        }
-
         /// <summary>
-        /// Ray from chart center through the figure hits the inner square;
-        /// <paramref name="insetTowardCenter"/> pulls the point inward from the rim.
+        /// Three equal seats per side of the inner square, padded inward along the edge normal.
+        /// Top L→R: 11,10,9 · Right T→B: 8,7,6 · Bottom R→L: 5,4,3 · Left B→T: 2,1,12.
         /// </summary>
-        private static Point ProjectOntoInnerSquare(Point figure, double insetTowardCenter)
+        private static IReadOnlyDictionary<int, Point> BuildSymmetricRimAnchors(double padFromRim)
         {
-            var dx = figure.X - CenterX;
-            var dy = figure.Y - CenterY;
-            var scale = Math.Max(Math.Abs(dx), Math.Abs(dy));
-            if (scale < 1e-6)
-                return new Point(CenterX, CenterY - InnerHalf);
+            var top = InnerMin + padFromRim;
+            var right = InnerMax - padFromRim;
+            var bottom = InnerMax - padFromRim;
+            var left = InnerMin + padFromRim;
 
-            var t = InnerHalf / scale;
-            var hitX = CenterX + t * dx;
-            var hitY = CenterY + t * dy;
-
-            return new Point(
-                hitX + (CenterX - hitX) * insetTowardCenter,
-                hitY + (CenterY - hitY) * insetTowardCenter);
-        }
-
-        /// <summary>Ray from center through the figure onto the outer diamond (|dx|+|dy|=500).</summary>
-        private static Point ProjectOntoDiamond(Point figure)
-        {
-            var dx = figure.X - CenterX;
-            var dy = figure.Y - CenterY;
-            var scale = Math.Abs(dx) + Math.Abs(dy);
-            if (scale < 1e-6)
-                return new Point(CenterX, CenterY - 500);
-
-            var t = 500.0 / scale;
-            return new Point(CenterX + t * dx, CenterY + t * dy);
+            return new Dictionary<int, Point>
+            {
+                [11] = new(EdgeA, top),
+                [10] = new(EdgeB, top),
+                [9] = new(EdgeC, top),
+                [8] = new(right, EdgeA),
+                [7] = new(right, EdgeB),
+                [6] = new(right, EdgeC),
+                [5] = new(EdgeC, bottom),
+                [4] = new(EdgeB, bottom),
+                [3] = new(EdgeA, bottom),
+                [2] = new(left, EdgeC),
+                [1] = new(left, EdgeB),
+                [12] = new(left, EdgeA),
+            };
         }
 
         /// <summary>

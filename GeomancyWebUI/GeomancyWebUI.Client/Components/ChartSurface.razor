@@ -107,25 +107,6 @@
                 <line x1="1000" y1="1000" x2="750" y2="750" stroke="#333" stroke-width="1" />
                 <line x1="0" y1="1000" x2="250" y2="750" stroke="#333" stroke-width="1" />
 
-                @if (RelationshipOverlay != null)
-                {
-                    <g class="house-role-fills" pointer-events="none">
-                        @if (RelationshipOverlay.QuerentHouse is >= 1 and <= 12
-                            && HouseChartGeometry.TryGetHouseFillPoints(RelationshipOverlay.QuerentHouse, out var qL, out var qR, out var qO))
-                        {
-                            <polygon points="@($"{qL.X:0.##},{qL.Y:0.##} {qR.X:0.##},{qR.Y:0.##} {qO.X:0.##},{qO.Y:0.##}")"
-                                     class="house-role-fill house-role-fill-querent" />
-                        }
-                        @if (RelationshipOverlay.QuesitedHouse is >= 1 and <= 12
-                            && RelationshipOverlay.QuesitedHouse != RelationshipOverlay.QuerentHouse
-                            && HouseChartGeometry.TryGetHouseFillPoints(RelationshipOverlay.QuesitedHouse, out var xL, out var xR, out var xO))
-                        {
-                            <polygon points="@($"{xL.X:0.##},{xL.Y:0.##} {xR.X:0.##},{xR.Y:0.##} {xO.X:0.##},{xO.Y:0.##}")"
-                                     class="house-role-fill house-role-fill-quesited" />
-                        }
-                    </g>
-                }
-
                 @if (RelationshipOverlay?.Links is { Count: > 0 })
                 {
                     <g class="house-chart-overlays" pointer-events="none">
@@ -137,11 +118,11 @@
                         </defs>
                         @foreach (var link in RelationshipOverlay.Links)
                         {
-                            @if (HouseChartGeometry.TryGetLinkAnchor(link.FromHouse, out var from)
-                                 && HouseChartGeometry.TryGetLinkAnchor(link.ToHouse, out var to))
+                            @if (HouseChartGeometry.TryGetNumberAnchor(link.FromHouse, out var from)
+                                 && HouseChartGeometry.TryGetNumberAnchor(link.ToHouse, out var to))
                             {
                                 var css = LinkCssClass(link);
-                                // Endpoints sit on the inner rim — lighter pull keeps arcs in the open center.
+                                // Endpoints snap to house numbers — light pull keeps arcs in the open center.
                                 var pull = link.Kind == "company-pair" ? 0.12 : 0.32;
                                 var path = HouseChartGeometry.ArcPath(from, to, pull);
                                 var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, link.Kind == "company-pair" ? 0.06 : 0.10);
@@ -243,7 +224,7 @@
                     </div></div>
                 </foreignObject>
 
-                @* House numbers on the inner-square rim (same points as overlay endpoints). *@
+                @* House numbers — overlay arcs snap to these same seats. *@
                 <g class="house-numbers" pointer-events="none">
                     @for (var h = 1; h <= 12; h++)
                     {
