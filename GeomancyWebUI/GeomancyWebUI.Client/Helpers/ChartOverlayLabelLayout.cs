@@ -1,15 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeomancyWebUI.Client.Models;
 
 namespace GeomancyWebUI.Client.Helpers
 {
     /// <summary>
-    /// Places house-chart connector badges so stacked links (e.g. Occupation + Company
-    /// on the same house pair) do not sit on top of each other.
+    /// Places house-chart connector badges so stacked links (e.g. Qrt + Co. Demi)
+    /// do not sit on top of each other. Long labels prefer the outer side of the arc
+    /// (below the bow when the top is crowded).
     /// </summary>
     public static class ChartOverlayLabelLayout
     {
+        private const double ChartCenterX = 500;
+        private const double ChartCenterY = 500;
+        private const int LongLabelChars = 12;
+
         public readonly record struct PlacedBadge(
             ChartAspectLink Link,
             string CssClass,
@@ -27,16 +33,17 @@ namespace GeomancyWebUI.Client.Helpers
         {
             var results = new List<PlacedBadge>(links.Count);
             var occupied = new List<(double X, double Y, double W, double H)>();
-            // Same unordered house-pair → alternate label seats along the arc.
             var pairSlot = new Dictionary<long, int>();
 
-            foreach (var link in links)
+            // Short path labels first so long company badges can fall below them.
+            foreach (var link in links.OrderBy(Priority))
             {
                 if (!HouseChartGeometry.TryGetNumberAnchor(link.FromHouse, out var from)
                     || !HouseChartGeometry.TryGetNumberAnchor(link.ToHouse, out var to))
                     continue;
 
                 var isCompany = link.Kind is "company-pair" or "company-pass";
+                var isLong = IsLongLabel(link);
                 var pull = isCompany ? 0.10 : 0.34;
                 var iconInner = ChartLinkIconGlyphs.TryGetInnerMarkup(link.IconKind, link.IconVariant);
                 var hasIcon = !string.IsNullOrEmpty(iconInner);
@@ -46,49 +53,41 @@ namespace GeomancyWebUI.Client.Helpers
                 pairSlot.TryGetValue(pairKey, out var slotIndex);
                 pairSlot[pairKey] = slotIndex + 1;
 
-                // Spread labels along the arc when several links share endpoints.
                 var t = slotIndex switch
                 {
                     0 => 0.50,
-                    1 => 0.32,
-                    2 => 0.68,
-                    3 => 0.22,
-                    _ => 0.50 + ((slotIndex % 2 == 0) ? 0.12 : -0.12)
+                    1 => 0.36,
+                    2 => 0.64,
+                    3 => 0.28,
+                    _ => 0.50 + ((slotIndex % 2 == 0) ? 0.10 : -0.10)
                 };
 
-                var inward = isCompany ? 0.04 : 0.12;
-                var basePoint = HouseChartGeometry.PointOnArc(from, to, t, pull);
-                var labelAt = new HouseChartGeometry.Point(
-                    basePoint.X + (500 - basePoint.X) * inward,
-                    basePoint.Y + (500 - basePoint.Y) * inward);
+                var mid = HouseChartGeometry.PointOnArc(from, to, t, pull);
+                var (ox, oy) = OuterUnit(mid);
 
-                // Fan perpendicular to the chord so badges stack clear of each other.
-                var dx = to.X - from.X;
-                var dy = to.Y - from.Y;
-                var len = Math.Sqrt(dx * dx + dy * dy);
-                if (len < 1) len = 1;
-                var nx = -dy / len;
-                var ny = dx / len;
-                // Prefer outward from chart center so labels don't dive into house fills.
-                var awayX = labelAt.X - 500;
-                var awayY = labelAt.Y - 500;
-                if (nx * awayX + ny * awayY < 0)
-                {
-                    nx = -nx;
-                    ny = -ny;
-                }
+                // Long / company badges sit clearly outside the arc bow (often "below"
+                // on bottom-edge houses); short labels stay nearer the midpoint.
+                var standOff = isLong ? 34 : (isCompany ? 22 : 12);
+                if (slotIndex > 0 && isLong)
+                    standOff += 10 * slotIndex;
 
-                labelAt = ResolveCollision(labelAt, w, h, nx, ny, occupied);
-                occupied.Add((labelAt.X, labelAt.Y, w, h));
+                var seed = new HouseChartGeometry.Point(
+                    mid.X + ox * standOff,
+                    mid.Y + oy * standOff);
+
+                // Prefer further along the outer side (and screen-down when that helps)
+                // before flipping to the inner/top side of the arc.
+                seed = ResolveCollision(seed, w, h, ox, oy, preferOuter: isLong || isCompany, occupied);
+                occupied.Add((seed.X, seed.Y, w, h));
 
                 results.Add(new PlacedBadge(
                     link,
-                    string.Empty, // caller fills CSS
+                    string.Empty,
                     pull,
                     HouseChartGeometry.ArcPath(from, to, pull),
                     from,
                     to,
-                    labelAt,
+                    seed,
                     w,
                     h,
                     hasIcon,
@@ -98,32 +97,103 @@ namespace GeomancyWebUI.Client.Helpers
             return results;
         }
 
+        private static int Priority(ChartAspectLink link)
+        {
+            if (IsLongLabel(link) || link.Kind is "company-pair" or "company-pass")
+                return 2;
+            if (string.Equals(link.Kind, "path", StringComparison.OrdinalIgnoreCase))
+                return 0;
+            return 1;
+        }
+
+        private static bool IsLongLabel(ChartAspectLink link) =>
+            (link.Label?.Length ?? 0) >= LongLabelChars
+            || link.Kind is "company-pair" or "company-pass";
+
+        /// <summary>Unit vector from arc midpoint away from chart center (outer rim).</summary>
+        private static (double X, double Y) OuterUnit(HouseChartGeometry.Point mid)
+        {
+            var dx = mid.X - ChartCenterX;
+            var dy = mid.Y - ChartCenterY;
+            var len = Math.Sqrt(dx * dx + dy * dy);
+            if (len < 1)
+                return (0, 1); // fallback: screen-down
+            return (dx / len, dy / len);
+        }
+
         private static HouseChartGeometry.Point ResolveCollision(
             HouseChartGeometry.Point seed,
             double w,
             double h,
-            double nx,
-            double ny,
+            double ox,
+            double oy,
+            bool preferOuter,
             List<(double X, double Y, double W, double H)> occupied)
         {
-            const double pad = 6;
-            var x = seed.X;
-            var y = seed.Y;
-            for (var attempt = 0; attempt < 10; attempt++)
+            const double pad = 8;
+            if (!Overlaps(seed.X, seed.Y, w, h, pad, occupied))
+                return seed;
+
+            // Candidate offsets: push further outside first for long labels, then
+            // screen-down, then lateral, then (last) flip to the inner/top side.
+            var candidates = preferOuter
+                ? BuildOuterFirstOffsets(seed, ox, oy)
+                : BuildAlternatingOffsets(seed, ox, oy);
+
+            foreach (var (x, y) in candidates)
             {
                 if (!Overlaps(x, y, w, h, pad, occupied))
                     return new HouseChartGeometry.Point(x, y);
-
-                var step = 20 + attempt * 8;
-                var side = attempt % 2 == 0 ? 1 : -1;
-                x = seed.X + nx * step * side;
-                y = seed.Y + ny * step * side;
-                // Slight along-normal drift so we don't ping-pong on the same spot.
-                x += ny * (attempt * 3);
-                y -= nx * (attempt * 3);
             }
 
-            return new HouseChartGeometry.Point(x, y);
+            // Last resort: keep going further outside.
+            return new HouseChartGeometry.Point(
+                seed.X + ox * 72,
+                seed.Y + oy * 72 + 24);
+        }
+
+        private static List<(double X, double Y)> BuildOuterFirstOffsets(
+            HouseChartGeometry.Point seed,
+            double ox,
+            double oy)
+        {
+            var list = new List<(double X, double Y)>(16);
+            // Further outside the arc
+            for (var i = 1; i <= 6; i++)
+            {
+                var step = 18 * i;
+                list.Add((seed.X + ox * step, seed.Y + oy * step));
+                // Bias screen-down so long badges clear Qrt sitting above
+                list.Add((seed.X + ox * step, seed.Y + oy * step + 14 * i));
+                list.Add((seed.X + ox * (step * 0.6) + oy * 16, seed.Y + oy * (step * 0.6) - ox * 16));
+                list.Add((seed.X + ox * (step * 0.6) - oy * 16, seed.Y + oy * (step * 0.6) + ox * 16));
+            }
+
+            // Inner/top side only after outer options are exhausted
+            for (var i = 1; i <= 3; i++)
+            {
+                var step = 20 * i;
+                list.Add((seed.X - ox * step, seed.Y - oy * step));
+            }
+
+            return list;
+        }
+
+        private static List<(double X, double Y)> BuildAlternatingOffsets(
+            HouseChartGeometry.Point seed,
+            double ox,
+            double oy)
+        {
+            var list = new List<(double X, double Y)>(12);
+            for (var attempt = 1; attempt <= 8; attempt++)
+            {
+                var step = 16 + attempt * 8;
+                var side = attempt % 2 == 0 ? 1 : -1;
+                list.Add((seed.X + ox * step * side, seed.Y + oy * step * side));
+                list.Add((seed.X + oy * step * side, seed.Y - ox * step * side));
+            }
+
+            return list;
         }
 
         private static bool Overlaps(
