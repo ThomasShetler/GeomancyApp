@@ -11,7 +11,7 @@
 
 **Live app:** <https://geofancy.up.railway.app>
 
-> **Official release (v1.0.8).** Geofancy is a production-ready web workspace with house-chart relationship overlays, a live perfections & aspects wiki, classical house reference, licensed Greer's references, interactive casting walkthroughs, and the full Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
+> **Official release (v1.0.9).** Geofancy is a production-ready web workspace with polished house-chart relationship overlays, a live perfections & aspects wiki, classical house reference, licensed Greer's references, interactive casting walkthroughs, and the full Way of Points stack. Bug reports and feedback are welcome on [GitHub Issues](https://github.com/ThomasShetler/GeomancyApp/issues).
 
 ---
 

@@ -1,5 +1,26 @@
 # Releases
 
+## v1.0.9 — Connector polish & deploy hardening
+
+**Released:** August 2026  
+**Live app:** <https://geofancy.up.railway.app>
+
+Polish release after **v1.0.8** — clearer house-chart relationship badges, faster workspace first paint, and more reliable Railway container builds.
+
+### Highlights
+
+- **Connector badge polish.** Perfection/aspect/company icons on overlay arcs; Qrt / Qst paths tinted to match querent green and quesited orange house fills; company arcs show planet or pairing (e.g. `Co. Demi · Mercury`).
+- **Anti-overlap labels.** Short spokes place first; long company badges sit outside the arc bow (below when the top is crowded) so Occupation and Co. Comp. no longer stack on the same point.
+- **Faster workspace open.** Chart + Court & Houses directories first; Way of Points, Lots, and company glossary load when those tabs open; process-wide directory cache and off-thread chart work.
+- **Deploy hardening.** `/alive` health checks, no InteractiveServer prerender stampede, workstation GC / tiered JIT in Docker, chart warmup at startup; dropped `PublishReadyToRun` (it broke framework-dependent Linux publishes with NETSDK1095).
+
+### Implementation notes
+
+- **Assemblies aligned to v1.0.9.** `Directory.Build.props`, `GeofancyVersion.Display`, and legacy `AssemblyInfo.cs` updated in lockstep.
+- **Branches:** `master` = production; `web-app` = integration / testing.
+
+---
+
 ## v1.0.8 — Chart relationship overlays & perfections wiki
 
 **Released:** August 2026  
