@@ -132,50 +132,72 @@
                                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#42a5f5" />
                             </marker>
                         </defs>
-                        @foreach (var link in RelationshipOverlay.Links)
+                        @foreach (var placed in ChartOverlayLabelLayout.Place(RelationshipOverlay.Links))
                         {
-                            @if (HouseChartGeometry.TryGetNumberAnchor(link.FromHouse, out var from)
-                                 && HouseChartGeometry.TryGetNumberAnchor(link.ToHouse, out var to))
-                            {
-                                var css = LinkCssClass(link);
-                                var isCompanyLink = link.Kind is "company-pair" or "company-pass";
-                                // Endpoints snap to house numbers — light pull keeps arcs in the open center.
-                                var pull = isCompanyLink ? 0.12 : 0.32;
-                                var path = HouseChartGeometry.ArcPath(from, to, pull);
-                                var labelAt = HouseChartGeometry.LabelPoint(from, to, pull, isCompanyLink ? 0.06 : 0.10);
-                                var useArrow = link.Kind == "aspect"
-                                    && !string.Equals(link.AspectType, "Opposition", StringComparison.OrdinalIgnoreCase);
-                                var midCount = link.Kind == "aspect" ? (link.IntermediateHouses?.Count ?? 0) : 0;
-                                <g class="house-chart-link-group">
-                                    <path d="@path"
-                                          class="house-chart-link @css"
-                                          marker-end="@(useArrow ? "url(#aspect-arrow-end)" : null)">
-                                        @if (!string.IsNullOrEmpty(link.Description))
-                                        {
-                                            <title>@link.Description</title>
-                                        }
-                                    </path>
-                                    @if (midCount > 0)
+                            var link = placed.Link;
+                            var css = LinkCssClass(link);
+                            var useArrow = link.Kind == "aspect"
+                                && !string.Equals(link.AspectType, "Opposition", StringComparison.OrdinalIgnoreCase);
+                            var midCount = link.Kind == "aspect" ? (link.IntermediateHouses?.Count ?? 0) : 0;
+                            var from = placed.From;
+                            var to = placed.To;
+                            var pull = placed.Pull;
+                            <g class="house-chart-link-group">
+                                <path d="@placed.Path"
+                                      class="house-chart-link @css"
+                                      marker-end="@(useArrow ? "url(#aspect-arrow-end)" : null)">
+                                    @if (!string.IsNullOrEmpty(link.Description))
                                     {
-                                        @for (var ti = 0; ti < midCount; ti++)
-                                        {
-                                            var t = (ti + 1) / (double)(midCount + 1);
-                                            var tick = HouseChartGeometry.PointOnArc(from, to, t, pull);
-                                            <circle cx="@tick.X.ToString("0.##")"
-                                                    cy="@tick.Y.ToString("0.##")"
-                                                    r="4.5"
-                                                    class="house-chart-intermediate @css" />
-                                        }
+                                        <title>@link.Description</title>
                                     }
-                                    @if (!string.IsNullOrEmpty(link.Label))
+                                </path>
+                                @if (midCount > 0)
+                                {
+                                    @for (var ti = 0; ti < midCount; ti++)
                                     {
-                                        var titleXml = string.IsNullOrEmpty(link.Description)
-                                            ? string.Empty
-                                            : $"<title>{System.Net.WebUtility.HtmlEncode(link.Description)}</title>";
-                                        @((MarkupString)$"<text x=\"{labelAt.X:0.##}\" y=\"{labelAt.Y:0.##}\" class=\"house-chart-link-label {css}\" text-anchor=\"middle\" dominant-baseline=\"middle\">{titleXml}{System.Net.WebUtility.HtmlEncode(link.Label)}</text>")
+                                        var t = (ti + 1) / (double)(midCount + 1);
+                                        var tick = HouseChartGeometry.PointOnArc(from, to, t, pull);
+                                        <circle cx="@tick.X.ToString("0.##")"
+                                                cy="@tick.Y.ToString("0.##")"
+                                                r="4.5"
+                                                class="house-chart-intermediate @css" />
                                     }
-                                </g>
-                            }
+                                }
+                                @if (!string.IsNullOrEmpty(link.Label) || placed.HasIcon)
+                                {
+                                    var titleXml = string.IsNullOrEmpty(link.Description)
+                                        ? string.Empty
+                                        : $"<title>{System.Net.WebUtility.HtmlEncode(link.Description)}</title>";
+                                    var labelText = System.Net.WebUtility.HtmlEncode(link.Label ?? string.Empty);
+                                    var lx = placed.LabelAt.X;
+                                    var ly = placed.LabelAt.Y;
+                                    if (placed.HasIcon && !string.IsNullOrEmpty(link.Label))
+                                    {
+                                        var totalW = placed.BadgeWidth;
+                                        var left = -totalW / 2;
+                                        var iconX = left + 4;
+                                        var textX = iconX + 18;
+                                        var badge = $"<g class=\"house-chart-link-badge {css}\" transform=\"translate({lx:0.##} {ly:0.##})\">{titleXml}"
+                                            + $"<rect class=\"house-chart-link-badge-bg\" x=\"{left:0.##}\" y=\"-11\" width=\"{totalW:0.##}\" height=\"22\" rx=\"6\"/>"
+                                            + $"<svg class=\"house-chart-link-icon\" x=\"{iconX:0.##}\" y=\"-8\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\">{placed.IconInner}</svg>"
+                                            + $"<text class=\"house-chart-link-label {css}\" x=\"{textX:0.##}\" y=\"0\" text-anchor=\"start\" dominant-baseline=\"middle\">{labelText}</text>"
+                                            + "</g>";
+                                        @((MarkupString)badge)
+                                    }
+                                    else if (placed.HasIcon)
+                                    {
+                                        var badge = $"<g class=\"house-chart-link-badge {css}\" transform=\"translate({lx:0.##} {ly:0.##})\">{titleXml}"
+                                            + $"<rect class=\"house-chart-link-badge-bg\" x=\"-12\" y=\"-11\" width=\"24\" height=\"22\" rx=\"6\"/>"
+                                            + $"<svg class=\"house-chart-link-icon\" x=\"-8\" y=\"-8\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\">{placed.IconInner}</svg>"
+                                            + "</g>";
+                                        @((MarkupString)badge)
+                                    }
+                                    else
+                                    {
+                                        @((MarkupString)$"<text x=\"{lx:0.##}\" y=\"{ly:0.##}\" class=\"house-chart-link-label {css}\" text-anchor=\"middle\" dominant-baseline=\"middle\">{titleXml}{labelText}</text>")
+                                    }
+                                }
+                            </g>
                         }
                     </g>
                 }
@@ -623,15 +645,24 @@
 
     private static string LinkCssClass(ChartAspectLink link)
     {
+        string baseClass;
         if (string.Equals(link.Kind, "company-pair", StringComparison.OrdinalIgnoreCase)
             || string.Equals(link.Kind, "company-pass", StringComparison.OrdinalIgnoreCase))
-            return "link-company";
-        if (string.Equals(link.Kind, "path", StringComparison.OrdinalIgnoreCase))
-            return "link-path";
+            baseClass = "link-company";
+        else if (string.Equals(link.Kind, "path", StringComparison.OrdinalIgnoreCase))
+            baseClass = "link-path";
+        else
+        {
+            var aspect = AspectDirectionHelper.AspectTypeClass(link.AspectType);
+            var dir = AspectDirectionHelper.Resolve(link.Direction, link.AspectType).CssClass;
+            baseClass = $"{aspect} {dir}".Trim();
+        }
 
-        var aspect = AspectDirectionHelper.AspectTypeClass(link.AspectType);
-        var dir = AspectDirectionHelper.Resolve(link.Direction, link.AspectType).CssClass;
-        return $"{aspect} {dir}".Trim();
+        if (string.Equals(link.Role, "querent", StringComparison.OrdinalIgnoreCase))
+            return $"{baseClass} link-role-querent";
+        if (string.Equals(link.Role, "quesited", StringComparison.OrdinalIgnoreCase))
+            return $"{baseClass} link-role-quesited";
+        return baseClass;
     }
 
     private string GetCourtHighlightClass(ChartHighlightCourt court)

@@ -29,9 +29,12 @@ namespace GeomancyWebUI.Client.Helpers
 
                 if (a.MadeThroughCompany)
                 {
-                    TryAddCompanyPair(links, querent, quesited, a.FromHouse, a.ToHouse, a.CompanyType, string.Empty);
+                    TryAddCompanyPair(
+                        links, querent, quesited, a.FromHouse, a.ToHouse,
+                        a.CompanyType, string.Empty, string.Empty, string.Empty, string.Empty);
                     TryAddCompanyFigureTranslationPath(
-                        links, querent, quesited, a.FromHouse, a.ToHouse, a.CompanyType, string.Empty);
+                        links, querent, quesited, a.FromHouse, a.ToHouse,
+                        a.CompanyType, string.Empty, string.Empty, string.Empty, string.Empty);
                 }
                 else
                 {
@@ -68,15 +71,23 @@ namespace GeomancyWebUI.Client.Helpers
                 else if (!hasAspect
                     && p.PathFromHouse > 0 && p.PathToHouse > 0 && p.PathFromHouse != p.PathToHouse)
                 {
+                    var modeLabel = string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == "None" ? p.Mode : p.BaseMode;
                     TryAddPathLink(links, p.PathFromHouse, p.PathToHouse,
-                        string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == "None" ? p.Mode : p.BaseMode,
-                        $"{(string.IsNullOrEmpty(p.BaseMode) || p.BaseMode == "None" ? p.Mode : p.BaseMode)} path H{p.PathFromHouse} → H{p.PathToHouse}.");
+                        modeLabel,
+                        $"{modeLabel} path H{p.PathFromHouse} → H{p.PathToHouse}.",
+                        role: "neutral",
+                        iconKind: "mode",
+                        iconVariant: (modeLabel ?? string.Empty).Trim().ToLowerInvariant());
                 }
 
                 if (p.MadeThroughCompany || string.Equals(p.Mode, "Company", StringComparison.OrdinalIgnoreCase))
                 {
                     var fromHint = p.AspectFromHouse > 0 ? p.AspectFromHouse : p.PathFromHouse;
                     var toHint = p.AspectToHouse > 0 ? p.AspectToHouse : p.PathToHouse;
+                    var (sigPreview, companionPreview) = ResolveCompanyPair(
+                        querent, quesited, fromHint, toHint, p.PathActor);
+                    var sigFig = FigureForCompanySeat(sigPreview, querent, quesited, p.QuerentFigure, p.QuesitedFigure, p.PathFigure);
+                    var coFig = FigureForCompanySeat(companionPreview, querent, quesited, p.QuerentFigure, p.QuesitedFigure, p.PathFigure);
                     TryAddCompanyPair(
                         links,
                         querent,
@@ -84,7 +95,10 @@ namespace GeomancyWebUI.Client.Helpers
                         fromHint,
                         toHint,
                         p.CompanyType,
-                        p.PathActor);
+                        p.CompanyTypeDescription,
+                        p.PathActor,
+                        sigFig,
+                        coFig);
                     if (hasAspect)
                     {
                         TryAddCompanyFigureTranslationPath(
@@ -94,7 +108,10 @@ namespace GeomancyWebUI.Client.Helpers
                             p.AspectFromHouse,
                             p.AspectToHouse,
                             p.CompanyType,
-                            p.PathActor);
+                            p.CompanyTypeDescription,
+                            p.PathActor,
+                            sigFig,
+                            coFig);
                     }
                 }
                 else if (hasAspect)
@@ -209,20 +226,29 @@ namespace GeomancyWebUI.Client.Helpers
             if (querent > 0 && t1 != querent)
             {
                 TryAddPathLink(links, t1, querent, "Qrt",
-                    $"{figNote} in H{t1} touches the querent in H{querent}.");
+                    $"{figNote} in H{t1} touches the querent in H{querent}.",
+                    role: "querent",
+                    iconKind: "mode",
+                    iconVariant: "translation");
             }
 
             if (quesited > 0 && t2 != quesited)
             {
                 TryAddPathLink(links, t2, quesited, "Qst",
-                    $"{figNote} in H{t2} touches the quesited in H{quesited}.");
+                    $"{figNote} in H{t2} touches the quesited in H{quesited}.",
+                    role: "quesited",
+                    iconKind: "mode",
+                    iconVariant: "translation");
             }
 
             // Two distinct translator seats: also show the courier span when useful.
             if (t1 != t2 && t1 > 0 && t2 > 0)
             {
                 TryAddPathLink(links, t1, t2, "Trans.",
-                    $"{figNote} carries light between H{t1} and H{t2}.");
+                    $"{figNote} carries light between H{t1} and H{t2}.",
+                    role: "neutral",
+                    iconKind: "mode",
+                    iconVariant: "translation");
             }
         }
 
@@ -244,20 +270,29 @@ namespace GeomancyWebUI.Client.Helpers
             {
                 TryAddPathLink(links, querent, passQ, "Q. pass",
                     $"Querent passes from H{querent} to H{passQ}"
-                    + (string.IsNullOrEmpty(p.PathFigure) ? "." : $" ({p.PathFigure})."));
+                    + (string.IsNullOrEmpty(p.PathFigure) ? "." : $" ({p.PathFigure})."),
+                    role: "querent",
+                    iconKind: "mode",
+                    iconVariant: "mutation");
             }
 
             if (quesited > 0 && passX != quesited)
             {
                 TryAddPathLink(links, quesited, passX, "Qst. pass",
                     $"Quesited passes from H{quesited} to H{passX}"
-                    + (string.IsNullOrEmpty(p.PathSecondaryFigure) ? "." : $" ({p.PathSecondaryFigure})."));
+                    + (string.IsNullOrEmpty(p.PathSecondaryFigure) ? "." : $" ({p.PathSecondaryFigure})."),
+                    role: "quesited",
+                    iconKind: "mode",
+                    iconVariant: "mutation");
             }
 
             if (passQ != passX)
             {
                 TryAddPathLink(links, passQ, passX, "Mutation",
-                    $"Pass houses H{passQ} and H{passX} sit next to each other.");
+                    $"Pass houses H{passQ} and H{passX} sit next to each other.",
+                    role: "neutral",
+                    iconKind: "mode",
+                    iconVariant: "mutation");
             }
         }
 
@@ -266,7 +301,10 @@ namespace GeomancyWebUI.Client.Helpers
             int from,
             int to,
             string label,
-            string description)
+            string description,
+            string role = "neutral",
+            string iconKind = "",
+            string iconVariant = "")
         {
             if (from < 1 || from > 12 || to < 1 || to > 12 || from == to)
                 return;
@@ -281,7 +319,10 @@ namespace GeomancyWebUI.Client.Helpers
                 ToHouse = to,
                 Kind = "path",
                 Label = label,
-                Description = description
+                Description = description,
+                Role = string.IsNullOrWhiteSpace(role) ? "neutral" : role,
+                IconKind = iconKind ?? string.Empty,
+                IconVariant = iconVariant ?? string.Empty
             });
         }
 
@@ -289,6 +330,9 @@ namespace GeomancyWebUI.Client.Helpers
         {
             var type = aspectType ?? string.Empty;
             var dir = direction ?? string.Empty;
+            var variant = string.IsNullOrWhiteSpace(type)
+                ? "generic"
+                : type.Trim().ToLowerInvariant();
             return new ChartAspectLink
             {
                 FromHouse = from,
@@ -298,7 +342,10 @@ namespace GeomancyWebUI.Client.Helpers
                 Kind = "aspect",
                 Label = GeomanticAspects.ShortLabel(type, dir),
                 Description = GeomanticAspects.DescribeAspect(from, to, type, dir),
-                IntermediateHouses = GeomanticAspects.IntermediateHouses(from, to)
+                IntermediateHouses = GeomanticAspects.IntermediateHouses(from, to),
+                Role = "neutral",
+                IconKind = "aspect",
+                IconVariant = variant
             };
         }
 
@@ -309,7 +356,10 @@ namespace GeomancyWebUI.Client.Helpers
             int fromHint,
             int toHint,
             string? companyType,
-            string? pathActor)
+            string? companyTypeDescription,
+            string? pathActor,
+            string? significatorFigure,
+            string? companionFigure)
         {
             var (sig, companion) = ResolveCompanyPair(querent, quesited, fromHint, toHint, pathActor);
             if (sig <= 0 || companion <= 0 || companion == sig)
@@ -319,9 +369,16 @@ namespace GeomancyWebUI.Client.Helpers
                     || (l.FromHouse == companion && l.ToHouse == sig))))
                 return;
 
-            var shortCo = PerfectionDetailCopy.FormatCompanyShort(companyType ?? string.Empty);
-            var label = string.IsNullOrEmpty(shortCo) ? "Co." : shortCo;
-            var pairDesc = PerfectionDetailCopy.FormatCompanyPairLabel(sig, companion);
+            var label = PerfectionDetailCopy.FormatCompanyConnectorLabel(
+                companyType ?? string.Empty,
+                companyTypeDescription ?? string.Empty,
+                sig,
+                companion,
+                significatorFigure,
+                companionFigure);
+            var pairDesc = PerfectionDetailCopy.FormatCompanyPairLabel(
+                sig, companion, significatorFigure, companionFigure);
+            var companyVariant = ChartLinkIconGlyphs.NormalizeCompanyVariant(companyType);
 
             links.Add(new ChartAspectLink
             {
@@ -333,9 +390,14 @@ namespace GeomancyWebUI.Client.Helpers
                     string.IsNullOrEmpty(pairDesc)
                         ? $"{PerfectionDetailCopy.FormatCompanyType(companyType ?? string.Empty)} — odd–even paired houses only."
                         : $"{pairDesc}. {PerfectionDetailCopy.FormatCompanyType(companyType ?? string.Empty)} — odd–even paired houses only.",
-                    string.Empty,
+                    PerfectionDetailCopy.CompanyMechanismFormationClause(
+                        companyType ?? string.Empty,
+                        companyTypeDescription ?? string.Empty),
                     sig,
-                    companion)
+                    companion),
+                Role = "neutral",
+                IconKind = "company",
+                IconVariant = companyVariant
             });
         }
 
@@ -351,7 +413,10 @@ namespace GeomancyWebUI.Client.Helpers
             int aspectFrom,
             int aspectTo,
             string? companyType,
-            string? pathActor)
+            string? companyTypeDescription,
+            string? pathActor,
+            string? significatorFigure,
+            string? companionFigure)
         {
             if (aspectFrom < 1 || aspectFrom > 12 || aspectTo < 1 || aspectTo > 12)
                 return;
@@ -364,8 +429,15 @@ namespace GeomancyWebUI.Client.Helpers
             if (aspectFrom == companion || aspectFrom == sig)
                 return;
 
-            var shortCo = PerfectionDetailCopy.FormatCompanyShort(companyType ?? string.Empty);
-            var label = string.IsNullOrEmpty(shortCo) ? "Co. fig." : shortCo;
+            var label = PerfectionDetailCopy.FormatCompanyConnectorLabel(
+                companyType ?? string.Empty,
+                companyTypeDescription ?? string.Empty,
+                sig,
+                companion,
+                significatorFigure,
+                companionFigure);
+            if (string.IsNullOrEmpty(label) || label == "Co.")
+                label = "Co. fig.";
             if (links.Any(l =>
                     (l.Kind == "path" || l.Kind == "company-pass")
                     && ((l.FromHouse == companion && l.ToHouse == aspectFrom)
@@ -379,7 +451,10 @@ namespace GeomancyWebUI.Client.Helpers
                 Kind = "company-pass",
                 Label = label,
                 Description =
-                    $"Company figure from H{companion} also appears in H{aspectFrom}, and from there aspects H{aspectTo}."
+                    $"Company figure from H{companion} also appears in H{aspectFrom}, and from there aspects H{aspectTo}.",
+                Role = "neutral",
+                IconKind = "company",
+                IconVariant = ChartLinkIconGlyphs.NormalizeCompanyVariant(companyType)
             });
         }
 
@@ -419,7 +494,27 @@ namespace GeomancyWebUI.Client.Helpers
                 aspectFrom,
                 home,
                 label,
-                $"{figNote} in H{aspectFrom} reflects the {role} significator in H{home}.");
+                $"{figNote} in H{aspectFrom} reflects the {role} significator in H{home}.",
+                role: string.IsNullOrEmpty(role) ? "neutral" : role,
+                iconKind: "mode",
+                iconVariant: "generic");
+        }
+
+        private static string FigureForCompanySeat(
+            int seat,
+            int querent,
+            int quesited,
+            string? querentFigure,
+            string? quesitedFigure,
+            string? pathFigure)
+        {
+            if (seat <= 0)
+                return pathFigure ?? string.Empty;
+            if (seat == querent && !string.IsNullOrWhiteSpace(querentFigure))
+                return querentFigure!;
+            if (seat == quesited && !string.IsNullOrWhiteSpace(quesitedFigure))
+                return quesitedFigure!;
+            return pathFigure ?? string.Empty;
         }
 
         private static (int homeHouse, string role) ResolveTranslatedAspectHome(

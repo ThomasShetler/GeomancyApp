@@ -201,5 +201,52 @@ namespace GeomancyUnitTesting
             StringAssert.Contains(text, "Dexter Sextile");
             StringAssert.Contains(text, "querent");
         }
+
+        [TestMethod]
+        public void FormatCompanyConnectorLabel_DemiIncludesPlanet()
+        {
+            var label = PerfectionDetailCopy.FormatCompanyConnectorLabel(
+                "DemiSimple",
+                "Company Demi-Simple (same planet: Jupiter) — paired under a shared patron.",
+                significatorHouse: 7,
+                companionHouse: 8);
+
+            Assert.AreEqual("Co. Demi · Jupiter", label);
+        }
+
+        [TestMethod]
+        public void FormatCompanyConnectorLabel_SimpleIncludesHousePair()
+        {
+            var label = PerfectionDetailCopy.FormatCompanyConnectorLabel(
+                "Simple",
+                string.Empty,
+                significatorHouse: 3,
+                companionHouse: 4);
+
+            Assert.AreEqual("Co. Simple · H3↔H4", label);
+        }
+
+        [TestMethod]
+        public void FormatCompanyConnectorLabel_CapitularIncludesFire()
+        {
+            Assert.AreEqual("Co. Cap. · Fire",
+                PerfectionDetailCopy.FormatCompanyConnectorLabel("Capitular", string.Empty));
+        }
+
+        [TestMethod]
+        public void FormatCompanyConnectorLabel_CompoundIncludesOppositePair()
+        {
+            var label = PerfectionDetailCopy.FormatCompanyConnectorLabel(
+                "Compound",
+                string.Empty,
+                significatorHouse: 1,
+                companionHouse: 2,
+                significatorFigure: "Caput Draconis",
+                companionFigure: "Cauda Draconis");
+
+            StringAssert.StartsWith(label, "Co. Comp. ·");
+            StringAssert.Contains(label, "Caput");
+            StringAssert.Contains(label, "Cauda");
+        }
     }
 }

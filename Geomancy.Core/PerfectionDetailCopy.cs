@@ -117,6 +117,59 @@ namespace GeomancyApp
             };
         }
 
+        /// <summary>
+        /// Compact house-chart connector label: company short form plus planet, Fire, opposite
+        /// pair, or house pair when known (e.g. "Co. Demi · Jupiter", "Co. Simple · H3↔H4").
+        /// </summary>
+        public static string FormatCompanyConnectorLabel(
+            string companyType,
+            string companyTypeDescription,
+            int significatorHouse = 0,
+            int companionHouse = 0,
+            string significatorFigure = null,
+            string companionFigure = null)
+        {
+            var shortCo = FormatCompanyShort(companyType);
+            if (string.IsNullOrEmpty(shortCo))
+                shortCo = "Co.";
+
+            var key = (companyType ?? string.Empty).Trim();
+
+            if (IsDemiSimpleCompanyType(key)
+                || key.IndexOf("Demi", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                var planet = ExtractCompanyBondPlanet(companyTypeDescription ?? string.Empty);
+                if (!string.IsNullOrEmpty(planet))
+                    return shortCo + " · " + planet;
+                return shortCo;
+            }
+
+            if (key.Equals("Capitular", StringComparison.OrdinalIgnoreCase)
+                || key.IndexOf("Capitular", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return shortCo + " · Fire";
+            }
+
+            if (IsCompoundCompanyType(key)
+                || key.IndexOf("Compound", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                var opposite = MatchCompoundOppositePair(
+                    significatorFigure ?? string.Empty,
+                    companionFigure ?? string.Empty);
+                if (opposite.HasValue)
+                    return shortCo + " · " + opposite.Value.Left + "↔" + opposite.Value.Right;
+            }
+
+            if (significatorHouse is >= 1 and <= 12
+                && companionHouse is >= 1 and <= 12
+                && significatorHouse != companionHouse)
+            {
+                return shortCo + " · H" + significatorHouse + "↔H" + companionHouse;
+            }
+
+            return shortCo;
+        }
+
         public static string FormatAspectType(string aspectType)
         {
             if (string.IsNullOrWhiteSpace(aspectType)

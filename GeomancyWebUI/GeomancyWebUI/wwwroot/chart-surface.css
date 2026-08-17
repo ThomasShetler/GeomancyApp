@@ -377,6 +377,21 @@
     stroke-width: 3;
 }
 
+.house-chart-link.link-path.link-role-querent {
+    stroke: #66bb6a;
+    stroke-dasharray: 8 7;
+    stroke-width: 3.25;
+    opacity: 0.95;
+}
+
+/* Match quesited house triangle / tag chrome (#ffb74d), not pastel red */
+.house-chart-link.link-path.link-role-quesited {
+    stroke: #ffa726;
+    stroke-dasharray: 8 7;
+    stroke-width: 3.25;
+    opacity: 0.95;
+}
+
 .house-chart-link.link-company {
     stroke: #ffc107;
     stroke-width: 2.75;
@@ -404,12 +419,53 @@ marker#aspect-arrow-end .aspect-arrowhead {
     fill: #42a5f5;
 }
 
+.house-chart-link-badge {
+    pointer-events: none;
+}
+
+.house-chart-link-badge-bg {
+    fill: var(--bg-primary, #1a1a1a);
+    fill-opacity: 0.82;
+    stroke: var(--bg-primary, #1a1a1a);
+    stroke-opacity: 0.35;
+    stroke-width: 1;
+}
+
+.house-chart-link-icon {
+    color: var(--accent-color, #b39ddb);
+    overflow: visible;
+}
+
+.house-chart-link-badge.link-role-querent .house-chart-link-icon,
+.house-chart-link-label.link-role-querent {
+    color: #81c784;
+    fill: #81c784;
+}
+
+.house-chart-link-badge.link-role-quesited .house-chart-link-icon,
+.house-chart-link-label.link-role-quesited {
+    color: #ffb74d;
+    fill: #ffb74d;
+}
+
+.house-chart-link-badge.link-company .house-chart-link-icon,
+.house-chart-link-label.link-company {
+    color: #ffc107;
+    fill: #ffc107;
+}
+
+.house-chart-link-badge.aspect-sextile .house-chart-link-icon { color: #26a69a; }
+.house-chart-link-badge.aspect-trine .house-chart-link-icon { color: #42a5f5; }
+.house-chart-link-badge.aspect-square .house-chart-link-icon { color: #ef5350; }
+.house-chart-link-badge.aspect-opposition .house-chart-link-icon { color: #ce93d8; }
+.house-chart-link-badge.aspect-conjunction .house-chart-link-icon { color: #ffa726; }
+
 .house-chart-link-label {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     paint-order: stroke;
     stroke: var(--bg-primary, #1a1a1a);
-    stroke-width: 4px;
+    stroke-width: 3.5px;
     pointer-events: none;
     opacity: 0.95;
 }
@@ -420,7 +476,9 @@ marker#aspect-arrow-end .aspect-arrowhead {
 .house-chart-link-label.aspect-opposition { fill: #ce93d8; }
 .house-chart-link-label.aspect-conjunction { fill: #ffa726; }
 .house-chart-link-label.link-path { fill: var(--accent-color, #b39ddb); }
-.house-chart-link-label.link-company { fill: #ffc107; font-size: 14px; }
+.house-chart-link-label.link-path.link-role-querent { fill: #81c784; }
+.house-chart-link-label.link-path.link-role-quesited { fill: #ffb74d; }
+.house-chart-link-label.link-company { fill: #ffc107; font-size: 13px; }
 
 .house-number {
     fill: var(--text-secondary, #b0b0b0);

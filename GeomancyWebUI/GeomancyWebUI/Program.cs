@@ -144,6 +144,15 @@ try
     _ = GeomancyAPI.Services.GreerHouseDirectoryLoader.GetDirectory();
     _ = GeomancyApp.GreerFigureCorpusLoader.LoadFigures();
     _ = GeomancyAPI.Handlers.GeomancyHandlers.GetAllFigures();
+    // Touch the chart pipeline once so ReadyToRun / tiered JIT is warm before traffic.
+    _ = GeomancyAPI.Handlers.GeomancyHandlers.GenerateHouseChart(
+        new GeomancyAPI.Models.GenerateFourFiguresRequest
+        {
+            House1 = new GeomancyAPI.Models.GenerateFigureRequest { HeadLine = 1, NeckLine = 1, BodyLine = 1, FootLine = 1 },
+            House2 = new GeomancyAPI.Models.GenerateFigureRequest { HeadLine = 2, NeckLine = 2, BodyLine = 2, FootLine = 2 },
+            House3 = new GeomancyAPI.Models.GenerateFigureRequest { HeadLine = 1, NeckLine = 2, BodyLine = 1, FootLine = 2 },
+            House4 = new GeomancyAPI.Models.GenerateFigureRequest { HeadLine = 2, NeckLine = 1, BodyLine = 2, FootLine = 1 },
+        });
 }
 catch (Exception ex)
 {

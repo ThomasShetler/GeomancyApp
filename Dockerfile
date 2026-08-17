@@ -27,7 +27,8 @@ COPY GeomancyWebUI/ GeomancyWebUI/
 RUN dotnet publish GeomancyWebUI/GeomancyWebUI/GeomancyWebUI.csproj \
     -c Release \
     -o /app/publish \
-    /p:UseAppHost=false
+    /p:UseAppHost=false \
+    /p:PublishReadyToRun=true
 
 # Publish emits a fingerprinted Client scoped-css bundle; styles.css @import and
 # App.razor expect a stable GeomancyWebUI.Client.bundle.scp.css filename.
@@ -43,6 +44,15 @@ COPY --from=build /app/publish .
 
 # Railway sets $PORT; default to 8080 for local docker run.
 ENV ASPNETCORE_URLS=http://+:${PORT:-8080}
+# Small PaaS: workstation GC + R2R cuts cold-start / circuit stutter vs Server GC.
+ENV DOTNET_EnableDiagnostics=0 \
+    DOTNET_ReadyToRun=1 \
+    DOTNET_TieredCompilation=1 \
+    DOTNET_TC_QuickJit=1 \
+    DOTNET_TC_QuickJitForLoops=1 \
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    DOTNET_gcServer=0 \
+    DOTNET_GCConserveMemory=5
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "GeomancyWebUI.dll"]
